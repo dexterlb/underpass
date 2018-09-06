@@ -1,0 +1,4 @@
+- can use prolog to parse categorial grammars with ease (but no probabilities)
+- context-free subset of a categorial grammar? (nonterminals on left side)
+- epsilon rules? (maybe more powerful than the above, allow for example a Filter
+  term to be transformed to Set -> Set) by applying the filter function

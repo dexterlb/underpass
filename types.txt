@@ -1,0 +1,59 @@
+-- basic types
+type Int
+type String
+type Float
+
+-- complex types
+type Set
+
+-- universals
+everything  : Set
+nodes       : Set
+ways        : Set
+relations   : Set
+areas       : Set
+
+-- filters
+kv      : String -> String -> Set       -- things that match a key/value tag
+around  : Float  -> Set -> Set          -- things that are within distance of given things
+in      : Set    -> Set                 -- things that are in areas in the set
+
+-- set operations
+or  : Set -> Set -> Set
+and : Set -> Set -> Set
+not : Set -> Set
+
+-- graph operations
+up      : Set -> Set     -- all parents of items in set
+down    : Set -> Set     -- all children of items in set
+upp     : Set -> Set     -- transitive parents
+downn   : Set -> Set     -- transitive children
+
+-- graph operations with a role filter
+up      : String -> Set -> Set     -- all parents of items in set
+down    : String -> Set -> Set     -- all children of items in set
+upp     : String -> Set -> Set     -- transitive parents
+downn   : String -> Set -> Set     -- transitive children
+
+-- convenience
+name : String -> Set
+name s = kv "name" s
+
+amenity : String -> Set
+amenity s = kv "amenity" s
+
+near : Set -> Set
+near = around 50
+
+
+-- lambda fragment
+lambda x: T { term :: T }
+
+
+-- examples
+
+-- cafes in sofia within 20m of water
+and (and (amenity "cafe") (in (name "sofia"))) (around 20 (amenity "drinking_water"))
+
+-- pharmacies near Circle Line stations
+and (amenity "pharmacy") (near (and (amenity "metro_station") (down (name "Circle Line"))))
