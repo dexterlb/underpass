@@ -6,7 +6,7 @@ module Parsing
     , module Text.Megaparsec.Expr
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
-    , operator
+    , operator, word
     , ps
     ) where
 
@@ -52,6 +52,9 @@ braces = between (symbol "(") (symbol ")")
 
 curlyBraces :: Parser a -> Parser a
 curlyBraces = between (symbol "{") (symbol "}")
+
+word :: Parser a -> Parser a
+word x = (lexeme . try) (x <* notFollowedBy alphaNumChar)
 
 operator :: Text -> Parser Text
 operator = lexeme . string

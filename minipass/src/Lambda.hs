@@ -7,6 +7,9 @@ module Lambda where
 import qualified LambdaTypes as T
 import LambdaTypes (Typed, typ)
 
+import Parsing (Parser, Parseable, parser, (<|>))
+import qualified Parsing as P
+
 type Index = Int
 type VarName = String
 newtype VarContext t = VarContext [(VarName, T.ApplicativeType t)]
@@ -37,7 +40,7 @@ showTerm context (Application a b) = "(" ++ showTerm context a ++ " " ++ showTer
 showTerm context (Lambda x t a) = "λ[" ++ x ++ ": " ++ show t ++ "] { " ++ showTerm (push (x, t) context) a ++ " }"
 showTerm context (Variable i)
     | Just (x, _) <- at i context = x
-    | otherwise = "<var?>"
+    | otherwise = "<var " ++ (show i) ++ ">"
 
 
 instance (Typed c t, Eq t) => Typed (LambdaTerm t c) t where
@@ -52,3 +55,30 @@ typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) con
 typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = T.TypeError
+
+instance (Parseable t, Parseable c, Typed c t) => Parseable (LambdaTerm t c) where
+    parser = parseTerm emptyContext
+
+parseTerm :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c)
+parseTerm context
+    =   parseApplication context
+
+parseNonApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c)
+parseNonApplication context
+    =   parseConstant
+
+parseConstant :: (Parseable t, Parseable c, Typed c t) => Parser (LambdaTerm t c)
+parseConstant = Constant <$> parser
+
+parseLambda :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c)
+parseLambda context = do
+    word "lambda" <|> operator "\\"
+    var <- parseVariableDeclaration
+    operator "{"
+    term <- parseTerm (push var context)
+    operator "}"
+    return term
+
+parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c)
+parseApplication context = (foldl1 Application)
+    <$> (P.some $ parseNonApplication context)

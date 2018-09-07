@@ -28,14 +28,14 @@ instance (Eq b) => Eq (ApplicativeType b) where
     _ == _ = False
 
 instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
-    parser = typeExprParser
+    parser = parseTypeExpr
 
-typeExprParser :: (P.Parseable b) => P.Parser (ApplicativeType b)
-typeExprParser = P.makeExprParser typeTermParser
+parseTypeExpr :: (P.Parseable b) => P.Parser (ApplicativeType b)
+parseTypeExpr = P.makeExprParser parseTypeTerm
     [ [ P.InfixR (P.operator "->" $> Application) ]
     ]
 
-typeTermParser :: (P.Parseable b) => P.Parser (ApplicativeType b)
-typeTermParser
-    =   P.braces typeExprParser
+parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
+parseTypeTerm
+    =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
