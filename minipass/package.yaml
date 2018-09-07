@@ -21,7 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/Dext
 
 dependencies:
 - base >= 4.7 && < 5
-- megaparsec >= 6.0
+- megaparsec >= 6.5.0 && < 7.0.0
 - text >= 1.0
 
 library:

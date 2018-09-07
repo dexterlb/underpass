@@ -6,11 +6,14 @@ module Parsing
     , module Text.Megaparsec.Expr
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
+    , operator
+    , ps
     ) where
 
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Text.Megaparsec.Expr
+import Text.Megaparsec.Error
 import qualified Text.Megaparsec.Char.Lexer as L
 
 import Data.Text (Text)
@@ -21,6 +24,13 @@ type Parser = Parsec () Text
 class Parseable t where
     parser :: Parser t
 
+instance ShowErrorComponent () where
+    showErrorComponent _ = ""
+
+ps :: Parseable t => Text -> t
+ps t = case parse (parser <* eof) "input" t of
+    Right d     -> d
+    Left errors -> error $ parseErrorPretty errors
 
 sc :: Parser ()
 sc = L.space space1 lineCmnt blockCmnt
@@ -42,3 +52,6 @@ braces = between (symbol "(") (symbol ")")
 
 curlyBraces :: Parser a -> Parser a
 curlyBraces = between (symbol "{") (symbol "}")
+
+operator :: Text -> Parser Text
+operator = lexeme . string

@@ -16,11 +16,19 @@ data Constants = Foo
     deriving (Show, Eq)
 
 instance P.Parseable Constants where
-    parser = P.string "foo" $> Foo
+    parser = (lexeme . try)
+        $   P.string "foo" $> Foo
+        <|> P.string "bar" $> Bar
 
 data Types
     = Set
+    | String
     deriving (Show, Eq)
+
+instance P.Parseable Types where
+    parser = (lexeme . try)
+        $   P.string "Set"      $> Set
+        <|> P.string "String"   $> String
 
 type Term = LambdaTerm Types Constants
 
