@@ -3,6 +3,8 @@
 
 module Minipass where
 
+import Parsing as P
+
 import LambdaTypes as T
 import Lambda
 
@@ -10,6 +12,9 @@ data Constants
     = Foo
     | Bar
     deriving (Show, Eq)
+
+instance P.Parseable Constants where
+    parser = (P.string "foo") *> (pure Foo)
 
 data Types
     = Set
