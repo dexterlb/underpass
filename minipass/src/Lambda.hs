@@ -1,5 +1,4 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 
@@ -30,24 +29,24 @@ data LambdaTerm t c where
     Variable    :: Typed c t => Index          -> LambdaTerm t c
 
 instance (Show t, Show c) => Show (LambdaTerm t c) where
-    show term = showTerm emptyContext term
+    show = showTerm emptyContext
 
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
-showTerm context (Application a b) = "(" ++ (showTerm context a) ++ " " ++ (showTerm context b) ++ ")"
-showTerm context (Lambda x t a) = "λ[" ++ x ++ ": " ++ (show t) ++ "] { " ++ (showTerm (push (x, t) context) a) ++ " }"
+showTerm context (Application a b) = "(" ++ showTerm context a ++ " " ++ showTerm context b ++ ")"
+showTerm context (Lambda x t a) = "λ[" ++ x ++ ": " ++ show t ++ "] { " ++ showTerm (push (x, t) context) a ++ " }"
 showTerm context (Variable i)
     | Just (x, _) <- at i context = x
     | otherwise = "<var?>"
 
 
 instance (Typed c t, Eq t) => Typed (LambdaTerm t c) t where
-    typ term = typeOfTerm emptyContext term
+    typ = typeOfTerm emptyContext
 
 typeOfTerm :: (Typed c t, Eq t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ (Constant c) = typ c
 typeOfTerm context (Application a b)
-    | (T.Application p q) <- typeOfTerm context a, p == (typeOfTerm context b) = q
+    | (T.Application p q) <- typeOfTerm context a, p == typeOfTerm context b = q
     | otherwise = T.TypeError
 typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) context) a)
 typeOfTerm context (Variable i)

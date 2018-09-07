@@ -4,7 +4,7 @@ module Parsing
     ( module Text.Megaparsec
     , module Text.Megaparsec.Char
     , module Text.Megaparsec.Expr
-    , Parseable, Parser
+    , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
     ) where
 
@@ -42,4 +42,3 @@ braces = between (symbol "(") (symbol ")")
 
 curlyBraces :: Parser a -> Parser a
 curlyBraces = between (symbol "{") (symbol "}")
-

@@ -14,7 +14,7 @@ class Typed a b | a -> b where  -- items of haskell type a have basic types from
 
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
-    show (Application a b) = "(" ++ (show a) ++ " -> " ++ (show b) ++ ")"
+    show (Application a b) = "(" ++ show a ++ " -> " ++ show b ++ ")"
     show TypeError = "type_error"
 
 instance (Eq b) => Eq (ApplicativeType b) where
