@@ -15,7 +15,7 @@ data ApplicativeType b
     | TypeError
 
 class Eq b => Typed a b | a -> b where  -- items of haskell type a have basic types from b
-    typ :: a -> ApplicativeType b
+    typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x

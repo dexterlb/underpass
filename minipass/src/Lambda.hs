@@ -6,7 +6,7 @@
 module Lambda where
 
 import qualified LambdaTypes as T
-import LambdaTypes (Typed, typ)
+import LambdaTypes (Typed, typeOf)
 
 import Parsing (Parser, Parseable, parser, (<|>))
 import qualified Parsing as P
@@ -54,10 +54,10 @@ showTerm context (Variable i)
 
 
 instance (Typed c t, Eq t) => Typed (LambdaTerm t c) t where
-    typ = typeOfTerm emptyContext
+    typeOf = typeOfTerm emptyContext
 
 typeOfTerm :: (Typed c t, Eq t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
-typeOfTerm _ (Constant c) = typ c
+typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
     | (T.Application p q) <- typeOfTerm context a, p == typeOfTerm context b = q
     | otherwise = T.TypeError
@@ -78,11 +78,12 @@ parseNonApplication context
     =   parseConstant
     <|> parseLambda context
     <|> parseVariable context
+    <|> P.braces (parseTerm context)
 
 parseConstant :: (Parseable t, Parseable c, Typed c t) => Parser (LambdaTerm t c, T.ApplicativeType t)
 parseConstant = do
     const <- Constant <$> parser
-    return (const, typ const)
+    return (const, typeOf const)
 
 parseLambda :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseLambda context = do

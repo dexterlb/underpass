@@ -33,5 +33,5 @@ instance P.Parseable Types where
 type Term = LambdaTerm Types Constants
 
 instance Typed Constants Types where
-    typ Foo = T.Basic Set
-    typ Bar = T.Application (T.Basic Set) (T.Basic Set)
+    typeOf Foo = T.Basic Set
+    typeOf Bar = T.Application (T.Basic Set) (T.Basic Set)
