@@ -6,7 +6,7 @@ module Parsing
     , module Text.Megaparsec.Expr
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
-    , operator, word, identifier
+    , operator, word, identifier, literal, quotedString
     , ps
     , pss
     ) where
@@ -60,8 +60,28 @@ curlyBraces = between (symbol "{") (symbol "}")
 word :: Parser a -> Parser a
 word x = (lexeme . try) (x <* notFollowedBy alphaNumChar)
 
+literal :: Text -> Parser Text
+literal = (lexeme . try) . string
+
 operator :: Text -> Parser Text
-operator = lexeme . string
+operator = literal
 
 identifier :: Parser Text
-identifier = T.pack <$> (lexeme $ ((:) <$> letterChar) <*> (many alphaNumChar))
+identifier = T.pack <$> ((lexeme . try) $ ((:) <$> letterChar) <*> (many alphaNumChar))
+
+quotedString :: Char -> Parser Text
+quotedString quote = (lexeme . try) $ do
+    char quote
+    chars <- many character
+    char quote
+    return $ T.pack $ concat chars
+
+    where
+        character = return <$> nonEscaped <|> escaped
+
+        escaped = do
+            d <- char '\\'
+            c <- oneOf [quote, '\\']
+            return [d, c]
+
+        nonEscaped = noneOf [quote, '\\']
