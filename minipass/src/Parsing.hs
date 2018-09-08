@@ -6,8 +6,9 @@ module Parsing
     , module Text.Megaparsec.Expr
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
-    , operator, word
+    , operator, word, identifier
     , ps
+    , pss
     ) where
 
 import Text.Megaparsec
@@ -26,6 +27,9 @@ class Parseable t where
 
 instance ShowErrorComponent () where
     showErrorComponent _ = ""
+
+pss :: Parseable t => String -> t
+pss = ps . T.pack
 
 ps :: Parseable t => Text -> t
 ps t = case parse (parser <* eof) "input" t of
@@ -58,3 +62,6 @@ word x = (lexeme . try) (x <* notFollowedBy alphaNumChar)
 
 operator :: Text -> Parser Text
 operator = lexeme . string
+
+identifier :: Parser Text
+identifier = T.pack <$> (lexeme $ ((:) <$> letterChar) <*> (many alphaNumChar))
