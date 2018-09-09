@@ -7,6 +7,7 @@ module Parsing
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
     , operator, word, identifier, literal, quotedString
+    , floatNumber
     , ps
     , pss
     ) where
@@ -85,3 +86,6 @@ quotedString quote = (lexeme . try) $ do
             return [d, c]
 
         nonEscaped = noneOf [quote, '\\']
+
+floatNumber :: Parser Float
+floatNumber = (lexeme . try) $ L.signed sc (lexeme ((try L.float) <|> (fromIntegral <$> (try L.decimal))))

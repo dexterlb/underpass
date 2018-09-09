@@ -48,10 +48,13 @@ data Constants = StringLiteral Text
     deriving (Show, Eq)
 
 instance P.Parseable Constants where
-    parser = parseKeyword <|> parseStringLiteral
+    parser = parseKeyword <|> parseStringLiteral <|> parseNumLiteral
 
 parseStringLiteral :: P.Parser Constants
 parseStringLiteral = StringLiteral <$> P.quotedString '\''
+
+parseNumLiteral :: P.Parser Constants
+parseNumLiteral = NumLiteral <$> P.floatNumber
 
 parseKeyword :: P.Parser Constants
 parseKeyword
@@ -96,6 +99,9 @@ instance P.Parseable Types where
         <|> P.string "Num"      $> String
 
 type Term = LambdaTerm Types Constants
+
+pts :: String -> Term
+pts = pss
 
 instance Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String
