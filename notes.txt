@@ -2,3 +2,9 @@
 - context-free subset of a categorial grammar? (nonterminals on left side)
 - epsilon rules? (maybe more powerful than the above, allow for example a Filter
   term to be transformed to Set -> Set) by applying the filter function
+
+- think about refining types - how to propagate information about arguments and
+  return values? maybe use a unification function to unify input and output
+  types and an update function that takes a type and returns a type. Then
+  call update on all nodes in the tree, unify types to make it consistent and
+  repeat until convergence.
