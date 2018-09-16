@@ -39,3 +39,6 @@ parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeTerm
     =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
+
+class Unifiable t where
+    unify :: t -> t -> t
