@@ -41,4 +41,4 @@ parseTypeTerm
     <|> (Basic <$> P.parser)
 
 class Unifiable t where
-    unify :: t -> t -> t
+    unify :: ApplicativeType t -> ApplicativeType t -> ApplicativeType t
