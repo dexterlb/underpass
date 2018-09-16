@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module Minipass where
+module Minipass.Language where
 
 import Data.Functor (($>))
 
