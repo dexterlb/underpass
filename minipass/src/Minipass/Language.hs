@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module Minipass where
+module Minipass.Language where
 
 import Data.Functor (($>))
 
@@ -26,6 +26,7 @@ data Constants = StringLiteral Text
                | Kv
                | Around
                | In
+               | Out
 
                | Or
                | And
@@ -38,8 +39,6 @@ data Constants = StringLiteral Text
 
                | UpFilter
                | DownFilter
-               | UppFilter
-               | DownnFilter
 
                | Name
                | Amenity
@@ -67,6 +66,7 @@ parseKeyword
     <|> P.literal "kv"          $> Kv
     <|> P.literal "around"      $> Around
     <|> P.literal "in"          $> In
+    <|> P.literal "out"         $> Out
 
     <|> P.literal "or"          $> Or
     <|> P.literal "and"         $> And
@@ -77,10 +77,8 @@ parseKeyword
     <|> P.literal "upp"         $> Upp
     <|> P.literal "downn"       $> Downn
 
-    <|> P.literal "up"          $> UpFilter
-    <|> P.literal "down"        $> DownFilter
-    <|> P.literal "upp"         $> UppFilter
-    <|> P.literal "downn"       $> DownnFilter
+    <|> P.literal "upf"         $> UpFilter
+    <|> P.literal "downf"       $> DownFilter
 
     <|> P.literal "name"        $> Name
     <|> P.literal "amenity"     $> Amenity
@@ -116,6 +114,7 @@ instance Typed Constants Types where
     typeOf Kv                = T.Application (T.Basic String) (T.Application (T.Basic String) (T.Basic Set))
     typeOf Around            = T.Application (T.Basic Num)    (T.Application (T.Basic Set)    (T.Basic Set))
     typeOf In                = T.Application (T.Basic Set)    (T.Basic Set)
+    typeOf Out               = T.Application (T.Basic Set)    (T.Basic Set)
 
     typeOf Or                = T.Application (T.Basic Set) (T.Application (T.Basic Set) (T.Basic Set)) -- Set -> Set -> Set
     typeOf And               = T.Application (T.Basic Set) (T.Application (T.Basic Set) (T.Basic Set)) -- Set -> Set -> Set
@@ -128,8 +127,6 @@ instance Typed Constants Types where
 
     typeOf UpFilter          = T.Application (T.Basic String) (T.Application (T.Basic Set) (T.Basic Set)) -- String -> Set -> Set
     typeOf DownFilter        = T.Application (T.Basic String) (T.Application (T.Basic Set) (T.Basic Set)) -- String -> Set -> Set
-    typeOf UppFilter         = T.Application (T.Basic String) (T.Application (T.Basic Set) (T.Basic Set)) -- String -> Set -> Set
-    typeOf DownnFilter       = T.Application (T.Basic String) (T.Application (T.Basic Set) (T.Basic Set)) -- String -> Set -> Set
 
     typeOf Name              = T.Application (T.Basic String) (T.Basic Set) -- String -> Set
     typeOf Amenity           = T.Application (T.Basic String) (T.Basic Set) -- String -> Set
