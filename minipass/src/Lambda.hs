@@ -14,26 +14,9 @@ import qualified Parsing as P
 import Data.Text (Text)
 import qualified Data.Text as Text
 
-import Data.List (elemIndex)
 import Control.Monad (fail, foldM)
 
-type Index = Int
-type VarName = Text
-newtype VarContext t = VarContext [(VarName, T.ApplicativeType t)]
-
-push :: (VarName, T.ApplicativeType t) -> VarContext t -> VarContext t
-push x (VarContext c) = VarContext $ x : c
-
-at :: Index -> VarContext t -> Maybe (VarName, T.ApplicativeType t)
-at i (VarContext c)
-    | length c > i = Just $ c !! i
-    | otherwise = Nothing
-
-get :: VarName -> VarContext t -> Maybe (Index, T.ApplicativeType t)
-get name (VarContext c) = (\i -> (i, snd $ c !! i)) <$> (elemIndex name (map fst c))
-
-emptyContext :: VarContext t
-emptyContext = VarContext []
+import Context
 
 data LambdaTerm t c where
     Constant    :: Typed c t => c              -> LambdaTerm t c

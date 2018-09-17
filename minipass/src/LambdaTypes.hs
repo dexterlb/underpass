@@ -41,4 +41,11 @@ parseTypeTerm
     <|> (Basic <$> P.parser)
 
 class Unifiable t where
-    unify :: ApplicativeType t -> ApplicativeType t -> ApplicativeType t
+    unify    :: ApplicativeType t -> ApplicativeType t -> ApplicativeType t
+    anything :: ApplicativeType t
+
+instance Unifiable t => Semigroup (ApplicativeType t) where
+    (<>) = unify
+
+instance Unifiable t => Monoid (ApplicativeType t) where
+    mempty  = anything

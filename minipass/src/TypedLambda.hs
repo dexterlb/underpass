@@ -8,8 +8,10 @@ module TypedLambda where
 
 import LambdaTypes (Typed, typeOf, Unifiable, unify)
 import qualified LambdaTypes as T
-import Lambda (VarName, VarContext, push, at, get, emptyContext, oneHotContext, pop, unifyContexts, Index, LambdaTerm, typeOfTerm)
+import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
+
+import Context
 
 data TSLTerm t c where
     Constant    :: Typed c t => T.ApplicativeType t -> c           -> TSLTerm t c
@@ -83,14 +85,13 @@ fixTypesUp :: (Typed c t, Unifiable t) => TSLTerm t c -> (TSLTerm t c, VarContex
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)
-    | Just ((_, tnx), subVars) <- pop vars = Lambda (T.Application (unify tnx tx) (unify ta' ta)) x a'
-    | otherwise                            = Lambda T.TypeError x a'
+    | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (unify tnx tx) (unify ta' ta)) x a', subVars)
+    | otherwise                            = (Lambda T.TypeError x a', vars)
     where
+        ta' = typeOf a'
         (a', vars) = fixTypesUp a
-        tx'  = unify tx tnx
-        ta'  = unify ta tna
 fixTypesUp (Application tr a b)
-    | (T.Application p q) <- typeOf a' = Application (unify tr q) a' b'
+    | (T.Application p q) <- typeOf a' = (Application (unify tr q) a' b', vars)
     where
         vars = unifyContexts aVars bVars
         (a', aVars)  = fixTypesUp a
