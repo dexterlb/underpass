@@ -49,6 +49,12 @@ typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = T.TypeError
 
+transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
+transform f _ (Constant c)      = f c
+transform f g (Application a b) = Application (transform f g a) (transform f g b)
+transform f g (Lambda x t a)    = Lambda x (T.transform g t) (transform f g a)
+transform _ _ (Variable i)      = Variable i
+
 instance (Parseable t, Parseable c, Typed c t) => Parseable (LambdaTerm t c) where
     parser = fst <$> parseTerm emptyContext
 

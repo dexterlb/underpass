@@ -14,6 +14,8 @@ import qualified LambdaTypes as T
 import LambdaTypes (unify)
 import Lambda
 
+import qualified Minipass.Language as L
+
 import Data.Text (Text)
 import qualified Data.Text as Text
 
@@ -122,3 +124,41 @@ instance T.Typed Constants Types where
 
     typeOf UpFilter          = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation]) (T.Basic $ osmSet [OsmRelation])
     typeOf DownFilter        = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmRelation]) (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation])
+
+toIntermediate :: L.Term -> Term
+toIntermediate = transform constToIntermediate typeToIntermediate
+    where
+        typeToIntermediate L.String = String
+        typeToIntermediate L.Num = Num
+        typeToIntermediate L.Set = osmAll
+
+
+        constToIntermediate (L.StringLiteral x) = Constant $ StringLiteral x
+        constToIntermediate (L.NumLiteral    x) = Constant $ NumLiteral    x
+
+        constToIntermediate L.Everything        = Constant $ Everything
+        constToIntermediate L.Nodes             = Constant $ Nodes
+        constToIntermediate L.Ways              = Constant $ Ways
+        constToIntermediate L.Relations         = Constant $ Relations
+        constToIntermediate L.Areas             = Constant $ Areas
+
+        constToIntermediate L.Kv                = Constant $ Kv
+        constToIntermediate L.Around            = Constant $ Around
+        constToIntermediate L.In                = Constant $ In
+        constToIntermediate L.Out               = Constant $ Out
+
+        constToIntermediate L.Or                = Constant $ Or
+        constToIntermediate L.And               = Constant $ And
+        constToIntermediate L.Not               = Constant $ Not
+
+        constToIntermediate L.Up                = Constant $ Up
+        constToIntermediate L.Down              = Constant $ Down
+        constToIntermediate L.Upp               = Constant $ Upp
+        constToIntermediate L.Downn             = Constant $ Downn
+
+        constToIntermediate L.UpFilter          = Constant $ UpFilter
+        constToIntermediate L.DownFilter        = Constant $ DownFilter
+
+        constToIntermediate L.Name              = Application (Constant Kv)     (Constant $ StringLiteral "name")
+        constToIntermediate L.Amenity           = Application (Constant Kv)     (Constant $ StringLiteral "amenity")
+        constToIntermediate L.Near              = Application (Constant Around) (Constant $ NumLiteral 50)

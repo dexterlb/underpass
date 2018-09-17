@@ -49,3 +49,7 @@ instance Unifiable t => Semigroup (ApplicativeType t) where
 
 instance Unifiable t => Monoid (ApplicativeType t) where
     mempty  = anything
+
+transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
+transform f (Basic x) = Basic $ f x
+transform f (Application a b) = Application (transform f a) (transform f b)
