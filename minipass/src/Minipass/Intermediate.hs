@@ -8,9 +8,10 @@ module Minipass.Intermediate where
 
 import Data.Functor (($>))
 
-import Parsing as P
+import qualified Parsing as P
 
-import LambdaTypes as T
+import qualified LambdaTypes as T
+import LambdaTypes (unify)
 import Lambda
 
 import Data.Text (Text)
@@ -53,6 +54,7 @@ data Types
     = Set SetTag
     | String
     | Num
+    | Anything
     deriving (Show, Eq)
 
 data SetTag = SetTag
@@ -72,11 +74,29 @@ osmSet types = Set (SetTag { osmTypes = HS.fromList types })
 osmAll :: Types
 osmAll = osmSet [OsmNode, OsmWay, OsmRelation, OsmArea]
 
+unifySetTags :: SetTag -> SetTag -> SetTag
+unifySetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
+    { osmTypes = HS.intersection t1 t2 }
+
 instance Hashable OsmType
+instance T.Unifiable Types where
+    anything = T.Basic Anything
+    unify x y
+        | z == T.TypeError = unify' y x
+        | otherwise      = z
+        where
+            z = unify' x y
+            unify' (T.Basic Anything) x = x
+            unify' (T.Application a1 a2) (T.Application b1 b2) = T.Application (unify a1 a2) (unify b1 b2)
+            unify' (T.Basic Num) (T.Basic Num) = T.Basic Num
+            unify' (T.Basic String) (T.Basic String) = T.Basic String
+            unify' (T.Basic (Set a)) (T.Basic (Set b)) = T.Basic (Set (unifySetTags a b))
+            unify' _ _ = T.TypeError
+
 
 type Term = LambdaTerm Types Constants
 
-instance Typed Constants Types where
+instance T.Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String
     typeOf (NumLiteral    _) = T.Basic Num
 
