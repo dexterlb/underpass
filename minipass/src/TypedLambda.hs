@@ -61,7 +61,11 @@ updateTypes updater (Lambda t x a) = (Lambda t' x a)
         t' = updater $ Lambda t x a'
         a' = updateTypes updater a
 
--- here be dragons
+
+fixTypes :: (Typed c t, Unifiable t) => TSLTerm t c -> TSLTerm t c
+fixTypes x = fixTypesDown (typeOf x') vars x'
+    where
+        (x', vars) = fixTypesUp x
 
 fixTypesDown :: (Typed c t, Unifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
 fixTypesDown targetType upVars (Constant t x) = Constant (unify targetType t) x
