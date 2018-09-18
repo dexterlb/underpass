@@ -11,6 +11,8 @@ import qualified LambdaTypes as T
 import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
 
+import qualified Data.Text as Text
+
 import Context
 
 data TSLTerm t c where
@@ -19,13 +21,23 @@ data TSLTerm t c where
     Lambda      :: Typed c t => T.ApplicativeType t -> VarName     -> TSLTerm t c -> TSLTerm t c
     Variable    :: Typed c t => T.ApplicativeType t -> Index       -> TSLTerm t c
 
-deriving instance (Typed c t, Show t, Show c) => Show (TSLTerm t c)
-
 instance Typed c t => Typed (TSLTerm t c) t where
     typeOf (Constant     t _     ) = t
     typeOf (Application  t _ _   ) = t
     typeOf (Lambda       t _ _   ) = t
     typeOf (Variable     t _     ) = t
+
+instance (Show t, Show c) => Show (TSLTerm t c) where
+    show = showTerm emptyContext
+
+showTerm :: (Show t, Show c) => VarContext t -> TSLTerm t c -> String
+showTerm _ (Constant t c) = (show c) ++ " : " ++ (show t)
+showTerm context (Application t a b) = "(" ++ showTerm context a ++ " . " ++ showTerm context b ++ ") : " ++ (show t)
+showTerm context (Lambda t x a) = "λ " ++ (Text.unpack x) ++ " { " ++ showTerm (push (x, t) context) a ++ " } : " ++ (show t)
+showTerm context (Variable t i)
+    | Just (x, _) <- at i context = (Text.unpack x) ++ " : " ++ (show t)
+    | otherwise = "<var " ++ (show i) ++ "> : " ++ (show t)
+
 
 typify :: Typed c t => VarContext t -> LambdaTerm t c -> TSLTerm t c
 typify context (L.Constant c) = Constant t c

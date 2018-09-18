@@ -3,6 +3,7 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE NamedFieldPuns        #-}
 
 module Minipass.Intermediate where
 
@@ -57,11 +58,25 @@ data Types
     | String
     | Num
     | Anything
-    deriving (Show, Eq)
+    deriving (Eq)
+
+instance Show Types where
+    show Num        = "Num"
+    show String     = "String"
+    show Anything   = "Any"
+    show (Set t)    = "[" ++ (show t) ++ "]"
 
 data SetTag = SetTag
     { osmTypes :: HashSet OsmType }
-    deriving (Show, Eq)
+    deriving (Eq)
+
+instance Show SetTag where
+    show (SetTag { osmTypes }) = concatMap f $ HS.toList osmTypes
+        where
+            f OsmNode       = "n"
+            f OsmWay        = "w"
+            f OsmRelation   = "r"
+            f OsmArea       = "a"
 
 data OsmType
     = OsmNode
