@@ -9,18 +9,21 @@ import qualified Parsing as P
 import Parsing ((<|>))
 import Data.Functor (($>))
 
+import Data.Text (Text)
+import qualified Data.Text as T
+
 data ApplicativeType b
     = Basic b
     | Application (ApplicativeType b) (ApplicativeType b)
-    | TypeError
+    | TypeError Text
 
-class Eq b => Typed a b | a -> b where  -- items of haskell type a have basic types from b
+class (Eq b, Show b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
-    show (Application a b) = "(" ++ show a ++ " -> " ++ show b ++ ")"
-    show TypeError = "type_error"
+    show (Application a b) = "(" <> show a <> " -> " <> show b <> ")"
+    show (TypeError s) = "type_error<" <> (T.unpack s) <> ">"
 
 instance (Eq b) => Eq (ApplicativeType b) where
     Basic x == Basic y = x == y

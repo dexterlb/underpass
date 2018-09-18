@@ -58,13 +58,20 @@ data Types
     | String
     | Num
     | Anything
-    deriving (Eq)
+
+instance Eq Types where
+    Set _       == Set _      = True
+    String      == String     = True
+    Num         == Num        = True
+    Anything    == _          = True
+    _           == Anything   = True
+    _           == _          = False
 
 instance Show Types where
     show Num        = "Num"
     show String     = "String"
     show Anything   = "Any"
-    show (Set t)    = "[" ++ (show t) ++ "]"
+    show (Set t)    = "[" <> (show t) <> "]"
 
 data SetTag = SetTag
     { osmTypes :: HashSet OsmType }
@@ -99,8 +106,8 @@ instance Hashable OsmType
 instance T.Unifiable Types where
     anything = T.Basic Anything
     unify x y
-        | z == T.TypeError = unify' y x
-        | otherwise      = z
+        | (T.TypeError _) <- z = unify' y x
+        | otherwise            = z
         where
             z = unify' x y
             unify' (T.Basic Anything) x = x
@@ -108,7 +115,7 @@ instance T.Unifiable Types where
             unify' (T.Basic Num) (T.Basic Num) = T.Basic Num
             unify' (T.Basic String) (T.Basic String) = T.Basic String
             unify' (T.Basic (Set a)) (T.Basic (Set b)) = T.Basic (Set (unifySetTags a b))
-            unify' _ _ = T.TypeError
+            unify' x y = T.TypeError $ "cannot unify " <> (Text.pack $ show x) <> " and " <> (Text.pack $ show y)
 
 
 type Term = LambdaTerm Types Constants

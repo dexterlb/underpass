@@ -29,25 +29,28 @@ instance (Show t, Show c) => Show (LambdaTerm t c) where
 
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
-showTerm context (Application a b) = "(" ++ showTerm context a ++ " " ++ showTerm context b ++ ")"
-showTerm context (Lambda x t a) = "λ " ++ (Text.unpack x) ++ ": " ++ show t ++ " { " ++ showTerm (push (x, t) context) a ++ " }"
+showTerm context (Application a b) = "(" <> showTerm context a <> " " <> showTerm context b <> ")"
+showTerm context (Lambda x t a) = "λ " <> (Text.unpack x) <> ": " <> show t <> " { " <> showTerm (push (x, t) context) a <> " }"
 showTerm context (Variable i)
     | Just (x, _) <- at i context = Text.unpack x
-    | otherwise = "<var " ++ (show i) ++ ">"
+    | otherwise = "<var " <> (show i) <> ">"
 
 
-instance (Typed c t, Eq t) => Typed (LambdaTerm t c) t where
+instance (Typed c t) => Typed (LambdaTerm t c) t where
     typeOf = typeOfTerm emptyContext
 
-typeOfTerm :: (Typed c t, Eq t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
+typeOfTerm :: (Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
-    | (T.Application p q) <- typeOfTerm context a, p == typeOfTerm context b = q
-    | otherwise = T.TypeError
+    | (T.Application p q) <- ta, p == tb = q
+    | otherwise = T.TypeError $ "want to apply " <> (Text.pack $ show ta) <> " to " <> (Text.pack $ show tb)
+    where
+        ta = typeOfTerm context a
+        tb = typeOfTerm context b
 typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) context) a)
 typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
-    | otherwise = T.TypeError
+    | otherwise = T.TypeError $ "non existant variable #" <> (Text.pack $ show i)
 
 transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c
@@ -90,7 +93,7 @@ parseApplication context = check =<< (((foldl1 makeApplication) . (map Just))
         check Nothing = fail "type error when trying to parse application"
         check (Just x) = return x
 
-        makeApplication (Just (_, (T.Application _ T.TypeError))) _ = Nothing
+        makeApplication (Just (_, (T.Application _ (T.TypeError _)))) _ = Nothing
         makeApplication (Just (x, (T.Application a b))) (Just (y, c))
             | c == a = Just (Application x y, b)
             | otherwise = Nothing
