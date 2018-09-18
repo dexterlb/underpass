@@ -111,7 +111,7 @@ instance T.Unifiable Types where
         where
             z = unify' x y
             unify' (T.Basic Anything) x = x
-            unify' (T.Application a1 a2) (T.Application b1 b2) = T.Application (unify a1 a2) (unify b1 b2)
+            unify' (T.Application a1 a2) (T.Application b1 b2) = T.Application (unify a1 b1) (unify a2 b2)
             unify' (T.Basic Num) (T.Basic Num) = T.Basic Num
             unify' (T.Basic String) (T.Basic String) = T.Basic String
             unify' (T.Basic (Set a)) (T.Basic (Set b)) = T.Basic (Set (unifySetTags a b))
