@@ -26,6 +26,8 @@ class (Eq b, Show b) => Typed a b | a -> b where  -- items of haskell type a hav
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
     show (Application a b) = "(" <> show a <> " -> " <> show b <> ")"
+    show Top = "⊤"
+    show Bottom = "⊥"
     show (TypeError s) = "type_error<" <> (Text.unpack s) <> ">"
 
 instance (Eq b) => Eq (ApplicativeType b) where
