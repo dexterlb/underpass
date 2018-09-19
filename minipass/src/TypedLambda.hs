@@ -6,7 +6,7 @@
 
 module TypedLambda where
 
-import LambdaTypes (Typed, typeOf, Unifiable, unify)
+import LambdaTypes (Typed, typeOf, BasicUnifiable, unify)
 import qualified LambdaTypes as T
 import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
@@ -77,12 +77,12 @@ updateTypes updater (Lambda t x a) = (Lambda t' x a)
         a' = updateTypes updater a
 
 
-fixTypes :: (Typed c t, Unifiable t) => TSLTerm t c -> TSLTerm t c
+fixTypes :: (Typed c t, BasicUnifiable t) => TSLTerm t c -> TSLTerm t c
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
         (x', vars) = fixTypesUp x
 
-fixTypesDown :: (Typed c t, Unifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
+fixTypesDown :: (Typed c t, BasicUnifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
 fixTypesDown targetType upVars (Constant t x) = Constant (unify targetType t) x
 fixTypesDown targetType upVars (Variable t i)
     | Just (_, t') <- at i upVars = Variable (unify targetType $ unify t t') i
@@ -102,12 +102,12 @@ fixTypesDown tnr upVars (Application tor a b)
         tr' = unify tnr tor
         tb  = typeOf b
 
-fixTypesUp :: (Typed c t, Unifiable t) => TSLTerm t c -> (TSLTerm t c, VarContext t)
+fixTypesUp :: (Typed c t, BasicUnifiable t) => TSLTerm t c -> (TSLTerm t c, VarContext t)
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)
     | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (unify tnx tx) (unify ta' ta)) x a', subVars)
-    | otherwise                            = (Lambda T.anything x a', vars) -- var is never used, so its type is Anything
+    | otherwise                            = (Lambda T.bottom x a', vars)
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a

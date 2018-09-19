@@ -103,19 +103,11 @@ unifySetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
     { osmTypes = HS.intersection t1 t2 }
 
 instance Hashable OsmType
-instance T.Unifiable Types where
-    anything = T.Basic Anything
-    unify x y
-        | (T.TypeError _) <- z = unify' y x
-        | otherwise            = z
-        where
-            z = unify' x y
-            unify' (T.Basic Anything) x = x
-            unify' (T.Application a1 a2) (T.Application b1 b2) = T.Application (unify a1 b1) (unify a2 b2)
-            unify' (T.Basic Num) (T.Basic Num) = T.Basic Num
-            unify' (T.Basic String) (T.Basic String) = T.Basic String
-            unify' (T.Basic (Set a)) (T.Basic (Set b)) = T.Basic (Set (unifySetTags a b))
-            unify' x y = T.TypeError $ "cannot unify " <> (Text.pack $ show x) <> " and " <> (Text.pack $ show y)
+instance T.BasicUnifiable Types where
+    bunify Num Num = T.Basic Num
+    bunify String String = T.Basic String
+    bunify (Set a) (Set b) = T.Basic $ Set $ unifySetTags a b
+    bunify x y = T.TypeError $ "cannot unify " <> (Text.pack $ show x) <> " and " <> (Text.pack $ show y)
 
 
 type Term = LambdaTerm Types Constants
