@@ -92,6 +92,9 @@ fixTypesDown (T.Application tnx tna) upVars (Lambda (T.Application tx ta) x a) =
         a'   = fixTypesDown ta' (push (x, tx') upVars) a
         tx'  = unify tx tnx
         ta'  = unify ta tna
+fixTypesDown p _ (Lambda q x y) = Lambda (T.TypeError $
+       "want to coerce lambda of type " <> (Text.pack $ show p)
+    <> " to type " <> (Text.pack $ show q)) x y
 fixTypesDown tnr upVars (Application tor a b)
     | (T.Application p _) <- ta = Application tr' a' (fixTypesDown p upVars b)
     | p <- err                  = Application tr' a' (fixTypesDown p upVars b)
@@ -107,7 +110,7 @@ fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)
     | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (unify tnx tx) (unify ta' ta)) x a', subVars)
-    | otherwise                            = (Lambda T.bottom x a', vars)
+    | otherwise                            = (Lambda (T.Application T.bottom       (unify ta' ta)) x a', vars)
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a
