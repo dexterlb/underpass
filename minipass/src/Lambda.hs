@@ -99,12 +99,17 @@ parseApplication context = check =<< (((foldl1 makeApplication) . (map Just))
             | otherwise = Nothing
         makeApplication _ _ = Nothing
 
-parseVariableDeclaration :: (Parseable t) => Parser (VarName, t)
-parseVariableDeclaration = do
-    var <- parseVariableName
-    P.operator ":"
-    varType <- parser
-    return (var, varType)
+parseVariableDeclaration :: (Parseable t) => Parser (VarName, T.ApplicativeType t)
+parseVariableDeclaration =
+    (P.try $ do
+        var <- parseVariableName
+        P.operator ":"
+        varType <- parser
+        return (var, varType))
+    <|> (P.try $ do
+        var <- parseVariableName
+        return (var, T.Top)
+    )
 
 parseVariable :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseVariable context = P.try $ do

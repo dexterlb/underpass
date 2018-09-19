@@ -12,9 +12,11 @@ import qualified Data.Text as Text
 
 import Data.List (elemIndex)
 
+import Debug.Trace (trace, traceShow, traceShowId)
+
 type Index = Int
 type VarName = Text
-newtype VarContext t = VarContext [(VarName, ApplicativeType t)]
+newtype VarContext t = VarContext [(VarName, ApplicativeType t)] deriving (Show)
 
 push :: (VarName, ApplicativeType t) -> VarContext t -> VarContext t
 push x (VarContext c) = VarContext $ x : c
@@ -27,9 +29,11 @@ oneHotContext :: BasicUnifiable t => Index -> (VarName, ApplicativeType t) -> Va
 oneHotContext i x = VarContext $ x : (replicate i ("", top))
 
 unifyContexts :: BasicUnifiable t => VarContext t -> VarContext t -> VarContext t
-unifyContexts (VarContext a) (VarContext b) = VarContext $ zipWith f a b
+unifyContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f (na, ta) (nb, tb) = (na, unify ta tb)
+        f ((na, ta):as) ((nb, tb):bs) = (na, unify ta tb):(f as bs)
+        f [] bs = bs
+        f as [] = as
 
 
 at :: Index -> VarContext t -> Maybe (VarName, ApplicativeType t)

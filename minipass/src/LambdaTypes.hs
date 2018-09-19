@@ -33,6 +33,8 @@ instance (Show b) => Show (ApplicativeType b) where
 instance (Eq b) => Eq (ApplicativeType b) where
     Basic x == Basic y = x == y
     Application x y == Application p q = x == p && y == q
+    Top == _ = True
+    _ == Top = True
     _ == _ = False
 
 instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
@@ -72,3 +74,5 @@ instance BasicUnifiable b => Unifiable (ApplicativeType b) where
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x) = Basic $ f x
 transform f (Application a b) = Application (transform f a) (transform f b)
+transform _ Top = Top
+transform _ Bottom = Bottom
