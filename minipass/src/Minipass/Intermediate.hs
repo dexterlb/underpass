@@ -25,6 +25,8 @@ import Data.HashSet (HashSet)
 import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
+import TypedLambda (TSLTerm)
+
 data Constants = StringLiteral Text
                | NumLiteral    Float
 
@@ -111,6 +113,7 @@ instance T.BasicUnifiable Types where
 
 
 type Term = LambdaTerm Types Constants
+type TTerm = TSLTerm Types Constants
 
 instance T.Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String

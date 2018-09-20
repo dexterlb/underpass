@@ -21,6 +21,7 @@ dependencies:
 - text >= 1.0
 - hashable >= 1.0
 - unordered-containers >= 0.2
+- mtl >= 2.2
 
 library:
   source-dirs: src

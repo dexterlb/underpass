@@ -120,3 +120,12 @@ fixTypesUp (Application tr a b)
         vars = unifyContexts aVars bVars
         (a', aVars)  = fixTypesUp a
         (b', bVars)  = fixTypesUp b
+
+uncurryApplication :: Typed c t => TSLTerm t c -> [TSLTerm t c]
+uncurryApplication = reverse . uncurryApplication'
+    where
+        uncurryApplication' (Application _ x y) = y : (uncurryApplication' x)
+        uncurryApplication' term = [term]
+
+uncurryTypes :: Typed c t => TSLTerm t c -> [(TSLTerm t c, T.ApplicativeType t)]
+uncurryTypes = (map (\t -> (t, typeOf t))) . uncurryApplication
