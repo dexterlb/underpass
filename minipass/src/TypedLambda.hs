@@ -6,7 +6,7 @@
 
 module TypedLambda where
 
-import LambdaTypes (Typed, typeOf, BasicUnifiable, unify)
+import LambdaTypes (Typed, typeOf, BasicUnifiable, unify, (<~))
 import qualified LambdaTypes as T
 import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
@@ -14,6 +14,8 @@ import qualified Lambda as L
 import qualified Data.Text as Text
 
 import Context
+
+import Debug.Trace (trace, traceShow, traceShowId)
 
 data TSLTerm t c where
     Constant    :: Typed c t => T.ApplicativeType t -> c           -> TSLTerm t c
@@ -30,6 +32,8 @@ instance Typed c t => Typed (TSLTerm t c) t where
 instance (Show t, Show c) => Show (TSLTerm t c) where
     show = showTerm emptyContext
 
+deriving instance (Eq c, Eq t, Typed c t) => Eq (TSLTerm t c)
+
 showTerm :: (Show t, Show c) => VarContext t -> TSLTerm t c -> String
 showTerm _ (Constant t c) = (show c) <> " : " <> (show t)
 showTerm context (Application t a b) = "(" <> showTerm context a <> " . " <> showTerm context b <> ") : " <> (show t)
@@ -44,7 +48,7 @@ typify context (L.Constant c) = Constant t c
     where
         t = typeOfTerm context (L.Constant c)
 typify context (L.Application a b)
-    | (T.Application p q)  <- ta', p == tb' = (Application q a' b')
+    | (T.Application p q)  <- ta', tb' <~ p = (Application q a' b')
     | otherwise = Application (T.TypeError err) a' b'
     where
         err = "want to apply " <> (Text.pack $ show ta') <> " to " <> (Text.pack $ show tb')
@@ -66,7 +70,7 @@ updateTypes updater (Constant t x) = Constant t' x
 updateTypes updater (Variable t i) = Variable t' i
     where
         t' = updater (Variable t i)
-updateTypes updater (Application t a b) = (Application t' a b)
+updateTypes updater (Application t a b) = (Application t' a' b')
     where
         t' = updater $ (Application t a' b')
         a' = updateTypes updater a

@@ -20,7 +20,7 @@ data ApplicativeType b
     | Top
     | Bottom
 
-class (Eq b, Show b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
+class (Show b, OrderedType b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
@@ -50,12 +50,15 @@ parseTypeTerm
     =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
 
-class Show t => Unifiable t where
+class OrderedType t where
+    (<~)      :: t -> t -> Bool
+
+class (Show t, OrderedType t) => Unifiable t where
     unify    :: t -> t -> t     -- unify two types
     top      :: t               -- unify top x == x
     bottom   :: t               -- unify bottom x == bottom
 
-class Show b => BasicUnifiable b where
+class (Show b, OrderedType b) => BasicUnifiable b where
     bunify    :: b -> b -> ApplicativeType b
 
 instance BasicUnifiable b => Unifiable (ApplicativeType b) where
@@ -70,6 +73,16 @@ instance BasicUnifiable b => Unifiable (ApplicativeType b) where
     top = Top
     bottom = Bottom
 
+instance OrderedType b => OrderedType (ApplicativeType b) where
+    (<~) (Basic x) (Basic y) = (<~) x y
+    (<~) (Application a1 a2) (Application b1 b2) = ((<~) a1 b1) && ((<~) a2 b2)
+    (<~) Top Top = True
+    (<~) Top x = False
+    (<~) x Top = True
+    (<~) Bottom Bottom = True
+    (<~) Bottom _ = True
+    (<~) _ Bottom = False
+    (<~) x y = False
 
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x) = Basic $ f x

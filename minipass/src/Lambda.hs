@@ -6,7 +6,7 @@
 module Lambda where
 
 import qualified LambdaTypes as T
-import LambdaTypes (Typed, typeOf)
+import LambdaTypes (Typed, typeOf, (<~))
 
 import Parsing (Parser, Parseable, parser, (<|>))
 import qualified Parsing as P
@@ -42,7 +42,7 @@ instance (Typed c t) => Typed (LambdaTerm t c) t where
 typeOfTerm :: (Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
-    | (T.Application p q) <- ta, p == tb = q
+    | (T.Application p q) <- ta, tb <~ p = q
     | otherwise = T.TypeError $ "want to apply " <> (Text.pack $ show ta) <> " to " <> (Text.pack $ show tb)
     where
         ta = typeOfTerm context a
@@ -95,7 +95,7 @@ parseApplication context = check =<< (((foldl1 makeApplication) . (map Just))
 
         makeApplication (Just (_, (T.Application _ (T.TypeError _)))) _ = Nothing
         makeApplication (Just (x, (T.Application a b))) (Just (y, c))
-            | c == a = Just (Application x y, b)
+            | c <~ a = Just (Application x y, b)
             | otherwise = Nothing
         makeApplication _ _ = Nothing
 

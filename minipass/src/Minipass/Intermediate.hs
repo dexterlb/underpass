@@ -12,7 +12,7 @@ import Data.Functor (($>))
 import qualified Parsing as P
 
 import qualified LambdaTypes as T
-import LambdaTypes (unify)
+import LambdaTypes (unify, OrderedType, (<~))
 import Lambda
 
 import qualified Minipass.Language as L
@@ -60,14 +60,15 @@ data Types
     | String
     | Num
     | Anything
+    deriving (Eq)
 
-instance Eq Types where
-    Set _       == Set _      = True
-    String      == String     = True
-    Num         == Num        = True
-    Anything    == _          = True
-    _           == Anything   = True
-    _           == _          = False
+instance OrderedType Types where
+    Set _       <~ Set _      = True
+    String      <~ String     = True
+    Num         <~ Num        = True
+    Anything    <~ _          = True
+    _           <~ Anything   = True
+    _           <~ _          = False
 
 instance Show Types where
     show Num        = "Num"
@@ -101,8 +102,15 @@ osmAll :: Types
 osmAll = osmSet [OsmNode, OsmWay, OsmRelation, OsmArea]
 
 unifySetTags :: SetTag -> SetTag -> SetTag
-unifySetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
+unifySetTags = intersectSetTags
+
+intersectSetTags :: SetTag -> SetTag -> SetTag
+intersectSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
     { osmTypes = HS.intersection t1 t2 }
+
+uniteSetTags :: SetTag -> SetTag -> SetTag
+uniteSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
+    { osmTypes = HS.union t1 t2 }
 
 instance Hashable OsmType
 instance T.BasicUnifiable Types where

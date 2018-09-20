@@ -90,6 +90,9 @@ data Types
     | Num
     deriving (Show, Eq)
 
+instance OrderedType Types where
+    a <~ b = a == b
+
 instance P.Parseable Types where
     parser = P.word
         $   P.string "Set"      $> Set
