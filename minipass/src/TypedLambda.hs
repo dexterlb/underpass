@@ -15,6 +15,8 @@ import qualified Data.Text as Text
 
 import Context
 
+import Data.Maybe (fromMaybe)
+
 import Debug.Trace (trace, traceShow, traceShowId)
 
 data TSLTerm t c where
@@ -124,6 +126,13 @@ fixTypesUp (Application tr a b)
         vars = unifyContexts aVars bVars
         (a', aVars)  = fixTypesUp a
         (b', bVars)  = fixTypesUp b
+
+transformApplications :: Typed c t => ([TSLTerm t c] -> Maybe (TSLTerm t c)) -> TSLTerm t c -> TSLTerm t c
+transformApplications f term = fromMaybe (g term) $ f $ uncurryApplication term
+    where
+        g (Application t a b) = Application t (transformApplications f a) (transformApplications f b)
+        g (Lambda t x a) = Lambda t x (transformApplications f a)
+        g term' = term'
 
 uncurryApplication :: Typed c t => TSLTerm t c -> [TSLTerm t c]
 uncurryApplication = reverse . uncurryApplication'

@@ -53,6 +53,8 @@ data Constants = StringLiteral Text
                | UpFilter
                | DownFilter
 
+               | Filter (HashSet FilterExpr)
+
     deriving (Show, Eq)
 
 data Types
@@ -88,6 +90,12 @@ instance Show SetTag where
             f OsmRelation   = "r"
             f OsmArea       = "a"
 
+data FilterExpr
+    = KvFilter Text Text
+    deriving (Show, Eq, Generic)
+
+instance Hashable FilterExpr
+
 data OsmType
     = OsmNode
     | OsmWay
@@ -122,6 +130,7 @@ instance T.BasicUnifiable Types where
 
 type Term = LambdaTerm Types Constants
 type TTerm = TSLTerm Types Constants
+type TTypes = T.ApplicativeType Types
 
 instance T.Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String

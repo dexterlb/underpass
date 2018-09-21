@@ -15,20 +15,36 @@ import qualified Data.Text.IO as TIO
 
 import           Context (VarName)
 
+import qualified Data.HashSet as HS
+import Data.HashSet (HashSet)
+
 import Minipass.Intermediate
 import qualified LambdaTypes as T
 import TypedLambda (TSLTerm(..), uncurryApplication)
 
 data Statement
-    = GetKv Text Text VarName
-    | PerformAnd VarName VarName VarName
-    | OutputSet VarName
+    = OutputSet VarName
+    | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
 
 render :: Statement -> Text
 render (OutputSet var) = "out " <> var <> ";\n"
-render (GetKv k v out) = "node[\"" <> k <> "\" = \"" <> v <> "\"] -> ." <> out <> ";\n"
-render (PerformAnd left right out) = "node." <> left <> "." <> right <> " -> ." <> out <> ";\n"
+render (PerformFilter types inputs filters out)
+    = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
 
+renderUnion :: [Text] -> VarName -> Text
+renderUnion items var = "( " <> (Text.intercalate "; " items) <> " ) -> ." <> var <> ";\n"
+
+renderFilter :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
+renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) vars) <> (map (("[" <>) . (<> "]") . renderFilterExpr) $ HS.toList filters)
+
+renderOsmType :: OsmType -> Text
+renderOsmType OsmNode = "node"
+renderOsmType OsmRelation = "rel"
+renderOsmType OsmWay = "way"
+renderOsmType OsmArea = "area"
+
+renderFilterExpr :: FilterExpr -> Text
+renderFilterExpr (KvFilter k v) = k <> " = " <> v
 
 data Value
     = StringValue Text
@@ -54,22 +70,32 @@ statement s = do
     put (state { statements = s : statements })
 
 translate :: TTerm -> State Translator Value
-translate t = translateApp (T.typeOf t) (uncurryApplication t)
+translate t = translateApp (uncurryApplication t)
 
-translateApp :: (T.ApplicativeType Types) -> [TTerm] -> State Translator Value
-translateApp (T.Basic (String)) [Constant _ (StringLiteral s)] = pure $ StringValue s
-translateApp (T.Basic (Set _)) [Constant _ Kv, keyTerm, valueTerm] = do
-    (StringValue key)   <- translate keyTerm
-    (StringValue value) <- translate valueTerm
+translateApp :: [TTerm] -> State Translator Value
+translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
+translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
+translateApp term@[Constant t@(T.Basic (Set _)) (Filter _)] = translateFilter t term
+translateApp term = error $ "I don't know how to translate " <> (show term)
+
+translateFilter :: TTypes -> [TTerm] -> State Translator Value
+translateFilter t terms = do
+    let (T.Basic (Set tag)) = t
+    (vars, filters) <- walkFilterTree terms
     result <- newVar
-    statement (GetKv key value result)
-    return (SetValue result)
-translateApp (T.Basic (Set _)) [Constant _ And, leftTerm, rightTerm] = do
-    (SetValue left) <- translate leftTerm
-    (SetValue right) <- translate rightTerm
-    result <- newVar
-    statement (PerformAnd left right result)
-    return (SetValue result)
+    statement $ PerformFilter (osmTypes tag) vars filters result
+    return $ SetValue result
+
+walkFilterTree :: [TTerm] -> State Translator ([VarName], (HashSet FilterExpr))
+walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
+    (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
+    (sets2, filters2) <- walkFilterTree $ uncurryApplication leftTerm
+    return ((sets1 <> sets2), (HS.union filters1 filters2))
+walkFilterTree [Constant _ (Filter filters)]
+    = pure ([], filters)
+walkFilterTree terms = do
+    (SetValue result) <- translateApp terms
+    return ([result], HS.empty)
 
 translator :: Translator
 translator = Translator { lastVarIndex = 0, statements = [] }
