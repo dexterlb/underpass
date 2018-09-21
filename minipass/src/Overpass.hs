@@ -27,12 +27,12 @@ data Statement
     | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
 
 render :: Statement -> Text
-render (OutputSet var) = "out " <> var <> ";\n"
+render (OutputSet var) = "." <> var <> " out;\n"
 render (PerformFilter types inputs filters out)
     = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
 
 renderUnion :: [Text] -> VarName -> Text
-renderUnion items var = "( " <> (Text.intercalate "; " items) <> " ) -> ." <> var <> ";\n"
+renderUnion items var = "( " <> (Text.concat $ map (<> "; ") items) <> ") -> ." <> var <> ";\n"
 
 renderFilter :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
 renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) vars) <> (map (("[" <>) . (<> "]") . renderFilterExpr) $ HS.toList filters)
@@ -44,7 +44,7 @@ renderOsmType OsmWay = "way"
 renderOsmType OsmArea = "area"
 
 renderFilterExpr :: FilterExpr -> Text
-renderFilterExpr (KvFilter k v) = k <> " = " <> v
+renderFilterExpr (KvFilter k v) = "\"" <> k <> "\" = \"" <> v <> "\""
 
 data Value
     = StringValue Text
@@ -89,7 +89,7 @@ translateFilter t terms = do
 walkFilterTree :: [TTerm] -> State Translator ([VarName], (HashSet FilterExpr))
 walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
     (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
-    (sets2, filters2) <- walkFilterTree $ uncurryApplication leftTerm
+    (sets2, filters2) <- walkFilterTree $ uncurryApplication rightTerm
     return ((sets1 <> sets2), (HS.union filters1 filters2))
 walkFilterTree [Constant _ (Filter filters)]
     = pure ([], filters)
@@ -108,6 +108,6 @@ tri = TIO.putStrLn . tr
 
 renderProgram :: (Value, Translator) -> Text
 renderProgram (SetValue var, Translator { statements })
-    = (Text.concat $ map render (extra ++ (reverse statements)))
+    = (Text.concat $ map render ((reverse statements) ++ extra))
     where
         extra = [OutputSet var]
