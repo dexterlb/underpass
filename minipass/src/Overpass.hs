@@ -25,17 +25,23 @@ import TypedLambda (TSLTerm(..), uncurryApplication)
 data Statement
     = OutputSet VarName
     | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
+    | GetInArea (HashSet OsmType) VarName VarName
 
 render :: Statement -> Text
 render (OutputSet var) = "." <> var <> " out;\n"
 render (PerformFilter types inputs filters out)
     = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
+render (GetInArea types var out)
+    = renderUnion (map (renderInArea var) (HS.toList types)) out
 
 renderUnion :: [Text] -> VarName -> Text
 renderUnion items var = "( " <> (Text.concat $ map (<> "; ") items) <> ") -> ." <> var <> ";\n"
 
 renderFilter :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
 renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) vars) <> (map (("[" <>) . (<> "]") . renderFilterExpr) $ HS.toList filters)
+
+renderInArea :: VarName -> OsmType -> Text
+renderInArea var t = renderOsmType t <> "(area." <> var <> ")"
 
 renderOsmType :: OsmType -> Text
 renderOsmType OsmNode = "node"
@@ -76,6 +82,11 @@ translateApp :: [TTerm] -> State Translator Value
 translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
 translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
 translateApp term@[Constant t@(T.Basic (Set _)) (Filter _)] = translateFilter t term
+translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
+    (SetValue area) <- translate areaTerm
+    result <- newVar
+    statement $ GetInArea (osmTypes tag) area result
+    return (SetValue result)
 translateApp term = error $ "I don't know how to translate " <> (show term)
 
 translateFilter :: TTypes -> [TTerm] -> State Translator Value

@@ -144,7 +144,7 @@ instance T.Typed Constants Types where
 
     typeOf Kv                = T.Application (T.Basic String) (T.Application (T.Basic String) (T.Basic osmAll))
     typeOf Around            = T.Application (T.Basic Num)    (T.Application (T.Basic osmAll) (T.Basic osmAll))
-    typeOf In                = T.Application (T.Basic $ osmSet [OsmArea])    (T.Basic $ osmSet [OsmNode])
+    typeOf In                = T.Application (T.Basic $ osmSet [OsmArea])    (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay])
     typeOf Out               = T.Application (T.Basic $ osmSet [OsmNode])    (T.Basic $ osmSet [OsmArea])
 
     typeOf Or                = T.Application (T.Basic osmAll) (T.Application (T.Basic osmAll) (T.Basic osmAll))
