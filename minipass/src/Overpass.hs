@@ -75,6 +75,12 @@ statement s = do
     let (Translator { statements }) = state
     put (state { statements = s : statements })
 
+expression :: (VarName -> Statement) -> State Translator VarName
+expression f = do
+    result <- newVar
+    statement $ f result
+    return result
+
 translate :: TTerm -> State Translator Value
 translate t = translateApp (uncurryApplication t)
 
@@ -84,8 +90,7 @@ translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.t
 translateApp term@[Constant t@(T.Basic (Set _)) (Filter _)] = translateFilter t term
 translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
     (SetValue area) <- translate areaTerm
-    result <- newVar
-    statement $ GetInArea (osmTypes tag) area result
+    result <- expression $ GetInArea (osmTypes tag) area
     return (SetValue result)
 translateApp term = error $ "I don't know how to translate " <> (show term)
 
@@ -93,8 +98,7 @@ translateFilter :: TTypes -> [TTerm] -> State Translator Value
 translateFilter t terms = do
     let (T.Basic (Set tag)) = t
     (vars, filters) <- walkFilterTree terms
-    result <- newVar
-    statement $ PerformFilter (osmTypes tag) vars filters result
+    result <- expression $ PerformFilter (osmTypes tag) vars filters
     return $ SetValue result
 
 walkFilterTree :: [TTerm] -> State Translator ([VarName], (HashSet FilterExpr))
