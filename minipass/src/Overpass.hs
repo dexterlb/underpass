@@ -90,6 +90,7 @@ translateApp :: [TTerm] -> State Translator Value
 translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
 translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
 translateApp term@[Constant t@(T.Basic (Set _)) (Filter _)] = translateFilter t term
+translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
 translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
     (SetValue area) <- translate areaTerm
     result <- expression $ GetInArea (osmTypes tag) area
@@ -108,6 +109,10 @@ walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
     (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
     (sets2, filters2) <- walkFilterTree $ uncurryApplication rightTerm
     return ((sets1 <> sets2), (HS.union filters1 filters2))
+walkFilterTree [Constant (T.Application _ (T.Application _ _)) Kv, keyTerm, valueTerm] = do
+    (StringValue key)   <- translate keyTerm
+    (StringValue value) <- translate valueTerm
+    pure ([], HS.singleton $ KvFilter key value)
 walkFilterTree [Constant _ (Filter filters)]
     = pure ([], filters)
 walkFilterTree terms = do

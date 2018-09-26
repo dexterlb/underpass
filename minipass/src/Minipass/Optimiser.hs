@@ -17,7 +17,7 @@ import qualified Data.HashSet as HS
 
 optimise :: TTerm -> TTerm
 optimise
-    = evaluateFilters
+    = id
     . evaluateArithmetic
     . (fixedPoint (removeRestrictions . propagateTypes))
 

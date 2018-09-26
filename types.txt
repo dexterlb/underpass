@@ -37,10 +37,10 @@ downn   : String -> Set -> Set     -- transitive children
 
 -- convenience
 name : String -> Set
-name s = kv "name" s
+name s = kv 'name' s
 
 amenity : String -> Set
-amenity s = kv "amenity" s
+amenity s = kv 'amenity' s
 
 near : Set -> Set
 near = around 50
@@ -53,7 +53,7 @@ lambda x: T { term :: T }
 -- examples
 
 -- cafes in sofia within 20m of water
-and (and (amenity "cafe") (in (name "sofia"))) (around 20 (amenity "drinking_water"))
+and (and (amenity 'cafe') (in (name 'sofia'))) (around 20 (amenity 'drinking_water'))
 
 -- pharmacies near Circle Line stations
-and (amenity "pharmacy") (near (and (amenity "metro_station") (down (name "Circle Line"))))
+and (amenity 'pharmacy') (near (and (amenity 'metro_station') (down (name 'Circle Line'))))

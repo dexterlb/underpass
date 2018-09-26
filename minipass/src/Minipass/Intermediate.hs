@@ -23,16 +23,16 @@ import GHC.Generics (Generic)
 
 import TypedLambda (TSLTerm)
 
-data Constants = StringLiteral Text
-               | NumLiteral    Float
+data Constants = StringLiteral Text     -- consumed by Filter
+               | NumLiteral    Float    -- consumed by Filter
 
-               | Everything
-               | Nodes
-               | Ways
-               | Relations
-               | Areas
+               | Everything             -- converts to Filter
+               | Nodes                  -- converts to Filter
+               | Ways                   -- converts to Filter
+               | Relations              -- converts to Filter
+               | Areas                  -- converts to Filter
 
-               | Kv
+               | Kv                     -- converts to Filter
                | Around
                | In
                | Out
