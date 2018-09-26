@@ -23,16 +23,10 @@ import GHC.Generics (Generic)
 
 import TypedLambda (TSLTerm)
 
-data Constants = StringLiteral Text     -- consumed by Filter
-               | NumLiteral    Float    -- consumed by Filter
+data Constants = StringLiteral Text
+               | NumLiteral    Float
 
-               | Everything             -- converts to Filter
-               | Nodes                  -- converts to Filter
-               | Ways                   -- converts to Filter
-               | Relations              -- converts to Filter
-               | Areas                  -- converts to Filter
-
-               | Kv                     -- converts to Filter
+               | Kv
                | Around
                | In
                | Out
@@ -49,7 +43,7 @@ data Constants = StringLiteral Text     -- consumed by Filter
                | UpFilter
                | DownFilter
 
-               | Filter (HashSet FilterExpr)
+               | TypeFilter (HashSet OsmType)
 
     deriving (Show, Eq)
 
@@ -132,12 +126,6 @@ instance T.Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String
     typeOf (NumLiteral    _) = T.Basic Num
 
-    typeOf Everything        = T.Basic osmAll
-    typeOf Nodes             = T.Basic $ osmSet [OsmNode]
-    typeOf Ways              = T.Basic $ osmSet [OsmWay]
-    typeOf Relations         = T.Basic $ osmSet [OsmRelation]
-    typeOf Areas             = T.Basic $ osmSet [OsmArea]
-
     typeOf Kv                = T.Application (T.Basic String) (T.Application (T.Basic String) (T.Basic osmAll))
     typeOf Around            = T.Application (T.Basic Num)    (T.Application (T.Basic osmAll) (T.Basic osmAll))
     typeOf In                = T.Application (T.Basic $ osmSet [OsmArea])    (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay])
@@ -155,7 +143,7 @@ instance T.Typed Constants Types where
     typeOf UpFilter          = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation]) (T.Basic $ osmSet [OsmRelation])
     typeOf DownFilter        = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmRelation]) (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation])
 
-    typeOf (Filter _)        = T.Basic osmAll
+    typeOf (TypeFilter t)    = T.Basic $ Set $ SetTag { osmTypes = t }
 
 toIntermediate :: L.Term -> Term
 toIntermediate = transform constToIntermediate typeToIntermediate
@@ -168,11 +156,11 @@ toIntermediate = transform constToIntermediate typeToIntermediate
         constToIntermediate (L.StringLiteral x) = Constant $ StringLiteral x
         constToIntermediate (L.NumLiteral    x) = Constant $ NumLiteral    x
 
-        constToIntermediate L.Everything        = Constant $ Everything
-        constToIntermediate L.Nodes             = Constant $ Nodes
-        constToIntermediate L.Ways              = Constant $ Ways
-        constToIntermediate L.Relations         = Constant $ Relations
-        constToIntermediate L.Areas             = Constant $ Areas
+        constToIntermediate L.Everything        = Constant $ TypeFilter $ HS.fromList [OsmNode, OsmWay, OsmRelation, OsmArea]
+        constToIntermediate L.Nodes             = Constant $ TypeFilter $ HS.singleton OsmNode
+        constToIntermediate L.Ways              = Constant $ TypeFilter $ HS.singleton OsmWay
+        constToIntermediate L.Relations         = Constant $ TypeFilter $ HS.singleton OsmRelation
+        constToIntermediate L.Areas             = Constant $ TypeFilter $ HS.singleton OsmArea
 
         constToIntermediate L.Kv                = Constant $ Kv
         constToIntermediate L.Around            = Constant $ Around

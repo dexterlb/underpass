@@ -89,7 +89,7 @@ translate t = translateApp (uncurryApplication t)
 translateApp :: [TTerm] -> State Translator Value
 translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
 translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
-translateApp term@[Constant t@(T.Basic (Set _)) (Filter _)] = translateFilter t term
+translateApp term@[Constant t@(T.Basic (Set _)) (TypeFilter _)] = translateFilter t term
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
 translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
     (SetValue area) <- translate areaTerm
@@ -113,8 +113,8 @@ walkFilterTree [Constant (T.Application _ (T.Application _ _)) Kv, keyTerm, valu
     (StringValue key)   <- translate keyTerm
     (StringValue value) <- translate valueTerm
     pure ([], HS.singleton $ KvFilter key value)
-walkFilterTree [Constant _ (Filter filters)]
-    = pure ([], filters)
+walkFilterTree [Constant _ (TypeFilter _)]
+    = pure ([], HS.empty)
 walkFilterTree terms = do
     (SetValue result) <- translateApp terms
     return ([result], HS.empty)

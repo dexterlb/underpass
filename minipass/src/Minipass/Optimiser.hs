@@ -12,8 +12,6 @@ import qualified LambdaTypes as T
 import TypedLambda
 import Maths
 
-import qualified Data.HashSet as HS
-
 
 optimise :: TTerm -> TTerm
 optimise
@@ -45,22 +43,3 @@ removeRestrictions = id
 
 evaluateArithmetic :: TTerm -> TTerm
 evaluateArithmetic = id
-
-evaluateFilters :: TTerm -> TTerm
-evaluateFilters = transformApplications f
-    where
-        f [Constant (T.Application _ (T.Application _ t)) Kv, Constant _ (StringLiteral k), Constant _ (StringLiteral v)]
-            = Just $ Constant t (Filter $ HS.singleton $ KvFilter k v)
-
-        -- the following can be inferred from the type
-        f [Constant t Nodes]
-            = Just $ Constant t (Filter $ HS.empty)
-        f [Constant t Ways]
-            = Just $ Constant t (Filter $ HS.empty)
-        f [Constant t Relations]
-            = Just $ Constant t (Filter $ HS.empty)
-        f [Constant t Areas]
-            = Just $ Constant t (Filter $ HS.empty)
-
-        f _ = Nothing
-
