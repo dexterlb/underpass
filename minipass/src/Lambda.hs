@@ -11,10 +11,9 @@ import LambdaTypes (Typed, typeOf, (<~))
 import Parsing (Parser, Parseable, parser, (<|>))
 import qualified Parsing as P
 
-import Data.Text (Text)
 import qualified Data.Text as Text
 
-import Control.Monad (fail, foldM)
+import Control.Monad (fail)
 
 import Context
 
@@ -74,16 +73,17 @@ parseNonApplication context
 
 parseConstant :: (Parseable t, Parseable c, Typed c t) => Parser (LambdaTerm t c, T.ApplicativeType t)
 parseConstant = do
-    const <- Constant <$> parser
-    return (const, typeOf const)
+    c <- Constant <$> parser
+    return (c, typeOf c)
 
 parseLambda :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseLambda context = do
-    P.word "lambda" <|> P.operator "\\" <|> P.operator "λ"
-    (var, varType) <- parseVariableDeclaration
-    P.operator "{"
+    _                <- P.word "lambda" <|> P.operator "\\" <|> P.operator "λ"
+    (var, varType)   <- parseVariableDeclaration
+    _                <- P.operator "{"
     (term, termType) <- parseTerm (push (var, varType) context)
-    P.operator "}"
+    _                <- P.operator "}"
+
     return (Lambda var varType term, T.Application varType termType)
 
 parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
@@ -102,12 +102,12 @@ parseApplication context = check =<< (((foldl1 makeApplication) . (map Just))
 parseVariableDeclaration :: (Parseable t) => Parser (VarName, T.ApplicativeType t)
 parseVariableDeclaration =
     (P.try $ do
-        var <- parseVariableName
-        P.operator ":"
+        var     <- parseVariableName
+        _       <- P.operator ":"
         varType <- parser
         return (var, varType))
     <|> (P.try $ do
-        var <- parseVariableName
+        var     <- parseVariableName
         return (var, T.Top)
     )
 

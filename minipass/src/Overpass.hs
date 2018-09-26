@@ -26,8 +26,10 @@ data Statement
     = OutputSet VarName
     | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
     | GetInArea (HashSet OsmType) VarName VarName
+    | Comment Text
 
 render :: Statement -> Text
+render (Comment x) = "/* " <> x <> " */\n"
 render (OutputSet var) = "." <> var <> " out;\n"
 render (PerformFilter types inputs filters out)
     = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
@@ -63,17 +65,17 @@ data Translator = Translator
 
 newVar :: State Translator VarName
 newVar = do
-    state <- get
-    let (Translator { lastVarIndex }) = state
+    trans <- get
+    let (Translator { lastVarIndex }) = trans
     let varIndex = lastVarIndex + 1
-    put (state { lastVarIndex = varIndex })
+    put (trans { lastVarIndex = varIndex })
     return $ "x" <> (Text.pack $ show varIndex)
 
 statement :: Statement -> State Translator ()
 statement s = do
-    state <- get
-    let (Translator { statements }) = state
-    put (state { statements = s : statements })
+    trans <- get
+    let (Translator { statements }) = trans
+    put (trans { statements = s : statements })
 
 expression :: (VarName -> Statement) -> State Translator VarName
 expression f = do
@@ -119,10 +121,12 @@ tr :: TTerm -> Text
 tr t = renderProgram $ runState (translate t) translator
 
 tri :: TTerm -> IO()
-tri = TIO.putStrLn . tr
+tri = TIO.putStr . tr
 
 renderProgram :: (Value, Translator) -> Text
-renderProgram (SetValue var, Translator { statements })
-    = (Text.concat $ map render ((reverse statements) ++ extra))
+renderProgram (value, Translator { statements })
+    = (Text.concat $ map render ((reverse statements) ++ (outputValue value)))
     where
-        extra = [OutputSet var]
+        outputValue (SetValue var)  = [OutputSet var]
+        outputValue (NumValue x)    = [Comment $ "Number: " <> (Text.pack $ show x)]
+        outputValue (StringValue x) = [Comment $ "String: " <> x]

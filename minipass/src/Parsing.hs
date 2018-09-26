@@ -15,18 +15,20 @@ module Parsing
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Text.Megaparsec.Expr
-import Text.Megaparsec.Error
+import Text.Megaparsec.Error()
 import qualified Text.Megaparsec.Char.Lexer as L
 
 import Data.Text (Text)
 import qualified Data.Text as T
 
-type Parser = Parsec () Text
+data Error = Error deriving (Eq, Ord, Show)
+
+type Parser = Parsec Error Text
 
 class Parseable t where
     parser :: Parser t
 
-instance ShowErrorComponent () where
+instance ShowErrorComponent Error where
     showErrorComponent _ = ""
 
 pss :: Parseable t => String -> t
@@ -72,9 +74,9 @@ identifier = T.pack <$> ((lexeme . try) $ ((:) <$> letterChar) <*> (many alphaNu
 
 quotedString :: Char -> Parser Text
 quotedString quote = (lexeme . try) $ do
-    char quote
+    _     <- char quote
     chars <- many character
-    char quote
+    _     <- char quote
     return $ T.pack $ concat chars
 
     where
@@ -88,4 +90,7 @@ quotedString quote = (lexeme . try) $ do
         nonEscaped = noneOf [quote, '\\']
 
 floatNumber :: Parser Float
-floatNumber = (lexeme . try) $ L.signed sc (lexeme ((try L.float) <|> (fromIntegral <$> (try L.decimal))))
+floatNumber = (lexeme . try) $ L.signed sc (lexeme ((try L.float) <|> (toFloat <$> (try L.decimal))))
+    where
+        toFloat :: Int -> Float
+        toFloat = fromIntegral

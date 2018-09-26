@@ -12,7 +12,6 @@ import LambdaTypes as T
 import Lambda
 
 import Data.Text (Text)
-import qualified Data.Text as Text
 
 data Constants = StringLiteral Text
                | NumLiteral    Float

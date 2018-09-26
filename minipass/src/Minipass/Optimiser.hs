@@ -13,10 +13,7 @@ import TypedLambda
 import Maths
 
 import qualified Data.HashSet as HS
-import Data.HashSet (HashSet)
 
-
-import Debug.Trace (trace, traceShow, traceShowId)
 
 optimise :: TTerm -> TTerm
 optimise

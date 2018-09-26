@@ -7,12 +7,8 @@
 
 module Minipass.Intermediate where
 
-import Data.Functor (($>))
-
-import qualified Parsing as P
-
 import qualified LambdaTypes as T
-import LambdaTypes (unify, OrderedType, (<~))
+import LambdaTypes (OrderedType, (<~))
 import Lambda
 
 import qualified Minipass.Language as L
@@ -158,6 +154,8 @@ instance T.Typed Constants Types where
 
     typeOf UpFilter          = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation]) (T.Basic $ osmSet [OsmRelation])
     typeOf DownFilter        = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmRelation]) (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation])
+
+    typeOf (Filter _)        = T.Basic osmAll
 
 toIntermediate :: L.Term -> Term
 toIntermediate = transform constToIntermediate typeToIntermediate

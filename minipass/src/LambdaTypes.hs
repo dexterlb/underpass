@@ -74,18 +74,19 @@ instance BasicUnifiable b => Unifiable (ApplicativeType b) where
     bottom = Bottom
 
 instance OrderedType b => OrderedType (ApplicativeType b) where
-    (<~) (Basic x) (Basic y) = (<~) x y
+    (<~) (Basic x)           (Basic y)           = (<~) x y
     (<~) (Application a1 a2) (Application b1 b2) = ((<~) a1 b1) && ((<~) a2 b2)
-    (<~) Top Top = True
-    (<~) Top x = False
-    (<~) x Top = True
-    (<~) Bottom Bottom = True
-    (<~) Bottom _ = True
-    (<~) _ Bottom = False
-    (<~) x y = False
+    (<~) Top    Top          = True
+    (<~) Top    _            = False
+    (<~) _      Top          = True
+    (<~) Bottom Bottom       = True
+    (<~) Bottom _            = True
+    (<~) _      Bottom       = False
+    (<~) _      _            = False
 
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
-transform f (Basic x) = Basic $ f x
-transform f (Application a b) = Application (transform f a) (transform f b)
-transform _ Top = Top
-transform _ Bottom = Bottom
+transform f (Basic x)           = Basic $ f x
+transform f (Application a b)   = Application (transform f a) (transform f b)
+transform _ Top                 = Top
+transform _ Bottom              = Bottom
+transform _ (TypeError x)       = TypeError x

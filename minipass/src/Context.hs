@@ -8,11 +8,8 @@ module Context where
 import LambdaTypes
 
 import Data.Text (Text)
-import qualified Data.Text as Text
 
 import Data.List (elemIndex)
-
-import Debug.Trace (trace, traceShow, traceShowId)
 
 type Index = Int
 type VarName = Text
@@ -31,7 +28,7 @@ oneHotContext i x = VarContext $ x : (replicate i ("", top))
 unifyContexts :: BasicUnifiable t => VarContext t -> VarContext t -> VarContext t
 unifyContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f ((na, ta):as) ((nb, tb):bs) = (na, unify ta tb):(f as bs)
+        f ((na, ta):as) ((_, tb):bs) = (na, unify ta tb):(f as bs)
         f [] bs = bs
         f as [] = as
 

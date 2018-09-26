@@ -17,8 +17,6 @@ import Context
 
 import Data.Maybe (fromMaybe)
 
-import Debug.Trace (trace, traceShow, traceShowId)
-
 data TSLTerm t c where
     Constant    :: Typed c t => T.ApplicativeType t -> c           -> TSLTerm t c
     Application :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c         -> TSLTerm t c
@@ -89,7 +87,7 @@ fixTypes x = fixTypesDown (typeOf x') vars x'
         (x', vars) = fixTypesUp x
 
 fixTypesDown :: (Typed c t, BasicUnifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
-fixTypesDown targetType upVars (Constant t x) = Constant (unify targetType t) x
+fixTypesDown targetType _      (Constant t x) = Constant (unify targetType t) x
 fixTypesDown targetType upVars (Variable t i)
     | Just (_, t') <- at i upVars = Variable (unify targetType $ unify t t') i
     | otherwise = Variable (T.TypeError $ "non existant variable #" <> (Text.pack $ show i)) i
@@ -120,9 +118,15 @@ fixTypesUp (Lambda (T.Application tx ta) x a)
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a
-fixTypesUp (Application tr a b)
-    | (T.Application p q) <- typeOf a' = (Application (unify tr q) a' b', vars)
+fixTypesUp (Lambda t x a) = (Lambda (T.TypeError err) x a', vars)
     where
+        (a', vars) = fixTypesUp a
+        err = "Wrong type for lambda: " <> (Text.pack $ show t)
+fixTypesUp (Application tr a b)
+    | (T.Application _ q) <- typeOf a' = (Application (unify tr q) a' b', vars)
+    | otherwise                        = (Application (T.TypeError err) a' b', vars)
+    where
+        err  = "Wrong type for application: " <> (Text.pack $ show $ typeOf a')
         vars = unifyContexts aVars bVars
         (a', aVars)  = fixTypesUp a
         (b', bVars)  = fixTypesUp b
