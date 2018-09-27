@@ -28,8 +28,6 @@ import TypedLambda (TSLTerm(..), uncurryApplication)
 data Statement
     = OutputSet VarName
     | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
-    | GetInArea (HashSet OsmType) VarName VarName
-    | GetAround (HashSet OsmType) Float VarName VarName
     | Comment Text
 
 render :: Statement -> Text
@@ -37,22 +35,12 @@ render (Comment x) = "/* " <> x <> " */\n"
 render (OutputSet var) = "." <> var <> " out;\n"
 render (PerformFilter types inputs filters out)
     = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
-render (GetInArea types var out)
-    = renderUnion (map (renderInArea var) (HS.toList types)) out
-render (GetAround types dist var out)
-    = renderUnion (map (renderAround dist var) (HS.toList types)) out
 
 renderUnion :: [Text] -> VarName -> Text
 renderUnion items var = "( " <> (Text.concat $ map (<> "; ") items) <> ") -> ." <> var <> ";\n"
 
 renderFilter :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
-renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) vars) <> (map (("[" <>) . (<> "]") . renderFilterExpr) $ HS.toList filters)
-
-renderInArea :: VarName -> OsmType -> Text
-renderInArea var t = renderOsmType t <> "(area." <> var <> ")"
-
-renderAround :: Float -> VarName -> OsmType -> Text
-renderAround dist var t = renderOsmType t <> "(around." <> var <> ":" <> (Text.pack $ show dist) <> ")"
+renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) vars) <> (map renderFilterExpr $ HS.toList filters)
 
 renderOsmType :: OsmType -> Text
 renderOsmType OsmNode = "node"
@@ -61,10 +49,14 @@ renderOsmType OsmWay = "way"
 renderOsmType OsmArea = "area"
 
 renderFilterExpr :: FilterExpr -> Text
-renderFilterExpr (KvFilter k v) = "\"" <> k <> "\" = \"" <> v <> "\""
+renderFilterExpr (KvFilter k v) = "[\"" <> k <> "\" = \"" <> v <> "\"]"
+renderFilterExpr (AroundFilter dist var) = "(around." <> var <> ":" <> (Text.pack $ show dist) <> ")"
+renderFilterExpr (AreaFilter var) = "(area." <> var <> ")"
 
 data FilterExpr
     = KvFilter Text Text
+    | AroundFilter Float VarName
+    | AreaFilter VarName
     deriving (Show, Eq, Generic)
 
 instance Hashable FilterExpr
@@ -107,15 +99,8 @@ translateApp [Constant (T.Basic (Num))    (NumLiteral    n)] = pure $ NumValue n
 translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
 translateApp term@[Constant t@(T.Basic (Set _)) (TypeFilter _)] = translateFilter t term
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
-translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
-    (SetValue area) <- translate areaTerm
-    result <- expression $ GetInArea (osmTypes tag) area
-    return (SetValue result)
-translateApp [Constant (T.Application _ (T.Application _ (T.Basic (Set tag)))) Around, distTerm, fromTerm] = do
-    (NumValue dist) <- translate distTerm
-    (SetValue from) <- translate fromTerm
-    result <- expression $ GetAround (osmTypes tag) dist from
-    return (SetValue result)
+translateApp term@[Constant (T.Application _ t) In, _] = translateFilter t term
+translateApp term@[Constant (T.Application _ (T.Application _ t)) Around, _, _] = translateFilter t term
 translateApp term = fail $ "I don't know how to translate " <> (show term)
 
 translateFilter :: TTypes -> [TTerm] -> State Translator Value
@@ -134,6 +119,13 @@ walkFilterTree [Constant (T.Application _ (T.Application _ _)) Kv, keyTerm, valu
     (StringValue key)   <- translate keyTerm
     (StringValue value) <- translate valueTerm
     pure ([], HS.singleton $ KvFilter key value)
+walkFilterTree [Constant (T.Application _ (T.Basic (Set _))) In, areaTerm] = do
+    (SetValue area) <- translate areaTerm
+    pure ([], HS.singleton $ AreaFilter area)
+walkFilterTree [Constant (T.Application _ (T.Application _ (T.Basic (Set _)))) Around, distTerm, fromTerm] = do
+    (NumValue dist) <- translate distTerm
+    (SetValue from) <- translate fromTerm
+    pure ([], HS.singleton $ AroundFilter dist from)
 walkFilterTree [Constant _ (TypeFilter _)]
     = pure ([], HS.empty)
 walkFilterTree terms = do
