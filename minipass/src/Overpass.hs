@@ -26,6 +26,7 @@ data Statement
     = OutputSet VarName
     | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
     | GetInArea (HashSet OsmType) VarName VarName
+    | GetAround (HashSet OsmType) Float VarName VarName
     | Comment Text
 
 render :: Statement -> Text
@@ -35,6 +36,8 @@ render (PerformFilter types inputs filters out)
     = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
 render (GetInArea types var out)
     = renderUnion (map (renderInArea var) (HS.toList types)) out
+render (GetAround types dist var out)
+    = renderUnion (map (renderAround dist var) (HS.toList types)) out
 
 renderUnion :: [Text] -> VarName -> Text
 renderUnion items var = "( " <> (Text.concat $ map (<> "; ") items) <> ") -> ." <> var <> ";\n"
@@ -44,6 +47,9 @@ renderFilter vars filters t = Text.concat $ (renderOsmType t) : (map ("." <>) va
 
 renderInArea :: VarName -> OsmType -> Text
 renderInArea var t = renderOsmType t <> "(area." <> var <> ")"
+
+renderAround :: Float -> VarName -> OsmType -> Text
+renderAround dist var t = renderOsmType t <> "(around." <> var <> ":" <> (Text.pack $ show dist) <> ")"
 
 renderOsmType :: OsmType -> Text
 renderOsmType OsmNode = "node"
@@ -88,6 +94,7 @@ translate t = translateApp (uncurryApplication t)
 
 translateApp :: [TTerm] -> State Translator Value
 translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
+translateApp [Constant (T.Basic (Num))    (NumLiteral    n)] = pure $ NumValue n
 translateApp term@[Constant _ And, left, right]  = translateFilter (T.unify (T.typeOf left) (T.typeOf right)) term
 translateApp term@[Constant t@(T.Basic (Set _)) (TypeFilter _)] = translateFilter t term
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
@@ -95,7 +102,12 @@ translateApp [Constant (T.Application _ (T.Basic (Set tag))) In, areaTerm] = do
     (SetValue area) <- translate areaTerm
     result <- expression $ GetInArea (osmTypes tag) area
     return (SetValue result)
-translateApp term = error $ "I don't know how to translate " <> (show term)
+translateApp [Constant (T.Application _ (T.Application _ (T.Basic (Set tag)))) Around, distTerm, fromTerm] = do
+    (NumValue dist) <- translate distTerm
+    (SetValue from) <- translate fromTerm
+    result <- expression $ GetAround (osmTypes tag) dist from
+    return (SetValue result)
+translateApp term = fail $ "I don't know how to translate " <> (show term)
 
 translateFilter :: TTypes -> [TTerm] -> State Translator Value
 translateFilter t terms = do

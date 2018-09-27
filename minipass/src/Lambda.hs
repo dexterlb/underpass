@@ -57,6 +57,9 @@ transform f g (Application a b) = Application (transform f g a) (transform f g b
 transform f g (Lambda x t a)    = Lambda x (T.transform g t) (transform f g a)
 transform _ _ (Variable i)      = Variable i
 
+apply :: Typed c t => [LambdaTerm t c] -> LambdaTerm t c
+apply = foldl1 Application
+
 instance (Parseable t, Parseable c, Typed c t) => Parseable (LambdaTerm t c) where
     parser = fst <$> parseTerm emptyContext
 

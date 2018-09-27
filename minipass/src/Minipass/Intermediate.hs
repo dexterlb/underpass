@@ -179,6 +179,13 @@ toIntermediate = transform constToIntermediate typeToIntermediate
         constToIntermediate L.UpFilter          = Constant $ UpFilter
         constToIntermediate L.DownFilter        = Constant $ DownFilter
 
-        constToIntermediate L.Name              = Application (Constant Kv)     (Constant $ StringLiteral "name")
-        constToIntermediate L.Amenity           = Application (Constant Kv)     (Constant $ StringLiteral "amenity")
-        constToIntermediate L.Near              = Application (Constant Around) (Constant $ NumLiteral 50)
+        constToIntermediate L.Name              =
+            apply [Constant Kv, Constant $ StringLiteral "name"]
+
+        constToIntermediate L.Amenity           = Lambda "amenity" (T.Basic String) $
+            apply [Constant And,
+                constToIntermediate L.Nodes,
+                apply [Constant Kv, Constant $ StringLiteral "amenity", Variable 0]
+            ]
+
+        constToIntermediate L.Near              = apply [Constant Around, Constant $ NumLiteral 50]
