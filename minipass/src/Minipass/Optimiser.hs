@@ -17,7 +17,7 @@ optimise :: TTerm -> TTerm
 optimise
     = id
     . evaluateArithmetic
-    . (fixedPoint (removeRestrictions . propagateTypes))
+    . (fixedPoint (removeRestrictions . propagateTypes . betaReduce))
 
 propagateTypes :: TTerm -> TTerm
 propagateTypes = (updateTypes updater) . fixTypes

@@ -19,7 +19,7 @@ import Data.Maybe (fromMaybe)
 
 data TSLTerm t c where
     Constant    :: Typed c t => T.ApplicativeType t -> c           -> TSLTerm t c
-    Application :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c         -> TSLTerm t c
+    Application :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c -> TSLTerm t c
     Lambda      :: Typed c t => T.ApplicativeType t -> VarName     -> TSLTerm t c -> TSLTerm t c
     Variable    :: Typed c t => T.ApplicativeType t -> Index       -> TSLTerm t c
 
@@ -146,3 +146,31 @@ uncurryApplication = reverse . uncurryApplication'
 
 uncurryTypes :: Typed c t => TSLTerm t c -> [(TSLTerm t c, T.ApplicativeType t)]
 uncurryTypes = (map (\t -> (t, typeOf t))) . uncurryApplication
+
+-- reduction and substitution:
+
+betaReduce :: Typed c t => TSLTerm t c -> TSLTerm t c
+betaReduce (Application _ (Lambda _ _ m) n) = up (substitute m 0 (up n 1)) (-1)
+betaReduce (Application t m n)              = Application t (betaReduce m) (betaReduce n)
+betaReduce (Lambda t x m)                   = Lambda t x    (betaReduce m)
+betaReduce (Variable t x)                   = Variable t x
+betaReduce (Constant t m)                   = Constant t m
+
+substitute :: Typed c t => TSLTerm t c -> Index -> TSLTerm t c -> TSLTerm t c
+substitute (Variable t x) y to
+    | x == y    = to
+    | otherwise = (Variable t x)
+substitute (Application t m n) y to = Application t (substitute m y to) (substitute n y to)
+substitute (Lambda t x m) y to = Lambda t x (substitute m (y + 1) (up to 1))
+substitute (Constant t m) _ _ = Constant t m
+
+up :: Typed c t => TSLTerm t c -> Index -> TSLTerm t c
+up to n = up' to n 0
+
+up' :: Typed c t => TSLTerm t c -> Index -> Index -> TSLTerm t c
+up' (Variable t x) d c
+    | x >= c = (Variable t (x + d))
+    | otherwise = (Variable t x)
+up' (Application t m n) d c = Application t (up' m d c) (up' n d c)
+up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
+up' (Constant t m) _ _ = Constant t m
