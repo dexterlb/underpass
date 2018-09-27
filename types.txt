@@ -55,5 +55,8 @@ lambda x: T { term :: T }
 -- cafes in sofia within 20m of water
 and (and (amenity 'cafe') (in (name 'sofia'))) (around 20 (amenity 'drinking_water'))
 
+-- cafes within 20m of water in sofia (faster)
+and (amenity 'cafe') (around 20 (and (in (name 'София')) (amenity 'drinking_water')))
+
 -- pharmacies near Circle Line stations
 and (amenity 'pharmacy') (near (and (amenity 'metro_station') (down (name 'Circle Line'))))
