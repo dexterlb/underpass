@@ -4,6 +4,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Overpass where
 
@@ -17,6 +18,8 @@ import           Context (VarName)
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
+import Data.Hashable (Hashable)
+import GHC.Generics (Generic)
 
 import Minipass.Intermediate
 import qualified LambdaTypes as T
@@ -59,6 +62,12 @@ renderOsmType OsmArea = "area"
 
 renderFilterExpr :: FilterExpr -> Text
 renderFilterExpr (KvFilter k v) = "\"" <> k <> "\" = \"" <> v <> "\""
+
+data FilterExpr
+    = KvFilter Text Text
+    deriving (Show, Eq, Generic)
+
+instance Hashable FilterExpr
 
 data Value
     = StringValue Text

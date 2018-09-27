@@ -80,12 +80,6 @@ instance Show SetTag where
             f OsmRelation   = "r"
             f OsmArea       = "a"
 
-data FilterExpr
-    = KvFilter Text Text
-    deriving (Show, Eq, Generic)
-
-instance Hashable FilterExpr
-
 data OsmType
     = OsmNode
     | OsmWay
