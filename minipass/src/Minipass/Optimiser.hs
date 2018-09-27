@@ -15,8 +15,7 @@ import Maths
 
 optimise :: TTerm -> TTerm
 optimise
-    = id
-    . evaluateArithmetic
+    = evaluateArithmetic
     . (fixedPoint (removeRestrictions . propagateTypes . betaReduce))
 
 propagateTypes :: TTerm -> TTerm
