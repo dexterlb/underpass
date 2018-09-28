@@ -6,7 +6,7 @@
 
 module TypedLambda where
 
-import LambdaTypes (Typed, typeOf, Unifiable, unify, (<~))
+import LambdaTypes (Typed, typeOf, Unifiable, unify, (<~>))
 import qualified LambdaTypes as T
 import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
@@ -51,7 +51,7 @@ typify context (L.Constant c) = Constant t c
     where
         t = typeOfTerm context (L.Constant c)
 typify context (L.Application a b)
-    | (T.Application p q)  <- ta', tb' <~ p = (Application q a' b')
+    | (T.Application p q)  <- ta', tb' <~> p = (Application q a' b')
     | otherwise = throw $ L.CannotApply (a, ta') (b, tb')
     where
         ta' = typeOf a'

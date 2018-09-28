@@ -7,7 +7,7 @@
 module Lambda where
 
 import qualified LambdaTypes as T
-import LambdaTypes (Typed, typeOf, (<~))
+import LambdaTypes (Typed, typeOf, (<~), (<~>))
 
 import Parsing (Parser, Parseable, parser, (<|>))
 import qualified Parsing as P
@@ -98,7 +98,7 @@ parseApplication context = (foldl1 makeApplication)
     <$> (P.some $ parseNonApplication context)
     where
         makeApplication left@(x, (T.Application a b)) right@(y, c)
-            | c <~ a                = (Application x y, b)
+            | c <~> a               = (Application x y, b)
             | otherwise             = throw $ CannotApply left right
         makeApplication left right  = throw $ CannotApply left right
 

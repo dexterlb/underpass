@@ -81,6 +81,9 @@ instance OrderedType b => OrderedType (ApplicativeType b) where
     (<~) _      Bottom       = False
     (<~) _      _            = False
 
+(<~>) :: OrderedType t => t -> t -> Bool
+a <~> b = a <~ b || b <~ a
+
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x)           = Basic $ f x
 transform f (Application a b)   = Application (transform f a) (transform f b)
