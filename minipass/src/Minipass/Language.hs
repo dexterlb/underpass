@@ -56,32 +56,32 @@ parseNumLiteral = NumLiteral <$> P.floatNumber
 
 parseKeyword :: P.Parser Constants
 parseKeyword
-    =   P.literal "everything"  $> Everything
-    <|> P.literal "nodes"       $> Nodes
-    <|> P.literal "ways"        $> Ways
-    <|> P.literal "relations"   $> Relations
-    <|> P.literal "areas"       $> Areas
+    =   P.word "everything"  $> Everything
+    <|> P.word "nodes"       $> Nodes
+    <|> P.word "ways"        $> Ways
+    <|> P.word "relations"   $> Relations
+    <|> P.word "areas"       $> Areas
 
-    <|> P.literal "kv"          $> Kv
-    <|> P.literal "around"      $> Around
-    <|> P.literal "in"          $> In
-    <|> P.literal "out"         $> Out
+    <|> P.word "kv"          $> Kv
+    <|> P.word "around"      $> Around
+    <|> P.word "in"          $> In
+    <|> P.word "out"         $> Out
 
-    <|> P.literal "or"          $> Or
-    <|> P.literal "and"         $> And
-    <|> P.literal "not"         $> Not
+    <|> P.word "or"          $> Or
+    <|> P.word "and"         $> And
+    <|> P.word "not"         $> Not
 
-    <|> P.literal "up"          $> Up
-    <|> P.literal "down"        $> Down
-    <|> P.literal "upp"         $> Upp
-    <|> P.literal "downn"       $> Downn
+    <|> P.word "up"          $> Up
+    <|> P.word "down"        $> Down
+    <|> P.word "upp"         $> Upp
+    <|> P.word "downn"       $> Downn
 
-    <|> P.literal "upf"         $> UpFilter
-    <|> P.literal "downf"       $> DownFilter
+    <|> P.word "upf"         $> UpFilter
+    <|> P.word "downf"       $> DownFilter
 
-    <|> P.literal "name"        $> Name
-    <|> P.literal "amenity"     $> Amenity
-    <|> P.literal "near"        $> Near
+    <|> P.word "name"        $> Name
+    <|> P.word "amenity"     $> Amenity
+    <|> P.word "near"        $> Near
 
 data Types
     = Set
