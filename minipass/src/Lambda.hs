@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE GADTs #-}
 
 module Lambda where
@@ -16,6 +17,9 @@ import qualified Data.Text as Text
 import Control.Monad (fail)
 
 import Context
+
+import Control.Exception (Exception, throw)
+import Data.Dynamic (Typeable)
 
 data LambdaTerm t c where
     Constant    :: Typed c t => c              -> LambdaTerm t c
@@ -42,14 +46,14 @@ typeOfTerm :: (Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType
 typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
     | (T.Application p q) <- ta, tb <~ p = q
-    | otherwise = T.TypeError $ "want to apply " <> (Text.pack $ show ta) <> " to " <> (Text.pack $ show tb)
+    | otherwise = throw $ CannotApply (a, ta) (b, tb)
     where
         ta = typeOfTerm context a
         tb = typeOfTerm context b
 typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) context) a)
 typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
-    | otherwise = T.TypeError $ "non existant variable #" <> (Text.pack $ show i)
+    | otherwise = throw $ UnknownVar i
 
 transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c
@@ -90,17 +94,13 @@ parseLambda context = do
     return (Lambda var varType term, T.Application varType termType)
 
 parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
-parseApplication context = check =<< (((foldl1 makeApplication) . (map Just))
-    <$> (P.some $ parseNonApplication context))
+parseApplication context = (foldl1 makeApplication)
+    <$> (P.some $ parseNonApplication context)
     where
-        check Nothing = fail "type error when trying to parse application"
-        check (Just x) = return x
-
-        makeApplication (Just (_, (T.Application _ (T.TypeError _)))) _ = Nothing
-        makeApplication (Just (x, (T.Application a b))) (Just (y, c))
-            | c <~ a = Just (Application x y, b)
-            | otherwise = Nothing
-        makeApplication _ _ = Nothing
+        makeApplication left@(x, (T.Application a b)) right@(y, c)
+            | c <~ a                = (Application x y, b)
+            | otherwise             = throw $ CannotApply left right
+        makeApplication left right  = throw $ CannotApply left right
 
 parseVariableDeclaration :: (Parseable t) => Parser (VarName, T.ApplicativeType t)
 parseVariableDeclaration =
@@ -123,3 +123,16 @@ parseVariable context = P.try $ do
 
 parseVariableName :: Parser VarName
 parseVariableName = P.identifier
+
+data LambdaException t c
+    = CannotApply (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
+    deriving (Typeable)
+
+data VarException
+    = UnknownVar Index
+    deriving (Show, Typeable)
+
+deriving instance (Show t, Show c) => Show (LambdaException t c)
+
+instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)
+instance Exception VarException

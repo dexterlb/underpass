@@ -14,7 +14,6 @@ import Lambda
 import qualified Minipass.Language as L
 
 import Data.Text (Text)
-import qualified Data.Text as Text
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
@@ -22,6 +21,8 @@ import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
 import TypedLambda (TSLTerm)
+
+import Control.Exception (throw)
 
 data Constants = StringLiteral Text
                | NumLiteral    Float
@@ -105,11 +106,11 @@ uniteSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
     { osmTypes = HS.union t1 t2 }
 
 instance Hashable OsmType
-instance T.BasicUnifiable Types where
-    bunify Num Num = T.Basic Num
-    bunify String String = T.Basic String
-    bunify (Set a) (Set b) = T.Basic $ Set $ unifySetTags a b
-    bunify x y = T.TypeError $ "cannot unify " <> (Text.pack $ show x) <> " and " <> (Text.pack $ show y)
+instance T.Unifiable Types where
+    unify Num Num = Num
+    unify String String = String
+    unify (Set a) (Set b) = Set $ unifySetTags a b
+    unify x y = throw $ T.CannotUnify x y
 
 
 type Term = LambdaTerm Types Constants

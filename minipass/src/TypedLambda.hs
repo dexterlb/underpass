@@ -6,7 +6,7 @@
 
 module TypedLambda where
 
-import LambdaTypes (Typed, typeOf, BasicUnifiable, unify, (<~))
+import LambdaTypes (Typed, typeOf, Unifiable, unify, (<~))
 import qualified LambdaTypes as T
 import Lambda (LambdaTerm, typeOfTerm)
 import qualified Lambda as L
@@ -16,6 +16,9 @@ import qualified Data.Text as Text
 import Context
 
 import Data.Maybe (fromMaybe)
+
+import Control.Exception (Exception, throw)
+import Data.Dynamic (Typeable)
 
 data TSLTerm t c where
     Constant    :: Typed c t => T.ApplicativeType t -> c           -> TSLTerm t c
@@ -49,9 +52,8 @@ typify context (L.Constant c) = Constant t c
         t = typeOfTerm context (L.Constant c)
 typify context (L.Application a b)
     | (T.Application p q)  <- ta', tb' <~ p = (Application q a' b')
-    | otherwise = Application (T.TypeError err) a' b'
+    | otherwise = throw $ L.CannotApply (a, ta') (b, tb')
     where
-        err = "want to apply " <> (Text.pack $ show ta') <> " to " <> (Text.pack $ show tb')
         ta' = typeOf a'
         tb' = typeOf b'
         a' = typify context a
@@ -61,7 +63,7 @@ typify context (L.Lambda x t a) = Lambda (T.Application t (typeOf a')) x a'
         a' = typify (push (x, t) context) a
 typify context (L.Variable i)
     | Just (_, t) <- at i context = Variable t i
-    | otherwise = Variable (T.TypeError $ "non existant variable #" <> (Text.pack $ show i)) i
+    | otherwise = throw $ L.UnknownVar i
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x
@@ -81,52 +83,46 @@ updateTypes updater (Lambda t x a) = (Lambda t' x a)
         a' = updateTypes updater a
 
 
-fixTypes :: (Typed c t, BasicUnifiable t) => TSLTerm t c -> TSLTerm t c
+fixTypes :: (Typed c t, Unifiable t) => TSLTerm t c -> TSLTerm t c
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
         (x', vars) = fixTypesUp x
 
-fixTypesDown :: (Typed c t, BasicUnifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
+fixTypesDown :: (Typed c t, Unifiable t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
 fixTypesDown targetType _      (Constant t x) = Constant (unify targetType t) x
 fixTypesDown targetType upVars (Variable t i)
     | Just (_, t') <- at i upVars = Variable (unify targetType $ unify t t') i
-    | otherwise = Variable (T.TypeError $ "non existant variable #" <> (Text.pack $ show i)) i
+    | otherwise = throw $ L.UnknownVar i
 fixTypesDown (T.Application tnx tna) upVars (Lambda (T.Application tx ta) x a) = Lambda (T.Application tx' ta') x a'
     where
         a'   = fixTypesDown ta' (push (x, tx') upVars) a
         tx'  = unify tx tnx
         ta'  = unify ta tna
-fixTypesDown p _ (Lambda q x y) = Lambda (T.TypeError $
-       "want to coerce lambda of type " <> (Text.pack $ show p)
-    <> " to type " <> (Text.pack $ show q)) x y
+fixTypesDown (T.Application _ _) _ (Lambda q _ _) = throw $ T.WrongLambdaType q
+fixTypesDown q _ (Lambda _ _ _)                   = throw $ T.WrongLambdaType q
 fixTypesDown tnr upVars (Application tor a b)
     | (T.Application p _) <- ta = Application tr' a' (fixTypesDown p upVars b)
-    | p <- err                  = Application tr' a' (fixTypesDown p upVars b)
+    | otherwise                 = throw $ CannotApply a b
     where
-        err = T.TypeError $ "trying to apply " <> (Text.pack $ show ta) <> " to something"
         ta  = typeOf a
         a'  = fixTypesDown (T.Application tb tr') upVars a
         tr' = unify tnr tor
         tb  = typeOf b
 
-fixTypesUp :: (Typed c t, BasicUnifiable t) => TSLTerm t c -> (TSLTerm t c, VarContext t)
+fixTypesUp :: (Typed c t, Unifiable t) => TSLTerm t c -> (TSLTerm t c, VarContext t)
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)
     | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (unify tnx tx) (unify ta' ta)) x a', subVars)
-    | otherwise                            = (Lambda (T.Application T.bottom       (unify ta' ta)) x a', vars)
+    | otherwise                            = throw $ L.UnknownVar 0
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a
-fixTypesUp (Lambda t x a) = (Lambda (T.TypeError err) x a', vars)
-    where
-        (a', vars) = fixTypesUp a
-        err = "Wrong type for lambda: " <> (Text.pack $ show t)
+fixTypesUp (Lambda t _ _) = throw $ T.WrongLambdaType t
 fixTypesUp (Application tr a b)
     | (T.Application _ q) <- typeOf a' = (Application (unify tr q) a' b', vars)
-    | otherwise                        = (Application (T.TypeError err) a' b', vars)
+    | otherwise                        = throw $ CannotApply a b
     where
-        err  = "Wrong type for application: " <> (Text.pack $ show $ typeOf a')
         vars = unifyContexts aVars bVars
         (a', aVars)  = fixTypesUp a
         (b', bVars)  = fixTypesUp b
@@ -174,3 +170,11 @@ up' (Variable t x) d c
 up' (Application t m n) d c = Application t (up' m d c) (up' n d c)
 up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
 up' (Constant t m) _ _ = Constant t m
+
+data LambdaException t c
+    = CannotApply (TSLTerm t c) (TSLTerm t c)
+    deriving (Typeable)
+
+deriving instance (Show t, Show c) => Show (LambdaException t c)
+
+instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)

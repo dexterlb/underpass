@@ -22,10 +22,10 @@ pop :: VarContext t -> Maybe ((VarName, ApplicativeType t), VarContext t)
 pop (VarContext (x:xs)) = Just (x, VarContext xs)
 pop _                   = Nothing
 
-oneHotContext :: BasicUnifiable t => Index -> (VarName, ApplicativeType t) -> VarContext t
+oneHotContext :: Unifiable t => Index -> (VarName, ApplicativeType t) -> VarContext t
 oneHotContext i x = VarContext $ x : (replicate i ("", top))
 
-unifyContexts :: BasicUnifiable t => VarContext t -> VarContext t -> VarContext t
+unifyContexts :: Unifiable t => VarContext t -> VarContext t -> VarContext t
 unifyContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
         f ((na, ta):as) ((_, tb):bs) = (na, unify ta tb):(f as bs)
