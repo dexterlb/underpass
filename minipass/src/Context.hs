@@ -11,8 +11,6 @@ import Data.Text (Text)
 
 import Data.List (elemIndex)
 
-import Control.Monad.Fail (MonadFail)
-
 type Index = Int
 type VarName = Text
 newtype VarContext t = VarContext [(VarName, ApplicativeType t)] deriving (Show)
@@ -24,19 +22,15 @@ pop :: VarContext t -> Maybe ((VarName, ApplicativeType t), VarContext t)
 pop (VarContext (x:xs)) = Just (x, VarContext xs)
 pop _                   = Nothing
 
-oneHotContext :: Unifiable t => Index -> (VarName, ApplicativeType t) -> VarContext t
+oneHotContext :: BasicUnifiable t => Index -> (VarName, ApplicativeType t) -> VarContext t
 oneHotContext i x = VarContext $ x : (replicate i ("", top))
 
-unifyContexts :: (Unifiable t, MonadFail m) => VarContext t -> VarContext t -> m (VarContext t)
-unifyContexts (VarContext a) (VarContext b) = VarContext <$> f a b
+unifyContexts :: BasicUnifiable t => VarContext t -> VarContext t -> VarContext t
+unifyContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f :: (Unifiable t, MonadFail m) => [(VarName, ApplicativeType t)] -> [(VarName, ApplicativeType t)] -> m [(VarName, ApplicativeType t)]
-        f ((na, ta):as) ((_, tb):bs) = do
-            unified <- unify ta tb
-            rest    <- f as bs
-            pure (na, unified):rest
-        f [] bs = pure bs
-        f as [] = pure as
+        f ((na, ta):as) ((_, tb):bs) = (na, unify ta tb):(f as bs)
+        f [] bs = bs
+        f as [] = as
 
 
 at :: Index -> VarContext t -> Maybe (VarName, ApplicativeType t)

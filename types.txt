@@ -1,6 +1,7 @@
 -- basic types
+type Int
 type String
-type Num
+type Float
 
 -- complex types
 type Set
