@@ -13,7 +13,8 @@ import Lambda
 
 import qualified Minipass.Language as L
 
-import Data.Text (Text)
+import           Data.Text (Text)
+import           Context (VarName)
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
@@ -45,6 +46,8 @@ data Constants = StringLiteral Text
                | DownFilter
 
                | TypeFilter (HashSet OsmType)
+
+               | FreeVar VarName
 
     deriving (Show, Eq)
 
@@ -139,6 +142,7 @@ instance T.Typed Constants Types where
     typeOf DownFilter        = T.Application (T.Basic String) $ T.Application (T.Basic $ osmSet [OsmRelation]) (T.Basic $ osmSet [OsmNode, OsmWay, OsmRelation])
 
     typeOf (TypeFilter t)    = T.Basic $ Set $ SetTag { osmTypes = t }
+    typeOf (FreeVar _)       = T.Basic $ osmAll
 
 toIntermediate :: L.Term -> Term
 toIntermediate = transform constToIntermediate typeToIntermediate

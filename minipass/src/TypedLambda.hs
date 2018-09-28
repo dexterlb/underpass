@@ -77,7 +77,7 @@ updateTypes updater (Application t a b) = (Application t' a' b')
         t' = updater $ (Application t a' b')
         a' = updateTypes updater a
         b' = updateTypes updater b
-updateTypes updater (Lambda t x a) = (Lambda t' x a)
+updateTypes updater (Lambda t x a) = (Lambda t' x a')
     where
         t' = updater $ Lambda t x a'
         a' = updateTypes updater a
@@ -145,12 +145,15 @@ uncurryTypes = (map (\t -> (t, typeOf t))) . uncurryApplication
 
 -- reduction and substitution:
 
-betaReduce :: Typed c t => TSLTerm t c -> TSLTerm t c
-betaReduce (Application _ (Lambda _ _ m) n) = up (substitute m 0 (up n 1)) (-1)
-betaReduce (Application t m n)              = Application t (betaReduce m) (betaReduce n)
-betaReduce (Lambda t x m)                   = Lambda t x    (betaReduce m)
-betaReduce (Variable t x)                   = Variable t x
-betaReduce (Constant t m)                   = Constant t m
+betaReduce :: Typed c t => (T.ApplicativeType t -> Bool) -> TSLTerm t c -> TSLTerm t c
+betaReduce p (Application _ l@(Lambda (T.Application t _) _ m) n)
+    | p t = up (substitute m 0 (up n 1)) (-1)
+    | otherwise = Application t (betaReduce p l) (betaReduce p n)
+betaReduce _ (Application _ l@(Lambda _ _ _) _) = error $ "fck u " <> show l
+betaReduce p (Lambda t x m)                   = Lambda t x    (betaReduce p m)
+betaReduce p (Application t m n)              = Application t (betaReduce p m) (betaReduce p n)
+betaReduce _ (Variable t x)                   = Variable t x
+betaReduce _ (Constant t m)                   = Constant t m
 
 substitute :: Typed c t => TSLTerm t c -> Index -> TSLTerm t c -> TSLTerm t c
 substitute (Variable t x) y to

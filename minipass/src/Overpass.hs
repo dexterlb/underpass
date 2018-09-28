@@ -23,7 +23,7 @@ import GHC.Generics (Generic)
 
 import Minipass.Intermediate
 import qualified LambdaTypes as T
-import TypedLambda (TSLTerm(..), uncurryApplication)
+import TypedLambda (TSLTerm(..), uncurryApplication, substitute)
 
 data Statement
     = OutputSet VarName
@@ -101,6 +101,10 @@ translateApp term@[Constant t@(T.Basic (Set _)) (TypeFilter _)] = translateFilte
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
 translateApp term@[Constant (T.Application _ t) In, _] = translateFilter t term
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Around, _, _] = translateFilter t term
+translateApp [Lambda (T.Application t@(T.Basic (Set _)) _) _ m, n] = do
+    (SetValue nVar) <- translate n
+    translate $ substitute m 0 (Constant t $ FreeVar nVar)
+translateApp [Constant _ (FreeVar var)] = pure $ SetValue var
 translateApp term = fail $ "I don't know how to translate " <> (show term)
 
 translateFilter :: TTypes -> [TTerm] -> State Translator Value

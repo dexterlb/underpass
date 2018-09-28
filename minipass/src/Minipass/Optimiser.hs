@@ -16,7 +16,8 @@ import Maths
 optimise :: TTerm -> TTerm
 optimise
     = evaluateArithmetic
-    . (fixedPoint (removeRestrictions . propagateTypes . betaReduce))
+    . (fixedPoint $ betaReduce (not . isSet))
+    . (fixedPoint (removeRestrictions . propagateTypes))
 
 propagateTypes :: TTerm -> TTerm
 propagateTypes = (updateTypes updater) . fixTypes
@@ -42,3 +43,7 @@ removeRestrictions = id
 
 evaluateArithmetic :: TTerm -> TTerm
 evaluateArithmetic = id
+
+isSet :: T.ApplicativeType Types -> Bool
+isSet (T.Basic (Set _)) = True
+isSet _                 = False
