@@ -17,24 +17,16 @@ import Data.Dynamic (Typeable)
 data ApplicativeType b
     = Basic b
     | Application (ApplicativeType b) (ApplicativeType b)
-    | Top
-    | Bottom
+    | Bot
+    deriving (Eq)
 
-class (Show b, Show a, Typeable a, Typeable b, OrderedType b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
+class (Show b, Show a, Typeable a, Typeable b, PartialOrd b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
     show (Application a b) = "(" <> show a <> " -> " <> show b <> ")"
-    show Top = "⊤"
-    show Bottom = "⊥"
-
-instance (Eq b) => Eq (ApplicativeType b) where
-    Basic x == Basic y = x == y
-    Application x y == Application p q = x == p && y == q
-    Top == _ = True
-    _ == Top = True
-    _ == _ = False
+    show Bot = "*"
 
 instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
     parser = parseTypeExpr
@@ -49,49 +41,46 @@ parseTypeTerm
     =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
 
-class OrderedType t where
-    (<~)      :: t -> t -> Bool
+class PartialOrd t where
+    (<!)      :: t -> t -> Bool
 
-class (Show t, Typeable t, OrderedType t) => Unifiable t where
-    unify    :: t -> t -> t     -- unify two types
+class (Show t, Typeable t, PartialOrd t) => MSemiLattice t where
+    (/\)      :: t -> t -> t     -- meet operator
 
-class (Show t) => HasTop t where
-    top      :: t               -- unify top x == x
+class HasBot t where
+    bot       :: t               -- x /\ bot == x
 
-instance Unifiable b => Unifiable (ApplicativeType b) where
-    unify (Basic x) (Basic y) = Basic $ unify x y
-    unify (Application a1 a2) (Application b1 b2) = Application (unify a1 b1) (unify a2 b2)
-    unify Top x = x
-    unify x Top = x
-    unify Bottom _ = Bottom
-    unify _ Bottom = Bottom
-    unify x y = throw $ CannotUnify x y
+(<!>) :: PartialOrd t => t -> t -> Bool
+a <!> b = a <! b || a !> b
 
-instance (Show b) => HasTop (ApplicativeType b) where
-    top = Top
+(!>) :: PartialOrd t => t -> t -> Bool
+a !> b = b <! a
 
-instance OrderedType b => OrderedType (ApplicativeType b) where
-    (<~) (Basic x)           (Basic y)           = (<~) x y
-    (<~) (Application a1 a2) (Application b1 b2) = ((<~) a1 b1) && ((<~) a2 b2)
-    (<~) Top    Top          = True
-    (<~) Top    _            = False
-    (<~) _      Top          = True
-    (<~) Bottom Bottom       = True
-    (<~) Bottom _            = True
-    (<~) _      Bottom       = False
-    (<~) _      _            = False
+instance MSemiLattice b => MSemiLattice (ApplicativeType b) where
+    (/\) (Basic x) (Basic y) = Basic $ (/\) x y
+    (/\) (Application a1 a2) (Application b1 b2) = Application ((/\) a1 b1) ((/\) a2 b2)
+    (/\) Bot x = x
+    (/\) x Bot = x
+    (/\) x y = throw $ CannotMeet x y
 
-(<~>) :: OrderedType t => t -> t -> Bool
-a <~> b = a <~ b || b <~ a
+instance HasBot (ApplicativeType b) where
+    bot = Bot
+
+instance PartialOrd b => PartialOrd (ApplicativeType b) where
+    (<!) (Basic x)           (Basic y)           = (<!) x y
+    (<!) (Application a1 a2) (Application b1 b2) = ((<!) a1 b1) && ((<!) a2 b2)
+    (<!) Bot    Bot          = True
+    (<!) Bot    _            = False
+    (<!) _      Bot          = True
+    (<!) _      _            = False
 
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x)           = Basic $ f x
 transform f (Application a b)   = Application (transform f a) (transform f b)
-transform _ Top                 = Top
-transform _ Bottom              = Bottom
+transform _ Bot                 =Bot
 
 data TypeException t
-    = CannotUnify t t
+    = CannotMeet t t
     | WrongLambdaType t
     deriving (Typeable)
 

@@ -8,7 +8,7 @@
 module Minipass.Intermediate where
 
 import qualified LambdaTypes as T
-import LambdaTypes (OrderedType, (<~))
+import LambdaTypes (PartialOrd, (<!))
 import Lambda
 
 import qualified Minipass.Language as L
@@ -58,13 +58,13 @@ data Types
     | Anything
     deriving (Eq)
 
-instance OrderedType Types where
-    Set _       <~ Set _      = True
-    String      <~ String     = True
-    Num         <~ Num        = True
-    Anything    <~ _          = True
-    _           <~ Anything   = True
-    _           <~ _          = False
+instance PartialOrd Types where
+    Set _       <! Set _      = True
+    String      <! String     = True
+    Num         <! Num        = True
+    Anything    <! _          = True
+    _           <! Anything   = True
+    _           <! _          = False
 
 instance Show Types where
     show Num        = "Num"
@@ -97,8 +97,8 @@ osmSet types = Set (SetTag { osmTypes = HS.fromList types })
 osmAll :: Types
 osmAll = osmSet [OsmNode, OsmWay, OsmRelation, OsmArea]
 
-unifySetTags :: SetTag -> SetTag -> SetTag
-unifySetTags = intersectSetTags
+meetSetTags :: SetTag -> SetTag -> SetTag
+meetSetTags = intersectSetTags
 
 intersectSetTags :: SetTag -> SetTag -> SetTag
 intersectSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
@@ -109,11 +109,11 @@ uniteSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
     { osmTypes = HS.union t1 t2 }
 
 instance Hashable OsmType
-instance T.Unifiable Types where
-    unify Num Num = Num
-    unify String String = String
-    unify (Set a) (Set b) = Set $ unifySetTags a b
-    unify x y = throw $ T.CannotUnify x y
+instance T.MSemiLattice Types where
+    Num /\ Num          = Num
+    String /\ String    = String
+    (Set a) /\ (Set b)  = Set $ meetSetTags a b
+    x /\ y              = throw $ T.CannotMeet x y
 
 
 type Term = LambdaTerm Types Constants

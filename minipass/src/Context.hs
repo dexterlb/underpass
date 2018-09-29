@@ -22,13 +22,13 @@ pop :: VarContext t -> Maybe ((VarName, ApplicativeType t), VarContext t)
 pop (VarContext (x:xs)) = Just (x, VarContext xs)
 pop _                   = Nothing
 
-oneHotContext :: Unifiable t => Index -> (VarName, ApplicativeType t) -> VarContext t
-oneHotContext i x = VarContext $ x : (replicate i ("", top))
+oneHotContext :: MSemiLattice t => Index -> (VarName, ApplicativeType t) -> VarContext t
+oneHotContext i x = VarContext $ x : (replicate i ("", bot))
 
-unifyContexts :: Unifiable t => VarContext t -> VarContext t -> VarContext t
-unifyContexts (VarContext a) (VarContext b) = VarContext $ f a b
+meetContexts :: MSemiLattice t => VarContext t -> VarContext t -> VarContext t
+meetContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f ((na, ta):as) ((_, tb):bs) = (na, unify ta tb):(f as bs)
+        f ((na, ta):as) ((_, tb):bs) = (na, ta /\ tb):(f as bs)
         f [] bs = bs
         f as [] = as
 

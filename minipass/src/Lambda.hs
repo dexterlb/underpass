@@ -7,7 +7,7 @@
 module Lambda where
 
 import qualified LambdaTypes as T
-import LambdaTypes (Typed, typeOf, (<~), (<~>))
+import LambdaTypes (Typed, typeOf, (<!), (<!>))
 
 import Parsing (Parser, Parseable, parser, (<|>))
 import qualified Parsing as P
@@ -45,7 +45,7 @@ instance (Typed c t) => Typed (LambdaTerm t c) t where
 typeOfTerm :: (Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
-    | (T.Application p q) <- ta, tb <~ p = q
+    | (T.Application p q) <- ta, tb <! p = q
     | otherwise = throw $ CannotApply (a, ta) (b, tb)
     where
         ta = typeOfTerm context a
@@ -98,7 +98,7 @@ parseApplication context = (foldl1 makeApplication)
     <$> (P.some $ parseNonApplication context)
     where
         makeApplication left@(x, (T.Application a b)) right@(y, c)
-            | c <~> a               = (Application x y, b)
+            | c <!> a               = (Application x y, b)
             | otherwise             = throw $ CannotApply left right
         makeApplication left right  = throw $ CannotApply left right
 
@@ -111,7 +111,7 @@ parseVariableDeclaration =
         return (var, varType))
     <|> (P.try $ do
         var     <- parseVariableName
-        return (var, T.Top)
+        return (var, T.bot)
     )
 
 parseVariable :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
