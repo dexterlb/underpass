@@ -1,0 +1,180 @@
+ % !TEX program = xelatex
+\documentclass[12pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{Noto Sans Mono}
+
+\usepackage[bulgarian,english]{babel}
+\usepackage{indentfirst}
+\usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
+\usepackage{url}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{syntax}
+\renewcommand{\baselinestretch}{1.1}
+\setlength{\emergencystretch}{3em}
+
+
+\lstset{
+	backgroundcolor = \color{light-gray},
+    language = C,
+    xleftmargin = 1cm,
+    framexleftmargin = 1em,
+    basicstyle=\ttfamily,
+	moredelim=[is][\underbar]{_}{_},
+}
+
+\usepackage{color}
+\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
+\definecolor{light-gray}{gray}{0.9}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\usepackage{tabularx}
+
+
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+
+
+\title{ble ble}
+\author{Ангел Ангелов <dexterlb@qtrp.org>}
+\date{2018}
+
+\begin{document}
+% uncomment for fancy title:
+% \maketitle
+% \thispagestyle{empty}
+% \tableofcontents
+% \pagebreak
+
+\section{Language draft}
+The minipass language is comprised of a lambda fragment (variables, application,
+abstraction) and constants which act as builtin identifiers. It should support
+set operations
+(\textbf{and}, \textbf{or}, \textbf{not}, \textbf{diff}), string literals,
+number literals and Overpass-specific functions.
+
+\begin{grammar}
+
+<term> ::= <variable>
+\alt <constant>
+\alt <term> <term>
+\alt `lambda' <declaration> `{' <term> `}'
+\alt `(' <term> `)'
+
+<variable> ::= <alphanum-identifier>
+
+<declaration> ::= <variable> `:' <type>
+\alt <variable>
+
+\end{grammar}
+
+We want to make the language simple. The major decision in this regard is to
+decide what to do with the third group - the Overpass functions.
+
+\pagebreak
+\subsection{Option 1}
+The first option is to include the overpass functions in our language as
+builtin operations.
+
+\begin{grammar}
+<type> ::= `Set'
+\alt `Num'
+\alt `String'
+
+<constant>
+    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
+    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
+    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
+    \alt `nodes' \hspace*{\fill}\textit {: Set (all 'nodes' that exist)}
+    \alt `ways' \hspace*{\fill}\textit {: Set (all 'ways' that exist)}
+    \alt `relations' \hspace*{\fill}\textit {: Set (all 'relations' that exist)}
+    \alt `areas' \hspace*{\fill}\textit {: Set (all 'areas' that exist)}
+    \alt `around' \hspace*{\fill}\textit {: Num -> Set -> Set (things within radius)}
+    \alt `in'   \hspace*{\fill}\textit {: Set -> Set (things in areas)}
+    \alt `children'   \hspace*{\fill}\textit {: String -> Set -> Set (children by role)}
+    \alt `parents'   \hspace*{\fill}\textit {: String -> Set -> Set (parents by role)}
+    \alt `tchildren'   \hspace*{\fill}\textit {: String -> Set -> Set (transitive)}
+    \alt `tparents'   \hspace*{\fill}\textit {: String -> Set -> Set (transitive)}
+    \alt `kv'      \hspace*{\fill}\textit {: String -> String -> Set (things matching k/v)}
+    \alt `fuzzykv'      \hspace*{\fill}\textit {: String -> String -> Set (like kv but fuzzy)}
+\end{grammar}
+
+This is an incomplete list - the language can be expanded. Since it's unwise to
+include such elements in a language's formal specification, we need another option.
+
+\pagebreak
+\subsection{Option 2}
+The Overpass-specific functions we've looked at either construct a set or
+transform a set by following edges in a graph. We could reduce them to just
+two functions!
+
+\begin{grammar}
+<type> ::= `Set'
+\alt `Num'
+\alt `String'
+\alt `Specifier'
+
+<constant>
+    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
+    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
+    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
+    \alt `get'  \hspace*{\fill}\textit {: Specifier -> Set}
+    \alt `next' \hspace*{\fill}\textit {: Specifier -> Set -> Set}
+\end{grammar}
+
+But how do we construct this mysterious Specifier type? One way I think of is
+to make it a String like "around:20" or "kv:foo:bar". This, however, makes
+the language very inflexible and defeats the purpose of adding useful elements
+such as arithmetic later on.
+
+Another way is to use a list:
+
+\begin{grammar}
+<type> ::= `Set'
+\alt `Num'
+\alt `String'
+\alt `List'
+
+<constant>
+    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
+    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
+    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
+    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
+    \alt `get'  \hspace*{\fill}\textit {: List -> Set}
+    \alt `next' \hspace*{\fill}\textit {: List -> Set -> Set}
+    \alt `empty' \hspace*{\fill}\textit {: List}
+    \alt `addNum' \hspace*{\fill}\textit {: Num -> List}
+    \alt `addString' \hspace*{\fill}\textit {: String -> List}
+\end{grammar}
+
+This way we can implement \textit{around} as \textit{lambda x : Num \{ get ( addString 'around' (addNum x empty) ) \}}
+and so on - the exact handling of specifiers is handled by a later translation
+phase and is of no interest to the language itself.
+
+However, using heterogenous lists for something like this seems stupid!
+\end{document}
