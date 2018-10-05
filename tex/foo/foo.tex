@@ -20,6 +20,7 @@
 \usepackage{syntax}
 \renewcommand{\baselinestretch}{1.1}
 \setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}
 
 
 \lstset{
@@ -63,12 +64,12 @@
 % \tableofcontents
 % \pagebreak
 
-\section{Language draft}
-The minipass language is comprised of a lambda fragment (variables, application,
-abstraction) and constants which act as builtin identifiers. It should support
-set operations
-(\textbf{and}, \textbf{or}, \textbf{not}, \textbf{diff}), string literals,
-number literals and Overpass-specific functions.
+\section{The Intermediate Language}
+Note: this is very much subject to change.
+
+Let our world be a directed graph whose vertices we call \emph{elements}.
+Each \emph{edge} carries a \emph{label}. Each \emph{label} is a polymorphic
+\emph{List} of \emph{Numbers}, \emph{Strings} and other \emph{Lists}.
 
 \begin{grammar}
 
@@ -78,103 +79,79 @@ number literals and Overpass-specific functions.
 \alt `lambda' <declaration> `{' <term> `}'
 \alt `(' <term> `)'
 
-<variable> ::= <alphanum-identifier>
+<constant> ::= <stringliteral>
+          \alt <numberliteral>
+          \alt `and'
+          \alt `or'
+          \alt `get'
+          \alt `next'
+          \alt `empty'
+          \alt `consNum'
+          \alt `consString'
+          \alt `consList'
+
+
+<variable> ::= <identifier>
 
 <declaration> ::= <variable> `:' <type>
 \alt <variable>
 
-\end{grammar}
+<type> :: <type> `->' <type>
+\alt <basictype>
+\alt `(' <type> `)'
 
-We want to make the language simple. The major decision in this regard is to
-decide what to do with the third group - the Overpass functions.
-
-\pagebreak
-\subsection{Option 1}
-The first option is to include the overpass functions in our language as
-builtin operations.
-
-\begin{grammar}
-<type> ::= `Set'
-\alt `Num'
-\alt `String'
-
-<constant>
-    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
-    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
-    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
-    \alt `nodes' \hspace*{\fill}\textit {: Set (all 'nodes' that exist)}
-    \alt `ways' \hspace*{\fill}\textit {: Set (all 'ways' that exist)}
-    \alt `relations' \hspace*{\fill}\textit {: Set (all 'relations' that exist)}
-    \alt `areas' \hspace*{\fill}\textit {: Set (all 'areas' that exist)}
-    \alt `around' \hspace*{\fill}\textit {: Num -> Set -> Set (things within radius)}
-    \alt `in'   \hspace*{\fill}\textit {: Set -> Set (things in areas)}
-    \alt `children'   \hspace*{\fill}\textit {: String -> Set -> Set (children by role)}
-    \alt `parents'   \hspace*{\fill}\textit {: String -> Set -> Set (parents by role)}
-    \alt `tchildren'   \hspace*{\fill}\textit {: String -> Set -> Set (transitive)}
-    \alt `tparents'   \hspace*{\fill}\textit {: String -> Set -> Set (transitive)}
-    \alt `kv'      \hspace*{\fill}\textit {: String -> String -> Set (things matching k/v)}
-    \alt `fuzzykv'      \hspace*{\fill}\textit {: String -> String -> Set (like kv but fuzzy)}
-\end{grammar}
-
-This is an incomplete list - the language can be expanded. Since it's unwise to
-include such elements in a language's formal specification, we need another option.
-
-\pagebreak
-\subsection{Option 2}
-The Overpass-specific functions we've looked at either construct a set or
-transform a set by following edges in a graph. We could reduce them to just
-two functions!
-
-\begin{grammar}
-<type> ::= `Set'
-\alt `Num'
-\alt `String'
-\alt `Specifier'
-
-<constant>
-    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
-    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
-    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
-    \alt `get'  \hspace*{\fill}\textit {: Specifier -> Set}
-    \alt `next' \hspace*{\fill}\textit {: Specifier -> Set -> Set}
-\end{grammar}
-
-But how do we construct this mysterious Specifier type? One way I think of is
-to make it a String like "around:20" or "kv:foo:bar". This, however, makes
-the language very inflexible and defeats the purpose of adding useful elements
-such as arithmetic later on.
-
-Another way is to use a list:
-
-\begin{grammar}
-<type> ::= `Set'
+<basictype> ::= `Set'
 \alt `Num'
 \alt `String'
 \alt `List'
 
-<constant>
-    ::   <floatnumber> \hspace*{\fill}\textit {: Num}
-    \alt `\''<symbols>`\'' \hspace*{\fill}\textit {: String}
-    \alt `and'  \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `or'   \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `diff' \hspace*{\fill}\textit {: Set -> Set -> Set}
-    \alt `not'  \hspace*{\fill}\textit {: Set -> Set}
-    \alt `get'  \hspace*{\fill}\textit {: List -> Set}
-    \alt `next' \hspace*{\fill}\textit {: List -> Set -> Set}
-    \alt `empty' \hspace*{\fill}\textit {: List}
-    \alt `addNum' \hspace*{\fill}\textit {: Num -> List}
-    \alt `addString' \hspace*{\fill}\textit {: String -> List}
+<identifier> ::= [a-zA-Z_][a-zA-Z_0-9]*
+
+<numberliteral>     ::= -?[0-9]+(\textbackslash.[0-9]+)?
+
+<stringliteral>     ::= <todo>
 \end{grammar}
 
-This way we can implement \textit{around} as \textit{lambda x : Num \{ get ( addString 'around' (addNum x empty) ) \}}
-and so on - the exact handling of specifiers is handled by a later translation
-phase and is of no interest to the language itself.
+For ease of writing, let us consider that types are right-associative,
+applications are left-associative and that we can write list literals
+within square brackets:
+\begin{lstlisting}
+[42, "foo"] := consNum 42 (consString "foo" empty)
+\end{lstlisting}
 
-However, using heterogenous lists for something like this seems stupid!
+And here are the types for all constants:
+
+\begin{lstlisting}
+<stringliteral> : String
+<numberliteral> : Num
+
+and       : Set -> Set -> Set   -- set intersection
+or        : Set -> Set -> Set   -- set union
+not       : Set -> Set          -- set negation
+
+get       : List -> Set         -- get elements by label
+next      : List -> Set -> Set  -- traverse edges
+
+-- constructing lists
+empty       :                     List
+consNum     : Num      -> List -> List
+consString  : String   -> List -> List
+consList    : List     -> List -> List
+
+\end{lstlisting}
+
+With this abstraction, we can represent most of the Overpass queries for
+constructing sets (filters, recurse, in/is_in, set operations, conditions)
+by encoding them as labels. Here are some examples:
+
+\begin{lstlisting}
+within : Num -> Set -> Set
+    := lambda dist { next ["around", dist] }
+
+onStreet : String -> Set
+    := lambda str  { next [
+        "tagFilter", ["==", "addr:street", str]] }
+\end{lstlisting}
+
 \end{document}
+
