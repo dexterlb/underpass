@@ -119,7 +119,7 @@ parseVariable context = P.try $ do
     name <- parseVariableName
     case get name context of
         Just (i, t) -> return (Variable i, t)
-        Nothing     -> fail "variable or identifier does not exist"
+        Nothing     -> fail $ "variable or identifier does not exist: " <> Text.unpack name
 
 parseVariableName :: Parser VarName
 parseVariableName = P.identifier

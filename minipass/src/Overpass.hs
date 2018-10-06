@@ -14,7 +14,7 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as TIO
 
-import           Context (VarName)
+import           Context (VarName, emptyContext)
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
@@ -22,9 +22,12 @@ import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
 import Minipass.Intermediate
+import Minipass.Constants
+import Minipass.Language (ListC(..), listTerm)
+
 import qualified LambdaTypes as T
 import           LambdaTypes ((/\))
-import TypedLambda (TSLTerm(..), uncurryApplication, substitute)
+import TypedLambda (TSLTerm(..), uncurryApplication, substitute, typify)
 
 data Statement
     = OutputSet VarName
@@ -66,6 +69,7 @@ data Value
     = StringValue Text
     | NumValue    Float
     | SetValue    VarName
+    | ListValue   [ListC]
 
 data Translator = Translator
     { lastVarIndex :: Int
@@ -97,15 +101,25 @@ translate t = translateApp (uncurryApplication t)
 translateApp :: [TTerm] -> State Translator Value
 translateApp [Constant (T.Basic (String)) (StringLiteral s)] = pure $ StringValue s
 translateApp [Constant (T.Basic (Num))    (NumLiteral    n)] = pure $ NumValue n
+translateApp [Constant _ Empty] = pure $ ListValue []
+translateApp [Constant _ ConsString, xTerm, xsTerm] = do
+    (StringValue x) <- translate xTerm
+    (ListValue  xs) <- translate xsTerm
+    pure $ ListValue (StringC x : xs)
+translateApp [Constant _ ConsNum, xTerm, xsTerm] = do
+    (NumValue   x) <- translate xTerm
+    (ListValue xs) <- translate xsTerm
+    pure $ ListValue (NumC x : xs)
+translateApp [Constant _ ConsList, xTerm, xsTerm] = do
+    (ListValue  x) <- translate xTerm
+    (ListValue xs) <- translate xsTerm
+    pure $ ListValue (ListC x : xs)
 translateApp term@[Constant _ And, left, right]  = translateFilter ((T.typeOf left) /\ (T.typeOf right)) term
-translateApp term@[Constant t@(T.Basic (Set _)) (TypeFilter _)] = translateFilter t term
-translateApp term@[Constant (T.Application _ (T.Application _ t)) Kv, _, _] = translateFilter t term
-translateApp term@[Constant (T.Application _ t) In, _] = translateFilter t term
-translateApp term@[Constant (T.Application _ (T.Application _ t)) Around, _, _] = translateFilter t term
+translateApp term@[Constant (T.Application _ (T.Application _ t)) Next, _, _] = translateFilter t term
+translateApp term@[Constant (T.Application _ t) Get, _] = translateFilter t term
 translateApp [Lambda (T.Application t@(T.Basic (Set _)) _) _ m, n] = do
     (SetValue nVar) <- translate n
-    translate $ substitute m 0 (Constant t $ FreeVar nVar)
-translateApp [Constant _ (FreeVar var)] = pure $ SetValue var
+    translate $ substitute m 0 (Application t (Constant (T.Application (T.Basic List) t) Get) (typify emptyContext $ toIntermediate $ listTerm [StringC "setVariable", StringC nVar]))
 translateApp term = fail $ "I don't know how to translate " <> (show term)
 
 translateFilter :: TTypes -> [TTerm] -> State Translator Value
@@ -120,19 +134,20 @@ walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
     (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
     (sets2, filters2) <- walkFilterTree $ uncurryApplication rightTerm
     return ((sets1 <> sets2), (HS.union filters1 filters2))
-walkFilterTree [Constant (T.Application _ (T.Application _ _)) Kv, keyTerm, valueTerm] = do
-    (StringValue key)   <- translate keyTerm
-    (StringValue value) <- translate valueTerm
-    pure ([], HS.singleton $ KvFilter key value)
-walkFilterTree [Constant (T.Application _ (T.Basic (Set _))) In, areaTerm] = do
-    (SetValue area) <- translate areaTerm
-    pure ([], HS.singleton $ AreaFilter area)
-walkFilterTree [Constant (T.Application _ (T.Application _ (T.Basic (Set _)))) Around, distTerm, fromTerm] = do
-    (NumValue dist) <- translate distTerm
-    (SetValue from) <- translate fromTerm
-    pure ([], HS.singleton $ AroundFilter dist from)
-walkFilterTree [Constant _ (TypeFilter _)]
-    = pure ([], HS.empty)
+walkFilterTree [Constant (T.Application _ _) Get, labelTerm] = do
+    (ListValue label)   <- translate labelTerm
+    case label of
+        [StringC "setVariable", StringC var] -> pure ([var], HS.empty)
+        [StringC "tagFilter", ListC [StringC _, StringC key, StringC value]]
+            -> pure ([], HS.singleton $ KvFilter key value)
+        _   -> fail $ "I don't know how to interpret this label: " <> show label
+walkFilterTree [Constant (T.Application _ (T.Application _ _)) Next, labelTerm, inTerm] = do
+    (ListValue label)   <- translate labelTerm
+    (SetValue  input)   <- translate inTerm
+    case label of
+        [StringC "in"] -> pure ([], HS.singleton $ AreaFilter input)
+        [StringC "around", NumC dist] -> pure ([], HS.singleton $ AroundFilter dist input)
+        _   -> fail $ "I don't know how to interpret this label: " <> show label
 walkFilterTree terms = do
     (SetValue result) <- translateApp terms
     return ([result], HS.empty)
@@ -152,4 +167,5 @@ renderProgram (value, Translator { statements })
     where
         outputValue (SetValue var)  = [OutputSet var]
         outputValue (NumValue x)    = [Comment $ "Number: " <> (Text.pack $ show x)]
+        outputValue (ListValue x)   = [Comment $ "List: " <> (Text.pack $ show x)]
         outputValue (StringValue x) = [Comment $ "String: " <> x]

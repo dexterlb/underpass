@@ -20,7 +20,7 @@ data ApplicativeType b
     | Bot
     deriving (Eq)
 
-class (Show b, Show a, Typeable a, Typeable b, PartialOrd b) => Typed a b | a -> b where  -- items of haskell type a have basic types from b
+class (Show b, Show a, Typeable a, Typeable b, PartialOrd b) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
