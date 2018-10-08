@@ -31,7 +31,7 @@ instance P.Parseable Types where
     parser = P.word
         $   P.string "Set"      $> Set
         <|> P.string "String"   $> String
-        <|> P.string "Num"      $> String
+        <|> P.string "Num"      $> Num
 
 type Term = LambdaTerm Types Constants
 

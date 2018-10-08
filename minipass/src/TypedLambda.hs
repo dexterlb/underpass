@@ -33,7 +33,7 @@ instance Typed c t => Typed (TSLTerm t c) t where
     typeOf (Variable     t _     ) = t
 
 instance (Show t, Show c) => Show (TSLTerm t c) where
-    show = showTerm emptyContext
+    show = showBareTerm emptyContext
 
 deriving instance (Eq c, Eq t, Typed c t) => Eq (TSLTerm t c)
 
@@ -44,6 +44,14 @@ showTerm context (Lambda t x a) = "λ " <> (Text.unpack x) <> " { " <> showTerm 
 showTerm context (Variable t i)
     | Just (x, _) <- at i context = (Text.unpack x) <> " : " <> (show t)
     | otherwise = "<var " <> (show i) <> "> : " <> (show t)
+
+showBareTerm :: (Show t, Show c) => VarContext t -> TSLTerm t c -> String
+showBareTerm _ (Constant _ c) = (show c)
+showBareTerm context (Application _ a b) = "(" <> showBareTerm context a <> " . " <> showBareTerm context b <> ")"
+showBareTerm context (Lambda t x a) = "λ " <> (Text.unpack x) <> " { " <> showBareTerm (push (x, t) context) a <> " }"
+showBareTerm context (Variable _ i)
+    | Just (x, _) <- at i context = (Text.unpack x)
+    | otherwise = "<var " <> (show i) <> ">"
 
 
 typify :: Typed c t => VarContext t -> LambdaTerm t c -> TSLTerm t c
@@ -114,7 +122,7 @@ fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)
     | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (tnx /\ tx) (ta' /\ ta)) x a', subVars)
-    | otherwise                            = throw $ L.UnknownVar 0
+    | otherwise                            = (Lambda (T.Application tx (ta' /\ ta)) x a', vars)
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a

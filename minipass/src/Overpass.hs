@@ -155,6 +155,9 @@ walkFilterTree terms = do
 translator :: Translator
 translator = Translator { lastVarIndex = 0, statements = [] }
 
+translateValue :: TTerm -> Value
+translateValue t = fst $ runState (translate t) translator
+
 tr :: TTerm -> Text
 tr t = renderProgram $ runState (translate t) translator
 

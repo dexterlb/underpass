@@ -23,7 +23,7 @@ pop (VarContext (x:xs)) = Just (x, VarContext xs)
 pop _                   = Nothing
 
 oneHotContext :: MSemiLattice t => Index -> (VarName, ApplicativeType t) -> VarContext t
-oneHotContext i x = VarContext $ x : (replicate i ("", bot))
+oneHotContext i x = VarContext $ reverse $ x : (replicate i ("", bot))
 
 meetContexts :: MSemiLattice t => VarContext t -> VarContext t -> VarContext t
 meetContexts (VarContext a) (VarContext b) = VarContext $ f a b

@@ -10,6 +10,7 @@ module Parsing
     , floatNumber
     , ps
     , pss
+    , forceParse
     ) where
 
 import Text.Megaparsec
@@ -35,7 +36,10 @@ pss :: Parseable t => String -> t
 pss = ps . T.pack
 
 ps :: Parseable t => Text -> t
-ps t = case parse (parser <* eof) "input" t of
+ps t = forceParse parser t
+
+forceParse :: Parser t -> Text -> t
+forceParse p t = case parse (p <* eof) "input" t of
     Right d     -> d
     Left errors -> error $ parseErrorPretty errors
 

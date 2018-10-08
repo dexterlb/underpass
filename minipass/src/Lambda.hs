@@ -124,6 +124,33 @@ parseVariable context = P.try $ do
 parseVariableName :: Parser VarName
 parseVariableName = P.identifier
 
+letLambda :: Typed c t => VarName -> LambdaTerm t c -> LambdaTerm t c -> LambdaTerm t c
+letLambda x a b = Application (Lambda x (typeOf a) b) a
+
+letLambdaN :: Typed c t => [(VarName, LambdaTerm t c)] -> LambdaTerm t c -> LambdaTerm t c
+letLambdaN l a = foldr f a l
+    where
+        f (x, b) c = letLambda x b c
+
+letContextN :: Typed c t => [(VarName, LambdaTerm t c)] -> VarContext t
+letContextN = foldl (flip f) emptyContext
+    where
+        f (x, b) c = push (x, typeOf b) c
+
+parseWrap :: (Typed c t, Parseable c, Parseable t) => [(VarName, LambdaTerm t c)] -> Parser (LambdaTerm t c)
+parseWrap l = (letLambdaN l) <$> fst <$> (parseTerm $ letContextN l)
+
+up :: Typed c t => LambdaTerm t c -> Index -> LambdaTerm t c
+up to n = up' to n 0
+
+up' :: Typed c t => LambdaTerm t c -> Index -> Index -> LambdaTerm t c
+up' (Variable x) d c
+    | x >= c = (Variable (x + d))
+    | otherwise = (Variable x)
+up' (Application m n) d c = Application (up' m d c) (up' n d c)
+up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
+up' (Constant m) _ _ = Constant m
+
 data LambdaException t c
     = CannotApply (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
     deriving (Typeable)
