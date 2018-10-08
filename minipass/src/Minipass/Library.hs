@@ -17,6 +17,10 @@ library =
     , ("amenity", pts "lambda n : String { get (consString 'tagFilter' (consList (consString '==' (consString 'amenity' (consString n empty))) empty)) }")
     , ("within",  pts "lambda dist : Num { next (consString 'around'   (consNum dist empty)) }")
     , ("in",      pts "next (consString 'in' empty)")
+    , ("nodes",   pts "get (consString 'all' (consString 'nodes' empty))")
+    , ("ways",   pts "get (consString 'all' (consString 'ways' empty))")
+    , ("relations",   pts "get (consString 'all' (consString 'relations' empty))")
+    , ("areas",   pts "get (consString 'all' (consString 'areas' empty))")
     ]
 
 parseWithLibrary :: Parser Term

@@ -142,6 +142,13 @@ transformApplications f term = fromMaybe (g term) $ f $ uncurryApplication term
         g (Lambda t x a) = Lambda t x (transformApplications f a)
         g term' = term'
 
+transform :: Typed c t => (TSLTerm t c -> Maybe (TSLTerm t c)) -> TSLTerm t c -> TSLTerm t c
+transform f term = fromMaybe (g term) $ f $ term
+    where
+        g (Application t a b) = Application t (transform f a) (transform f b)
+        g (Lambda t x a) = Lambda t x (transform f a)
+        g term' = term'
+
 uncurryApplication :: Typed c t => TSLTerm t c -> [TSLTerm t c]
 uncurryApplication = reverse . uncurryApplication'
     where
@@ -153,9 +160,9 @@ uncurryTypes = (map (\t -> (t, typeOf t))) . uncurryApplication
 
 -- reduction and substitution:
 
-betaReduce :: Typed c t => (T.ApplicativeType t -> Bool) -> TSLTerm t c -> TSLTerm t c
+betaReduce :: Typed c t => (TSLTerm t c -> Bool) -> TSLTerm t c -> TSLTerm t c
 betaReduce p (Application _ l@(Lambda (T.Application t _) _ m) n)
-    | p t = up (substitute m 0 (up n 1)) (-1)
+    | p n = up (substitute m 0 (up n 1)) (-1)
     | otherwise = Application t (betaReduce p l) (betaReduce p n)
 betaReduce _ (Application _ l@(Lambda _ _ _) _) = error $ "fck u " <> show l
 betaReduce p (Lambda t x m)                   = Lambda t x    (betaReduce p m)

@@ -53,12 +53,12 @@ renderOsmType OsmWay = "way"
 renderOsmType OsmArea = "area"
 
 renderFilterExpr :: FilterExpr -> Text
-renderFilterExpr (KvFilter k v) = "[\"" <> k <> "\" = \"" <> v <> "\"]"
+renderFilterExpr (KvFilter c k v) = "[\"" <> k <> "\" " <> c <> " \"" <> v <> "\"]"
 renderFilterExpr (AroundFilter dist var) = "(around." <> var <> ":" <> (Text.pack $ show dist) <> ")"
 renderFilterExpr (AreaFilter var) = "(area." <> var <> ")"
 
 data FilterExpr
-    = KvFilter Text Text
+    = KvFilter Text Text Text
     | AroundFilter Float VarName
     | AreaFilter VarName
     deriving (Show, Eq, Generic)
@@ -138,8 +138,9 @@ walkFilterTree [Constant (T.Application _ _) Get, labelTerm] = do
     (ListValue label)   <- translate labelTerm
     case label of
         [StringC "setVariable", StringC var] -> pure ([var], HS.empty)
-        [StringC "tagFilter", ListC [StringC _, StringC key, StringC value]]
-            -> pure ([], HS.singleton $ KvFilter key value)
+        [StringC "tagFilter", ListC [StringC comparator, StringC key, StringC value]]
+            -> pure ([], HS.singleton $ KvFilter comparator key value)
+        [StringC "all"] -> pure ([], HS.empty)  -- only filter the type, return all objects
         _   -> fail $ "I don't know how to interpret this label: " <> show label
 walkFilterTree [Constant (T.Application _ (T.Application _ _)) Next, labelTerm, inTerm] = do
     (ListValue label)   <- translate labelTerm
