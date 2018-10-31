@@ -56,11 +56,13 @@
 
 \theoremstyle{definition} \newtheorem{defn}{Definition}
 
-\newcommand{\lc}{\backslash}
-\newcommand{\rc}{/}
-\newcommand{\mc}{|}
-\newcommand{\lb}{[}
-\newcommand{\rb}{]}
+\newcommand{\lc}{\textcolor{red}{\backslash}}
+\newcommand{\rc}{\textcolor{red}{/}}
+\newcommand{\mc}{\textcolor{red}{|}}
+\newcommand{\lb}{\textcolor{red}{[}}
+\newcommand{\rb}{\textcolor{red}{]}}
+\newcommand{\lp}{\textcolor{red}{(}}
+\newcommand{\rp}{\textcolor{red}{)}}
 
 \title{ble ble}
 \author{Ангел Ангелов <dexterlb@qtrp.org>}
@@ -87,8 +89,8 @@ category features, category variables and feature variables.
     For a set $\tau$, its \emph{categorial closure} $C(\tau)$ is defined as follows:
     \begin{enumerate}
         \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
-        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow (X \rc Y) \in C(\tau)$
-        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow (X \lc Y) \in C(\tau)$
+        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
+        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
     \end{enumerate}
 
     Letters like $A, B, C$ will be used to denote atomic categories (produced
@@ -99,18 +101,13 @@ category features, category variables and feature variables.
     used to denote any slash (when the distinction between $\lc$ and $\rc$
     doesn't matter). Categories will also be considered left-associative.
     Thus we can write $X_1 \mc X_2 \mc X_3 \mc X_4$ to denote
-    $(((X_1 \mc X_2) \mc X_3) \mc X_4)$. It's useful to note that $X_1$ may
-    be decomposed into its constitutents until it becomes an atomic category:
+    $\lp \lp \lp X_1 \mc X_2 \rp \mc X_3 \rp \mc X_4 \rp$. It's useful to note that $X_1$ may
+    be decomposed into its constituents until it becomes an atomic category:
     this means that every category can be written in the form
     $A \mc X_1 \mc X_2 \mc ... \mc X_n$, where $A$ is atomic. We say that
     $n$ is the category's \emph{arity}. $A$ is called its \emph{target} or
     return type, while
     $X_1 ... X_n$ are called its \emph{arguments} or argument types.
-\end{defn}
-
-\begin{defn}
-    For a set $\tau$, the set of \emph{categorial compositions} is:
-    \[ \hat{C}(\tau) = (\{ \lb \} C(\tau) \{ \rb \})^* \]
 \end{defn}
 
 \begin{defn}
@@ -125,6 +122,7 @@ category features, category variables and feature variables.
     \end{itemize}
 \end{defn}
 
+\pagebreak
 \subsection{Derivations}
 
 \begin{defn}
