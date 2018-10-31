@@ -1,0 +1,145 @@
+ % !TEX program = xelatex
+\documentclass[12pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{Noto Sans Mono}
+
+\usepackage[bulgarian,english]{babel}
+\usepackage{indentfirst}
+\usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
+\usepackage{url}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{syntax}
+\renewcommand{\baselinestretch}{1.1}
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}
+
+
+\lstset{
+	backgroundcolor = \color{light-gray},
+    language = C,
+    xleftmargin = 1cm,
+    framexleftmargin = 1em,
+    basicstyle=\ttfamily,
+	moredelim=[is][\underbar]{_}{_},
+}
+
+\usepackage{color}
+\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
+\definecolor{light-gray}{gray}{0.9}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\usepackage{tabularx}
+
+
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+
+\theoremstyle{definition} \newtheorem{defn}{Definition}
+
+\newcommand{\lc}{\backslash}
+\newcommand{\rc}{/}
+\newcommand{\mc}{|}
+
+\title{ble ble}
+\author{Ангел Ангелов <dexterlb@qtrp.org>}
+\date{2018}
+
+\begin{document}
+% uncomment for fancy title:
+% \maketitle
+% \thispagestyle{empty}
+% \tableofcontents
+% \pagebreak
+
+\section{Pure CCG}
+The CCG formalism is used in a multitude of variants. We will now give a basic
+form which is of little practical use, but can be easily extended.
+
+To define what a CCG is, we will first define \emph{variables} and
+\emph{rule templates}.
+
+\begin{defn}
+    Let $\mathbb{V}$ be a countable set. We will call its elements
+    \emph{variables} and will denote them with small letters near the end
+    of the latin alphabet: $x, y, z$. This set will be implicit from now on.
+\end{defn}
+
+\begin{defn}
+    For a set $\tau$, its \emph{categorial closure} $C(\tau)$ is defined as follows:
+    \begin{enumerate}
+        \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow (X \rc Y) \in C(\tau)$
+        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow (X \lc Y) \in C(\tau)$
+    \end{enumerate}
+
+    Letters like $A, B, C$ will be used to denote atomic categories (produced
+    by rule \ref{itm:atomic}), while letters like $X, Y, Z$ will be used to
+    denote complex categories (produced by rules \ref{itm:left} and \ref{itm:right}).
+
+    We will call such expressions \emph{categories}. The $\mc$ symbol will be
+    used to denote any slash (when the distinction between $\lc$ and $\rc$
+    doesn't matter). Categories will also be considered left-associative.
+    Thus we can write $X_1 \mc X_2 \mc X_3 \mc X_4$ to denote
+    $(((X_1 \mc X_2) \mc X_3) \mc X_4)$. It's useful to note that $X_1$ may
+    be decomposed into its constitutents until it becomes an atomic category:
+    this means that every category can be written in the form
+    $A \mc X_1 \mc X_2 \mc ... \mc X_n$, where $A$ is atomic. We say that
+    $n$ is the category's \emph{arity}. $A$ is called its \emph{target} or
+    return type, while
+    $X_1 ... X_n$ are called its \emph{arguments} or argument types.
+\end{defn}
+
+\begin{defn}
+    For a set $\tau$, the set of \emph{categorial compositions} is:
+    \[ \hat{C}(\tau) = C(\tau) (\{\circ\} C(\tau))^* \]
+\end{defn}
+
+\begin{defn}
+    $ G = \langle \Sigma, N, f, R \rangle $ is a \emph{Combinatory Categorial Grammar}, where
+    \begin{itemize}
+        \item $ \Sigma $ is the set of \emph{terminals}
+        \item $ N $ is the set of \emph{non-terminals} (atomic categories)
+        \item $ f : \Sigma \rightarrow C(N) $ is the function for interpreting
+            terminals
+        \item $ R $ is a \textbf{finite} set of \emph{rule templates}:
+            \begin{itemize}
+                \item $x \rc y \circ y \mc z_1 \mc z_2 \mc ... \mc z_n \rightarrow x \mc z_1 \mc z_2 \mc ... \mc z_n$: forward  composition
+                \item $y \mc z_1 \mc z_2 \mc ... \mc z_n \circ x \lc y \rightarrow x \mc z_1 \mc z_2 \mc ... \mc z_n$: backward composition
+            \end{itemize}
+
+            We call $x \mc y$ the \emph{primary category} of the template, and
+            we call $y \mc z_1 \mc z_2 \mc ... \mc z_n$ its \emph{secondary category}
+            and we call the number $n$ the \emph{arity} of the template.
+            Formally, we may encode such a template as a pair of a primary category
+            slash and a string of secondary category slashes:
+
+            \[ R \subset \{ \rc, \lc \} \times \{ \rc, \lc \}^* \]
+
+            This way, for example the template
+            $x \rc y \circ y \lc w \rc z \rightarrow x \lc w \rc z$
+            may be encoded as $(\rc, \lc \rc)$.
+    \end{itemize}
+\end{defn}
+
+\end{document}
+
