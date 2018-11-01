@@ -16,6 +16,7 @@
 \usepackage{xcolor}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{adjustbox}
 \usepackage{listings}
@@ -55,6 +56,7 @@
 \setlength{\grammarindent}{12em} % increase separation between LHS/RHS
 
 \theoremstyle{definition} \newtheorem{defn}{Definition}
+\theoremstyle{definition} \newtheorem{prop}{Proposition}
 
 \newcommand{\lc}{\textcolor{red}{\backslash}}
 \newcommand{\rc}{\textcolor{red}{/}}
@@ -129,9 +131,9 @@ category features, category variables and feature variables.
     Basic derivation
     \begin{itemize}
         \item If $ a \in \Sigma, X \in f(a) $, then \[ a \rightarrow \lb X \rb \]
-        \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), m \leq n $
+        \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
-        \item If $ X \lc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), m \leq n $
+        \item If $ X \lc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc Y \rb \]
     \end{itemize}
 \end{defn}
@@ -140,13 +142,123 @@ category features, category variables and feature variables.
     Derivation process
     \begin{itemize}
         \item If $\beta \rightarrow \beta'$, then $\alpha \beta \gamma \Rightarrow \alpha \beta' \gamma$
-        \item Let $\Rightarrow^*$ be the transitive closure of $\Rightarrow$.
+        \item Let $\Rightarrow^*$ be the reflexive and transitive closure of $\Rightarrow$.
         \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
     \end{itemize}
 \end{defn}
 
+\begin{prop}
+    Properties of CCG derivation
+    \begin{itemize}
+        \item $\varepsilon \notin L(G)$
+        \item If $\alpha \Rightarrow \alpha', \beta \Rightarrow \beta'$,
+              then $\alpha \beta \Rightarrow \alpha' \beta'$
+    \end{itemize}
+\end{prop}
 
+\subsection{The CYK algorithm}
 
+This is the most straight-forward algorithm for parsing a string with the help
+of CCG. It is easy to understand, but has exponential runtime with respect to
+the input word length.
+
+Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
+be a word.
+
+The algorithm recursively builds a set $P$ of \emph{items} in the form
+$(X, i, j)$, $X \in C(N), 1 \leq i \leq j \leq k$ and aims to produce the item
+$(S, 1, k)$.
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P, 1 \leq i \leq p < j \leq k$,
+        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k$,
+        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+\end{enumerate}
+
+To reason about the algorithm, we will use the following invariant:
+\begin{equation}
+    \lb X \rb \Rightarrow^* w_i ... w_j \iff (X, i, j) \in P
+\end{equation}
+
+\begin{prop}
+    The algorithm is \textbf{correct}: if $(S, 1, k) \in P$, then $w \in L(G)$.
+\end{prop}
+\begin{proof}
+    We have to prove the right-to-left direction of the invariant:
+    \begin{equation}\label{eq:left}
+        (X, i, j) \in P \implies \lb X \rb \Rightarrow^* w_i ... w_j
+    \end{equation}
+
+    From which would follow $ (S, 1, k) \in P \implies \lb S \rb \Rightarrow^* w_1 ... w_k$,
+    which is what we need to prove.
+
+    So, let $(X, i, j) \in P$ and inductively suppose that (\ref{eq:left}) is true
+    for any shorter substrings of $w$. There are 3 rules by which this item has appeared:
+    \begin{enumerate}
+        \item $i = j, X \in f(w_i)$: This means
+            $\lb X \rb \rightarrow w_i \implies \lb X \rb \Rightarrow^* w_i = w_i ... w_j$
+        \item \label{itm:rightslash} $i < j$ and
+            \begin{itemize}
+                \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$
+                \item $(W \rc Y, i, p) \in P$
+                \item $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$
+            \end{itemize}
+            for some $i \leq p < j, m \leq n$. By inductive hypothesis,
+            $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
+            and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_{p + 1} ... w_j$.
+            Then, by the definition of $\rightarrow$ and by concatenativity of
+            $\Rightarrow$, we have:
+            \[
+                \lb X \rb = \lb W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \rightarrow
+                \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \Rightarrow^*
+                w_i ... w_p w_{p + 1} ... w_j = w
+            \]
+        \item $i < j$ and (analogous to \ref{itm:rightslash})
+            \begin{itemize}
+                \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$
+                \item $(W \lc Y, p + 1, j) \in P$
+                \item $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$
+            \end{itemize}
+            for some $i \leq p < j, m \leq n$. By inductive hypothesis,
+            $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_i ... w_p$.
+            Then, by the definition of $\rightarrow$ and by concatenativity of
+            $\Rightarrow$, we have:
+            \[
+                \lb X \rb = \lb W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \rightarrow
+                \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb
+                \Rightarrow^*
+                w_i ... w_p w_{p + 1} ... w_j = w
+            \]
+    \end{enumerate}
+\end{proof}
+
+\begin{prop}
+    The algorithm is \textbf{complete}: if $w \in L(G)$, then $(S, 1, k) \in P$.
+\end{prop}
+\begin{proof}
+    We have to prove the left-to-right direction of the invariant:
+    \begin{equation}\label{eq:right}
+        \lb X \rb \Rightarrow^* w_i ... w_j \implies (X, i, j) \in P
+    \end{equation}
+    From which would follow $ \lb S \rb \Rightarrow^* w_1 ... w_k \implies (S, 1, k) \in P$,
+    which is what we need to prove.
+
+    Let $ \lb X \rb \Rightarrow^* w_i ... w_j, i \leq j $.
+    Then \[
+        \lb X \rb \Rightarrow^* \alpha \beta \gamma
+        \Rightarrow \alpha \beta' \gamma
+        \Rightarrow^* w_i ... w_j \text{\quad where \quad}
+        \beta \rightarrow \beta'
+        \]
+\end{proof}
 
 
 \end{document}
