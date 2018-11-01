@@ -242,6 +242,8 @@ To reason about the algorithm, we will use the following invariant:
     \end{enumerate}
 \end{proof}
 
+\pagebreak
+
 \begin{prop}
     The algorithm is \textbf{complete}: if $w \in L(G)$, then $(S, 1, k) \in P$.
 \end{prop}
@@ -253,7 +255,12 @@ To reason about the algorithm, we will use the following invariant:
     From which would follow $ \lb S \rb \Rightarrow^* w_1 ... w_k \implies (S, 1, k) \in P$,
     which is what we need to prove.
 
-    Let $ \lb X \rb \Rightarrow^* w_i ... w_j, i \leq j $.
+    Let $ \lb X \rb \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = w_i ... w_j, i \leq j $
+    be a derivation. We now perform induction over the derivation steps from
+    right to left:
+    \begin{itemize}
+        \item $\alpha_r$: actually, that doesn't help at all :(
+    \end{itemize}
     Then \[
         \lb X \rb \Rightarrow^* \alpha \beta \gamma
         \Rightarrow \alpha \beta' \gamma
