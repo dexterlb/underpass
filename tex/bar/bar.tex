@@ -118,7 +118,8 @@ category features, category variables and feature variables.
         \item $ \Sigma $ is the set of \emph{terminals}
         \item $ N $ is the set of \emph{non-terminals} (atomic categories)
         \item $ S \in N $ is the \emph{target category}
-        \item $ f : \Sigma \rightarrow C(N) $ is the function for interpreting
+        \item $ f : \Sigma \rightarrow \hat{N} $, where $\hat{N}$ is the set of
+            \textbf{finite} subsets of $C(N)$, is the function for interpreting
             terminals
         \item $ n \in \mathbb{N} $ is the \emph{maximum composition arity}
     \end{itemize}
@@ -153,6 +154,7 @@ category features, category variables and feature variables.
         \item $\varepsilon \notin L(G)$
         \item If $\alpha \Rightarrow \alpha', \beta \Rightarrow \beta'$,
               then $\alpha \beta \Rightarrow \alpha' \beta'$
+              (\emph{concatenativity})
     \end{itemize}
 \end{prop}
 
@@ -171,9 +173,9 @@ $(S, 1, k)$.
 
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P, 1 \leq i \leq p < j \leq k$,
+    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k$,
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
 \end{enumerate}
 
