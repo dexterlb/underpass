@@ -295,8 +295,45 @@ To reason about the algorithm, we will use the following invariant:
     From which would follow $ \lb S \rb \Rightarrow^* w_1 ... w_k \implies (S, 1, k) \in P$,
     which is what we need to prove.
 
-    Let $ \lb X \rb \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = w_i ... w_j, i \leq j $
-    be a derivation for $G$.
+    Let $\mu: \lb X \rb \Rightarrow \alpha \Rightarrow^* w_i ... w_j$
+    be a derivation for $G$. We will prove (\ref{eq:right}) by induction over
+    $\mu$ from right to left.
+
+    The only way for $\lb X \rb$ to appear to the left
+    of a production is $\lb X \rb \rightarrow \alpha$ - we can now look at
+    all ways for this to happen.
+    \begin{enumerate}
+        \item $\alpha = a \in \Sigma, X \in f(a)$. Then $w = \alpha, i = j, w_i = a$,
+            which means $(X, i, i) = (X, i, j) \in P$.
+        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
+            $\alpha = \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$.
+            Since $\mu$ is also a derivation in the context-free
+            grammar $G^C_{\mu}$ where $\lb W \rc Y \rb$ and $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$
+            are non-terminals, there exists $p$ such that
+            \begin{itemize}
+                \item $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
+                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that
+            $(W \rc Y, i, p) \in P$ and
+            $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$. Thus,
+            by the algorithm definition,
+            $(X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$.
+        \item (analogous) $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
+            $\alpha = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$.
+            Since $\mu$ is also a derivation in the context-free
+            grammar $G^C_{\mu}$ where $\lb W \lc Y \rb$ and $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$
+            are non-terminals, there exists $p$ such that
+            \begin{itemize}
+                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_i ... w_p$
+                \item $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that
+            $(W \lc Y, p + 1, j) \in P$ and
+            $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$. Thus,
+            by the algorithm definition,
+            $(X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$.
+    \end{enumerate}
 
 \end{proof}
 
