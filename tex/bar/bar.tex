@@ -23,6 +23,7 @@
 \usepackage{syntax}
 \renewcommand{\baselinestretch}{1.1}
 \setlength{\emergencystretch}{3em}
+\setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
 
 
@@ -34,6 +35,13 @@
     basicstyle=\ttfamily,
 	moredelim=[is][\underbar]{_}{_},
 }
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
 
 \usepackage{color}
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
@@ -110,6 +118,15 @@ category features, category variables and feature variables.
     $n$ is the category's \emph{arity}. $A$ is called its \emph{target} or
     return type, while
     $X_1 ... X_n$ are called its \emph{arguments} or argument types.
+
+    For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
+    finite set, we define $C(\alpha)$ to be the set of all categories which
+    can be found in $\alpha$, namely:
+    \begin{itemize}
+        \item $C(\varepsilon) = \emptyset$
+        \item for $a \in \Sigma$, $C(a\beta) = C(\beta)$
+        \item for $X \in C(\tau)$, $C(\lb X \rb \beta) = X \cup C(\beta)$
+    \end{itemize}
 \end{defn}
 
 \begin{defn}
@@ -129,9 +146,12 @@ category features, category variables and feature variables.
 \subsection{Derivations}
 
 \begin{defn}
-    Basic derivation
+    For a CCG $G$, we can construct a set $R \subset (\lb C(N) \rb) \times (\Sigma \cup \lb C(N) \rb)^*$
+    of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$, we will write
+    $\alpha \rightarrow \beta$.
+
     \begin{itemize}
-        \item If $ a \in \Sigma, X \in f(a) $, then \[ a \rightarrow \lb X \rb \]
+        \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
         \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
         \item If $ X \lc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
@@ -144,9 +164,29 @@ category features, category variables and feature variables.
     \begin{itemize}
         \item If $\beta \rightarrow \beta'$, then $\alpha \beta \gamma \Rightarrow \alpha \beta' \gamma$
         \item Let $\Rightarrow^*$ be the reflexive and transitive closure of $\Rightarrow$.
+        \item If $\alpha \Rightarrow^* \beta$, we can write
+            \[ \mu: \alpha \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = \beta \]
+            and call $\mu$ a \emph{derivation} for $G$. Then $C(\mu) = \bigcup\limits_{i=1}^{r} C(\alpha_i)$
+            is the set of all categories used in $\mu$.
         \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
     \end{itemize}
 \end{defn}
+
+\begin{prop}
+    A CCG $G = \langle \Sigma, N, S, f, n \rangle$ is equivalent to an
+    (albeit infinite) context-free grammar
+    $G^C = \langle \Sigma, \lb C(N) \rb, R, \lb S \rb \rangle$.
+
+    Moreover, let $\mu: \lb X \rb \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r$
+    be a derivation for $G$.
+    We can construct a finite context-free grammar
+    $G_\mu^C = \langle \Sigma, \lb C(\mu) \rb, \restr{R}{\lb C(\mu) \rb}, \lb S \rb \rangle$
+    which produces $\mu$.
+\end{prop}
+\begin{proof}
+    This follows because our definition of $\Rightarrow$ for $G$ and the context-free
+    definition of $\Rightarrow$ for $G^C$ are the same.
+\end{proof}
 
 \begin{prop}
     Properties of CCG derivation
@@ -175,7 +215,9 @@ $(S, 1, k)$.
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
     \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
+    \
+
+        Moreover, item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
 \end{enumerate}
 
@@ -242,8 +284,6 @@ To reason about the algorithm, we will use the following invariant:
     \end{enumerate}
 \end{proof}
 
-\pagebreak
-
 \begin{prop}
     The algorithm is \textbf{complete}: if $w \in L(G)$, then $(S, 1, k) \in P$.
 \end{prop}
@@ -256,19 +296,21 @@ To reason about the algorithm, we will use the following invariant:
     which is what we need to prove.
 
     Let $ \lb X \rb \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = w_i ... w_j, i \leq j $
-    be a derivation. We now perform induction over the derivation steps from
-    right to left:
-    \begin{itemize}
-        \item $\alpha_r$: actually, that doesn't help at all :(
-    \end{itemize}
-    Then \[
-        \lb X \rb \Rightarrow^* \alpha \beta \gamma
-        \Rightarrow \alpha \beta' \gamma
-        \Rightarrow^* w_i ... w_j \text{\quad where \quad}
-        \beta \rightarrow \beta'
-        \]
+    be a derivation for $G$.
+
 \end{proof}
 
+\subsection{The Vijay-Shanker algorithm}
+
+This algorithm behaves like the CYK algorithm for derivations which use only
+short categories. In order to pack longer categories in a way which wouldn't
+result in polynomial complexity, it uses some clever tricks.
+
+The algorithm uses two types of items:
+\begin{enumerate}
+    \item $(A, \alpha, i, j), A \in N, \alpha \in \{ \lc, \rc \} C(N), 1 \leq i \leq j \leq k$
+    \item $(A, \alpha, T, i, j, p, q), A \in N, T \in \{ \lc, \rc \} N, \alpha \in \{ \lc, \rc \} C(N), 1 \leq i \leq p \leq q \leq j \leq k$
+\end{enumerate}
 
 \end{document}
 
