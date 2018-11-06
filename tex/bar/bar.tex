@@ -130,6 +130,11 @@ category features, category variables and feature variables.
 \end{defn}
 
 \begin{defn}
+    Length of category: for $X = A \mc X_1 \mc X_2 \mc ... \mc X_n \in C(\tau)$,
+    $|X| = n$.
+\end{defn}
+
+\begin{defn}
     $ G = \langle \Sigma, N, S, f, n \rangle $ is a \emph{Combinatory Categorial Grammar}, where
     \begin{itemize}
         \item $ \Sigma $ is the set of \emph{terminals}
@@ -213,11 +218,9 @@ $(S, 1, k)$.
 
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
+    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \
-
-        Moreover, item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P, 1 \leq i \leq p < j \leq k, 0 \leq m \leq n$,
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$,
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
 \end{enumerate}
 
@@ -319,8 +322,9 @@ To reason about the algorithm, we will use the following invariant:
             $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$. Thus,
             by the algorithm definition,
             $(X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$.
-        \item (analogous) $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
-            $\alpha = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$.
+        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
+            $\alpha = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$
+            (analogous to \ref{eq:right}).
             Since $\mu$ is also a derivation in the context-free
             grammar $G^C_{\mu}$ where $\lb W \lc Y \rb$ and $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$
             are non-terminals, there exists $p$ such that
@@ -343,10 +347,48 @@ This algorithm behaves like the CYK algorithm for derivations which use only
 short categories. In order to pack longer categories in a way which wouldn't
 result in polynomial complexity, it uses some clever tricks.
 
+Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
+be a word.
+
+Let $c' = max \{ |X| \mid X \in f(a), a \in \Sigma \}$ and $c = max \{ c', n \}$.
+
 The algorithm uses two types of items:
 \begin{enumerate}
-    \item $(A, \alpha, i, j), A \in N, \alpha \in \{ \lc, \rc \} C(N), 1 \leq i \leq j \leq k$
+    \item $(X, i, j), X \in C(N), 1 \leq i \leq j \leq k$
     \item $(A, \alpha, T, i, j, p, q), A \in N, T \in \{ \lc, \rc \} N, \alpha \in \{ \lc, \rc \} C(N), 1 \leq i \leq p \leq q \leq j \leq k$
+\end{enumerate}
+
+As with the CYK algorithm, we build a set ${P}$ of items and aims to produce the item
+$(S, 1, k)$.
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc B, i, t) \in P, (B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $|X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq c$
+        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+    \item If $(A \mc_* X \rc B, i, t) \in P, (B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $|A \mc_* X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| > c$
+        then $(A, \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, k) \in P$
+    \item If $(A, \alpha \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$, $\alpha \neq \varepsilon$,
+        $m > 1$, then $(A, \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, t) \in P$.
+    \item If $(A, \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, T, i, j, p, q) \in P$.
+    \item If $(A, \alpha \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_* Z, t + 1, j) \in P$,
+        then $(A, \alpha \mc_* Z, T, i, j, p, q) \in P$.
+    \item If $(A, \alpha \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $\alpha \neq \varepsilon$,
+        then $(A, \alpha, T, i, j, p, q) \in P$.
+    \item If $(A, \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A \beta T, i, j) \in P$,
+        then $(A \beta, i, j) \in P$.
+    \item If $(A, \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A, \beta T, T', i, j, r, s) \in P$,
+        then $(A, \beta, i, j, r, s) \in P$.
+
+
 \end{enumerate}
 
 \end{document}
