@@ -1,4 +1,7 @@
- % !TEX program = xelatex
+%%% Local Variables: 
+%%% TeX-engine: xetex
+%%% End: 
+% !TEX program = xelatex
 \documentclass[12pt]{extarticle}
 \usepackage[T1]{fontenc}
 \usepackage{fontspec}
@@ -105,11 +108,11 @@ category features, category variables and feature variables.
 
     Letters like $A, B, C$ will be used to denote atomic categories (produced
     by rule \ref{itm:atomic}), while letters like $X, Y, Z$ will be used to
-    denote complex categories (produced by rules \ref{itm:left} and \ref{itm:right}).
+    denote potentually complex categories (produced by an arbitrary combination of tjw rules above).
 
     Such expressions are called \emph{categories}. The $\mc$ symbol will be
     used to denote any slash (when the distinction between $\lc$ and $\rc$
-    doesn't matter). Categories will also be considered left-associative.
+    doesn't matter). The two slashes will also be considered left-associative.
     Thus we can write $X_1 \mc X_2 \mc X_3 \mc X_4$ to denote
     $\lp \lp \lp X_1 \mc X_2 \rp \mc X_3 \rp \mc X_4 \rp$. It's useful to note that $X_1$ may
     be decomposed into its constituents until it becomes an atomic category:
@@ -119,8 +122,14 @@ category features, category variables and feature variables.
     return type, while
     $X_1 ... X_n$ are called its \emph{arguments} or argument types.
 
+    In what follows, for any given set $\tau$ we will consider the
+    (potentially infinite) alphabet in which categories are considered
+    as letters. To avoid syntactic ambiguity, when categories are used
+    as lettets we will enclose them in square brackets: $\lb X
+    \rb$. We will denote this alphabet as $\lb C(\tau) \rb$.
+
     For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
-    finite set, we define $C(\alpha)$ to be the set of all categories which
+    finite set, we define $C(\alpha)$\footnote{Clash of notation with categorial closure} to be the set of all categories which
     can be found in $\alpha$, namely:
     \begin{itemize}
         \item $C(\varepsilon) = \emptyset$
@@ -130,7 +139,7 @@ category features, category variables and feature variables.
 \end{defn}
 
 \begin{defn}
-    Length of category: for $X = A \mc X_1 \mc X_2 \mc ... \mc X_n \in C(\tau)$,
+    Breadth\footnote{Length usually denotes the total number of symbols, while here you want the number of arguments instead. Have you considered ``arity''?} of category: for $X = A \mc X_1 \mc X_2 \mc ... \mc X_n \in C(\tau)$,
     $|X| = n$.
 \end{defn}
 
