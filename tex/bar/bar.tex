@@ -19,6 +19,8 @@
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{syntax}
+\usepackage{tikz-qtree}
+\usepackage{tikz-qtree-compat}
 \renewcommand{\baselinestretch}{1.1}
 \setlength{\emergencystretch}{3em}
 \setlength{\parskip}{5pt}
@@ -40,6 +42,18 @@
   \vphantom{\big|} % pretend it's a little taller at normal size
   \right|_{#2} % this is the delimiter
   }}
+
+\newcommand\tree[1]{
+    \begin{tikzpicture}
+    \Tree[ #1 ]
+    \end{tikzpicture}
+}
+
+\newcommand\centree[1]{
+    \begin{center}
+    \tree{ #1 }
+    \end{center}
+}
 
 \usepackage{color}
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
@@ -167,8 +181,16 @@ category features, category variables and feature variables.
         \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
         \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+            Furthermore, we call $ X \rc Y $ the \emph{primary category} of the rule
+            instance, while $ Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ is its
+            \emph{secondary category}.
+            We also call $ X \rc Y $ the \emph{left category} of the rule instance,
+            and $  Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ its \emph{right category}.
         \item If $ X \lc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc Y \rb \]
+            Here, $ X \lc Y $ is the \emph{primary} and \emph{right} category,
+            while $ Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ is the \emph{secondary}
+            and \emph{left} category.
     \end{itemize}
 \end{defn}
 
@@ -183,6 +205,59 @@ category features, category variables and feature variables.
             is the set of all categories used in $\mu$.
         \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
     \end{itemize}
+\end{defn}
+
+\begin{defn}
+    Derivation tree
+
+    Derivation trees for CCG are ordered binary trees with categories labeling
+    their internal nodes and terminals labeling their leaves.
+
+    We shall also consider the concept of \emph{primary edges} in the context
+    of derivation trees, in correspondence to the concept of
+    \emph{primary categories} in the context of derivations. Primary edges
+    will be drawn with a thick line.
+
+    \begin{itemize}
+        \item If $ a \in \Sigma, X \in f(a) $, then
+            \centree{.$X$ \edge[very thick]; $a$ }
+            is a derivation tree for $ \lb X \rb \Rightarrow^* a $
+        \item If
+            \begin{center}
+                \tree{.{$X \rc Y$} \edge[roof]; $\alpha$}
+                and
+                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
+            \end{center}
+
+            are derivation trees for $\lb X \rc Y \rb \Rightarrow^* \alpha$ and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \Rightarrow^* \beta$ respectively,
+            where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
+            \centree{.{$X \rc Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                \edge[very thick];
+                [ .{$X \rc Y$} \edge[roof]; $\alpha$ ]
+                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
+            }
+            is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+            \Rightarrow^* \alpha \beta $.
+        \item If
+            \begin{center}
+                \tree{.{$X \lc Y$} \edge[roof]; $\alpha$}
+                and
+                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
+            \end{center}
+
+            are derivation trees for $\lb X \lc Y \rb \Rightarrow^* \alpha$ and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \Rightarrow^* \beta$ respectively,
+            where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
+            \centree{.{$X \rc Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
+                \edge[very thick];
+                [ .{$X \lc Y$} \edge[roof]; $\alpha$ ]
+            }
+            is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+            \Rightarrow^* \beta \alpha $.
+    \end{itemize}
+
 \end{defn}
 
 \begin{prop}\label{prop:cfg}
@@ -412,9 +487,9 @@ $(S, 1, k)$.
     \item If $(A, \rc, B, T, i, t, p, q) \in P$,
         $(B, t + 1, j) \in P$, $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, i, j) \in P$,
         then $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m, i, j) \in P$.
-    \item If $(A, \rc B, T, i, t, p, q) \in P$,
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
         $(B, t + 1, j) \in P$, $(A, \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, T', i, j, r, s) \in P$,
-        then $(A, \mc_1, X_1 \mc_2 X_2 ... \mc_m X_m, i, j, r, s) \in P$.
+        then $(A, \mc_1, X_1 \mc_2 X_2 ... \mc_m X_m, T', i, j, r, s) \in P$.
 \end{enumerate}
 
 The other 8 rules regarding backward composition
@@ -473,7 +548,7 @@ The invariant here is composed of two parts:
         $|A \mc_* X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| > c$,
         $(A, \mc_1, Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, k) \in P$
 
-        Here $\nu = \rc$, $Y = X$.
+        Here $\nu = \mc_*$, $Y = X$.
         \begin{itemize}
             \item $|Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq |B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq c$
             \item $
@@ -487,7 +562,46 @@ The invariant here is composed of two parts:
             \item $\lb A \mc_* X \rc B \rb \Rightarrow^* w_i ... w_t$
         \end{itemize}
 
+    \item $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $m > 1$,
+        $(A, \xi, Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, t) \in P$.
+
+        Here $\nu = ?$, $Y = X \rc B$.
+        \begin{itemize}
+            \item $|Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq |B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq c$
+            \item $
+                \lb A ? X \rc B \xi Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \rightarrow
+                \lb A ? X \xi B \rb \lb B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \\
+                \Rightarrow^* \lb A ? X \rc B \rb w_{t + 1} ... w_j
+                = w_i ... w_{i - 1} \lb A \mc_* X \rc B \rb w_{t + 1} ... w_j
+                $
+            \item $\lb A \mc_* X \rc B \rb \Rightarrow^* w_i ... w_t$
+        \end{itemize}
+
+
+
     \iffalse
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \xi, Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, t) \in P$.
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
+        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \mc_1, Z_1 \mc_2 Z_2 ... \mc_m Z_m, T, i, j, p, q) \in P$.
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B \mc_* Z, t + 1, j) \in P$,
+        then $(A, \xi, X \mc_* Z, T, i, j, p, q) \in P$.
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$,
+        then $(A, \xi, X, T, i, j, p, q) \in P$.
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, i, j) \in P$,
+        then $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m, i, j) \in P$.
+    \item If $(A, \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A, \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, T', i, j, r, s) \in P$,
+        then $(A, \mc_1, X_1 \mc_2 X_2 ... \mc_m X_m, i, j, r, s) \in P$.
     \fi
     \end{enumerate}
 \end{proof}
