@@ -77,6 +77,7 @@
 
 \theoremstyle{definition} \newtheorem{defn}{Definition}
 \theoremstyle{definition} \newtheorem{prop}{Proposition}
+\theoremstyle{definition} \newtheorem{property}{Property}
 
 \newcommand{\lc}{\textcolor{red}{\backslash}}
 \newcommand{\rc}{\textcolor{red}{/}}
@@ -268,10 +269,22 @@ category features, category variables and feature variables.
     \emph{primary categories} in the context of derivations. Primary edges
     will be drawn with a thick line.
 
+    If a string $ \alpha \in (\lb C(N) \rb \cup \Sigma)^* $ can be derived
+    from a category $ X \in C(N) $ with a derivation tree, it shall be denoted
+    as $ \lb X \rb \Rrightarrow \alpha $. Formally, $ \lb X \rb \Rrightarrow
+    \alpha $ if there exists a derivation tree for $ \lb X \rb \Rrightarrow
+    \alpha $.
+
+    Derivation trees are constructed as follows:
+
     \begin{itemize}
+        \item If $ a \in \Sigma $, then $ a $ is a derivation tree for $ a \Rrightarrow a$
+            (trivial terminal case).
+        \item If $ X \in C(N) $ then $ X $ is a derivation tree for $ \lb X \rb \Rrightarrow \lb X \rb $
+            (trivial nonterminal case).
         \item If $ a \in \Sigma, X \in f(a) $, then
             \centree{.$X$ \edge[very thick]; $a$ }
-            is a derivation tree for $ \lb X \rb \Rightarrow^* a $
+            is a derivation tree for $ \lb X \rb \Rrightarrow a $
         \item If
             \begin{center}
                 \tree{.{$X \rc Y$} \edge[roof]; $\alpha$}
@@ -279,8 +292,8 @@ category features, category variables and feature variables.
                 \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
             \end{center}
 
-            are derivation trees for $\lb X \rc Y \rb \Rightarrow^* \alpha$ and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \beta$ respectively,
+            are derivation trees for $\lb X \rc Y \rb \Rrightarrow \alpha$ and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rrightarrow \beta$ respectively,
             where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
             \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
                 \edge[very thick];
@@ -288,7 +301,7 @@ category features, category variables and feature variables.
                 [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
             }
             is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
-            \Rightarrow^* \alpha \beta $.
+            \Rrightarrow \alpha \beta $.
         \item If
             \begin{center}
                 \tree{.{$X \lc Y$} \edge[roof]; $\alpha$}
@@ -296,8 +309,8 @@ category features, category variables and feature variables.
                 \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
             \end{center}
 
-            are derivation trees for $\lb X \lc Y \rb \Rightarrow^* \alpha$ and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \beta$ respectively,
+            are derivation trees for $\lb X \lc Y \rb \Rrightarrow \alpha$ and
+            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rrightarrow \beta$ respectively,
             where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
             \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
                 [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
@@ -305,7 +318,7 @@ category features, category variables and feature variables.
                 [ .{$X \lc Y$} \edge[roof]; $\alpha$ ]
             }
             is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
-            \Rightarrow^* \beta \alpha $.
+            \Rrightarrow \beta \alpha $.
     \end{itemize}
 
 \end{defn}
@@ -313,14 +326,17 @@ category features, category variables and feature variables.
 \begin{prop}
     Equivalence of derivation trees and derivations
 
-    $ \lb X \rb \Rightarrow^* \alpha \iff $ there exists a derivation tree for
-    $ \lb X \rb \Rightarrow^* \alpha $
+    $ \lb X \rb \Rightarrow^* \alpha \iff \lb X \rb \Rrightarrow \alpha $
+
+    Note: this also extends for the case where we have a terminal on the left,
+    but it is not worth mentioning.
 \end{prop}
 \begin{proof}
-    First, let there exist a derivation tree for $ \lb X \rb \Rightarrow^* \alpha $.
+    First, let there exist a derivation tree for $ \lb X \rb \Rrightarrow \alpha $.
     $\lb X \rb \Rightarrow^* \alpha$ can be proven by induction over constructing
     the tree.
     \begin{itemize}
+        \item For the trivial cases, the derivation has 0 steps.
         \item For a tree
             \centree{.$X$ \edge[very thick]; $a$ }
             and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$
@@ -353,12 +369,13 @@ category features, category variables and feature variables.
     Second, we can prove the inverse implication (given a derivation,
     construct the derivation tree) by induction over derivation
     length. Let $\mu: \lb X \rb \Rightarrow \beta \Rightarrow^* \alpha$
-    be a derivation for $G$. Ignoring the trivial case of reflexivity,
-    we have $ \lb X \rb \rightarrow \beta $.
+    be a derivation for $G$.
     \begin{itemize}
+        \item $\beta = \lb X \rb$. Then this is the trivial reflexive case
+            and $\lb X \rb$ is a valid derivation tree in itself.
         \item $\beta = a \in \Sigma, X \in f(a)$. Then $\alpha = \beta$ and
             \centree{.$X$ \edge[very thick]; $a$ }
-            is a derivation tree for $ \lb X \rb \Rightarrow^* a = \alpha $
+            is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
         \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
             $\beta = \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$.
             According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
@@ -380,7 +397,7 @@ category features, category variables and feature variables.
                 [ .{$W \rc Y$} \edge[roof]; $\eta$ ]
                 [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\xi$ ]
             }
-            for $\lb X \rb \Rightarrow^* \alpha$.
+            for $\lb X \rb \Rrightarrow \alpha$.
         \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
             $\beta = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$.
             According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
@@ -402,9 +419,24 @@ category features, category variables and feature variables.
                 \edge[very thick];
                 [ .{$W \lc Y$} \edge[roof]; $\xi$ ]
             }
-            for $\lb X \rb \Rightarrow^* \alpha$.
+            for $\lb X \rb \Rrightarrow \alpha$.
     \end{itemize}
 \end{proof}
+
+\begin{defn}
+    We say $\lb X \rb \Rrightarrow \alpha T \beta$ is a
+    \emph{primary derivation} from $\lb X \rb$ to $T$ if:
+    \begin{itemize}
+        \item $T \in \Sigma$ or $T \in C(N)$
+        \item $\lb X \rb \Rrightarrow \alpha \lb T \rb \beta$
+        \item The path in the tree from the root $ X $ to the leaf $ T $
+            consists of only primary edges.
+    \end{itemize}
+\end{defn}
+
+\begin{property}
+
+\end{property}
 
 \subsection{The CYK algorithm}
 
