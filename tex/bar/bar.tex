@@ -424,14 +424,18 @@ category features, category variables and feature variables.
 \end{proof}
 
 \begin{defn}
-    We say $\lb X \rb \Rrightarrow \alpha T \beta$ is a
-    \emph{primary derivation} from $\lb X \rb$ to $T$ if:
+    We say $\lb X \mc^* Y \rb \Rrightarrow \alpha \lb X \mc^* Z \rb \beta$ is a
+    \emph{primary derivation} from $X \mc^* Y$ to $X \mc^* Z$ with prefix $ X $ if:
     \begin{itemize}
-        \item $T \in \Sigma$ or $T \in C(N)$
-        \item $\lb X \rb \Rrightarrow \alpha \lb T \rb \beta$
-        \item The path in the tree from the root $ X $ to the leaf $ T $
+        \item $\lb X \mc^* Y \rb \Rrightarrow \alpha \lb X \mc^* Z \rb \beta$
+        \item The path in the tree from the root $ X \mc^* Y $
+            to the leaf $ X \mc^* Z $
             consists of only primary edges.
+        \item Every category in the path looks like $ X \mc^* T $ for some
+            $ T \in C(N) $
     \end{itemize}
+
+    (here $ X, Y, Z \in C(N), \mc^* \in \{ \lc, \rc \} $)
 \end{defn}
 
 \begin{property}
