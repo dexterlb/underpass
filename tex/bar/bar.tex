@@ -269,56 +269,66 @@ category features, category variables and feature variables.
     \emph{primary categories} in the context of derivations. Primary edges
     will be drawn with a thick line.
 
-    If a string $ \alpha \in (\lb C(N) \rb \cup \Sigma)^* $ can be derived
-    from a category $ X \in C(N) $ with a derivation tree, it shall be denoted
-    as $ \lb X \rb \Rrightarrow \alpha $. Formally, $ \lb X \rb \Rrightarrow
-    \alpha $ if there exists a derivation tree for $ \lb X \rb \Rrightarrow
-    \alpha $.
+    We will construct the set $ \mathbb{T} $ of all derivation trees, as well
+    as the functions $ crown: \mathbb{T} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
+    $ root: \mathbb{T} \rightarrow C(N) \cup \Sigma$,
+    $ primary : \mathbb{T} \rightarrow \mathbb{T} $ and
+    $ prefix : \mathbb{T} \rightarrow C(N) \cup \Sigma $.
+
+    If there exists $\tau \in \mathbb{T}$ such that $root(\tau) = X \in C(N),
+    crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
 
     Derivation trees are constructed as follows:
 
     \begin{itemize}
-        \item If $ a \in \Sigma $, then $ a $ is a derivation tree for $ a \Rrightarrow a$
-            (trivial terminal case).
-        \item If $ X \in C(N) $ then $ X $ is a derivation tree for $ \lb X \rb \Rrightarrow \lb X \rb $
-            (trivial nonterminal case).
+        \item If $ a \in \Sigma $, then
+            $ a \in \mathbb{T}, crown(a) = a, root(a) = a, primary(a) = a, prefix(a) = a$.
+        \item If $ X \in C(N) $ then $ X \in \mathbb{T}, crown(X) = X, primary(X) = X, prefix(X) = X$
         \item If $ a \in \Sigma, X \in f(a) $, then
-            \centree{.$X$ \edge[very thick]; $a$ }
-            is a derivation tree for $ \lb X \rb \Rrightarrow a $
+            \begin{center}
+                \tree{.$X$ \edge[very thick]; $a$ } ( $ \pi $ )
+            \end{center}
+            $ \pi \in \mathbb{T}, crown(\pi) = a, root(\pi) = X, primary(\pi) = a, prefix(\pi) = a $
         \item If
             \begin{center}
-                \tree{.{$X \rc Y$} \edge[roof]; $\alpha$}
-                and
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
+                \tree{.{$X \rc Y$} \edge[roof]; $\alpha$} ($\pi'$)
+                \quad and \quad
+                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$} ($\pi''$)
             \end{center}
 
-            are derivation trees for $\lb X \rc Y \rb \Rrightarrow \alpha$ and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rrightarrow \beta$ respectively,
-            where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
-            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                \edge[very thick];
-                [ .{$X \rc Y$} \edge[roof]; $\alpha$ ]
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
-            }
-            is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
-            \Rrightarrow \alpha \beta $.
+            are derivation trees such that $ root(\pi') = X \rc Y $,
+            $ root(\pi'') = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ crown(pi') = \alpha, crown(pi'') = \beta $
+            where $m \leq n$, then
+            \begin{center}
+                \tree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                    \edge[very thick];
+                    [ .{$X \rc Y$} \edge[roof]; $\alpha$ ]
+                    [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
+                } ($\tau$)
+            \end{center}
+            $ \tau \in \mathbb{T}, root(\tau) = X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi'$, $prefix(\tau) = X$
         \item If
             \begin{center}
-                \tree{.{$X \lc Y$} \edge[roof]; $\alpha$}
-                and
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$}
+                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$} ($\pi'$)
+                \quad and \quad
+                \tree{.{$X \lc Y$} \edge[roof]; $\alpha$} ($\pi''$)
             \end{center}
-
-            are derivation trees for $\lb X \lc Y \rb \Rrightarrow \alpha$ and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rrightarrow \beta$ respectively,
-            where $m \leq n, \alpha \in \Sigma^*, \beta \in \Sigma^*$, then
-            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
-                \edge[very thick];
-                [ .{$X \lc Y$} \edge[roof]; $\alpha$ ]
-            }
-            is a derivation tree for $ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
-            \Rrightarrow \beta \alpha $.
+            are derivation trees such that
+            $ root(\pi') = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ root(\pi'') = X \lc Y $,
+            $ crown(pi') = \alpha, crown(pi'') = \beta $
+            where $m \leq n$, then
+            \begin{center}
+                \tree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                    [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\alpha$ ]
+                    \edge[very thick];
+                    [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
+                } ($\tau$)
+            \end{center}
+            $ \tau \in \mathbb{T}, root(\tau) = X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi''$, $prefix(\tau) = X$
     \end{itemize}
 
 \end{defn}
@@ -424,18 +434,19 @@ category features, category variables and feature variables.
 \end{proof}
 
 \begin{defn}
-    We say $\lb X \mc^* Y \rb \Rrightarrow \alpha \lb X \mc^* Z \rb \beta$ is a
-    \emph{primary derivation} from $X \mc^* Y$ to $X \mc^* Z$ with prefix $ X $ if:
-    \begin{itemize}
-        \item $\lb X \mc^* Y \rb \Rrightarrow \alpha \lb X \mc^* Z \rb \beta$
-        \item The path in the tree from the root $ X \mc^* Y $
-            to the leaf $ X \mc^* Z $
-            consists of only primary edges.
-        \item Every category in the path looks like $ X \mc^* T $ for some
-            $ T \in C(N) $
-    \end{itemize}
+    A path in a derivation tree is a \emph{primary path} if all of its edges
+    are primary.
+\end{defn}
 
-    (here $ X, Y, Z \in C(N), \mc^* \in \{ \lc, \rc \} $)
+\begin{defn}
+    A primary path in a derivation tree has a leaf $X \mc^* Z$ and prefix $X$
+    if:
+    \begin{itemize}
+        \item $X \mc^* Z$ is a leaf
+        \item the path from it to the root is primary
+        \item every category in the primary path has the form $X \mc^* Y$
+            for some $Y \in C(N)$.
+    \end{itemize}
 \end{defn}
 
 \begin{property}
