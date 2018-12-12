@@ -1,6 +1,6 @@
-name:                minipass
+name:                ccg
 version:             0.1.0.0
-github:              "DexterLB/minipass"
+github:              "DexterLB/ccg"
 license:             MIT
 author:              "dexterlb"
 maintainer:          "dexterlb@qtrp.org"
@@ -9,25 +9,20 @@ copyright:           "2018 Angel Angelov"
 extra-source-files:
 - README.md
 
-description:         Please see the README on GitHub at <https://github.com/DexterLB/minipass#readme>
+description:         Please see the README on GitHub at <https://github.com/githubuser/ccg#readme>
 
 dependencies:
 - base >= 4.7 && < 5
-- megaparsec >= 6.5.0 && < 7.0.0
-- text >= 1.0
-- hashable >= 1.0
-- unordered-containers >= 0.2
-- mtl >= 2.2
 
 library:
   source-dirs: src
 
 ghc-options:
 - -Wall
-- -Werror
+- -Werrora
 
 executables:
-  minipass-exe:
+  ccg-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -35,10 +30,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - ccg
 
 tests:
-  minipass-test:
+  ccg-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -46,4 +41,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - ccg
