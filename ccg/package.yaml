@@ -16,6 +16,7 @@ dependencies:
 - unordered-containers
 - hashable
 - data-memocombinators
+- vector
 
 library:
   source-dirs: src
