@@ -1,34 +1,56 @@
+{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE ConstrainedClassMethods #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE StandaloneDeriving #-}
+
 module Category where
 
 data Category atom slash
     = Atom  atom
     | Slash slash (Category atom slash) (Category atom slash)
 
-class Combines rule a where
-    combine :: a -> a -> [(rule, a)]
+deriving instance (Eq atom, Eq slash) => Eq (Category atom slash)
 
-class CombinesBy rule a where
-    combineBy :: rule -> a -> a -> Maybe a
+class (Finite (Rule a)) => Combines a where
+    type Rule a
+    combine :: a -> a -> [(Rule a, a)]
+    combine x y = [(rule, z) | rule <- listAll
+                             , Just z <- [combineBy rule x y]]
 
-instance (CombinesBy rule a, Finite rule) => Combines rule a where
-    combine x y = catMaybes $ map (\rule -> (rule,) <$> combineBy rule x y) all
+    combineBy :: Rule a -> a -> a -> Maybe a
 
 class Finite a where
-    all :: [a]
+    listAll :: [a]
 
 type SimpleCategory = Category String SimpleSlash
-data SimpleRule = LeftApp | RightApp deriving (Eq)
-data SimpleSlash = Left | Right
+
+data SimpleRule
+    = LeftApp
+    | RightApp
+    deriving (Eq)
+
+data SimpleSlash
+    = LeftSlash
+    | RightSlash
+    deriving (Eq)
 
 instance Finite SimpleRule where
-    all = [LeftApp, RightApp]
+    listAll = [LeftApp, RightApp]
 
-instance CombinesBy SimpleRule SimpleCategory where
-    combine LeftApp (Slash Left x y) z
+instance Combines SimpleCategory where
+    type Rule SimpleCategory = SimpleRule
+    combineBy LeftApp (Slash LeftSlash x y) z
         | x == z = Just y
         | otherwise = Nothing
-    combine RightApp (Slash Right x y) z
+    combineBy RightApp (Slash RightSlash x y) z
         | y == z = Just x
         | otherwise = Nothing
+    combineBy _ _ _ = Nothing
 
 
