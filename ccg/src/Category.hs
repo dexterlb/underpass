@@ -16,9 +16,9 @@ instance (CombinesBy rule a, Finite rule) => Combines rule a where
 class Finite a where
     all :: [a]
 
-type SimpleCategory = Category String SimpleSlash deriving (Eq)
-type SimpleRule = LeftApp | RightApp deriving (Eq)
-type SimpleSlash = Left | Right
+type SimpleCategory = Category String SimpleSlash
+data SimpleRule = LeftApp | RightApp deriving (Eq)
+data SimpleSlash = Left | Right
 
 instance Finite SimpleRule where
     all = [LeftApp, RightApp]

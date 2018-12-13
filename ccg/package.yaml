@@ -19,7 +19,7 @@ library:
 
 ghc-options:
 - -Wall
-- -Werrora
+- -Werror
 
 executables:
   ccg-exe:
