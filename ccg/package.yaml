@@ -12,9 +12,10 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/githubuser/ccg#readme>
 
 dependencies:
-- base >= 4.7 && < 5
-- unordered-containers >= 0.2
-- hashable >= 1.2 && < 2.0
+- base
+- unordered-containers
+- hashable
+- data-memocombinators
 
 library:
   source-dirs: src
