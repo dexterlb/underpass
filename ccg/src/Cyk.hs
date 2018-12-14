@@ -6,9 +6,13 @@ import           Data.HashMap.Lazy (HashMap)
 import qualified Data.HashMap.Lazy as HM
 import           Data.Hashable     (Hashable)
 import           Data.Vector       (Vector)
-import qualified Data.Vector       as Vector
+import qualified Data.Vector       as V
+import           Data.Maybe        (fromMaybe)
+import           Data.MemoCombinators.Class (MemoTable)
 
 import Category
+import Trees
+import Memoise (memo)
 
 type Cell cat payload = HashMap cat [Item cat payload]
 
@@ -16,13 +20,19 @@ data (Combines cat) => Item cat payload
     = Terminal payload
     | Derive   (Rule cat) (Int, Int, cat) (Int, Int, cat)
 
+cyk :: (Eq cat, Hashable cat, Combines cat, MemoTable cat)
+    => Vector [(cat, payload)]                  -- tagged word
+    -> cat                                      -- target category
+    -> ParseForest cat payload
+cyk word cat = memo (getTrees' (memo $ cyk' word)) (0, V.length word - 1, cat)
+
 cyk' :: (Eq cat, Hashable cat, Combines cat)
     => Vector [(cat, payload)]                  -- tagged word
     -> ((Int, Int) -> Cell cat payload)         -- recursion argument
     -> (Int, Int)                               -- word indices
     -> Cell cat payload                         -- cell at specified indices
 cyk' w f (i, j)
-    | i == j    = leafCell $ w Vector.! i
+    | i == j    = leafCell $ w V.! i
     | otherwise
         = aggregate
         $ foldr1 (++)
@@ -41,17 +51,16 @@ combineCells f (a, b) (c, d)
         xs = HM.keys $ f (a, b)
         ys = HM.keys $ f (c, d)
 
-getTrees' :: Combines cat
+getTrees' :: (Combines cat, Eq cat, Hashable cat)
     => ((Int, Int) -> Cell cat payload)
     -> ((Int, Int, cat) -> ParseForest cat payload)  -- recursion argument
     -> (Int, Int, cat)
     -> ParseForest cat payload
-getTrees get f (i, j, cat)
+getTrees' get f (i, j, cat)
     = ParseForest cat
     $ fromMaybe []
     $ (map buildNode) <$> (HM.lookup cat $ get (i, j))
     where
-        buildNode :: Item cat payload -> MultiNode cat payload
         buildNode (Terminal payload)    = MultiLeaf payload
         buildNode (Derive   rule x y)   = MultiVert rule (f x) (f y)
 
