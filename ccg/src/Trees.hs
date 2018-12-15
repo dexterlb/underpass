@@ -1,22 +1,37 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
+
 module Trees where
 
 import Category
 
-data (Combines cat) => ParseTree cat payload
-    = Leaf cat payload
-    | Vert cat (Rule cat) (ParseTree cat payload) (ParseTree cat payload)
+data ParseTree cat payload where
+    Leaf :: cat -> payload -> ParseTree cat payload
+    Vert :: (Combines cat) => cat -> Rule cat -> ParseTree cat payload -> ParseTree cat payload -> ParseTree cat payload
 
-data (Combines cat) => ParseForest cat payload
+data ParseForest cat payload
     = ParseForest cat [MultiNode cat payload]
 
-data (Combines cat) => MultiNode cat payload
-    = MultiLeaf payload
-    | MultiVert (Rule cat) (ParseForest cat payload) (ParseForest cat payload)
+data MultiNode cat payload where
+    MultiLeaf :: payload -> MultiNode cat payload
+    MultiVert :: (Combines cat) => Rule cat -> ParseForest cat payload -> ParseForest cat payload -> MultiNode cat payload
 
-enumTrees :: (Combines cat) => ParseForest cat payload -> [ParseTree cat payload]
+enumTrees :: ParseForest cat payload -> [ParseTree cat payload]
 enumTrees (ParseForest cat nodes) = foldr (++) [] $ map (extractTrees cat) nodes
 
-extractTrees :: (Combines cat) => cat -> MultiNode cat payload -> [ParseTree cat payload]
+extractTrees :: cat -> MultiNode cat payload -> [ParseTree cat payload]
 extractTrees cat (MultiLeaf payload) = [Leaf cat payload]
 extractTrees cat (MultiVert rule xs ys)
     = [ Vert cat rule x y | x <- enumTrees xs, y <- enumTrees ys ]
+
+instance (Show cat, Show payload, Show (Rule cat)) => Show (ParseTree cat payload) where
+    show = unlines . showTreeLines
+
+showTreeLines :: (Show cat, Show payload, Show (Rule cat)) => ParseTree cat payload -> [String]
+showTreeLines (Leaf cat payload) = ["< " <> show cat <> " | " <> show payload <> " >"]
+showTreeLines (Vert cat rule left right) =
+       [""]
+    ++ [ show cat <> " (" <> show rule <> ")" ]
+    ++ (map ("  " ++) $ showTreeLines left)
+    ++ (map ("  " ++) $ showTreeLines right)
+    ++ [""]

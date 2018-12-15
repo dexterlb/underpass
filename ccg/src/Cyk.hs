@@ -1,4 +1,5 @@
 {-# LANGUAGE ParallelListComp #-}
+{-# LANGUAGE GADTs #-}
 
 module Cyk where
 
@@ -16,9 +17,9 @@ import Memoise (memo)
 
 type Cell cat payload = HashMap cat [Item cat payload]
 
-data (Combines cat) => Item cat payload
-    = Terminal payload
-    | Derive   (Rule cat) (Int, Int, cat) (Int, Int, cat)
+data Item cat payload where
+    Terminal :: payload -> Item cat payload
+    Derive   :: (Combines cat) => (Rule cat) -> (Int, Int, cat) -> (Int, Int, cat) -> Item cat payload
 
 cyk :: (Eq cat, Hashable cat, Combines cat, MemoTable cat)
     => Vector [(cat, payload)]                  -- tagged word

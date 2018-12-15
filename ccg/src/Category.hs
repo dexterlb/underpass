@@ -8,14 +8,28 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Category where
+
+import           Data.Hashable (Hashable)
+import           GHC.Generics  (Generic)
+import           Data.MemoCombinators.Class (MemoTable, table)
+import qualified Data.MemoCombinators as Memo
 
 data Category atom slash
     = Atom  atom
     | Slash slash (Category atom slash) (Category atom slash)
+    deriving (Generic)
 
 deriving instance (Eq atom, Eq slash) => Eq (Category atom slash)
+deriving instance (Hashable atom, Hashable slash) => Hashable (Category atom slash)
+
+
+instance (Show atom, Show slash) => Show (Category atom slash) where
+    show (Atom atom) = show atom
+    show (Slash slash a b) = "(" <> (show a) <> (show slash) <> (show b) <> ")"
 
 class (Finite (Rule a)) => Combines a where
     type Rule a
@@ -27,30 +41,3 @@ class (Finite (Rule a)) => Combines a where
 
 class Finite a where
     listAll :: [a]
-
-type SimpleCategory = Category String SimpleSlash
-
-data SimpleRule
-    = LeftApp
-    | RightApp
-    deriving (Eq)
-
-data SimpleSlash
-    = LeftSlash
-    | RightSlash
-    deriving (Eq)
-
-instance Finite SimpleRule where
-    listAll = [LeftApp, RightApp]
-
-instance Combines SimpleCategory where
-    type Rule SimpleCategory = SimpleRule
-    combineBy LeftApp (Slash LeftSlash x y) z
-        | x == z = Just y
-        | otherwise = Nothing
-    combineBy RightApp (Slash RightSlash x y) z
-        | y == z = Just x
-        | otherwise = Nothing
-    combineBy _ _ _ = Nothing
-
-
