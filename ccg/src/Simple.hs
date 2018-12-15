@@ -17,6 +17,8 @@ import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable)
 import           Data.Vector (Vector)
 import qualified Data.Vector as V
+import           Data.MemoCombinators.Class (MemoTable, table)
+import qualified Data.MemoCombinators as Memo
 
 import           Category
 import           Trees
@@ -37,6 +39,9 @@ data SimpleSlash
     deriving (Eq, Generic, Enum)
 
 deriving instance (Hashable SimpleSlash)
+
+instance MemoTable SimpleSlash where
+    table = Memo.enum
 
 instance Show SimpleSlash where
     show LeftSlash  = "\\"
