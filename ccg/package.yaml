@@ -17,6 +17,7 @@ dependencies:
 - hashable
 - data-memocombinators
 - vector
+- text
 
 library:
   source-dirs: src
@@ -24,6 +25,7 @@ library:
 ghc-options:
 - -Wall
 - -Werror
+- -Wno-orphans
 
 executables:
   ccg-exe:

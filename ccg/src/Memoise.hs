@@ -3,9 +3,12 @@ module Memoise where
 import           Data.Hashable     (Hashable)
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.MemoCombinators.Class as MemoComb
+import qualified Data.MemoCombinators as Memo
 import           Data.Function        (fix)
 import           Control.Concurrent.MVar (newMVar, readMVar, modifyMVar_)
 import           System.IO.Unsafe (unsafePerformIO)
+import           Data.Text (Text)
+import qualified Data.Text as T
 
 memo :: MemoComb.MemoTable a => ((a -> b) -> a -> b) -> a -> b
 memo f = g
@@ -17,6 +20,9 @@ memoWith :: ((a -> b) -> (a -> b)) -> ((a -> b) -> a -> b) -> a -> b
 memoWith table f = g
     where
         g = table (f g)
+
+instance MemoComb.MemoTable Text where
+    table = Memo.wrap T.pack T.unpack MemoComb.table
 
 -- ********************
 memoUgly :: (Eq a, Hashable a) => ((a -> b) -> a -> b) -> a -> b

@@ -15,14 +15,10 @@ module Simple where
 
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable)
-import           Data.Vector (Vector)
-import qualified Data.Vector as V
 import           Data.MemoCombinators.Class (MemoTable, table)
 import qualified Data.MemoCombinators as Memo
 
 import           Category
-import           Trees
-import           Cyk
 
 type SimpleCategory = Category String SimpleSlash
 
@@ -51,21 +47,11 @@ instance Finite SimpleRule where
     listAll = [LeftApp, RightApp]
 
 instance Combines SimpleCategory where
-    type Rule SimpleCategory = SimpleRule
-    combineBy LeftApp z (Slash LeftSlash x y)
+    type CombineRule SimpleCategory = SimpleRule
+    combineBy LeftApp z (Complex LeftSlash x y)
         | y == z = Just x
         | otherwise = Nothing
-    combineBy RightApp (Slash RightSlash x y) z
+    combineBy RightApp (Complex RightSlash x y) z
         | y == z = Just x
         | otherwise = Nothing
     combineBy _ _ _ = Nothing
-
-simpleWord :: Vector [(SimpleCategory, String)]
-simpleWord = V.fromList
-    [ [(Atom "A", "a")]
-    , [(Slash LeftSlash (Slash RightSlash (Atom "S") (Atom "C")) (Atom "A"), "b" )]
-    , [(Atom "C", "c")]
-    ]
-
-simpleCyk :: [ParseTree SimpleCategory String]
-simpleCyk = enumTrees $ cyk simpleWord $ Atom "S"
