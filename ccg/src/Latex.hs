@@ -11,13 +11,10 @@ import           System.Directory (createDirectory, removePathForcibly)
 class Latexable a where
     latex :: a -> Text
 
-instance Latexable String where
-    latex s = T.pack s
-
 instance Latexable Text where
     latex s = s
 
-instance {-# OVERLAPS #-} Latexable a => Latexable [a] where
+instance Latexable a => Latexable [a] where
     latex = T.unlines . (map latex)
 
 latexPreview :: Latexable a => a -> IO ()

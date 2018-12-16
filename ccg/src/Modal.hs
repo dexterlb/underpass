@@ -88,7 +88,7 @@ instance Latexable Modality where
     latex Star    = "\\star"
     latex Diamond = "\\Diamond"
     latex X       = "\\times"
-    latex Dot     = "\\circ"
+    latex Dot     = ""
 
 instance Show Slash where
     show (LeftSlash  m) = "\\" <> show m
@@ -121,9 +121,9 @@ vc :: String -> ModalCategory
 vc s = Simple $ Variable $ T.pack s
 
 (</>) :: ModalCategory -> ModalCategory -> ModalCategory
-a </> b = Complex (RightSlash Diamond) a b
+a </> b = Complex (RightSlash Dot) a b
 
 (<\>) :: ModalCategory -> ModalCategory -> ModalCategory
-a <\> b = Complex (LeftSlash Diamond) a b
+a <\> b = Complex (LeftSlash Dot) a b
 
 

@@ -16,6 +16,7 @@ module Sandbox where
 
 import           Data.Vector (Vector)
 import qualified Data.Vector as V
+import           Data.Text (Text)
 
 import           Category
 import           Trees
@@ -23,14 +24,14 @@ import           Cyk
 import           Modal
 import           Latex
 
-simpleWord :: Vector [(ModalCategory, String)]
+simpleWord :: Vector [(ModalCategory, Text)]
 simpleWord = V.fromList
     [ [(sc "A", "a"), (sc "S" </> sc "C" </> sc "B", "a")]
     , [(sc "S" </> sc "C" <\> sc "A", "b" ), (sc "B", "b")]
     , [(sc "C", "c")]
     ]
 
-simpleCyk :: [ParseTree ModalCategory String]
+simpleCyk :: [ParseTree ModalCategory Text]
 simpleCyk = enumTrees $ cyk simpleWord $ Simple $ NonTerm "S"
 
 latexCyk :: IO ()
