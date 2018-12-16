@@ -21,6 +21,7 @@ import           Category
 import           Trees
 import           Cyk
 import           Modal
+import           Latex
 
 simpleWord :: Vector [(ModalCategory, String)]
 simpleWord = V.fromList
@@ -31,3 +32,6 @@ simpleWord = V.fromList
 
 simpleCyk :: [ParseTree ModalCategory String]
 simpleCyk = enumTrees $ cyk simpleWord $ Simple $ NonTerm "S"
+
+latexCyk :: IO ()
+latexCyk = latexPreview simpleCyk

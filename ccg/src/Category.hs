@@ -6,6 +6,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE ConstrainedClassMethods #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DeriveAnyClass #-}
@@ -19,6 +20,8 @@ import           Data.Hashable (Hashable)
 import           GHC.Generics  (Generic)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo3)
+
+import           Latex
 
 data Category atom slash
     = Simple  atom
@@ -47,6 +50,10 @@ instance (Show atom, Show slash) => Show (Category atom slash) where
     show (Simple atom) = show atom
     show (Complex slash a b) = "(" <> (show a) <> (show slash) <> (show b) <> ")"
 
+instance (Latexable atom, Latexable slash) => Latexable (Category atom slash) where
+    latex (Simple atom) = latex atom
+    latex (Complex slash a b) = "$($" <> latex a <> latex slash <> latex b <> "$)$"
+
 class (Finite (CombineRule a)) => Combines a where
     type CombineRule a
     combine :: a -> a -> [(CombineRule a, a)]
@@ -57,3 +64,8 @@ class (Finite (CombineRule a)) => Combines a where
 
 class Finite a where
     listAll :: [a]
+
+class HasPrimaryDir a where
+    primaryDir :: a -> PrimaryDir
+
+data PrimaryDir = LeftPrimary | RightPrimary | NoPrimary deriving (Eq, Show)

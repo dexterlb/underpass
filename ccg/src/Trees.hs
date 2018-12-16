@@ -1,9 +1,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Trees where
 
 import Category
+import Latex
 
 data ParseTree cat payload where
     Leaf :: cat -> payload -> ParseTree cat payload
@@ -35,3 +37,17 @@ showTreeLines (Vert cat rule left right) =
     ++ (map ("  " ++) $ showTreeLines left)
     ++ (map ("  " ++) $ showTreeLines right)
     ++ [""]
+
+instance (Latexable cat, Latexable payload, Latexable (CombineRule cat), HasPrimaryDir (CombineRule cat))
+    => Latexable (ParseTree cat payload) where
+    latex tree = "\\vspace{1em}\n\\begin{tikzpicture}\n\\Tree [ " <> latex' tree <> " ]\n\\end{tikzpicture}\n\\vspace{1em}\n\n"
+        where
+            latex' (Leaf cat payload)
+              =  ".{" <> latex cat <> " } { " <> latex payload <> "}"
+            latex' (Vert cat rule left right)
+              =  ".{ " <> latex cat <> " } "
+              <> (if primaryDir rule == LeftPrimary  then "\\edge[very thick];" else "")
+              <> " [ " <> latex' left  <> " ] "
+              <> (if primaryDir rule == RightPrimary then "\\edge[very thick];" else "")
+              <> " [ " <> latex' right <> " ] "
+

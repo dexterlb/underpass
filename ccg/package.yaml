@@ -18,6 +18,8 @@ dependencies:
 - data-memocombinators
 - vector
 - text
+- process
+- directory
 
 library:
   source-dirs: src
