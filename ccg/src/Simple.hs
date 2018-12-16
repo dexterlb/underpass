@@ -29,7 +29,7 @@ type SimpleCategory = Category String SimpleSlash
 data SimpleRule
     = LeftApp
     | RightApp
-    deriving (Eq, Generic)
+    deriving (Eq, Generic, Show)
 
 deriving instance (Hashable SimpleRule)
 
@@ -52,8 +52,8 @@ instance Finite SimpleRule where
 
 instance Combines SimpleCategory where
     type Rule SimpleCategory = SimpleRule
-    combineBy LeftApp (Slash LeftSlash x y) z
-        | x == z = Just y
+    combineBy LeftApp z (Slash LeftSlash x y)
+        | y == z = Just x
         | otherwise = Nothing
     combineBy RightApp (Slash RightSlash x y) z
         | y == z = Just x
