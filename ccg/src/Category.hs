@@ -30,17 +30,18 @@ deriving instance (Hashable atom, Hashable slash) => Hashable (Category atom sla
 
 instance (MemoTable atom, MemoTable slash) => MemoTable (Category atom slash) where
     table = mkmemo (table :: Memo atom) (table :: Memo slash)
-
-mkmemo :: forall atom slash b.
-          (forall a. (atom -> a)  -> (atom -> a))
-       -> (forall a. (slash -> a) -> (slash -> a))
-       -> (Category atom slash -> b)
-       -> (Category atom slash -> b)
-mkmemo matom _      f (Atom x) = (matom (f . Atom)) x
-mkmemo matom mslash f (Slash x y z) = (memo3 mslash mcat mcat (\a b c -> f $ Slash a b c)) x y z
-    where
-        mcat :: (Category atom slash -> t) -> (Category atom slash -> t)
-        mcat = mkmemo matom mslash
+        where
+            mkmemo :: forall atom' slash' b.
+                      (forall a. (atom'  -> a) -> (atom'  -> a))
+                   -> (forall a. (slash' -> a) -> (slash' -> a))
+                   -> (Category atom' slash' -> b)
+                   -> (Category atom' slash' -> b)
+            mkmemo matom _      f (Atom x)      = (matom (f . Atom)) x
+            mkmemo matom mslash f (Slash x y z) =
+                (memo3 mslash mcat mcat (\a b c -> f $ Slash a b c)) x y z
+                where
+                    mcat :: (Category atom' slash' -> t) -> (Category atom' slash' -> t)
+                    mcat = mkmemo matom mslash
 
 instance (Show atom, Show slash) => Show (Category atom slash) where
     show (Atom atom) = show atom

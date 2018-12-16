@@ -18,20 +18,6 @@ memoWith table f = g
     where
         g = table (f g)
 
-
--- ********************
-class Enumerated a where
-    listAll :: [a]
-
-instance Enumerated Int where
-    listAll = [0..]
-
-memoHash :: (Eq a, Hashable a, Enumerated a) => ((a -> b) -> a -> b) -> a -> b
-memoHash f x = get x
-    where
-        t = HM.fromList $ zip listAll (map (f get) listAll)
-        get   = (t HM.!)
-
 -- ********************
 memoUgly :: (Eq a, Hashable a) => ((a -> b) -> a -> b) -> a -> b
 memoUgly = memoWith tableUgly
