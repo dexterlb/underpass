@@ -87,6 +87,15 @@ instance PartialOrd Modality where
     Star    <! Star     = True
     _       <! _        = False
 
+instance MSemiLattice Modality where
+    Dot  /\ x   = x
+    x    /\ Dot = x
+    x    /\ y
+      | x == y    = x
+      | otherwise = Star
+
+
+
 deriving instance (Hashable Modality)
 
 instance Show Modality where
@@ -117,6 +126,7 @@ instance Latexable Rule where
 
 instance Combines ModalCategory where
     type CombineRule ModalCategory = Rule
+    -- todo: make the categories have disjunct vars before combining
     combineBy LeftApp z (Complex (LeftSlash m) x y)
         | Just (_, r) <- y === z, m <! Star = Just $ r x
         | otherwise = Nothing
@@ -128,17 +138,41 @@ instance Combines ModalCategory where
 -- unification
 
 (===) :: ModalCategory -> ModalCategory -> Maybe ((ModalCategory -> ModalCategory), (ModalCategory -> ModalCategory))
-(===) x y = (\(r1, r2) -> (rename r1, rename r2)) <$> unify x y
+(===) x y = (\(_, r1, r2) -> (substitute r1, substitute r2)) <$> unify x y
 
-data Rename = Rename
+type Substitution = [(Text, ModalCategory)]
 
-unify :: ModalCategory -> ModalCategory -> Maybe (Rename, Rename)
-unify x y
-    | x == y    = Just (Rename, Rename)
+unify :: ModalCategory -> ModalCategory -> Maybe (ModalCategory, Substitution, Substitution)
+unify (Simple (Variable a)) y = Just (y, [(a, y)], [])
+unify x (Simple (Variable a)) = Just (x, [], [(a, x)])
+unify (l @ (Simple (NonTerm p))) (Simple (NonTerm q))
+    | p == q    = Just (l, [], [])
     | otherwise = Nothing
+unify (Complex sl al bl) (Complex sr ar br) = do
+    (a, alSub, arSub) <- unify al ar
+    let bl' = substitute alSub bl
+    let br' = substitute arSub br
+    (b, blSub, brSub) <- unify bl' br'
+    s <- unifySlash sl sr
+    pure (Complex s a b, alSub <> blSub, arSub <> brSub)
+unify _ _ = Nothing
 
-rename :: Rename -> ModalCategory -> ModalCategory
-rename _ = id
+unifySlash :: Slash -> Slash -> Maybe Slash
+unifySlash (LeftSlash a)  (LeftSlash b)  = Just $ LeftSlash  $ a /\ b
+unifySlash (RightSlash a) (RightSlash b) = Just $ RightSlash $ a /\ b
+unifySlash _ _ = Nothing
+
+
+substitute :: Substitution -> ModalCategory -> ModalCategory
+substitute subs cat = foldl substituteOne cat subs
+
+substituteOne :: ModalCategory -> (Text, ModalCategory) -> ModalCategory
+substituteOne (Complex sl left right) sub =
+    Complex sl (substituteOne left sub) (substituteOne right sub)
+substituteOne (Simple (Variable b)) (a, x)
+    | a == b    = x
+    | otherwise = (Simple (Variable b))
+substituteOne t _ = t
 
 
 -- convenience functions

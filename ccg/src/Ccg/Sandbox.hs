@@ -27,8 +27,8 @@ import           Ccg.Latex
 simpleWord :: Vector [(ModalCategory, Text)]
 simpleWord = V.fromList
     [ [(sc "A", "a"), (sc "S" </> sc "C" </> sc "B", "a")]
-    , [(sc "S" </> sc "C" <\> sc "A", "b" ), (sc "B", "b")]
-    , [(sc "C", "c")]
+    , [(sc "S" </> sc "C" <\> sc "A", "b"), (sc "B", "b"), (sc "S" </> vc "p" <\> vc "p", "b")]
+    , [(sc "C", "c"), (sc "A", "c")]
     ]
 
 simpleCyk :: [ParseTree ModalCategory Text]
