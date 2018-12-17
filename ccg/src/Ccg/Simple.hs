@@ -11,14 +11,14 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
-module Simple where
+module Ccg.Simple where
 
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import qualified Data.MemoCombinators as Memo
 
-import           Category
+import           Ccg.Category
 
 type SimpleCategory = Category String SimpleSlash
 

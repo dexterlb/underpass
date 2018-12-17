@@ -2,9 +2,9 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module Minipass.Constants where
+module Minipass.Language.Constants where
 
-import Parsing as P
+import Utils.Parsing as P
 import Data.Functor (($>))
 
 import Data.Text (Text)

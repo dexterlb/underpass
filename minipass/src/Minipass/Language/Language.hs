@@ -2,19 +2,20 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module Minipass.Language where
+module Minipass.Language.Language where
 
 import Data.Functor (($>))
 
-import Parsing as P
+import Utils.Parsing as P
+import Utils.Maths
 
-import qualified LambdaTypes as T
-import           LambdaTypes (PartialOrd, Typed)
-import Lambda
+import qualified Minipass.LambdaTypes as T
+import           Minipass.LambdaTypes (Typed)
+import Minipass.Lambda
 
 import Data.Text (Text)
 
-import Minipass.Constants
+import Minipass.Language.Constants
 
 data Types
     = Set

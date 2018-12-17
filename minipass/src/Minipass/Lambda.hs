@@ -4,19 +4,20 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE GADTs #-}
 
-module Lambda where
+module Minipass.Lambda where
 
-import qualified LambdaTypes as T
-import LambdaTypes (Typed, typeOf, (<!), (<!>))
+import qualified Minipass.LambdaTypes as T
+import Minipass.LambdaTypes (Typed, typeOf)
 
-import Parsing (Parser, Parseable, parser, (<|>))
-import qualified Parsing as P
+import Utils.Maths
+import Utils.Parsing (Parser, Parseable, parser, (<|>))
+import qualified Utils.Parsing as P
 
 import qualified Data.Text as Text
 
 import Control.Monad (fail)
 
-import Context
+import Minipass.Context
 
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
@@ -111,7 +112,7 @@ parseVariableDeclaration =
         return (var, varType))
     <|> (P.try $ do
         var     <- parseVariableName
-        return (var, T.bot)
+        return (var, bot)
     )
 
 parseVariable :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)

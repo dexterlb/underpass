@@ -5,17 +5,17 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE NamedFieldPuns #-}
 
-module Minipass.Optimiser where
+module Minipass.Language.Optimiser where
 
-import Minipass.Intermediate
-import qualified LambdaTypes as T
-import           LambdaTypes ((/\), typeOf)
-import TypedLambda
-import Maths
-import Minipass.Constants
-import Minipass.Language (ListC(..), listTerm)
-import Overpass (Value(ListValue), translateValue)
-import Context
+import Minipass.Language.Intermediate
+import qualified Minipass.LambdaTypes as T
+import           Minipass.LambdaTypes (typeOf)
+import Minipass.TypedLambda
+import Utils.Maths
+import Minipass.Language.Constants
+import Minipass.Language.Language (ListC(..), listTerm)
+import Minipass.Overpass (Value(ListValue), translateValue)
+import Minipass.Context
 
 optimise :: TTerm -> TTerm
 optimise

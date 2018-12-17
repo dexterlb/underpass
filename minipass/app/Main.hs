@@ -1,17 +1,17 @@
 module Main where
 
-import Overpass
-import TypedLambda
-import Context
-import Minipass.Optimiser
-import Minipass.Intermediate
-import Minipass.Library
+import Minipass.Overpass
+import Minipass.TypedLambda
+import Minipass.Context
+import Minipass.Language.Optimiser
+import Minipass.Language.Intermediate
+import Minipass.Language.Library
 
 import System.IO
 
 import qualified Data.Text as Text
 
-import Parsing (forceParse)
+import Utils.Parsing (forceParse)
 
 main :: IO ()
 main = do

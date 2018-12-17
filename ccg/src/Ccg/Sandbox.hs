@@ -12,17 +12,17 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Sandbox where
+module Ccg.Sandbox where
 
 import           Data.Vector (Vector)
 import qualified Data.Vector as V
 import           Data.Text (Text)
 
-import           Category
-import           Trees
-import           Cyk
-import           Modal
-import           Latex
+import           Ccg.Category
+import           Ccg.Trees
+import           Ccg.Cyk
+import           Ccg.Modal
+import           Ccg.Latex
 
 simpleWord :: Vector [(ModalCategory, Text)]
 simpleWord = V.fromList

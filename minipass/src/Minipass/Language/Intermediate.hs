@@ -5,21 +5,23 @@
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE NamedFieldPuns        #-}
 
-module Minipass.Intermediate where
+module Minipass.Language.Intermediate where
 
-import qualified LambdaTypes as T
-import LambdaTypes (PartialOrd, (<!), typeOf, Typed)
-import Lambda
+import qualified Minipass.LambdaTypes as T
+import Minipass.LambdaTypes (typeOf, Typed)
+import Minipass.Lambda
 
-import qualified Minipass.Language as L
-import           Minipass.Constants
+import Utils.Maths
+
+import qualified Minipass.Language.Language as L
+import           Minipass.Language.Constants
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
 import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
-import TypedLambda (TSLTerm)
+import Minipass.TypedLambda (TSLTerm)
 
 import Control.Exception (throw)
 
@@ -84,7 +86,7 @@ uniteSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
     { osmTypes = HS.union t1 t2 }
 
 instance Hashable OsmType
-instance T.MSemiLattice Types where
+instance MSemiLattice Types where
     Num     /\ Num      = Num
     String  /\ String   = String
     List    /\ List     = List

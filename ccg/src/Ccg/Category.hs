@@ -14,14 +14,14 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Category where
+module Ccg.Category where
 
 import           Data.Hashable (Hashable)
 import           GHC.Generics  (Generic)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo3)
 
-import           Latex
+import           Ccg.Latex
 
 data Category atom slash
     = Simple  atom

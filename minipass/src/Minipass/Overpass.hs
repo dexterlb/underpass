@@ -6,7 +6,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module Overpass where
+module Minipass.Overpass where
 
 import           Control.Monad.State.Lazy
 
@@ -14,20 +14,20 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as TIO
 
-import           Context (VarName, emptyContext)
+import           Minipass.Context (VarName, emptyContext)
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
 import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
-import Minipass.Intermediate
-import Minipass.Constants
-import Minipass.Language (ListC(..), listTerm)
+import Minipass.Language.Intermediate
+import Minipass.Language.Constants
+import Minipass.Language.Language (ListC(..), listTerm)
 
-import qualified LambdaTypes as T
-import           LambdaTypes ((/\))
-import TypedLambda (TSLTerm(..), uncurryApplication, substitute, typify)
+import qualified Minipass.LambdaTypes as T
+import           Utils.Maths ((/\))
+import Minipass.TypedLambda (TSLTerm(..), uncurryApplication, substitute, typify)
 
 data Statement
     = OutputSet VarName

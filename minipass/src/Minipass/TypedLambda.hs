@@ -4,16 +4,18 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module TypedLambda where
+module Minipass.TypedLambda where
 
-import LambdaTypes (Typed, typeOf, MSemiLattice, (/\), (<!>))
-import qualified LambdaTypes as T
-import Lambda (LambdaTerm, typeOfTerm)
-import qualified Lambda as L
+import Minipass.LambdaTypes (Typed, typeOf)
+import qualified Minipass.LambdaTypes as T
+import Minipass.Lambda (LambdaTerm, typeOfTerm)
+import qualified Minipass.Lambda as L
+
+import Utils.Maths
 
 import qualified Data.Text as Text
 
-import Context
+import Minipass.Context
 
 import Data.Maybe (fromMaybe)
 

@@ -2,10 +2,10 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Trees where
+module Ccg.Trees where
 
-import Category
-import Latex
+import Ccg.Category
+import Ccg.Latex
 
 data ParseTree cat payload where
     Leaf :: cat -> payload -> ParseTree cat payload

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parsing
+module Utils.Parsing
     ( module Text.Megaparsec
     , module Text.Megaparsec.Char
     , module Text.Megaparsec.Expr

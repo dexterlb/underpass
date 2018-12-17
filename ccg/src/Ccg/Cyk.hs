@@ -1,7 +1,7 @@
 {-# LANGUAGE ParallelListComp #-}
 {-# LANGUAGE GADTs #-}
 
-module Cyk where
+module Ccg.Cyk where
 
 import           Data.HashMap.Lazy (HashMap)
 import qualified Data.HashMap.Lazy as HM
@@ -11,9 +11,9 @@ import qualified Data.Vector       as V
 import           Data.Maybe        (fromMaybe)
 import           Data.MemoCombinators.Class (MemoTable)
 
-import Category
-import Trees
-import Memoise (memo)
+import Ccg.Category
+import Ccg.Trees
+import Ccg.Memoise (memo)
 
 type Cell cat payload = HashMap cat [Item cat payload]
 

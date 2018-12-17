@@ -12,7 +12,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Modal where
+module Ccg.Modal where
 
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable)
@@ -21,9 +21,9 @@ import qualified Data.MemoCombinators as Memo
 import           Data.Text (Text)
 import qualified Data.Text as T
 
-import           Category
-import           Memoise()
-import           Latex
+import           Ccg.Category
+import           Ccg.Memoise()
+import           Ccg.Latex
 
 type ModalCategory = Category NonTerm Slash
 

@@ -5,14 +5,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module LambdaTypes where
+module Minipass.LambdaTypes where
 
-import qualified Parsing as P
-import Parsing ((<|>))
+import qualified Utils.Parsing as P
+import Utils.Parsing ((<|>))
 import Data.Functor (($>))
 
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
+import Utils.Maths
 
 data ApplicativeType b
     = Basic b
@@ -40,21 +41,6 @@ parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeTerm
     =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
-
-class PartialOrd t where
-    (<!)      :: t -> t -> Bool
-
-class (Show t, Typeable t, PartialOrd t) => MSemiLattice t where
-    (/\)      :: t -> t -> t     -- meet operator
-
-class HasBot t where
-    bot       :: t               -- x /\ bot == x
-
-(<!>) :: PartialOrd t => t -> t -> Bool
-a <!> b = a <! b || a !> b
-
-(!>) :: PartialOrd t => t -> t -> Bool
-a !> b = b <! a
 
 instance MSemiLattice b => MSemiLattice (ApplicativeType b) where
     (/\) (Basic x) (Basic y) = Basic $ (/\) x y

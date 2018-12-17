@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Latex where
+module Ccg.Latex where
 
 import           Data.Text (Text)
 import qualified Data.Text as T

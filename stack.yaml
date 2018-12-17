@@ -2,3 +2,4 @@ resolver: lts-12.22
 packages:
 - ccg
 - minipass
+- utils

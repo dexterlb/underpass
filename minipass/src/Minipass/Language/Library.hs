@@ -4,12 +4,13 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Minipass.Library where
+module Minipass.Language.Library where
 
-import Lambda
-import Minipass.Language
-import Context
-import Parsing (Parser)
+import Minipass.Lambda
+import Minipass.Language.Language
+import Minipass.Context
+
+import Utils.Parsing (Parser)
 
 library :: [(VarName, Term)]
 library =
