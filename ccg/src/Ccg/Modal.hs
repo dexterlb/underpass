@@ -25,6 +25,8 @@ import           Ccg.Category
 import           Ccg.Memoise()
 import           Ccg.Latex
 
+import           Utils.Maths
+
 type ModalCategory = Category NonTerm Slash
 
 data NonTerm
@@ -76,6 +78,15 @@ data Modality
 instance MemoTable Modality where
     table = Memo.enum
 
+instance PartialOrd Modality where
+    Dot     <! _        = True
+    X       <! X        = True
+    X       <! Star     = True
+    Diamond <! Diamond  = True
+    Diamond <! Star     = True
+    Star    <! Star     = True
+    _       <! _        = False
+
 deriving instance (Hashable Modality)
 
 instance Show Modality where
@@ -106,13 +117,31 @@ instance Latexable Rule where
 
 instance Combines ModalCategory where
     type CombineRule ModalCategory = Rule
-    combineBy LeftApp z (Complex (LeftSlash _) x y)
-        | y == z = Just x
+    combineBy LeftApp z (Complex (LeftSlash m) x y)
+        | Just (_, r) <- y === z, m <! Star = Just $ r x
         | otherwise = Nothing
-    combineBy RightApp (Complex (RightSlash _) x y) z
-        | y == z = Just x
+    combineBy RightApp (Complex (RightSlash m) x y) z
+        | Just (r, _) <- y === z, m <! Star = Just $ r x
         | otherwise = Nothing
     combineBy _ _ _ = Nothing
+
+-- unification
+
+(===) :: ModalCategory -> ModalCategory -> Maybe ((ModalCategory -> ModalCategory), (ModalCategory -> ModalCategory))
+(===) x y = (\(r1, r2) -> (rename r1, rename r2)) <$> unify x y
+
+data Rename = Rename
+
+unify :: ModalCategory -> ModalCategory -> Maybe (Rename, Rename)
+unify x y
+    | x == y    = Just (Rename, Rename)
+    | otherwise = Nothing
+
+rename :: Rename -> ModalCategory -> ModalCategory
+rename _ = id
+
+
+-- convenience functions
 
 sc :: String -> ModalCategory
 sc s = Simple $ NonTerm $ T.pack s

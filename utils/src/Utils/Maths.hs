@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module Utils.Maths where
 
 import Data.Dynamic (Typeable)
@@ -19,7 +21,10 @@ class PartialOrd t where
     (<!)      :: t -> t -> Bool
 
 class (Show t, Typeable t, PartialOrd t) => MSemiLattice t where
-    (/\)      :: t -> t -> t     -- meet operator
+    (/\)      :: t -> t -> t           -- meet operator
+
+class (Show t, Typeable t, PartialOrd t) => PMSemiLattice t where
+    (/!\)     :: t -> t -> Maybe t     -- partial meet operator
 
 class HasBot t where
     bot       :: t               -- x /\ bot == x

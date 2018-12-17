@@ -20,6 +20,7 @@ dependencies:
 - text
 - process
 - directory
+- utils
 
 library:
   source-dirs: src
