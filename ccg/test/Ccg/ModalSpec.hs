@@ -16,4 +16,4 @@ spec = do
       combine (sc "S" </> vc "x" </> vc "x") (sc "C")
         `shouldBe` [(RightApp, (sc "S" </> sc "C"))]
       combine (sc "A") (sc "S" </> vc "x" <\> vc "x")
-        `shouldBe` [(RightApp, (sc "S" </> sc "A"))]
+        `shouldBe` [(LeftApp, (sc "S" </> sc "A"))]

@@ -128,7 +128,7 @@ instance Combines ModalCategory where
     type CombineRule ModalCategory = Rule
     -- todo: make the categories have disjunct vars before combining
     combineBy LeftApp z (Complex (LeftSlash m) x y)
-        | Just (_, r) <- y === z, m <! Star = Just $ r x
+        | Just (_, r) <- z === y, m <! Star = Just $ r x
         | otherwise = Nothing
     combineBy RightApp (Complex (RightSlash m) x y) z
         | Just (r, _) <- y === z, m <! Star = Just $ r x
