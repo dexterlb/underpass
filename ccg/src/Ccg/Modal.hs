@@ -20,6 +20,8 @@ import           Data.MemoCombinators.Class (MemoTable, table)
 import qualified Data.MemoCombinators as Memo
 import           Data.Text (Text)
 import qualified Data.Text as T
+import           Data.HashSet (HashSet)
+import qualified Data.HashSet as HS
 
 import           Ccg.Category
 import           Ccg.Memoise()
@@ -127,13 +129,19 @@ instance Latexable Rule where
 instance Combines ModalCategory where
     type CombineRule ModalCategory = Rule
     -- todo: make the categories have disjunct vars before combining
-    combineBy LeftApp z (Complex (LeftSlash m) x y)
-        | Just (_, r) <- z === y, m <! Star = Just $ r x
+    combineBy rule left right
+        |   LeftApp <- rule
+          , z <- left', Complex (LeftSlash m) x y <- right'
+          , Just (_, r) <- z === y, m <! Star
+          = Just $ r x
+        |   RightApp <- rule
+          , Complex (RightSlash m) x y <- left', z <- right'
+          , Just (r, _) <- y === z, m <! Star
+          = Just $ r x
         | otherwise = Nothing
-    combineBy RightApp (Complex (RightSlash m) x y) z
-        | Just (r, _) <- y === z, m <! Star = Just $ r x
-        | otherwise = Nothing
-    combineBy _ _ _ = Nothing
+        where
+            left'  = addVarSuffix "_l" left  (vars right)
+            right' = addVarSuffix "_r" right (vars left)
 
 -- unification
 
@@ -174,6 +182,18 @@ substituteOne (Simple (Variable b)) (a, x)
     | otherwise = (Simple (Variable b))
 substituteOne t _ = t
 
+addVarSuffix :: Text -> ModalCategory -> HashSet Text -> ModalCategory
+addVarSuffix suff (Complex s left right) v = (Complex s (addVarSuffix suff left  v)
+                                                        (addVarSuffix suff right v))
+addVarSuffix suff (Simple (Variable x))  v
+    | HS.member x v = Simple $ Variable $ x <> suff
+    | otherwise        = Simple $ Variable   x
+addVarSuffix _ other _ = other
+
+vars :: ModalCategory -> HashSet Text
+vars (Complex _ left right) = HS.union (vars left) (vars right)
+vars (Simple (Variable x))  = HS.singleton x
+vars _                      = HS.empty
 
 -- convenience functions
 

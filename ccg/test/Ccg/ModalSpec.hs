@@ -17,3 +17,13 @@ spec = do
         `shouldBe` [(RightApp, (sc "S" </> sc "C"))]
       combine (sc "A") (sc "S" </> vc "x" <\> vc "x")
         `shouldBe` [(LeftApp, (sc "S" </> sc "A"))]
+      combine (sc "S" </> vc "x" </> vc "x") (sc "C" </> sc "A")
+        `shouldBe` [(RightApp, (sc "S" </> (sc "C" </> sc "A")))]
+      combine (vc "y" </> vc "x" </> vc "x") (sc "C" </> sc "A")
+        `shouldBe` [(RightApp, (vc "y" </> (sc "C" </> sc "A")))]
+    it "renames common variables" $ do
+      combine (sc "S" </> vc "x" </> vc "x") (sc "C" </> vc "x")
+        `shouldBe` [(RightApp, (sc "S" </> (sc "C" </> vc "x_r")))]
+    it "renames overlapping variables" $ do
+      combine (vc "y" </> vc "x" </> vc "x") (vc "y" </> sc "A")
+        `shouldBe` [(RightApp, (vc "y_l" </> (vc "y_r" </> sc "A")))]
