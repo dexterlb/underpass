@@ -20,6 +20,10 @@ import           Data.Hashable (Hashable)
 import           GHC.Generics  (Generic)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo3)
+import           Data.Dynamic (Typeable)
+
+import qualified LambdaCalculus.LambdaTypes as T
+import           LambdaCalculus.LambdaTypes (Typed, typeOf)
 
 import           Ccg.Latex
 
@@ -69,3 +73,8 @@ class HasPrimaryDir a where
     primaryDir :: a -> PrimaryDir
 
 data PrimaryDir = LeftPrimary | RightPrimary | NoPrimary deriving (Eq, Show)
+
+-- lambda instances (maybe they shouldn't be here?)
+instance (Show payload, Typeable payload,  Typed atom t) => Typed (Category atom payload) t where
+    typeOf (Simple a) = typeOf a
+    typeOf (Complex _ l r) = T.Application (typeOf r) (typeOf l)

@@ -4,3 +4,8 @@
 - category features and feature variables
 - token matching (tagged tokens?)
 - way to write grammars (template haskell? parsing?)
+
+ideas:
+    - have a fixed starting type system T (e.g. minipass types)
+      and allow lexicon-writers to make subtypes of ApplicativeType T.
+      Afterwards, lower the terms into ApplicativeType T.

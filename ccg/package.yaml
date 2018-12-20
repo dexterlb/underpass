@@ -21,6 +21,7 @@ dependencies:
 - process
 - directory
 - utils
+- lambda-calculus
 
 library:
   source-dirs: src

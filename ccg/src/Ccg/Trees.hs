@@ -18,6 +18,10 @@ data MultiNode cat payload where
     MultiLeaf :: payload -> MultiNode cat payload
     MultiVert :: (Combines cat) => CombineRule cat -> ParseForest cat payload -> ParseForest cat payload -> MultiNode cat payload
 
+tmap :: (p1 -> p2) -> ParseTree cat p1 -> ParseTree cat p2
+tmap f (Leaf c p)     = Leaf c (f p)
+tmap f (Vert c r a b) = Vert c r (tmap f a) (tmap f b)
+
 enumTrees :: ParseForest cat payload -> [ParseTree cat payload]
 enumTrees (ParseForest cat nodes) = foldr (++) [] $ map (extractTrees cat) nodes
 
