@@ -1,0 +1,6 @@
+- figure out how to get from trees to lambda expressions with best balance
+  between abstraction and pain
+- incorporate type raising (decide between unary rules or parametric combination)
+- category features and feature variables
+- token matching (tagged tokens?)
+- way to write grammars (template haskell? parsing?)
