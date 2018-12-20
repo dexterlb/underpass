@@ -4,10 +4,10 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE GADTs #-}
 
-module Minipass.Lambda where
+module LambdaCalculus.Lambda where
 
-import qualified Minipass.LambdaTypes as T
-import Minipass.LambdaTypes (Typed, typeOf)
+import qualified LambdaCalculus.LambdaTypes as T
+import LambdaCalculus.LambdaTypes (Typed, typeOf)
 
 import Utils.Maths
 import Utils.Parsing (Parser, Parseable, parser, (<|>))
@@ -17,7 +17,7 @@ import qualified Data.Text as Text
 
 import Control.Monad (fail)
 
-import Minipass.Context
+import LambdaCalculus.Context
 
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)

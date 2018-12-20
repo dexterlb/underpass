@@ -3,9 +3,9 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 
-module Minipass.Context where
+module LambdaCalculus.Context where
 
-import Minipass.LambdaTypes
+import LambdaCalculus.LambdaTypes
 import Utils.Maths
 
 import Data.Text (Text)

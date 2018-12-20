@@ -4,18 +4,18 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Minipass.TypedLambda where
+module LambdaCalculus.TypedLambda where
 
-import Minipass.LambdaTypes (Typed, typeOf)
-import qualified Minipass.LambdaTypes as T
-import Minipass.Lambda (LambdaTerm, typeOfTerm)
-import qualified Minipass.Lambda as L
+import LambdaCalculus.LambdaTypes (Typed, typeOf)
+import qualified LambdaCalculus.LambdaTypes as T
+import LambdaCalculus.Lambda (LambdaTerm, typeOfTerm)
+import qualified LambdaCalculus.Lambda as L
 
 import Utils.Maths
 
 import qualified Data.Text as Text
 
-import Minipass.Context
+import LambdaCalculus.Context
 
 import Data.Maybe (fromMaybe)
 

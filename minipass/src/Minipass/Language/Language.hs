@@ -9,9 +9,9 @@ import Data.Functor (($>))
 import Utils.Parsing as P
 import Utils.Maths
 
-import qualified Minipass.LambdaTypes as T
-import           Minipass.LambdaTypes (Typed)
-import Minipass.Lambda
+import qualified LambdaCalculus.LambdaTypes as T
+import           LambdaCalculus.LambdaTypes (Typed)
+import           LambdaCalculus.Lambda
 
 import Data.Text (Text)
 

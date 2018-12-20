@@ -14,7 +14,9 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as TIO
 
-import           Minipass.Context (VarName, emptyContext)
+import           LambdaCalculus.Context (VarName, emptyContext)
+import           LambdaCalculus.TypedLambda (TSLTerm(..), uncurryApplication, substitute, typify)
+import qualified LambdaCalculus.LambdaTypes as T
 
 import qualified Data.HashSet as HS
 import Data.HashSet (HashSet)
@@ -25,9 +27,7 @@ import Minipass.Language.Intermediate
 import Minipass.Language.Constants
 import Minipass.Language.Language (ListC(..), listTerm)
 
-import qualified Minipass.LambdaTypes as T
 import           Utils.Maths ((/\))
-import Minipass.TypedLambda (TSLTerm(..), uncurryApplication, substitute, typify)
 
 data Statement
     = OutputSet VarName

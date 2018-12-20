@@ -6,9 +6,12 @@
 
 module Minipass.Language.Library where
 
-import Minipass.Lambda
+
+import LambdaCalculus.Context
+import LambdaCalculus.Lambda
+
+
 import Minipass.Language.Language
-import Minipass.Context
 
 import Utils.Parsing (Parser)
 

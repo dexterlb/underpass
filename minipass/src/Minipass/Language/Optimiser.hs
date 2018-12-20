@@ -7,15 +7,15 @@
 
 module Minipass.Language.Optimiser where
 
-import Minipass.Language.Intermediate
-import qualified Minipass.LambdaTypes as T
-import           Minipass.LambdaTypes (typeOf)
-import Minipass.TypedLambda
-import Utils.Maths
-import Minipass.Language.Constants
-import Minipass.Language.Language (ListC(..), listTerm)
-import Minipass.Overpass (Value(ListValue), translateValue)
-import Minipass.Context
+import           Minipass.Language.Intermediate
+import qualified LambdaCalculus.LambdaTypes as T
+import           LambdaCalculus.LambdaTypes (typeOf)
+import           LambdaCalculus.TypedLambda
+import           LambdaCalculus.Context
+import           Utils.Maths
+import           Minipass.Language.Constants
+import           Minipass.Language.Language (ListC(..), listTerm)
+import           Minipass.Overpass (Value(ListValue), translateValue)
 
 optimise :: TTerm -> TTerm
 optimise

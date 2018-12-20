@@ -7,9 +7,9 @@
 
 module Minipass.Language.Intermediate where
 
-import qualified Minipass.LambdaTypes as T
-import Minipass.LambdaTypes (typeOf, Typed)
-import Minipass.Lambda
+import qualified LambdaCalculus.LambdaTypes as T
+import           LambdaCalculus.LambdaTypes (typeOf, Typed)
+import           LambdaCalculus.Lambda
 
 import Utils.Maths
 
@@ -21,7 +21,7 @@ import Data.HashSet (HashSet)
 import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
-import Minipass.TypedLambda (TSLTerm)
+import LambdaCalculus.TypedLambda (TSLTerm)
 
 import Control.Exception (throw)
 

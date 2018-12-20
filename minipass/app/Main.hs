@@ -1,8 +1,8 @@
 module Main where
 
 import Minipass.Overpass
-import Minipass.TypedLambda
-import Minipass.Context
+import LambdaCalculus.TypedLambda
+import LambdaCalculus.Context
 import Minipass.Language.Optimiser
 import Minipass.Language.Intermediate
 import Minipass.Language.Library

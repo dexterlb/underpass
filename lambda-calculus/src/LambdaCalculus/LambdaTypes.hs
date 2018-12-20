@@ -5,7 +5,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Minipass.LambdaTypes where
+module LambdaCalculus.LambdaTypes where
 
 import qualified Utils.Parsing as P
 import Utils.Parsing ((<|>))
