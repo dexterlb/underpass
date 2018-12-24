@@ -43,14 +43,14 @@ tableUglyIO f = do
     return f'
 
 tableUgly :: (Eq a, Hashable a) => (a -> b) -> (a -> b)
-tableUgly f = let f' = unsafePerformIO (tableUglyIO f) in \ x -> unsafePerformIO (f' x)
+tableUgly f = let f' = unsafePerformIO (tableUglyIO f) in unsafePerformIO . f'
 
 -- ********************
 
 fib :: (Int -> Int) -> Int -> Int
 fib _ 0 = 1
 fib _ 1 = 1
-fib f n = (f (n - 1)) + (f (n - 2))
+fib f n = f (n - 1) + f (n - 2)
 
 fib' :: Int -> Int
 fib' = fix fib

@@ -1,4 +1,3 @@
-{-# LANGUAGE ParallelListComp #-}
 {-# LANGUAGE GADTs #-}
 
 module Ccg.Cyk where
@@ -8,7 +7,6 @@ import qualified Data.HashMap.Lazy as HM
 import           Data.Hashable     (Hashable)
 import           Data.Vector       (Vector)
 import qualified Data.Vector       as V
-import           Data.Maybe        (fromMaybe)
 import           Data.MemoCombinators.Class (MemoTable)
 
 import Ccg.Category
@@ -19,7 +17,7 @@ type Cell cat payload = HashMap cat [Item cat payload]
 
 data Item cat payload where
     Terminal :: payload -> Item cat payload
-    Derive   :: (Combines cat) => (CombineRule cat) -> (Int, Int, cat) -> (Int, Int, cat) -> Item cat payload
+    Derive   :: (Combines cat) => CombineRule cat -> (Int, Int, cat) -> (Int, Int, cat) -> Item cat payload
 
 cyk :: (Eq cat, Hashable cat, Combines cat, MemoTable cat)
     => Vector [(cat, payload)]                  -- tagged word
@@ -59,15 +57,14 @@ getTrees' :: (Combines cat, Eq cat, Hashable cat)
     -> ParseForest cat payload
 getTrees' get f (i, j, cat)
     = ParseForest cat
-    $ fromMaybe []
-    $ (map buildNode) <$> (HM.lookup cat $ get (i, j))
+    $ maybe [] (map buildNode) (HM.lookup cat $ get (i, j))
     where
         buildNode (Terminal payload)    = MultiLeaf payload
         buildNode (Derive   rule x y)   = MultiVert rule (f x) (f y)
 
 
 aggregate :: (Eq a, Hashable a) => [(a, b)] -> HashMap a [b]
-aggregate = (HM.fromListWith (++)) . (map (pure <$>))
+aggregate = HM.fromListWith (++) . map (pure <$>)
 
 leafCell :: (Eq cat, Hashable cat) => [(cat, payload)] -> Cell cat payload
-leafCell = HM.fromList . (map ((pure . Terminal) <$>))
+leafCell = HM.fromList . map ((pure . Terminal) <$>)
