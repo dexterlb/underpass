@@ -24,12 +24,12 @@ pop (VarContext (x:xs)) = Just (x, VarContext xs)
 pop _                   = Nothing
 
 oneHotContext :: MSemiLattice t => Index -> (VarName, ApplicativeType t) -> VarContext t
-oneHotContext i x = VarContext $ reverse $ x : (replicate i ("", bot))
+oneHotContext i x = VarContext $ reverse $ x : replicate i ("", bot)
 
 meetContexts :: MSemiLattice t => VarContext t -> VarContext t -> VarContext t
 meetContexts (VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f ((na, ta):as) ((_, tb):bs) = (na, ta /\ tb):(f as bs)
+        f ((na, ta):as) ((_, tb):bs) = (na, ta /\ tb):f as bs
         f [] bs = bs
         f as [] = as
 
@@ -40,7 +40,7 @@ at i (VarContext c)
     | otherwise = Nothing
 
 get :: VarName -> VarContext t -> Maybe (Index, ApplicativeType t)
-get name (VarContext c) = (\i -> (i, snd $ c !! i)) <$> (elemIndex name (map fst c))
+get name (VarContext c) = (\i -> (i, snd $ c !! i)) <$> elemIndex name (map fst c)
 
 emptyContext :: VarContext t
 emptyContext = VarContext []
