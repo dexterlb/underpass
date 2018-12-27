@@ -1,14 +1,9 @@
-{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RankNTypes #-}
@@ -30,10 +25,7 @@ import           Ccg.Latex
 data Category atom slash
     = Simple  atom
     | Complex slash (Category atom slash) (Category atom slash)
-    deriving (Generic)
-
-deriving instance (Eq atom, Eq slash) => Eq (Category atom slash)
-deriving instance (Hashable atom, Hashable slash) => Hashable (Category atom slash)
+    deriving (Eq, Hashable, Generic)
 
 instance (MemoTable atom, MemoTable slash) => MemoTable (Category atom slash) where
     table = mkmemo (table :: Memo atom) (table :: Memo slash)
@@ -43,16 +35,16 @@ instance (MemoTable atom, MemoTable slash) => MemoTable (Category atom slash) wh
                    -> (forall a. (slash' -> a) -> (slash' -> a))
                    -> (Category atom' slash' -> b)
                    -> (Category atom' slash' -> b)
-            mkmemo matom _      f (Simple x)    = (matom (f . Simple)) x
+            mkmemo matom _      f (Simple x)    = matom (f . Simple) x
             mkmemo matom mslash f (Complex x y z) =
-                (memo3 mslash mcat mcat (\a b c -> f $ Complex a b c)) x y z
+                memo3 mslash mcat mcat (\a b c -> f $ Complex a b c) x y z
                 where
                     mcat :: (Category atom' slash' -> t) -> (Category atom' slash' -> t)
                     mcat = mkmemo matom mslash
 
 instance (Show atom, Show slash) => Show (Category atom slash) where
     show (Simple atom) = show atom
-    show (Complex slash a b) = "(" <> (show a) <> (show slash) <> (show b) <> ")"
+    show (Complex slash a b) = "(" <> show a <> show slash <> show b <> ")"
 
 instance (Latexable atom, Latexable slash) => Latexable (Category atom slash) where
     latex (Simple atom) = latex atom

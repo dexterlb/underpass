@@ -15,7 +15,7 @@ instance Latexable Text where
     latex s = s
 
 instance Latexable a => Latexable [a] where
-    latex = T.unlines . (map latex)
+    latex = T.unlines . map latex
 
 latexPreview :: Latexable a => a -> IO ()
 latexPreview x = do

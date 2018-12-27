@@ -34,10 +34,10 @@ instance (Show t, Show c) => Show (LambdaTerm t c) where
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
 showTerm context (Application a b) = "(" <> showTerm context a <> " " <> showTerm context b <> ")"
-showTerm context (Lambda x t a) = "λ " <> (Text.unpack x) <> ": " <> show t <> " { " <> showTerm (push (x, t) context) a <> " }"
+showTerm context (Lambda x t a) = "λ " <> Text.unpack x <> ": " <> show t <> " { " <> showTerm (push (x, t) context) a <> " }"
 showTerm context (Variable i)
     | Just (x, _) <- at i context = Text.unpack x
-    | otherwise = "<var " <> (show i) <> ">"
+    | otherwise = "<var " <> show i <> ">"
 
 
 instance (Typed c t) => Typed (LambdaTerm t c) t where
@@ -69,8 +69,7 @@ instance (Parseable t, Parseable c, Typed c t) => Parseable (LambdaTerm t c) whe
     parser = fst <$> parseTerm emptyContext
 
 parseTerm :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
-parseTerm context
-    =   parseApplication context
+parseTerm = parseApplication
 
 parseNonApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseNonApplication context
@@ -95,22 +94,22 @@ parseLambda context = do
     return (Lambda var varType term, T.Application varType termType)
 
 parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
-parseApplication context = (foldl1 makeApplication)
-    <$> (P.some $ parseNonApplication context)
+parseApplication context = foldl1 makeApplication
+    <$> P.some (parseNonApplication context)
     where
-        makeApplication left@(x, (T.Application a b)) right@(y, c)
+        makeApplication left@(x, T.Application a b) right@(y, c)
             | c <!> a               = (Application x y, b)
             | otherwise             = throw $ CannotApply left right
         makeApplication left right  = throw $ CannotApply left right
 
 parseVariableDeclaration :: (Parseable t) => Parser (VarName, T.ApplicativeType t)
 parseVariableDeclaration =
-    (P.try $ do
+        P.try (do
         var     <- parseVariableName
         _       <- P.operator ":"
         varType <- parser
         return (var, varType))
-    <|> (P.try $ do
+    <|> P.try (do
         var     <- parseVariableName
         return (var, bot)
     )
@@ -131,23 +130,23 @@ letLambda x a b = Application (Lambda x (typeOf a) b) a
 letLambdaN :: Typed c t => [(VarName, LambdaTerm t c)] -> LambdaTerm t c -> LambdaTerm t c
 letLambdaN l a = foldr f a l
     where
-        f (x, b) c = letLambda x b c
+        f (x, b) = letLambda x b
 
 letContextN :: Typed c t => [(VarName, LambdaTerm t c)] -> VarContext t
 letContextN = foldl (flip f) emptyContext
     where
-        f (x, b) c = push (x, typeOf b) c
+        f (x, b) = push (x, typeOf b)
 
 parseWrap :: (Typed c t, Parseable c, Parseable t) => [(VarName, LambdaTerm t c)] -> Parser (LambdaTerm t c)
-parseWrap l = (letLambdaN l) <$> fst <$> (parseTerm $ letContextN l)
+parseWrap l = letLambdaN l . fst <$> parseTerm (letContextN l)
 
 up :: Typed c t => LambdaTerm t c -> Index -> LambdaTerm t c
 up to n = up' to n 0
 
 up' :: Typed c t => LambdaTerm t c -> Index -> Index -> LambdaTerm t c
 up' (Variable x) d c
-    | x >= c = (Variable (x + d))
-    | otherwise = (Variable x)
+    | x >= c = Variable (x + d)
+    | otherwise = Variable x
 up' (Application m n) d c = Application (up' m d c) (up' n d c)
 up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
 up' (Constant m) _ _ = Constant m
@@ -156,7 +155,7 @@ data LambdaException t c
     = CannotApply (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
     deriving (Typeable)
 
-data VarException
+newtype VarException
     = UnknownVar Index
     deriving (Show, Typeable)
 

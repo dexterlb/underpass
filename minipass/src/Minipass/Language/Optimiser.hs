@@ -2,7 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Minipass.Language.Optimiser where
@@ -19,13 +18,13 @@ import           Minipass.Overpass (Value(ListValue), translateValue)
 
 optimise :: TTerm -> TTerm
 optimise
-    = fixedPoint (
-        evaluateArithmetic
+    = fixedPoint
+        $ evaluateArithmetic
         . generaliseUniversals
-        . (fixedPoint (propagateTypes . fixTypes))
-        . (fixedPoint (betaReduce reducible))
-        . (fixedPoint fixTypes)
-    )
+        . fixedPoint (propagateTypes . fixTypes)
+        . fixedPoint (betaReduce reducible)
+        . fixedPoint fixTypes
+
 
 propagateTypes :: TTerm -> TTerm
 propagateTypes = updateTypes updater
@@ -67,7 +66,7 @@ refineGetType _ t = t
 
 refineNextType :: [ListC] -> TTypes -> TTypes
 refineNextType [StringC "in"] t
-    = t /\ (T.Application (T.Basic $ osmSet [OsmArea]) (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay]))
+    = t /\ T.Application (T.Basic $ osmSet [OsmArea]) (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay])
 refineNextType _ t = t
 
 generaliseUniversals :: TTerm -> TTerm
@@ -88,7 +87,7 @@ evaluateArithmetic :: TTerm -> TTerm
 evaluateArithmetic = id
 
 reducible :: TTerm -> Bool
-reducible x = (not $ isSet $ typeOf x) || (trivial x)
+reducible x = not (isSet $ typeOf x) || trivial x
 
 isSet :: T.ApplicativeType Types -> Bool
 isSet (T.Basic (Set _)) = True

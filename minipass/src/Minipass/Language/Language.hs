@@ -65,7 +65,7 @@ data ListC
 
 listTerm :: [ListC] -> Term
 listTerm []             = Constant Empty
-listTerm ((NumC n):xs)    = Application (Application (Constant ConsNum) (Constant $ NumLiteral n)) $ listTerm xs
-listTerm ((StringC n):xs) = Application (Application (Constant ConsString) (Constant $ StringLiteral n)) $ listTerm xs
-listTerm ((ListC n):xs)   = Application (Application (Constant ConsList) (listTerm n)) $ listTerm xs
+listTerm (NumC n:xs)    = Application (Application (Constant ConsNum) (Constant $ NumLiteral n)) $ listTerm xs
+listTerm (StringC n:xs) = Application (Application (Constant ConsString) (Constant $ StringLiteral n)) $ listTerm xs
+listTerm (ListC n:xs)   = Application (Application (Constant ConsList) (listTerm n)) $ listTerm xs
 

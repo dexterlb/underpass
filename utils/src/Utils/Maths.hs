@@ -7,7 +7,7 @@ import Data.Dynamic (Typeable)
 data ProcessResult = Ok | GiveUp deriving (Show, Eq)
 
 fixedPoint :: (Eq a) => (a -> a) -> a -> a
-fixedPoint f = fst . (limitedFixedPoint f 100000)   -- fixme
+fixedPoint f = fst . limitedFixedPoint f 100000   -- fixme
 
 limitedFixedPoint :: (Eq a) => (a -> a) -> Int -> a -> (a, ProcessResult)
 limitedFixedPoint _ 0 x = (x, GiveUp)

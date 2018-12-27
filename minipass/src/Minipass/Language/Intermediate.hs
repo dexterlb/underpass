@@ -1,7 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE NamedFieldPuns        #-}
 
@@ -47,14 +46,14 @@ instance Show Types where
     show String     = "String"
     show List       = "List"
     show Anything   = "Any"
-    show (Set t)    = "[" <> (show t) <> "]"
+    show (Set t)    = "[" <> show t <> "]"
 
-data SetTag = SetTag
+newtype SetTag = SetTag
     { osmTypes :: HashSet OsmType }
     deriving (Eq)
 
 instance Show SetTag where
-    show (SetTag { osmTypes }) = concatMap f $ HS.toList osmTypes
+    show SetTag { osmTypes } = concatMap f $ HS.toList osmTypes
         where
             f OsmNode       = "n"
             f OsmWay        = "w"
@@ -78,11 +77,11 @@ meetSetTags :: SetTag -> SetTag -> SetTag
 meetSetTags = intersectSetTags
 
 intersectSetTags :: SetTag -> SetTag -> SetTag
-intersectSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
+intersectSetTags SetTag { osmTypes = t1 } SetTag { osmTypes = t2 } = SetTag
     { osmTypes = HS.intersection t1 t2 }
 
 uniteSetTags :: SetTag -> SetTag -> SetTag
-uniteSetTags (SetTag { osmTypes = t1 }) (SetTag { osmTypes = t2 }) = SetTag
+uniteSetTags SetTag { osmTypes = t1 } SetTag { osmTypes = t2 } = SetTag
     { osmTypes = HS.union t1 t2 }
 
 instance Hashable OsmType
@@ -99,7 +98,7 @@ type TTerm = TSLTerm Types Constants
 type TTypes = T.ApplicativeType Types
 
 instance Typed Constants Types where
-    typeOf = (T.transform typeToIntermediate) . typeOf
+    typeOf = T.transform typeToIntermediate . typeOf
 
 toIntermediate :: L.Term -> Term
 toIntermediate = transform Constant typeToIntermediate
