@@ -22,6 +22,7 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import           Data.HashSet (HashSet)
 import qualified Data.HashSet as HS
+import           Data.Tuple (swap)
 
 import           Ccg.Category
 import           Ccg.Memoise()
@@ -29,24 +30,24 @@ import           Ccg.Latex
 
 import           Utils.Maths
 
-type ModalCategory = Category NonTerm Slash
+type ModalCategory t = Category (NonTerm t) Slash
 
-data NonTerm
-    = NonTerm   Text
+data NonTerm t
+    = NonTerm   t
     | Variable  Text
     deriving (Eq, Generic)
 
-instance MemoTable NonTerm where
+instance (MemoTable t) => MemoTable (NonTerm t) where
     table f (NonTerm  x) = (table (f . NonTerm)) x
     table f (Variable x) = (table (f . Variable)) x
 
-deriving instance (Hashable NonTerm)
-instance Show NonTerm where
-    show (NonTerm  t) = T.unpack t
+deriving instance Hashable t => (Hashable (NonTerm t))
+instance Show t => Show (NonTerm t) where
+    show (NonTerm  t) = show t
     show (Variable t) = T.unpack $ "<" <> t <> ">"
 
-instance Latexable NonTerm where
-    latex (NonTerm t)  = "$" <> t <> "$"
+instance (Latexable t) => Latexable (NonTerm t) where
+    latex (NonTerm t)  = "$" <> latex t <> "$"
     latex (Variable t) = "$var(" <> t <> ")$"
 
 data Rule
@@ -126,17 +127,17 @@ instance Finite Rule where
 instance Latexable Rule where
     latex = T.pack . show
 
-instance Combines ModalCategory where
-    type CombineRule ModalCategory = Rule
+instance (MSemiLattice t) => Combines (ModalCategory t) where
+    type CombineRule (ModalCategory t) = Rule
     -- todo: make the categories have disjunct vars before combining
     combineBy rule left right
         |   LeftApp <- rule
           , z <- left', Complex (LeftSlash m) x y <- right'
-          , Just (_, r) <- z === y, m <! Star
+          , Just (_, r) <- z =<= y, m <! Star
           = Just $ r x
         |   RightApp <- rule
           , Complex (RightSlash m) x y <- left', z <- right'
-          , Just (r, _) <- y === z, m <! Star
+          , Just (r, _) <- y =>= z, m <! Star
           = Just $ r x
         | otherwise = Nothing
         where
@@ -145,25 +146,28 @@ instance Combines ModalCategory where
 
 -- unification
 
-(===) :: ModalCategory -> ModalCategory -> Maybe ((ModalCategory -> ModalCategory), (ModalCategory -> ModalCategory))
-(===) x y = (\(_, r1, r2) -> (substitute r1, substitute r2)) <$> unify x y
+(=>=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe ((ModalCategory t -> ModalCategory t), (ModalCategory t -> ModalCategory t))
+x =>= y = (\(_, r1, r2) -> (substitute r1, substitute r2)) <$> unifyLeft x y
 
-type Substitution = [(Text, ModalCategory)]
+(=<=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe ((ModalCategory t -> ModalCategory t), (ModalCategory t -> ModalCategory t))
+x =<= y = swap <$> (y =>= x)
 
-unify :: ModalCategory -> ModalCategory -> Maybe (ModalCategory, Substitution, Substitution)
-unify (Simple (Variable a)) y = Just (y, [(a, y)], [])
-unify x (Simple (Variable a)) = Just (x, [], [(a, x)])
-unify (l @ (Simple (NonTerm p))) (Simple (NonTerm q))
-    | p == q    = Just (l, [], [])
+type Substitution t = [(Text, ModalCategory t)]
+
+unifyLeft :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe (ModalCategory t, Substitution t, Substitution t)
+unifyLeft (Simple (Variable a)) y = Just (y, [(a, y)], [])
+unifyLeft x (Simple (Variable a)) = Just (x, [], [(a, x)])
+unifyLeft (Simple (NonTerm p)) (Simple (NonTerm q))
+    | p !> q    = Just (Simple $ NonTerm $ p /\ q, [], [])
     | otherwise = Nothing
-unify (Complex sl al bl) (Complex sr ar br) = do
-    (a, alSub, arSub) <- unify al ar
+unifyLeft (Complex sl al bl) (Complex sr ar br) = do
+    (a, alSub, arSub) <- unifyLeft al ar
     let bl' = substitute alSub bl
     let br' = substitute arSub br
-    (b, blSub, brSub) <- unify bl' br'
+    (b, blSub, brSub) <- unifyLeft bl' br'
     s <- unifySlash sl sr
     pure (Complex s a b, alSub <> blSub, arSub <> brSub)
-unify _ _ = Nothing
+unifyLeft _ _ = Nothing
 
 unifySlash :: Slash -> Slash -> Maybe Slash
 unifySlash (LeftSlash a)  (LeftSlash b)  = Just $ LeftSlash  $ a /\ b
@@ -171,10 +175,10 @@ unifySlash (RightSlash a) (RightSlash b) = Just $ RightSlash $ a /\ b
 unifySlash _ _ = Nothing
 
 
-substitute :: Substitution -> ModalCategory -> ModalCategory
+substitute :: Substitution t -> ModalCategory t -> ModalCategory t
 substitute subs cat = foldl substituteOne cat subs
 
-substituteOne :: ModalCategory -> (Text, ModalCategory) -> ModalCategory
+substituteOne :: ModalCategory t -> (Text, ModalCategory t) -> ModalCategory t
 substituteOne (Complex sl left right) sub =
     Complex sl (substituteOne left sub) (substituteOne right sub)
 substituteOne (Simple (Variable b)) (a, x)
@@ -182,7 +186,7 @@ substituteOne (Simple (Variable b)) (a, x)
     | otherwise = (Simple (Variable b))
 substituteOne t _ = t
 
-addVarSuffix :: Text -> ModalCategory -> HashSet Text -> ModalCategory
+addVarSuffix :: Text -> ModalCategory t -> HashSet Text -> ModalCategory t
 addVarSuffix suff (Complex s left right) v = (Complex s (addVarSuffix suff left  v)
                                                         (addVarSuffix suff right v))
 addVarSuffix suff (Simple (Variable x))  v
@@ -190,23 +194,23 @@ addVarSuffix suff (Simple (Variable x))  v
     | otherwise        = Simple $ Variable   x
 addVarSuffix _ other _ = other
 
-vars :: ModalCategory -> HashSet Text
+vars :: ModalCategory t -> HashSet Text
 vars (Complex _ left right) = HS.union (vars left) (vars right)
 vars (Simple (Variable x))  = HS.singleton x
 vars _                      = HS.empty
 
 -- convenience functions
 
-sc :: String -> ModalCategory
-sc s = Simple $ NonTerm $ T.pack s
+sc :: t -> ModalCategory t
+sc s = Simple $ NonTerm $ s
 
-vc :: String -> ModalCategory
+vc :: String -> ModalCategory t
 vc s = Simple $ Variable $ T.pack s
 
-(</>) :: ModalCategory -> ModalCategory -> ModalCategory
+(</>) :: ModalCategory t -> ModalCategory t -> ModalCategory t
 a </> b = Complex (RightSlash Dot) a b
 
-(<\>) :: ModalCategory -> ModalCategory -> ModalCategory
+(<\>) :: ModalCategory t -> ModalCategory t -> ModalCategory t
 a <\> b = Complex (LeftSlash Dot) a b
 
 

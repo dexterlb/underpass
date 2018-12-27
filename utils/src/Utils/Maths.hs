@@ -34,3 +34,14 @@ a <!> b = a <! b || a !> b
 
 (!>) :: PartialOrd t => t -> t -> Bool
 a !> b = b <! a
+
+instance PartialOrd String where
+    (<!) = (==)
+
+instance MSemiLattice String where
+    (/\) = eqMeet
+
+eqMeet :: (Eq a) => a -> a -> a
+eqMeet a b
+    | a == b    = a
+    | otherwise = error "trying to meet unequal values"
