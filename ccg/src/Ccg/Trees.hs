@@ -23,7 +23,7 @@ tmap f (Leaf c p)     = Leaf c (f p)
 tmap f (Vert c r a b) = Vert c r (tmap f a) (tmap f b)
 
 enumTrees :: ParseForest cat payload -> [ParseTree cat payload]
-enumTrees (ParseForest cat nodes) = foldr (++) [] $ map (extractTrees cat) nodes
+enumTrees (ParseForest cat nodes) = concatMap (extractTrees cat) nodes
 
 extractTrees :: cat -> MultiNode cat payload -> [ParseTree cat payload]
 extractTrees cat (MultiLeaf payload) = [Leaf cat payload]
@@ -38,8 +38,8 @@ showTreeLines (Leaf cat payload) = ["< " <> show cat <> " | " <> show payload <>
 showTreeLines (Vert cat rule left right) =
        [""]
     ++ [ show cat <> " (" <> show rule <> ")" ]
-    ++ (map ("  " ++) $ showTreeLines left)
-    ++ (map ("  " ++) $ showTreeLines right)
+    ++ map ("  " ++) (showTreeLines left)
+    ++ map ("  " ++) (showTreeLines right)
     ++ [""]
 
 instance (Latexable cat, Latexable payload, Latexable (CombineRule cat), HasPrimaryDir (CombineRule cat))

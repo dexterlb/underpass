@@ -1,12 +1,5 @@
-{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
@@ -38,8 +31,8 @@ data NonTerm t
     deriving (Eq, Generic)
 
 instance (MemoTable t) => MemoTable (NonTerm t) where
-    table f (NonTerm  x) = (table (f . NonTerm)) x
-    table f (Variable x) = (table (f . Variable)) x
+    table f (NonTerm  x) = table (f . NonTerm) x
+    table f (Variable x) = table (f . Variable) x
 
 deriving instance Hashable t => (Hashable (NonTerm t))
 instance Show t => Show (NonTerm t) where
@@ -68,8 +61,8 @@ data Slash
 deriving instance (Hashable Slash)
 
 instance MemoTable Slash where
-    table f (LeftSlash x) = table (f . LeftSlash) $ x
-    table f (RightSlash x) = table (f . RightSlash) $ x
+    table f (LeftSlash x) = table (f . LeftSlash) x
+    table f (RightSlash x) = table (f . RightSlash) x
 
 data Modality
     = Star
@@ -146,10 +139,10 @@ instance (MSemiLattice t) => Combines (ModalCategory t) where
 
 -- unification
 
-(=>=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe ((ModalCategory t -> ModalCategory t), (ModalCategory t -> ModalCategory t))
+(=>=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe (ModalCategory t -> ModalCategory t, ModalCategory t -> ModalCategory t)
 x =>= y = (\(_, r1, r2) -> (substitute r1, substitute r2)) <$> unifyLeft x y
 
-(=<=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe ((ModalCategory t -> ModalCategory t), (ModalCategory t -> ModalCategory t))
+(=<=) :: (MSemiLattice t) => ModalCategory t -> ModalCategory t -> Maybe (ModalCategory t -> ModalCategory t, ModalCategory t -> ModalCategory t)
 x =<= y = swap <$> (y =>= x)
 
 type Substitution t = [(Text, ModalCategory t)]
@@ -183,12 +176,12 @@ substituteOne (Complex sl left right) sub =
     Complex sl (substituteOne left sub) (substituteOne right sub)
 substituteOne (Simple (Variable b)) (a, x)
     | a == b    = x
-    | otherwise = (Simple (Variable b))
+    | otherwise = Simple (Variable b)
 substituteOne t _ = t
 
 addVarSuffix :: Text -> ModalCategory t -> HashSet Text -> ModalCategory t
-addVarSuffix suff (Complex s left right) v = (Complex s (addVarSuffix suff left  v)
-                                                        (addVarSuffix suff right v))
+addVarSuffix suff (Complex s left right) v = Complex s (addVarSuffix suff left  v)
+                                                       (addVarSuffix suff right v)
 addVarSuffix suff (Simple (Variable x))  v
     | HS.member x v = Simple $ Variable $ x <> suff
     | otherwise        = Simple $ Variable   x

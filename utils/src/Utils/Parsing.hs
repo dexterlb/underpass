@@ -22,6 +22,8 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Data.Text (Text)
 import qualified Data.Text as T
 
+import Control.Applicative (liftA2)
+
 data Error = Error deriving (Eq, Ord, Show)
 
 type Parser = Parsec Error Text
@@ -36,7 +38,7 @@ pss :: Parseable t => String -> t
 pss = ps . T.pack
 
 ps :: Parseable t => Text -> t
-ps t = forceParse parser t
+ps = forceParse parser
 
 forceParse :: Parser t -> Text -> t
 forceParse p t = case parse (p <* eof) "input" t of
@@ -74,7 +76,7 @@ operator :: Text -> Parser Text
 operator = literal
 
 identifier :: Parser Text
-identifier = T.pack <$> ((lexeme . try) $ ((:) <$> letterChar) <*> (many alphaNumChar))
+identifier = T.pack <$> (lexeme . try) (liftA2 (:) letterChar (many alphaNumChar))
 
 quotedString :: Char -> Parser Text
 quotedString quote = (lexeme . try) $ do
@@ -94,7 +96,7 @@ quotedString quote = (lexeme . try) $ do
         nonEscaped = noneOf [quote, '\\']
 
 floatNumber :: Parser Float
-floatNumber = (lexeme . try) $ L.signed sc (lexeme ((try L.float) <|> (toFloat <$> (try L.decimal))))
+floatNumber = (lexeme . try) $ L.signed sc (lexeme (try L.float <|> (toFloat <$> try L.decimal)))
     where
         toFloat :: Int -> Float
         toFloat = fromIntegral

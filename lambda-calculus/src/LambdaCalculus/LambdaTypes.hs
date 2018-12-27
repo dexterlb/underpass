@@ -1,7 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
@@ -54,7 +53,7 @@ instance HasBot (ApplicativeType b) where
 
 instance PartialOrd b => PartialOrd (ApplicativeType b) where
     (<!) (Basic x)           (Basic y)           = (<!) x y
-    (<!) (Application a1 a2) (Application b1 b2) = ((<!) a1 b1) && ((<!) a2 b2)
+    (<!) (Application a1 a2) (Application b1 b2) = (<!) a1 b1 && (<!) a2 b2
     (<!) Bot    Bot          = True
     (<!) Bot    _            = False
     (<!) _      Bot          = True
