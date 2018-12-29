@@ -43,17 +43,21 @@ instance MemoTable StupidType where
 instance Latexable StupidType where
     latex = T.pack . show
 
-type Cat = ModalCategory (TypeBox StupidType)
+type Cat = ModalCategory (WrappedType StupidType)
 
 simpleWord :: Vector [(Cat, Text)]
 simpleWord = V.fromList
     [ [(bc A, "a"), (bc S </> bc C </> bc B, "a")]
-    , [(bc S </> bc C <\> bc A, "b"), (bc B, "b"), (bc S </> vc "p" <\> vc "p", "b")]
+--    [ [(sc $ T.Basic $ SubType "AA" $ T.Basic $ Type $ A, "a"), (bc S </> bc C </> bc B, "a")]
+    , [(bc S </> bc C <\> bcAny A, "b"), (bc B, "b"), (bc S </> vc "p" <\> vc "p", "b")]
     , [(bc C, "c"), (bc A, "c")]
     ]
 
 bc :: StupidType -> Cat
-bc = sc . (TypeBox False) . T.Basic . Type
+bc = sc . T.Basic . Type
+
+bcAny :: StupidType -> Cat
+bcAny = sc . T.Basic . Type
 
 simpleCyk :: [ParseTree (Cat) Text]
 simpleCyk = enumTrees $ cyk simpleWord $ bc S

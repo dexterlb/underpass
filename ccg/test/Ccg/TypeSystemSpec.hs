@@ -41,67 +41,39 @@ tR = Basic $ Type R
 tS :: WrappedType Base
 tS = Basic $ Type S
 
-tp :: WrappedType Base -> TypeBox Base
-tp t = TypeBox True t
-
-tn :: WrappedType Base -> TypeBox Base
-tn t = TypeBox False t
-
-shouldLt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldLt :: WrappedType Base -> WrappedType Base -> Expectation
 shouldLt a b = shouldSatisfy (a, b) $ uncurry (<!)
 
-shouldNotLt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldNotLt :: WrappedType Base -> WrappedType Base -> Expectation
 shouldNotLt a b = shouldNotSatisfy (a, b) $ uncurry (<!)
 
-shouldGt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldGt :: WrappedType Base -> WrappedType Base -> Expectation
 shouldGt = flip shouldLt
 
-shouldNotGt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldNotGt :: WrappedType Base -> WrappedType Base -> Expectation
 shouldNotGt = flip shouldNotLt
 
 checkLt :: WrappedType Base -> WrappedType Base -> Expectation
 checkLt a b = do
     a == b `shouldBe` False
-    tp a `shouldLt` tp b
-    tp a `shouldNotLt` tn b
-    tn a `shouldLt` tp b
-    tn a `shouldNotLt` tn b
-
-    tp a `shouldNotGt` tp b
-    tp a `shouldNotGt` tn b
-    tn a `shouldNotGt` tp b
-    tn a `shouldNotGt` tn b
-
-    tp a /\ tp b `shouldBe` tp a
+    a `shouldLt` b
+    a `shouldNotGt` b
+    a /\ b `shouldBe` a
 
 checkEq :: WrappedType Base -> WrappedType Base -> Expectation
 checkEq a b = do
     a == b `shouldBe` True
-    tp a `shouldLt` tp b
-    tp a `shouldLt` tn b
-    tn a `shouldLt` tp b
-    tn a `shouldLt` tn b
+    a `shouldLt` b
+    a `shouldGt` b
 
-    tp a `shouldGt` tp b
-    tp a `shouldGt` tn b
-    tn a `shouldGt` tp b
-    tn a `shouldGt` tn b
-
-    tp a /\ tp b `shouldBe` tp a
-    tp a /\ tp b `shouldBe` tp b
+    a /\ b `shouldBe` a
+    a /\ b `shouldBe` b
 
 checkUnrelated :: WrappedType Base -> WrappedType Base -> Expectation
 checkUnrelated a b = do
     a == b `shouldBe` False
-    tp a `shouldNotLt` tp b
-    tp a `shouldNotLt` tn b
-    tn a `shouldNotLt` tp b
-    tn a `shouldNotLt` tn b
-
-    tp a `shouldNotGt` tp b
-    tp a `shouldNotGt` tn b
-    tn a `shouldNotGt` tp b
-    tn a `shouldNotGt` tn b
+    a `shouldNotLt` b
+    a `shouldNotGt` b
 
 
 spec :: Spec
@@ -128,6 +100,6 @@ spec = do
       checkUnrelated tB tR
   describe "meet in non-branch cases" $ do
     it "works on example with two *'s" $ do
-      (tp $ Application Bot tP) /\ (tp $ Application (Application tE tF) (Application tR Bot))
+      (Application Bot tP) /\ (Application (Application tE tF) (Application tR Bot))
         `shouldBe`
-            (tp $ Application (Application tE tF) tP)
+            (Application (Application tE tF) tP)
