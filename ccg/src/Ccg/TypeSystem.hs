@@ -24,6 +24,10 @@ import           Ccg.Memoise ()
 
 type Name = Text
 
+-- The following types define a wrapping typesystem which extends the
+-- given typesystem `b`. The new types have simple text names and extend
+-- respective applicative types from the typesystem `b`.
+
 type WrappedType b = ApplicativeType (TypeWrapper b)
 
 data TypeWrapper b
