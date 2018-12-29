@@ -29,7 +29,7 @@ tB = Basic $ SubType "B" (Application tC tD)
 tC :: WrappedType Base
 tC = Basic $ SubType "C" tE
 tD :: WrappedType Base
-tD = Basic $ SubType "F" tF
+tD = Basic $ SubType "D" tF
 tE :: WrappedType Base
 tE = Basic $ Type E
 tF :: WrappedType Base
@@ -47,33 +47,45 @@ tp t = TypeBox True t
 tn :: WrappedType Base -> TypeBox Base
 tn t = TypeBox False t
 
+shouldLt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldLt a b = shouldSatisfy (a, b) $ uncurry (<!)
+
+shouldNotLt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldNotLt a b = shouldNotSatisfy (a, b) $ uncurry (<!)
+
+shouldGt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldGt = flip shouldLt
+
+shouldNotGt :: TypeBox Base -> TypeBox Base -> Expectation
+shouldNotGt = flip shouldNotLt
+
 checkLt :: WrappedType Base -> WrappedType Base -> Expectation
 checkLt a b = do
     a == b `shouldBe` False
-    tp a <! tp b `shouldBe` True
-    tp a <! tn b `shouldBe` False
-    tn a <! tp b `shouldBe` True
-    tn a <! tn b `shouldBe` False
+    tp a `shouldLt` tp b
+    tp a `shouldNotLt` tn b
+    tn a `shouldLt` tp b
+    tn a `shouldNotLt` tn b
 
-    tp a !> tp b `shouldBe` False
-    tp a !> tn b `shouldBe` False
-    tn a !> tp b `shouldBe` False
-    tn a !> tn b `shouldBe` False
+    tp a `shouldNotGt` tp b
+    tp a `shouldNotGt` tn b
+    tn a `shouldNotGt` tp b
+    tn a `shouldNotGt` tn b
 
     tp a /\ tp b `shouldBe` tp a
 
 checkEq :: WrappedType Base -> WrappedType Base -> Expectation
 checkEq a b = do
     a == b `shouldBe` True
-    tp a <! tp b `shouldBe` True
-    tp a <! tn b `shouldBe` True
-    tn a <! tp b `shouldBe` True
-    tn a <! tn b `shouldBe` True
+    tp a `shouldLt` tp b
+    tp a `shouldLt` tn b
+    tn a `shouldLt` tp b
+    tn a `shouldLt` tn b
 
-    tp a !> tp b `shouldBe` True
-    tp a !> tn b `shouldBe` True
-    tn a !> tp b `shouldBe` True
-    tn a !> tn b `shouldBe` True
+    tp a `shouldGt` tp b
+    tp a `shouldGt` tn b
+    tn a `shouldGt` tp b
+    tn a `shouldGt` tn b
 
     tp a /\ tp b `shouldBe` tp a
     tp a /\ tp b `shouldBe` tp b
@@ -81,15 +93,15 @@ checkEq a b = do
 checkUnrelated :: WrappedType Base -> WrappedType Base -> Expectation
 checkUnrelated a b = do
     a == b `shouldBe` False
-    tp a <! tp b `shouldBe` False
-    tp a <! tn b `shouldBe` False
-    tn a <! tp b `shouldBe` False
-    tn a <! tn b `shouldBe` False
+    tp a `shouldNotLt` tp b
+    tp a `shouldNotLt` tn b
+    tn a `shouldNotLt` tp b
+    tn a `shouldNotLt` tn b
 
-    tp a !> tp b `shouldBe` False
-    tp a !> tn b `shouldBe` False
-    tn a !> tp b `shouldBe` False
-    tn a !> tn b `shouldBe` False
+    tp a `shouldNotGt` tp b
+    tp a `shouldNotGt` tn b
+    tn a `shouldNotGt` tp b
+    tn a `shouldNotGt` tn b
 
 
 spec :: Spec
@@ -97,6 +109,8 @@ spec = do
   describe "meet and less-than" $ do
     it "works on simple examples" $ do
       checkLt tA tB
+      checkLt tC tE
+      checkLt tD tF
       checkEq tB tB
       checkEq tP tP
     it "works on examples with application" $ do
@@ -116,4 +130,4 @@ spec = do
     it "works on example with two *'s" $ do
       (tp $ Application Bot tP) /\ (tp $ Application (Application tE tF) (Application tR Bot))
         `shouldBe`
-            (tp $ Application (Application tE tF) (Application tR tS))
+            (tp $ Application (Application tE tF) tP)

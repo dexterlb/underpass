@@ -64,6 +64,7 @@ lessThan (Application a b) (Application c d) = (lessThan a c) && (lessThan b d)
 lessThan (Basic (SubType x pa)) (r @ (Basic (SubType y _)))
     | x == y = True
     | otherwise = lessThan pa r
+lessThan (Basic (SubType _ pa)) (r @ (Basic (Type  _))) = lessThan pa r
 lessThan (Basic (SubType _ pa)) (r @ (Application _ _)) = lessThan pa r
 lessThan Bot    Bot          = True
 lessThan Bot    _            = False
@@ -72,7 +73,7 @@ lessThan _      _            = False
 
 meet :: (Eq b, MSemiLattice b) => WrappedType b -> WrappedType b -> WrappedType b
 meet (Basic (Type x)) (Basic (Type y)) = Basic $ Type $ x /\ y
-meet (Application a b) (Application c d) = Application (a `meet` b) (c `meet` d)
+meet (Application a b) (Application c d) = Application (a `meet` c) (b `meet` d)
 meet x y
     | lessThan x y = x
     | lessThan y x = y
