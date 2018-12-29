@@ -15,12 +15,13 @@ import           Data.MemoCombinators.Class (MemoTable, table)
 import qualified Data.MemoCombinators as Memo
 
 import           Utils.Maths
+import qualified LambdaCalculus.LambdaTypes as T
 
-import           Ccg.Category
 import           Ccg.Trees
 import           Ccg.Cyk
 import           Ccg.Modal
 import           Ccg.Latex
+import           Ccg.TypeSystem
 
 data StupidType
     = S | A | B | C | N
@@ -42,15 +43,20 @@ instance MemoTable StupidType where
 instance Latexable StupidType where
     latex = T.pack . show
 
-simpleWord :: Vector [(ModalCategory StupidType, Text)]
+type Cat = ModalCategory (TypeBox StupidType)
+
+simpleWord :: Vector [(Cat, Text)]
 simpleWord = V.fromList
-    [ [(sc A, "a"), (sc S </> sc C </> sc B, "a")]
-    , [(sc S </> sc C <\> sc A, "b"), (sc B, "b"), (sc S </> vc "p" <\> vc "p", "b")]
-    , [(sc C, "c"), (sc A, "c")]
+    [ [(bc A, "a"), (bc S </> bc C </> bc B, "a")]
+    , [(bc S </> bc C <\> bc A, "b"), (bc B, "b"), (bc S </> vc "p" <\> vc "p", "b")]
+    , [(bc C, "c"), (bc A, "c")]
     ]
 
-simpleCyk :: [ParseTree (ModalCategory StupidType) Text]
-simpleCyk = enumTrees $ cyk simpleWord $ Simple $ NonTerm S
+bc :: StupidType -> Cat
+bc = sc . (TypeBox False) . T.Basic . Type
+
+simpleCyk :: [ParseTree (Cat) Text]
+simpleCyk = enumTrees $ cyk simpleWord $ bc S
 
 latexCyk :: IO ()
 latexCyk = latexPreview simpleCyk

@@ -15,6 +15,9 @@ dependencies:
 - base
 - megaparsec
 - text
+- hashable
+- data-memocombinators
+
 - utils
 
 library:

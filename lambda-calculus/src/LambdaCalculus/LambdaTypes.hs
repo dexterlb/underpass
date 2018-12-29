@@ -3,6 +3,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module LambdaCalculus.LambdaTypes where
 
@@ -12,13 +16,19 @@ import Data.Functor (($>))
 
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
+import Data.Hashable (Hashable)
+import GHC.Generics (Generic)
 import Utils.Maths
+import Data.MemoCombinators.Class (MemoTable, table)
+import Data.MemoCombinators (Memo, memo2)
 
 data ApplicativeType b
     = Basic b
     | Application (ApplicativeType b) (ApplicativeType b)
     | Bot
-    deriving (Eq)
+    deriving (Eq, Generic)
+
+deriving instance (Hashable b) => Hashable (ApplicativeType b)
 
 class (Show b, Show a, Typeable a, Typeable b, PartialOrd b) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
@@ -72,3 +82,19 @@ data TypeException t
 deriving instance Show t => Show (TypeException t)
 
 instance (Show t, Typeable t) => Exception (TypeException t)
+
+-- memo instances
+instance (MemoTable t) => MemoTable (ApplicativeType t) where
+    table = mkmemo (table :: Memo t)
+        where
+            mkmemo :: forall t' b.
+                      (forall a. (t' -> a) -> (t' -> a))
+                   -> (ApplicativeType t' -> b)
+                   -> (ApplicativeType t' -> b)
+            mkmemo mt f (Basic x) = mt (f . Basic) x
+            mkmemo mt f (Application x y) =
+                memo2 mapp mapp (\a b -> f $ Application a b) x y
+                where
+                    mapp :: (ApplicativeType t' -> s) -> (ApplicativeType t' -> s)
+                    mapp = mkmemo mt
+            mkmemo _  f Bot = f Bot

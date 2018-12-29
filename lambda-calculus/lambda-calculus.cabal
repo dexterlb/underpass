@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8e69613bdd27c3a7cc52f729037f42268dfa0928901dea635bcc5d1e835dd063
+-- hash: cbe3b39f4fbf37292d2b01cefd10d2fbacb8397b8675ca480c143b1aad258282
 
 name:           lambda-calculus
 version:        0.1.0.0
@@ -37,6 +37,8 @@ library
   ghc-options: -Wall -Werror -Wno-orphans
   build-depends:
       base
+    , data-memocombinators
+    , hashable
     , megaparsec
     , text
     , utils
@@ -52,6 +54,8 @@ test-suite lambda-calculus-test
   ghc-options: -Wall -Werror -Wno-orphans -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base
+    , data-memocombinators
+    , hashable
     , lambda-calculus
     , megaparsec
     , text
