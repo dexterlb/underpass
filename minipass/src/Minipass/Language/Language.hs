@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE FlexibleInstances     #-}
 
 module Minipass.Language.Language where
 
@@ -27,6 +28,9 @@ data Types
 
 instance PartialOrd Types where
     a <! b = a == b
+
+instance PartialOrd (T.ApplicativeType Types) where
+    (<!) = T.defaultLess
 
 instance P.Parseable Types where
     parser = P.word

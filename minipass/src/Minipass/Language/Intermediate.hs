@@ -1,5 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE NamedFieldPuns        #-}
@@ -40,6 +41,9 @@ instance PartialOrd Types where
     Anything    <! _          = True
     _           <! Anything   = True
     _           <! _          = False
+
+instance PartialOrd (T.ApplicativeType Types) where
+    (<!) = T.defaultLess
 
 instance Show Types where
     show Num        = "Num"
@@ -91,6 +95,9 @@ instance MSemiLattice Types where
     List    /\ List     = List
     (Set a) /\ (Set b)  = Set $ meetSetTags a b
     x       /\ y        = throw $ T.CannotMeet x y
+
+instance MSemiLattice (T.ApplicativeType Types) where
+    (/\) = T.defaultMeet
 
 
 type Term = LambdaTerm Types Constants

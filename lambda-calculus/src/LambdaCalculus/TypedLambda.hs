@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
@@ -93,12 +94,12 @@ updateTypes updater (Lambda t x a) = Lambda t' x a'
         a' = updateTypes updater a
 
 
-fixTypes :: (Typed c t, MSemiLattice t) => TSLTerm t c -> TSLTerm t c
+fixTypes :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> TSLTerm t c
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
         (x', vars) = fixTypesUp x
 
-fixTypesDown :: (Typed c t, MSemiLattice t) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
+fixTypesDown :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
 fixTypesDown targetType _      (Constant t x) = Constant (targetType /\ t) x
 fixTypesDown targetType upVars (Variable t i)
     | Just (_, t') <- at i upVars = Variable (targetType /\ t /\ t') i
@@ -119,7 +120,7 @@ fixTypesDown tnr upVars (Application tor a b)
         tr' = tnr /\ tor
         tb  = typeOf b
 
-fixTypesUp :: (Typed c t, MSemiLattice t) => TSLTerm t c -> (TSLTerm t c, VarContext t)
+fixTypesUp :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> (TSLTerm t c, VarContext t)
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
 fixTypesUp (Lambda (T.Application tx ta) x a)

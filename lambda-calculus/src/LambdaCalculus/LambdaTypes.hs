@@ -30,7 +30,7 @@ data ApplicativeType b
 
 deriving instance (Hashable b) => Hashable (ApplicativeType b)
 
-class (Show b, Show a, Typeable a, Typeable b, PartialOrd b) => Typed a b where  -- items of haskell type a have basic types from b
+class (Show b, Show a, Typeable a, Typeable b, PartialOrd (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
@@ -51,23 +51,23 @@ parseTypeTerm
     =   P.braces parseTypeExpr
     <|> (Basic <$> P.parser)
 
-instance MSemiLattice b => MSemiLattice (ApplicativeType b) where
-    (/\) (Basic x) (Basic y) = Basic $ (/\) x y
-    (/\) (Application a1 a2) (Application b1 b2) = Application ((/\) a1 b1) ((/\) a2 b2)
-    (/\) Bot x = x
-    (/\) x Bot = x
-    (/\) x y = throw $ CannotMeet x y
+defaultMeet :: MSemiLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+defaultMeet (Basic x) (Basic y) = Basic $ x /\ y
+defaultMeet (Application a1 a2) (Application b1 b2) = Application (defaultMeet a1 b1) (defaultMeet a2 b2)
+defaultMeet Bot x = x
+defaultMeet x Bot = x
+defaultMeet x y = throw $ CannotMeet x y
+
+defaultLess :: PartialOrd b => ApplicativeType b -> ApplicativeType b -> Bool
+defaultLess (Basic x)           (Basic y)           = x <! y
+defaultLess (Application a1 a2) (Application b1 b2) = defaultLess a1 b1 && defaultLess a2 b2
+defaultLess Bot    Bot          = True
+defaultLess Bot    _            = False
+defaultLess _      Bot          = True
+defaultLess _      _            = False
 
 instance HasBot (ApplicativeType b) where
     bot = Bot
-
-instance PartialOrd b => PartialOrd (ApplicativeType b) where
-    (<!) (Basic x)           (Basic y)           = (<!) x y
-    (<!) (Application a1 a2) (Application b1 b2) = (<!) a1 b1 && (<!) a2 b2
-    (<!) Bot    Bot          = True
-    (<!) Bot    _            = False
-    (<!) _      Bot          = True
-    (<!) _      _            = False
 
 transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x)           = Basic $ f x
