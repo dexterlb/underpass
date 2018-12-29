@@ -43,7 +43,7 @@ instance MemoTable StupidType where
 instance Latexable StupidType where
     latex = T.pack . show
 
-type Cat = ModalCategory (WrappedType StupidType)
+type Cat = ModalCategory (AppTypeWrapper StupidType)
 
 simpleWord :: Vector [(Cat, Text)]
 simpleWord = V.fromList

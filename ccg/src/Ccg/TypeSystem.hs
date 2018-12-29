@@ -28,12 +28,13 @@ type Name = Text
 -- given typesystem `b`. The new types have simple text names and extend
 -- respective applicative types from the typesystem `b`.
 
-type WrappedType b = ApplicativeType (TypeWrapper b)
 
 data TypeWrapper b
     = Type    b
-    | SubType Name (WrappedType b)
+    | SubType Name (AppTypeWrapper b)
     deriving (Generic)
+
+type AppTypeWrapper b = ApplicativeType (TypeWrapper b)
 
 instance Eq b => Eq (TypeWrapper b) where
     (Type x)      == (Type y)      = x == y
@@ -68,11 +69,11 @@ instance (Eq b, MSemiLattice b) => MSemiLattice (ApplicativeType (TypeWrapper b)
 
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where
-    table = mkmemo (table :: Memo t) (table :: Memo (WrappedType t))
+    table = mkmemo (table :: Memo t) (table :: Memo (AppTypeWrapper t))
         where
             mkmemo :: forall t' b.
                       (forall a. (t'               -> a) -> (t'               -> a))
-                   -> (forall a. ((WrappedType t') -> a) -> ((WrappedType t') -> a))
+                   -> (forall a. ((AppTypeWrapper t') -> a) -> ((AppTypeWrapper t') -> a))
                    -> (TypeWrapper t' -> b)
                    -> (TypeWrapper t' -> b)
             mkmemo mt _   f (Type      x) = mt (f . Type) x

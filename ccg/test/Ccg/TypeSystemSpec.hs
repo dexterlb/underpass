@@ -22,45 +22,45 @@ instance MSemiLattice Base where
         | a == b    = a
         | otherwise = error "trying to meet unequal base items"
 
-tA :: WrappedType Base
+tA :: AppTypeWrapper Base
 tA = Basic $ SubType "A" tB
-tB :: WrappedType Base
+tB :: AppTypeWrapper Base
 tB = Basic $ SubType "B" (Application tC tD)
-tC :: WrappedType Base
+tC :: AppTypeWrapper Base
 tC = Basic $ SubType "C" tE
-tD :: WrappedType Base
+tD :: AppTypeWrapper Base
 tD = Basic $ SubType "D" tF
-tE :: WrappedType Base
+tE :: AppTypeWrapper Base
 tE = Basic $ Type E
-tF :: WrappedType Base
+tF :: AppTypeWrapper Base
 tF = Basic $ Type F
-tP :: WrappedType Base
+tP :: AppTypeWrapper Base
 tP = Basic $ SubType "P" (Application tR tS)
-tR :: WrappedType Base
+tR :: AppTypeWrapper Base
 tR = Basic $ Type R
-tS :: WrappedType Base
+tS :: AppTypeWrapper Base
 tS = Basic $ Type S
 
-shouldLt :: WrappedType Base -> WrappedType Base -> Expectation
+shouldLt :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 shouldLt a b = shouldSatisfy (a, b) $ uncurry (<!)
 
-shouldNotLt :: WrappedType Base -> WrappedType Base -> Expectation
+shouldNotLt :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 shouldNotLt a b = shouldNotSatisfy (a, b) $ uncurry (<!)
 
-shouldGt :: WrappedType Base -> WrappedType Base -> Expectation
+shouldGt :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 shouldGt = flip shouldLt
 
-shouldNotGt :: WrappedType Base -> WrappedType Base -> Expectation
+shouldNotGt :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 shouldNotGt = flip shouldNotLt
 
-checkLt :: WrappedType Base -> WrappedType Base -> Expectation
+checkLt :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 checkLt a b = do
     a == b `shouldBe` False
     a `shouldLt` b
     a `shouldNotGt` b
     a /\ b `shouldBe` a
 
-checkEq :: WrappedType Base -> WrappedType Base -> Expectation
+checkEq :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 checkEq a b = do
     a == b `shouldBe` True
     a `shouldLt` b
@@ -69,7 +69,7 @@ checkEq a b = do
     a /\ b `shouldBe` a
     a /\ b `shouldBe` b
 
-checkUnrelated :: WrappedType Base -> WrappedType Base -> Expectation
+checkUnrelated :: AppTypeWrapper Base -> AppTypeWrapper Base -> Expectation
 checkUnrelated a b = do
     a == b `shouldBe` False
     a `shouldNotLt` b
