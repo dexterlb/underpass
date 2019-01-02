@@ -9,15 +9,18 @@
 
 module Ccg.TypeSystem where
 
-import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..), Typed(..))
 import           Data.Text (Text)
-import qualified Data.Text as T
+import qualified Data.Text as Text
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable, hashWithSalt)
 import           Control.Exception (throw)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo2)
 
+import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..), Typed(..))
+import           LambdaCalculus.Lambda (LambdaTerm)
+import qualified LambdaCalculus.Lambda as L
+import qualified LambdaCalculus.LambdaTypes as T
 import           Utils.Maths
 
 import           Ccg.Latex
@@ -78,6 +81,25 @@ instance (Eq b, MSemiLattice b) => MSemiLattice (ApplicativeType (TypeWrapper b)
         | x !> y = y
         | otherwise    = throw $ CannotMeet x y
 
+wrap :: (Eq t, PartialOrd t, Typed c t) => LambdaTerm t c -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+wrap = L.transformConst wrapConst wrapType
+
+unwrap :: (Eq t, PartialOrd t, Typed c t) => LambdaTerm (TypeWrapper t) (ConstWrapper c) -> LambdaTerm t c
+unwrap = L.transformConst unwrapConst unwrapType
+
+wrapConst :: c -> ConstWrapper c
+wrapConst = ConstWrapper
+
+unwrapConst :: ConstWrapper c -> c
+unwrapConst (ConstWrapper x) = x
+
+wrapType :: t -> AppTypeWrapper t
+wrapType = Basic . Type
+
+unwrapType :: TypeWrapper t -> ApplicativeType t
+unwrapType (Type x) = Basic x
+unwrapType (SubType _ parent) = T.transform unwrapType parent
+
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where
     table = mkmemo (table :: Memo t) (table :: Memo (AppTypeWrapper t))
@@ -99,4 +121,4 @@ instance (Latexable b) => Latexable (TypeWrapper b) where
 
 instance (Show b) => Show (TypeWrapper b) where
     show (Type b) = show b
-    show (SubType name _) = T.unpack name
+    show (SubType name _) = Text.unpack name

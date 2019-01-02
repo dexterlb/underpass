@@ -56,11 +56,17 @@ typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = throw $ UnknownVar i
 
-transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
+transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c
 transform f g (Application a b) = Application (transform f g a) (transform f g b)
 transform f g (Lambda x t a)    = Lambda x (T.transform g t) (transform f g a)
 transform _ _ (Variable i)      = Variable i
+
+transformConst :: (Typed c1 t1, Typed c2 t2) => (c1 -> c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
+transformConst f _ (Constant c)      = Constant $ f c
+transformConst f g (Application a b) = Application (transformConst f g a) (transformConst f g b)
+transformConst f g (Lambda x t a)    = Lambda x (T.transform g t) (transformConst f g a)
+transformConst _ _ (Variable i)      = Variable i
 
 apply :: Typed c t => [LambdaTerm t c] -> LambdaTerm t c
 apply = foldl1 Application

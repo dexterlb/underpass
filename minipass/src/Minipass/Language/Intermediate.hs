@@ -105,10 +105,10 @@ type TTerm = TSLTerm Types Constants
 type TTypes = T.ApplicativeType Types
 
 instance Typed Constants Types where
-    typeOf = T.transform typeToIntermediate . typeOf
+    typeOf = T.transform (T.Basic . typeToIntermediate) . typeOf
 
 toIntermediate :: L.Term -> Term
-toIntermediate = transform Constant typeToIntermediate
+toIntermediate = transform Constant (T.Basic . typeToIntermediate)
 
 typeToIntermediate :: L.Types -> Types
 typeToIntermediate L.String = String

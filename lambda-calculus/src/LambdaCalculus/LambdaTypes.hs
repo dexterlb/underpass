@@ -74,10 +74,10 @@ defaultLess _      _            = False
 instance HasBot (ApplicativeType b) where
     bot = Bot
 
-transform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
-transform f (Basic x)           = Basic $ f x
+transform :: (t1 -> ApplicativeType t2) -> ApplicativeType t1 -> ApplicativeType t2
+transform f (Basic x)           = f x
 transform f (Application a b)   = Application (transform f a) (transform f b)
-transform _ Bot                 =Bot
+transform _ Bot                 = Bot
 
 data TypeException t
     = CannotMeet t t
