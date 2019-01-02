@@ -4,10 +4,12 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Minipass.Overpass where
 
 import           Control.Monad.State.Lazy
+import qualified Control.Monad.Fail as Fail
 
 import           Data.Text (Text)
 import qualified Data.Text as Text
@@ -74,7 +76,7 @@ data Translator = Translator
     { lastVarIndex :: Int
     , statements :: [Statement] }
 
-newVar :: State Translator VarName
+newVar :: EState Translator VarName
 newVar = do
     trans <- get
     let Translator { lastVarIndex } = trans
@@ -82,22 +84,22 @@ newVar = do
     put (trans { lastVarIndex = varIndex })
     pure $ "x" <> Text.pack (show varIndex)
 
-statement :: Statement -> State Translator ()
+statement :: Statement -> EState Translator ()
 statement s = do
     trans <- get
     let Translator { statements } = trans
     put (trans { statements = s : statements })
 
-expression :: (VarName -> Statement) -> State Translator VarName
+expression :: (VarName -> Statement) -> EState Translator VarName
 expression f = do
     result <- newVar
     statement $ f result
     pure result
 
-translate :: TTerm -> State Translator Value
+translate :: TTerm -> EState Translator Value
 translate t = translateApp (uncurryApplication t)
 
-translateApp :: [TTerm] -> State Translator Value
+translateApp :: [TTerm] -> EState Translator Value
 translateApp [Constant (T.Basic String) (StringLiteral s)] = pure $ StringValue s
 translateApp [Constant (T.Basic Num)    (NumLiteral    n)] = pure $ NumValue n
 translateApp [Constant _ Empty] = pure $ ListValue []
@@ -121,14 +123,14 @@ translateApp [Lambda (T.Application t@(T.Basic (Set _)) _) _ m, n] = do
     translate $ substitute m 0 (Application t (Constant (T.Application (T.Basic List) t) Get) (typify emptyContext $ toIntermediate $ listTerm [StringC "setVariable", StringC nVar]))
 translateApp term = fail $ "I don't know how to translate " <> show term
 
-translateFilter :: TTypes -> [TTerm] -> State Translator Value
+translateFilter :: TTypes -> [TTerm] -> EState Translator Value
 translateFilter t terms = do
     let (T.Basic (Set tag)) = t
     (vars, filters) <- walkFilterTree terms
     result <- expression $ PerformFilter (osmTypes tag) vars filters
     pure $ SetValue result
 
-walkFilterTree :: [TTerm] -> State Translator ([VarName], HashSet FilterExpr)
+walkFilterTree :: [TTerm] -> EState Translator ([VarName], HashSet FilterExpr)
 walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
     (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
     (sets2, filters2) <- walkFilterTree $ uncurryApplication rightTerm
@@ -156,10 +158,10 @@ translator :: Translator
 translator = Translator { lastVarIndex = 0, statements = [] }
 
 translateValue :: TTerm -> Value
-translateValue t = evalState (translate t) translator
+translateValue t = fst $ runEState (translate t) translator
 
 tr :: TTerm -> Text
-tr t = renderProgram $ runState (translate t) translator
+tr t = renderProgram $ runEState (translate t) translator
 
 tri :: TTerm -> IO ()
 tri = TIO.putStr . tr
@@ -172,3 +174,21 @@ renderProgram (value, Translator { statements })
         outputValue (NumValue x)    = [Comment $ "Number: " <> Text.pack (show x)]
         outputValue (ListValue x)   = [Comment $ "List: " <> Text.pack (show x)]
         outputValue (StringValue x) = [Comment $ "String: " <> x]
+
+-- here comes a state monad which throws errors. todo: make it more elegant
+
+type EState s = StateT s (EitherError)
+
+newtype EitherError a = EitherError (Either String a) deriving (Functor, Applicative, Monad)
+
+instance Fail.MonadFail (EitherError) where
+    fail = EitherError . Left
+
+runEState :: EState s a -> s -> (a, s)
+runEState m v = failLeft $ runStateT m v
+
+failLeft :: EitherError a -> a
+failLeft (EitherError (Left  s)) = error s
+failLeft (EitherError (Right x)) = x
+
+

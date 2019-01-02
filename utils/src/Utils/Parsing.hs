@@ -3,7 +3,7 @@
 module Utils.Parsing
     ( module Text.Megaparsec
     , module Text.Megaparsec.Char
-    , module Text.Megaparsec.Expr
+    , module Control.Monad.Combinators.Expr
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces
     , operator, word, identifier, literal, quotedString
@@ -15,7 +15,7 @@ module Utils.Parsing
 
 import Text.Megaparsec
 import Text.Megaparsec.Char
-import Text.Megaparsec.Expr
+import Control.Monad.Combinators.Expr
 import Text.Megaparsec.Error()
 import qualified Text.Megaparsec.Char.Lexer as L
 
@@ -43,7 +43,7 @@ ps = forceParse parser
 forceParse :: Parser t -> Text -> t
 forceParse p t = case parse (p <* eof) "input" t of
     Right d     -> d
-    Left errors -> error $ parseErrorPretty errors
+    Left errors -> error $ errorBundlePretty errors
 
 sc :: Parser ()
 sc = L.space space1 lineCmnt blockCmnt
