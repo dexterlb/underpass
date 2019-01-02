@@ -5,10 +5,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Ccg.TypeSystem where
 
-import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..))
+import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..), Typed(..))
 import           Data.Text (Text)
 import qualified Data.Text as T
 import           GHC.Generics (Generic)
@@ -28,6 +29,16 @@ type Name = Text
 -- given typesystem `b`. The new types have simple text names and extend
 -- respective applicative types from the typesystem `b`.
 
+newtype ConstWrapper a = ConstWrapper a deriving (Generic)
+
+instance (Typed c t, Eq t, PartialOrd t) => Typed (ConstWrapper c) (TypeWrapper t) where
+    typeOf (ConstWrapper x) = Type <$> typeOf x
+
+deriving instance (Eq a) => Eq (ConstWrapper a)
+instance (Show a) => Show (ConstWrapper a) where
+    show (ConstWrapper a) = show a
+
+deriving instance (Hashable a) => Hashable (ConstWrapper a)
 
 data TypeWrapper b
     = Type    b

@@ -41,6 +41,11 @@ instance (Show b) => Show (ApplicativeType b) where
 instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
     parser = parseTypeExpr
 
+instance Functor ApplicativeType where
+    fmap f (Basic x)         = Basic $ f x
+    fmap f (Application a b) = Application (fmap f a) (fmap f b)
+    fmap _ Bot               = Bot
+
 parseTypeExpr :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeExpr = P.makeExprParser parseTypeTerm
     [ [ P.InfixR (P.operator "->" $> Application) ]
