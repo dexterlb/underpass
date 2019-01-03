@@ -9,3 +9,8 @@ ideas:
     - have a fixed starting type system T (e.g. minipass types)
       and allow lexicon-writers to make subtypes of ApplicativeType T.
       Afterwards, lower the terms into ApplicativeType T.
+    - DECISION TREES for matching tokens! A set of formulae like
+      '(matches(stem, <regex>) & verb & !past_tense) | foo | bar'
+      can be converted to a decision tree. Conjuncts can even have
+      side effects (e.g. matches(..) could set $1 $2 etc). So awesomely
+      dirty!
