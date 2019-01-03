@@ -9,7 +9,6 @@
 
 module Ccg.TypeSystem where
 
-import           Data.Text (Text)
 import qualified Data.Text as Text
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable, hashWithSalt)
@@ -20,13 +19,13 @@ import           Data.MemoCombinators (Memo, memo2)
 import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..), Typed(..))
 import           LambdaCalculus.Lambda (LambdaTerm)
 import qualified LambdaCalculus.Lambda as L
+import           LambdaCalculus.LambdaTypes (Name)
 import qualified LambdaCalculus.LambdaTypes as T
 import           Utils.Maths
+import qualified Utils.Parsing as P
 
 import           Ccg.Latex
 import           Ccg.Memoise ()
-
-type Name = Text
 
 -- The following types define a wrapping typesystem which extends the
 -- given typesystem `b`. The new types have simple text names and extend
@@ -99,6 +98,15 @@ wrapType = Basic . Type
 unwrapType :: TypeWrapper t -> ApplicativeType t
 unwrapType (Type x) = Basic x
 unwrapType (SubType _ parent) = T.transform unwrapType parent
+
+data SubtypeAssertion t = SubtypeAssertion T.Name (T.UnresolvedType t)
+
+instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
+    parser = do
+        name    <- P.identifier
+        _       <- P.operator "<"
+        supType <- P.parser
+        pure $ SubtypeAssertion name supType
 
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where

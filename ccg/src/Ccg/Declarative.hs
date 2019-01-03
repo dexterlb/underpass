@@ -1,0 +1,1 @@
+module Ccg.Declarative where

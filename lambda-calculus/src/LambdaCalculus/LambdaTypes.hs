@@ -17,6 +17,7 @@ import Data.Functor (($>))
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 import Data.Hashable (Hashable)
+import Data.Text (Text)
 import GHC.Generics (Generic)
 import Utils.Maths
 import Data.MemoCombinators.Class (MemoTable, table)
@@ -103,3 +104,16 @@ instance (MemoTable t) => MemoTable (ApplicativeType t) where
                     mapp :: (ApplicativeType t' -> s) -> (ApplicativeType t' -> s)
                     mapp = mkmemo mt
             mkmemo _  f Bot = f Bot
+
+-- parsing helpers
+type Name = Text
+
+data TypeRef t        = UnresolvedName P.SourcePos Name | BasicRef t
+type UnresolvedType t = ApplicativeType (TypeRef t)
+
+instance (P.Parseable t) => P.Parseable (TypeRef t) where
+    parser = (BasicRef <$> P.parser) <|> (do
+        pos  <- P.getSourcePos
+        name <- P.identifier
+        pure $ UnresolvedName pos name
+        )
