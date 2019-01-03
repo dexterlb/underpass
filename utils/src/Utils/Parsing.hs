@@ -66,6 +66,11 @@ braces = between (symbol "(") (symbol ")")
 curlyBraces :: Parser a -> Parser a
 curlyBraces = between (symbol "{") (symbol "}")
 
+block :: Text -> Parser a -> Parser a
+block t p = do
+    _ <- literal t
+    curlyBraces p
+
 word :: Parser a -> Parser a
 word x = (lexeme . try) (x <* notFollowedBy alphaNumChar)
 
