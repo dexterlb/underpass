@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a191dc518236b7cf0373389205f732c31f6fa4da2956c4273623d0ce567757a6
+-- hash: 065ea150324730625714c2f8df9403dfeadbe24034cca13d827560ceb711c538
 
 name:           utils
 version:        0.1.0.0
@@ -26,6 +26,7 @@ source-repository head
 
 library
   exposed-modules:
+      Data.Bag
       Utils.Maths
       Utils.Parsing
   other-modules:
@@ -35,9 +36,11 @@ library
   ghc-options: -Wall -Werror -Wno-orphans
   build-depends:
       base
+    , hashable
     , megaparsec
     , parser-combinators
     , text
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite utils-test
@@ -50,8 +53,10 @@ test-suite utils-test
   ghc-options: -Wall -Werror -Wno-orphans -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base
+    , hashable
     , megaparsec
     , parser-combinators
     , text
+    , unordered-containers
     , utils
   default-language: Haskell2010

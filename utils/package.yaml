@@ -16,6 +16,8 @@ dependencies:
 - megaparsec
 - text
 - parser-combinators
+- unordered-containers
+- hashable
 
 library:
   source-dirs: src
