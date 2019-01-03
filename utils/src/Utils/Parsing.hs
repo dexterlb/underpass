@@ -5,7 +5,7 @@ module Utils.Parsing
     , module Text.Megaparsec.Char
     , module Control.Monad.Combinators.Expr
     , Parseable, Parser, parser
-    , lexeme, symbol, lambda, braces, curlyBraces
+    , lexeme, symbol, lambda, braces, curlyBraces, block
     , operator, word, identifier, literal, quotedString
     , floatNumber
     , ps
@@ -65,6 +65,11 @@ braces = between (symbol "(") (symbol ")")
 
 curlyBraces :: Parser a -> Parser a
 curlyBraces = between (symbol "{") (symbol "}")
+
+block :: Text -> Parser a -> Parser a
+block t p = do
+    _ <- literal t
+    curlyBraces p
 
 word :: Parser a -> Parser a
 word x = (lexeme . try) (x <* notFollowedBy alphaNumChar)
