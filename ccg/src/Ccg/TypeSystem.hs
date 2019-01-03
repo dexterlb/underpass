@@ -12,7 +12,9 @@ module Ccg.TypeSystem where
 import qualified Data.Text as Text
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable, hashWithSalt)
+import           Data.HashMap.Lazy (HashMap)
 import           Control.Exception (throw)
+import           Control.Monad.Fail (MonadFail)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo2)
 
@@ -99,6 +101,7 @@ unwrapType :: TypeWrapper t -> ApplicativeType t
 unwrapType (Type x) = Basic x
 unwrapType (SubType _ parent) = T.transform unwrapType parent
 
+-- parsing helpers
 data SubtypeAssertion t = SubtypeAssertion T.Name (T.UnresolvedType t)
 
 instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
@@ -107,6 +110,10 @@ instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
         _       <- P.operator "<"
         supType <- P.parser
         pure $ SubtypeAssertion name supType
+
+type TypeWrappers t = HashMap T.Name (AppTypeWrapper t)
+
+makeTypeWrappers :: (MonadFail m) => [SubtypeAssertion t] -> m (TypeWrappers t)
 
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where
