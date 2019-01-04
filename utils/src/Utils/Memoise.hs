@@ -1,4 +1,4 @@
-module Ccg.Memoise where
+module Utils.Memoise where
 
 import           Data.Hashable     (Hashable)
 import qualified Data.HashMap.Lazy as HM

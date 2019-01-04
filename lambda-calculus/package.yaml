@@ -17,6 +17,7 @@ dependencies:
 - text
 - hashable
 - data-memocombinators
+- unordered-containers
 
 - utils
 
@@ -38,3 +39,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - lambda-calculus
+    - hspec

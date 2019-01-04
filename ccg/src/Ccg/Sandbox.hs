@@ -20,8 +20,8 @@ import qualified LambdaCalculus.LambdaTypes as T
 import           Ccg.Trees
 import           Ccg.Cyk
 import           Ccg.Modal
-import           Ccg.Latex
-import           Ccg.TypeSystem
+import           Utils.Latex
+import           LambdaCalculus.UserTypeSystem
 
 data StupidType
     = S | A | B | C | N

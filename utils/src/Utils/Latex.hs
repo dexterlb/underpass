@@ -1,14 +1,12 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Ccg.Latex where
+module Utils.Latex where
 
 import           Data.Text (Text)
 import qualified Data.Text as T
 import           System.Process (CreateProcess(..), readCreateProcess, CmdSpec(..), StdStream(..))
 import           System.Directory (createDirectory, removePathForcibly)
-
-import qualified LambdaCalculus.LambdaTypes as LT
 
 class Latexable a where
     latex :: a -> Text
@@ -18,11 +16,6 @@ instance Latexable Text where
 
 instance Latexable a => Latexable [a] where
     latex = T.unlines . map latex
-
-instance Latexable a => Latexable (LT.ApplicativeType a) where
-    latex (LT.Basic x)         = latex x
-    latex (LT.Application a b) = latex a <> " \\rightarrow " <> latex b
-    latex LT.Bot               = "*"
 
 latexPreview :: Latexable a => a -> IO ()
 latexPreview x = do

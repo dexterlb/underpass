@@ -8,7 +8,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Ccg.TypeSystem where
+module LambdaCalculus.UserTypeSystem where
 
 import qualified Data.Text as Text
 import           GHC.Generics (Generic)
@@ -30,8 +30,8 @@ import qualified Utils.Parsing as P
 
 import           Utils.Resolver
 
-import           Ccg.Latex
-import           Ccg.Memoise ()
+import           Utils.Latex
+import           Utils.Memoise ()
 
 -- The following types define a wrapping typesystem which extends the
 -- given typesystem `b`. The new types have simple text names and extend
@@ -124,13 +124,13 @@ makeTypeWrappers = (resolveLibrary TWR) . HM.fromList
 resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
 resolveType = resolveItem TWR
 
-data TWR t = TWR
+data TWR t = TWR -- term wrapper resolver
 instance Resolvable  (TWR t) where
     type Resolvee    (TWR t) = T.UnresolvedType t
     type ResolveKey  (TWR t) = T.Name
     type Resolved    (TWR t) = AppTypeWrapper t
 
-    fv = undefined
+    fv TWR = T.unresolvedNames
     substituteAll TWR m = T.transform resolveRef
         where
             resolveRef (T.BasicRef x) = Basic $ Type x

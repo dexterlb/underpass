@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Ccg.TypeSystemSpec (main, spec) where
+module LambdaCalculus.UserTypeSystemSpec (main, spec) where
 
 import Test.Hspec
 
 import LambdaCalculus.LambdaTypes
 import Utils.Maths
 
-import Ccg.TypeSystem
+import LambdaCalculus.UserTypeSystem
 
 main :: IO ()
 main = hspec spec

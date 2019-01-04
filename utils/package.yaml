@@ -18,6 +18,9 @@ dependencies:
 - parser-combinators
 - unordered-containers
 - hashable
+- process
+- data-memocombinators
+- directory
 
 library:
   source-dirs: src

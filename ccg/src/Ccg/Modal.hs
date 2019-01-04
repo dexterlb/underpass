@@ -18,8 +18,8 @@ import qualified Data.HashSet as HS
 import           Data.Tuple (swap)
 
 import           Ccg.Category
-import           Ccg.Memoise()
-import           Ccg.Latex
+import           Utils.Memoise()
+import           Utils.Latex
 
 import           Utils.Maths
 

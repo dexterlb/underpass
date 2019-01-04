@@ -7,6 +7,7 @@ module Utils.Resolver where
 
 -- import qualified Data.HashMap.Lazy as HM
 import           Data.HashMap.Lazy (HashMap)
+import           Data.HashSet (HashSet)
 import           Data.Hashable (Hashable)
 
 class (Eq (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
@@ -14,7 +15,7 @@ class (Eq (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
     type Resolvee a
     type Resolved a
 
-    fv :: a -> Resolvee a -> [ResolveKey a]
+    fv :: a -> Resolvee a -> HashSet (ResolveKey a)
 
     substituteAll :: a -> HashMap (ResolveKey a) (Resolved a) -> Resolvee a -> (Resolved a)
 

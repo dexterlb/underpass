@@ -11,7 +11,7 @@ import           Data.MemoCombinators.Class (MemoTable)
 
 import Ccg.Category
 import Ccg.Trees
-import Ccg.Memoise (memo)
+import Utils.Memoise (memo)
 
 type Cell cat payload = HashMap cat [Item cat payload]
 

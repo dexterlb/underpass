@@ -17,9 +17,6 @@ import Data.Functor (($>))
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 import Data.Hashable (Hashable)
-import Data.HashSet (HashSet)
-import qualified Data.HashSet as HS
-import Utils.Latex (Latexable, latex)
 import Data.Text (Text)
 import GHC.Generics (Generic)
 import Utils.Maths
@@ -95,11 +92,6 @@ deriving instance Show t => Show (TypeException t)
 
 instance (Show t, Typeable t) => Exception (TypeException t)
 
-instance Latexable a => Latexable (ApplicativeType a) where
-    latex (Basic x)         = latex x
-    latex (Application a b) = latex a <> " \\rightarrow " <> latex b
-    latex Bot               = "*"
-
 -- memo instances
 instance (MemoTable t) => MemoTable (ApplicativeType t) where
     table = mkmemo (table :: Memo t)
@@ -121,11 +113,6 @@ type Name = Text
 
 data TypeRef t        = UnresolvedName P.SourcePos Name | BasicRef t
 type UnresolvedType t = ApplicativeType (TypeRef t)
-
-unresolvedNames :: UnresolvedType t -> HashSet Name
-unresolvedNames (Basic (UnresolvedName _ name)) = HS.singleton name
-unresolvedNames (Application a b) = HS.union (unresolvedNames a) (unresolvedNames b)
-unresolvedNames _                 = HS.empty
 
 instance (P.Parseable t) => P.Parseable (TypeRef t) where
     parser = (BasicRef <$> P.parser) <|> (do

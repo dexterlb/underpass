@@ -20,7 +20,7 @@ import           Data.Dynamic (Typeable)
 import qualified LambdaCalculus.LambdaTypes as T
 import           LambdaCalculus.LambdaTypes (Typed, typeOf)
 
-import           Ccg.Latex
+import           Utils.Latex
 
 data Category atom slash
     = Simple  atom

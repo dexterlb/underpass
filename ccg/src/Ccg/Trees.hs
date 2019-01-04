@@ -6,7 +6,7 @@
 module Ccg.Trees where
 
 import Ccg.Category
-import Ccg.Latex
+import Utils.Latex
 
 data ParseTree cat payload where
     Leaf :: cat -> payload -> ParseTree cat payload
