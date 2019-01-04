@@ -75,6 +75,9 @@ defaultLess _      _            = False
 instance HasBot (ApplicativeType b) where
     bot = Bot
 
+basicTransform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
+basicTransform f = transform (Basic . f)
+
 transform :: (t1 -> ApplicativeType t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x)           = f x
 transform f (Application a b)   = Application (transform f a) (transform f b)

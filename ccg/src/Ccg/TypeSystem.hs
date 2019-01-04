@@ -13,8 +13,9 @@ import qualified Data.Text as Text
 import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable, hashWithSalt)
 import           Data.HashMap.Lazy (HashMap)
-import           Control.Exception (throw)
-import           Control.Monad.Fail (MonadFail)
+import qualified Data.HashMap.Lazy as HM
+import           Control.Exception (throw, Exception)
+import           Data.Dynamic (Typeable)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo2)
 
@@ -27,7 +28,7 @@ import           Utils.Maths
 import qualified Utils.Parsing as P
 
 import           Ccg.Latex
-import           Ccg.Memoise ()
+import           Ccg.Memoise (memo)
 
 -- The following types define a wrapping typesystem which extends the
 -- given typesystem `b`. The new types have simple text names and extend
@@ -111,9 +112,39 @@ instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
         supType <- P.parser
         pure $ SubtypeAssertion name supType
 
-type TypeWrappers t = HashMap T.Name (AppTypeWrapper t)
+type TypeWrappers t = HashMap T.Name (TypeWrapper t)
 
-makeTypeWrappers :: (MonadFail m) => [SubtypeAssertion t] -> m (TypeWrappers t)
+makeTypeWrappers :: [SubtypeAssertion t] -> TypeWrappers t
+makeTypeWrappers = makeTypeWrappers' . HM.fromList
+    . (map (\(SubtypeAssertion x y) -> (x, y)))
+
+    where
+        makeTypeWrappers' :: HashMap T.Name (T.UnresolvedType t) -> TypeWrappers t
+        makeTypeWrappers' m = HM.mapWithKey (\k _ -> makeTypeWrapper m k) m
+
+        makeTypeWrapper :: HashMap T.Name (T.UnresolvedType t) -> T.Name -> TypeWrapper t
+        makeTypeWrapper m = memo (makeTypeWrapper' m)
+
+        makeTypeWrapper' :: HashMap T.Name (T.UnresolvedType t) -> (T.Name -> TypeWrapper t) -> T.Name -> TypeWrapper t
+        makeTypeWrapper' m f name
+            | (Just t) <- HM.lookup name m = SubType name (T.basicTransform (makeTypeWrapper'' m f) t)
+            | otherwise = error "this is unreachable!"
+
+        makeTypeWrapper'' :: HashMap T.Name (T.UnresolvedType t) -> (T.Name -> TypeWrapper t) -> T.TypeRef t -> TypeWrapper t
+        makeTypeWrapper'' _ _ (T.BasicRef x) = Type x
+        makeTypeWrapper'' m f (T.UnresolvedName pos name)
+            | HM.member name m = f name
+            | otherwise        = throw $ NoSuchType pos name
+
+resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
+resolveType m = T.basicTransform resolveRef
+    where
+        resolveRef (T.BasicRef x) = Type x
+        resolveRef (T.UnresolvedName pos name)
+            | (Just t) <- HM.lookup name m = t
+            | otherwise = throw $ NoSuchType pos name
+
+
 
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where
@@ -137,3 +168,9 @@ instance (Latexable b) => Latexable (TypeWrapper b) where
 instance (Show b) => Show (TypeWrapper b) where
     show (Type b) = show b
     show (SubType name _) = Text.unpack name
+
+-- exceptions
+data SubtypeException
+    = NoSuchType P.SourcePos T.Name
+    deriving (Typeable, Exception, Show)
+
