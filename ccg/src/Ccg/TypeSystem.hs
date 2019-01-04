@@ -6,6 +6,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Ccg.TypeSystem where
 
@@ -27,8 +28,10 @@ import qualified LambdaCalculus.LambdaTypes as T
 import           Utils.Maths
 import qualified Utils.Parsing as P
 
+import           Utils.Resolver
+
 import           Ccg.Latex
-import           Ccg.Memoise (memo)
+import           Ccg.Memoise ()
 
 -- The following types define a wrapping typesystem which extends the
 -- given typesystem `b`. The new types have simple text names and extend
@@ -112,39 +115,28 @@ instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
         supType <- P.parser
         pure $ SubtypeAssertion name supType
 
-type TypeWrappers t = HashMap T.Name (TypeWrapper t)
+type TypeWrappers t = HashMap T.Name (AppTypeWrapper t)
 
 makeTypeWrappers :: [SubtypeAssertion t] -> TypeWrappers t
-makeTypeWrappers = makeTypeWrappers' . HM.fromList
+makeTypeWrappers = (resolveLibrary TWR) . HM.fromList
     . (map (\(SubtypeAssertion x y) -> (x, y)))
 
-    where
-        makeTypeWrappers' :: HashMap T.Name (T.UnresolvedType t) -> TypeWrappers t
-        makeTypeWrappers' m = HM.mapWithKey (\k _ -> makeTypeWrapper m k) m
-
-        makeTypeWrapper :: HashMap T.Name (T.UnresolvedType t) -> T.Name -> TypeWrapper t
-        makeTypeWrapper m = memo (makeTypeWrapper' m)
-
-        makeTypeWrapper' :: HashMap T.Name (T.UnresolvedType t) -> (T.Name -> TypeWrapper t) -> T.Name -> TypeWrapper t
-        makeTypeWrapper' m f name
-            | (Just t) <- HM.lookup name m = SubType name (T.basicTransform (makeTypeWrapper'' m f) t)
-            | otherwise = error "this is unreachable!"
-
-        makeTypeWrapper'' :: HashMap T.Name (T.UnresolvedType t) -> (T.Name -> TypeWrapper t) -> T.TypeRef t -> TypeWrapper t
-        makeTypeWrapper'' _ _ (T.BasicRef x) = Type x
-        makeTypeWrapper'' m f (T.UnresolvedName pos name)
-            | HM.member name m = f name
-            | otherwise        = throw $ NoSuchType pos name
-
 resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
-resolveType m = T.basicTransform resolveRef
-    where
-        resolveRef (T.BasicRef x) = Type x
-        resolveRef (T.UnresolvedName pos name)
-            | (Just t) <- HM.lookup name m = t
-            | otherwise = throw $ NoSuchType pos name
+resolveType = resolveItem TWR
 
+data TWR t = TWR
+instance Resolvable  (TWR t) where
+    type Resolvee    (TWR t) = T.UnresolvedType t
+    type ResolveKey  (TWR t) = T.Name
+    type Resolved    (TWR t) = AppTypeWrapper t
 
+    fv = undefined
+    substituteAll TWR m = T.transform resolveRef
+        where
+            resolveRef (T.BasicRef x) = Basic $ Type x
+            resolveRef (T.UnresolvedName pos name)
+                | (Just t) <- HM.lookup name m = t
+                | otherwise = throw $ NoSuchType pos name
 
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where

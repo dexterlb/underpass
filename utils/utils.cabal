@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 065ea150324730625714c2f8df9403dfeadbe24034cca13d827560ceb711c538
+-- hash: 0be42da694b98ed458275e01740917c20cf7a7136769e7144bede1831f7bd217
 
 name:           utils
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
       Data.Bag
       Utils.Maths
       Utils.Parsing
+      Utils.Resolver
   other-modules:
       Paths_utils
   hs-source-dirs:
