@@ -21,6 +21,8 @@ import Data.HashSet (HashSet)
 import qualified Data.HashSet as HS
 import Utils.Latex (Latexable, latex)
 import Data.Text (Text)
+import qualified Data.Text as Text
+import Control.Applicative (liftA2)
 import GHC.Generics (Generic)
 import Utils.Maths
 import Data.MemoCombinators.Class (MemoTable, table)
@@ -119,17 +121,38 @@ instance (MemoTable t) => MemoTable (ApplicativeType t) where
 -- parsing helpers
 type Name = Text
 
-data TypeRef t        = UnresolvedName P.SourcePos Name | BasicRef t
-type UnresolvedType t = ApplicativeType (TypeRef t)
+data Ref t            = UnresolvedName P.SourcePos Name | BasicRef t
+type UnresolvedType t = ApplicativeType (Ref t)
 
 unresolvedNames :: UnresolvedType t -> HashSet Name
 unresolvedNames (Basic (UnresolvedName _ name)) = HS.singleton name
 unresolvedNames (Application a b) = HS.union (unresolvedNames a) (unresolvedNames b)
 unresolvedNames _                 = HS.empty
 
-instance (P.Parseable t) => P.Parseable (TypeRef t) where
+instance (P.Parseable t) => P.Parseable (Ref t) where
     parser = (BasicRef <$> P.parser) <|> (do
         pos  <- P.getSourcePos
         name <- P.identifier
         pure $ UnresolvedName pos name
         )
+
+instance (Show t) => Show (Ref t) where
+    show (BasicRef x) = show x
+    show (UnresolvedName _ name) = "<unresolved " <> Text.unpack name <> ">"
+
+deriving instance (Eq t) => Eq (Ref t)
+
+instance (PartialOrd t) => PartialOrd (Ref t) where
+    (BasicRef x) <! (BasicRef y) = x <! y
+    _            <! _            = False
+
+instance (PartialOrd (ApplicativeType t)) => PartialOrd (ApplicativeType (Ref t)) where
+    a <! b
+        | (Just x) <- stripRefs a, (Just y) <- stripRefs b = x <! y
+        | otherwise = False
+
+stripRefs :: ApplicativeType (Ref t) -> Maybe (ApplicativeType t)
+stripRefs (Basic (BasicRef x)) = Just $ Basic x
+stripRefs (Application a b) = liftA2 Application (stripRefs a) (stripRefs b)
+stripRefs Bot = Just Bot
+stripRefs _ = Nothing

@@ -101,9 +101,15 @@ unwrapConst (ConstWrapper x) = x
 wrapType :: t -> AppTypeWrapper t
 wrapType = Basic . Type
 
+wrapType' :: ApplicativeType t -> AppTypeWrapper t
+wrapType' = T.transform wrapType
+
 unwrapType :: TypeWrapper t -> ApplicativeType t
 unwrapType (Type x) = Basic x
 unwrapType (SubType _ parent) = T.transform unwrapType parent
+
+unwrapType' :: AppTypeWrapper t -> ApplicativeType t
+unwrapType' = T.transform unwrapType
 
 -- parsing helpers
 data SubtypeAssertion t = SubtypeAssertion T.Name (T.UnresolvedType t)
@@ -123,6 +129,9 @@ makeTypeWrappers = (resolveLibrary TWR) . HM.fromList
 
 resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
 resolveType = resolveItem TWR
+
+resolveBasicType :: TypeWrappers t -> T.Ref t -> AppTypeWrapper t
+resolveBasicType m = (resolveType m) . T.Basic
 
 data TWR t = TWR -- term wrapper resolver
 instance Resolvable  (TWR t) where

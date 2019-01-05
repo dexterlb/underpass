@@ -170,9 +170,3 @@ deriving instance (Show t, Show c) => Show (LambdaException t c)
 
 instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)
 instance Exception VarException
-
-newtype ConstRef c = ConstRef c
-
-deriving instance (Parseable c) => Parseable (ConstRef c)
-deriving instance (Show c) => Show (ConstRef c)
-deriving instance (Eq c) => Eq (ConstRef c)
