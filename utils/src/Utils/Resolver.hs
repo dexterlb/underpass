@@ -10,6 +10,8 @@ import           Data.HashMap.Lazy (HashMap)
 import           Data.HashSet (HashSet)
 import           Data.Hashable (Hashable)
 
+type Library a = HashMap (ResolveKey a) (Resolved a)
+
 class (Eq (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
     type ResolveKey a
     type Resolvee a
@@ -17,10 +19,10 @@ class (Eq (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
 
     fv :: a -> Resolvee a -> HashSet (ResolveKey a)
 
-    substituteAll :: a -> HashMap (ResolveKey a) (Resolved a) -> Resolvee a -> (Resolved a)
+    substituteAll :: a -> Library a -> Resolvee a -> (Resolved a)
 
-resolveLibrary :: a -> HashMap (ResolveKey a) (Resolvee a) -> HashMap (ResolveKey a) (Resolved a)
+resolveLibrary :: a -> HashMap (ResolveKey a) (Resolvee a) -> Library a
 resolveLibrary = undefined
 
-resolveItem :: a -> HashMap (ResolveKey a) (Resolved a) -> (Resolvee a) -> (Resolved a)
+resolveItem :: a -> Library a -> (Resolvee a) -> (Resolved a)
 resolveItem = undefined

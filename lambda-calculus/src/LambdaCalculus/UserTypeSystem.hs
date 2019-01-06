@@ -119,12 +119,13 @@ instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
         name    <- P.identifier
         _       <- P.operator "<"
         supType <- P.parser
+        _       <- P.operator "."
         pure $ SubtypeAssertion name supType
 
 type TypeWrappers t = HashMap T.Name (AppTypeWrapper t)
 
-makeTypeWrappers :: [SubtypeAssertion t] -> TypeWrappers t
-makeTypeWrappers = (resolveLibrary TWR) . HM.fromList
+resolveTypeLibrary :: [SubtypeAssertion t] -> TypeWrappers t
+resolveTypeLibrary = (resolveLibrary TWR) . HM.fromList
     . (map (\(SubtypeAssertion x y) -> (x, y)))
 
 resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t

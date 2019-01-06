@@ -7,6 +7,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module LambdaCalculus.UserTerms where
 
@@ -59,6 +60,29 @@ instance (Eq t, PartialOrd t, Typed c t) => Resolvable (CR c t) where
             resolveRef (ConstRef (T.UnresolvedName pos name))
                 | (Just c) <- HM.lookup name m = c
                 | otherwise = throw $ NoSuchConst pos name
+
+resolveConsts :: Library (CR c t) -> LambdaTerm (TypeWrapper t) (ConstRef c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+resolveConsts = resolveItem CR
+
+data TermDefinition c t = TermDefinition T.Name (LambdaTerm (Ref t) (Ref c))
+
+resolveTermLibrary :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> [TermDefinition c t] -> Library (CR c t)
+resolveTermLibrary tlib = (resolveLibrary CR) . HM.fromList
+    -- this can be done in the other way (first resolve terms, then types),
+    -- thus eliminating the need for tlib here. Since, however, I'm too lazy
+    -- to do it now, it stays like this.
+    . (map (\(TermDefinition x y) -> (x, resolveTypes tlib y)))
+
+resolveTerm :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> Library (CR c t) -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+resolveTerm tlib clib = (resolveConsts clib) . (resolveTypes tlib)
+
+instance (Eq t, PartialOrd t, Typed c t, P.Parseable c, P.Parseable t) => P.Parseable (TermDefinition c t) where
+    parser = do
+        name    <- P.identifier
+        _       <- P.operator ":="
+        supType <- P.parser
+        _       <- P.operator "."
+        pure $ TermDefinition name supType
 
 -- exceptions
 data ConstException
