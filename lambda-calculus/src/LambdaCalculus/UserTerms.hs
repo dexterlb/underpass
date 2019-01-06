@@ -61,10 +61,13 @@ instance (Eq t, PartialOrd t, Typed c t) => Resolvable (CR c t) where
                 | (Just c) <- HM.lookup name m = c
                 | otherwise = throw $ NoSuchConst pos name
 
-resolveConsts :: Library (CR c t) -> LambdaTerm (TypeWrapper t) (ConstRef c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+resolveConsts :: (Eq t, PartialOrd t, Typed c t) => Library (CR c t) -> LambdaTerm (TypeWrapper t) (ConstRef c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
 resolveConsts = resolveItem CR
 
 data TermDefinition c t = TermDefinition T.Name (LambdaTerm (Ref t) (Ref c))
+
+deriving instance (Show c, Show t) => Show (TermDefinition c t)
+deriving instance (Eq c, Eq t) => Eq (TermDefinition c t)
 
 resolveTermLibrary :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> [TermDefinition c t] -> Library (CR c t)
 resolveTermLibrary tlib = (resolveLibrary CR) . HM.fromList
@@ -75,6 +78,9 @@ resolveTermLibrary tlib = (resolveLibrary CR) . HM.fromList
 
 resolveTerm :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> Library (CR c t) -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
 resolveTerm tlib clib = (resolveConsts clib) . (resolveTypes tlib)
+
+getTerm :: (Eq t, PartialOrd t, Typed c t) => T.Name -> Library (CR c t) -> Maybe (LambdaTerm (TypeWrapper t) (ConstWrapper c))
+getTerm = getItem CR
 
 instance (Eq t, PartialOrd t, Typed c t, P.Parseable c, P.Parseable t) => P.Parseable (TermDefinition c t) where
     parser = do

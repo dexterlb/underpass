@@ -114,6 +114,9 @@ unwrapType' = T.transform unwrapType
 -- parsing helpers
 data SubtypeAssertion t = SubtypeAssertion T.Name (T.UnresolvedType t)
 
+deriving instance (Show t) => Show (SubtypeAssertion t)
+deriving instance (Eq t) => Eq (SubtypeAssertion t)
+
 instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
     parser = do
         name    <- P.identifier

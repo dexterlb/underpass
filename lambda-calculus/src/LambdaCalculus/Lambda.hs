@@ -32,6 +32,8 @@ data LambdaTerm t c where
 instance (Show t, Show c) => Show (LambdaTerm t c) where
     show = showTerm emptyContext
 
+deriving instance (Eq t, Eq c) => Eq (LambdaTerm t c)
+
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
 showTerm context (Application a b) = "(" <> showTerm context a <> " " <> showTerm context b <> ")"
@@ -80,9 +82,9 @@ parseTerm = parseApplication
 
 parseNonApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseNonApplication context
-    =   parseConstant
-    <|> parseLambda context
+    =   parseLambda context
     <|> parseVariable context
+    <|> parseConstant
     <|> P.braces (parseTerm context)
 
 parseConstant :: (Parseable t, Parseable c, Typed c t) => Parser (LambdaTerm t c, T.ApplicativeType t)

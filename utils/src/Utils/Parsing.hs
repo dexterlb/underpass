@@ -11,6 +11,7 @@ module Utils.Parsing
     , ps
     , pss
     , forceParse
+    , parseFile
     ) where
 
 import Text.Megaparsec
@@ -21,6 +22,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
 
 import Control.Applicative (liftA2)
 
@@ -40,8 +42,16 @@ pss = ps . T.pack
 ps :: Parseable t => Text -> t
 ps = forceParse parser
 
+parseFile :: Parseable t => FilePath -> IO t
+parseFile filename = do
+    content <- TIO.readFile filename
+    pure $ forceParseNamed parser content filename
+
 forceParse :: Parser t -> Text -> t
-forceParse p t = case parse (p <* eof) "input" t of
+forceParse p t = forceParseNamed p t "input"
+
+forceParseNamed :: Parser t -> Text -> String -> t
+forceParseNamed p t name = case parse (p <* eof) name t of
     Right d     -> d
     Left errors -> error $ errorBundlePretty errors
 
