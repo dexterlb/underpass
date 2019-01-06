@@ -1,21 +1,19 @@
 module Main where
 
+import System.Environment (getArgs)
+
 import Minipass.Overpass
 import LambdaCalculus.TypedLambda
 import LambdaCalculus.Context
 import Minipass.Language.Optimiser
 import Minipass.Language.Intermediate
-import Minipass.Language.Library
+import Minipass.Language.Program
+import Utils.Parsing (parseFile)
 
-import System.IO
 
-import qualified Data.Text as Text
-
-import Utils.Parsing (forceParse)
 
 main :: IO ()
 main = do
-    putStr "Enter query: "
-    hFlush stdout
-    query <- getLine
-    tri $ optimise $ typify emptyContext $ toIntermediate $ forceParse parseWithLibrary $ Text.pack query
+    [filename] <- getArgs
+    program <- parseFile $ filename
+    tri $ optimise $ typify emptyContext $ toIntermediate $ getMain $ program
