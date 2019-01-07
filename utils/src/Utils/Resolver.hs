@@ -23,10 +23,15 @@ class (Eq (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
     substituteAll :: a -> Library a -> Resolvee a -> (Resolved a)
 
 resolveLibrary :: (Resolvable a) => a -> HashMap (ResolveKey a) (Resolvee a) -> Library a
-resolveLibrary = undefined
+resolveLibrary r plib = foldr (addToLibrary r) (emptyLib r) $ map (\k -> (k, plib HM.! k)) keys
+    where
+        keys = topoSort $ map (\(k, v) -> (k, fv r v)) $ HM.toList plib
+
+addToLibrary :: (Resolvable a) => a -> (ResolveKey a, Resolvee a) -> Library a -> Library a
+addToLibrary r (k, v) lib = HM.insert k (resolveItem r lib v) lib
 
 resolveItem :: (Resolvable a) => a -> Library a -> (Resolvee a) -> (Resolved a)
-resolveItem = undefined
+resolveItem = substituteAll -- maybe don't need a second name for this shit? just maybe?
 
 getItem :: (Resolvable a) => a -> ResolveKey a -> Library a -> Maybe (Resolved a)
 getItem _ key lib = HM.lookup key lib
@@ -36,3 +41,6 @@ emptyLib _ = HM.empty
 
 mergeLib :: (Resolvable a) => a -> Library a -> Library a -> Library a
 mergeLib _ = HM.union
+
+topoSort :: (Eq a) => [(a, HashSet a)] -> [a]
+topoSort = undefined
