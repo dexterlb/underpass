@@ -118,7 +118,7 @@ deriving instance (Show t) => Show (SubtypeAssertion t)
 deriving instance (Eq t) => Eq (SubtypeAssertion t)
 
 instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
-    parser = do
+    parser = P.try $ do
         name    <- P.identifier
         _       <- P.operator "<"
         supType <- P.parser
