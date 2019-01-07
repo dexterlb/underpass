@@ -17,6 +17,7 @@ dependencies:
 - text
 - parser-combinators
 - unordered-containers
+- containers
 - hashable
 - process
 - data-memocombinators
