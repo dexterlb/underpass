@@ -12,7 +12,7 @@ import GHC.Generics (Generic)
 import LambdaCalculus.Lambda (LambdaTerm)
 import LambdaCalculus.UserTerms
 import LambdaCalculus.UserTypeSystem
-import Utils.Parsing (Parseable, parser, (<|>), many)
+import Utils.Parsing (Parseable, parser, (<|>), many, try)
 import Data.Bag
 import Utils.Resolver
 
@@ -37,7 +37,7 @@ instance Keyed Statement where
     keys (LambdaStatement  (TermDefinition   _ _)) = [LambdaKey]
 
 instance Parseable Statement where
-    parser = (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
+    parser = (try $ SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
 
 data Program = Program
     { types :: Library (TWR Types)
@@ -66,6 +66,13 @@ instance Parseable Program where
 
             extractTermDef (LambdaStatement s) = s
             extractTermDef _ = error "fu"
+
+instance Monoid Program where
+    mempty = Program { types = emptyLib TWR, terms = emptyLib CR }
+    mappend
+        (Program { types = types1, terms = terms1 })
+        (Program { types = types2, terms = terms2 })
+            = Program { types = mergeLib TWR types1 types2, terms = mergeLib CR terms1 terms2 }
 
 getMain :: Program -> LambdaTerm Types Constants
 getMain p

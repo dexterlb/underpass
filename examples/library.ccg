@@ -1,0 +1,9 @@
+name        :=  lambda n : String { get (consString 'tagFilter' (consList (consString '==' (consString 'name' (consString n empty))) empty)) }.
+amenity     :=  lambda n : String { get (consString 'tagFilter' (consList (consString '==' (consString 'amenity' (consString n em))) empty)) }.
+within      :=  lambda dist : Num { next (consString 'around'   (consNum dist empty)) }.
+in          :=  next (consString 'in' empty).
+nodes       :=  get (consString 'all' (consString 'nodes' empty)).
+ways        :=  get (consString 'all' (consString 'ways' empty)).
+relations   :=  get (consString 'all' (consString 'relations' empty)).
+areas       :=  get (consString 'all' (consString 'areas' empty)).
+

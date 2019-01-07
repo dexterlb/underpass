@@ -11,7 +11,7 @@ module Utils.Parsing
     , ps
     , pss
     , forceParse
-    , parseFile
+    , parseFile, parseFiles
     ) where
 
 import Text.Megaparsec
@@ -23,8 +23,8 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-
 import Control.Applicative (liftA2)
+import Control.Monad (forM)
 
 data Error = Error deriving (Eq, Ord, Show)
 
@@ -41,6 +41,9 @@ pss = ps . T.pack
 
 ps :: Parseable t => Text -> t
 ps = forceParse parser
+
+parseFiles :: (Parseable t, Monoid t) => [FilePath] -> IO t
+parseFiles = (mconcat <$>) . (`forM` parseFile)
 
 parseFile :: Parseable t => FilePath -> IO t
 parseFile filename = do

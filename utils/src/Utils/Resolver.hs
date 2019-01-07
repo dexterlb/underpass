@@ -30,3 +30,9 @@ resolveItem = undefined
 
 getItem :: (Resolvable a) => a -> ResolveKey a -> Library a -> Maybe (Resolved a)
 getItem _ key lib = HM.lookup key lib
+
+emptyLib :: (Resolvable a) => a -> Library a
+emptyLib _ = HM.empty
+
+mergeLib :: (Resolvable a) => a -> Library a -> Library a -> Library a
+mergeLib _ = HM.union

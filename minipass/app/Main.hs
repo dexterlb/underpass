@@ -8,12 +8,11 @@ import LambdaCalculus.Context
 import Minipass.Language.Optimiser
 import Minipass.Language.Intermediate
 import Minipass.Language.Program
-import Utils.Parsing (parseFile)
-
+import Utils.Parsing (parseFiles)
 
 
 main :: IO ()
 main = do
-    [filename] <- getArgs
-    program <- parseFile $ filename
+    args    <- getArgs
+    program <- parseFiles $ args
     tri $ optimise $ typify emptyContext $ toIntermediate $ getMain $ program
