@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module LambdaCalculus.UserTypeSystemSpec (main, spec) where
 
@@ -21,6 +22,12 @@ instance MSemiLattice Base where
     a /\ b
         | a == b    = a
         | otherwise = error "trying to meet unequal base items"
+
+instance PartialOrd (ApplicativeType Base) where
+    (<!) = defaultLess
+
+instance MSemiLattice (ApplicativeType Base) where
+    (/\) = defaultMeet
 
 tA :: AppTypeWrapper Base
 tA = Basic $ SubType "A" tB

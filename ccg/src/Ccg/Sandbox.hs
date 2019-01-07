@@ -2,6 +2,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Ccg.Sandbox where
 
@@ -36,6 +37,13 @@ instance MSemiLattice StupidType where
     a /\ b
         | a == b = a
         | otherwise = error "trying to meet incompatible stupid types"
+
+instance PartialOrd (T.ApplicativeType StupidType) where
+    (<!) = T.defaultLess
+
+instance MSemiLattice (T.ApplicativeType StupidType) where
+    (/\) = T.defaultMeet
+
 
 instance MemoTable StupidType where
     table = Memo.enum

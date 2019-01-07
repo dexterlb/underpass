@@ -62,7 +62,7 @@ typify context (L.Constant c) = Constant t c
     where
         t = typeOfTerm context (L.Constant c)
 typify context (L.Application a b)
-    | T.Application p q <- ta', tb' <!> p = Application q a' b'
+    | (p, q) <- T.inferApp ta', tb' <!> p = Application q a' b'
     | otherwise = throw $ L.CannotApply (a, ta') (b, tb')
     where
         ta' = typeOf a'
@@ -112,7 +112,7 @@ fixTypesDown (T.Application tnx tna) upVars (Lambda (T.Application tx ta) x a) =
 fixTypesDown (T.Application _ _) _ (Lambda q _ _) = throw $ T.WrongLambdaType q
 fixTypesDown q _ Lambda {}                        = throw $ T.WrongLambdaType q
 fixTypesDown tnr upVars (Application tor a b)
-    | (T.Application p _) <- ta = Application tr' a' (fixTypesDown p upVars b)
+    | (p, _) <- T.inferApp ta     = Application tr' a' (fixTypesDown p upVars b)
     | otherwise                 = throw $ CannotApply a b
     where
         ta  = typeOf a
@@ -131,7 +131,7 @@ fixTypesUp (Lambda (T.Application tx ta) x a)
         (a', vars) = fixTypesUp a
 fixTypesUp (Lambda t _ _) = throw $ T.WrongLambdaType t
 fixTypesUp (Application tr a b)
-    | (T.Application _ q) <- typeOf a' = (Application (tr /\ q) a' b', vars)
+    | (_, q) <- T.inferApp $ typeOf a'   = (Application (tr /\ q) a' b', vars)
     | otherwise                        = throw $ CannotApply a b
     where
         vars = meetContexts aVars bVars

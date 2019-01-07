@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
@@ -43,13 +44,13 @@ showTerm context (Variable i)
     | otherwise = "<var " <> show i <> ">"
 
 
-instance (Typed c t) => Typed (LambdaTerm t c) t where
+instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (LambdaTerm t c) t where
     typeOf = typeOfTerm emptyContext
 
-typeOfTerm :: (Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
+typeOfTerm :: (MSemiLattice (T.ApplicativeType t), Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ (Constant c) = typeOf c
 typeOfTerm context (Application a b)
-    | (T.Application p q) <- ta, tb <! p = q
+    | (p, q) <- T.inferApp ta, tb <! p = q
     | otherwise = throw $ CannotApply (a, ta) (b, tb)
     where
         ta = typeOfTerm context a
@@ -106,10 +107,10 @@ parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Par
 parseApplication context = foldl1 makeApplication
     <$> P.some (parseNonApplication context)
     where
-        makeApplication left@(x, T.Application a b) right@(y, c)
+        makeApplication left@(x, ab) right@(y, c)
             | c <!> a               = (Application x y, b)
             | otherwise             = throw $ CannotApply left right
-        makeApplication left right  = throw $ CannotApply left right
+            where (a, b) = T.inferApp ab
 
 parseVariableDeclaration :: (Parseable t) => Parser (VarName, T.ApplicativeType t)
 parseVariableDeclaration =

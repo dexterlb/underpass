@@ -36,7 +36,7 @@ data ApplicativeType b
 
 deriving instance (Hashable b) => Hashable (ApplicativeType b)
 
-class (Show b, Show a, Typeable a, Typeable b, PartialOrd (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
+class (Show b, Show a, Typeable a, Typeable b, MSemiLattice (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
 instance (Show b) => Show (ApplicativeType b) where
@@ -69,6 +69,15 @@ defaultMeet Bot x = x
 defaultMeet x Bot = x
 defaultMeet x y = throw $ CannotMeet x y
 
+defaultPartialMeet :: (Eq b, Show b, Typeable b) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+defaultPartialMeet (Basic x) (Basic y)
+  | x == y    = Basic x
+  | otherwise = throw $ CannotMeet (Basic x) (Basic y)
+defaultPartialMeet (Application a1 a2) (Application b1 b2) = Application (defaultPartialMeet a1 b1) (defaultPartialMeet a2 b2)
+defaultPartialMeet Bot x = x
+defaultPartialMeet x Bot = x
+defaultPartialMeet x y = throw $ CannotMeet x y
+
 defaultLess :: PartialOrd b => ApplicativeType b -> ApplicativeType b -> Bool
 defaultLess (Basic x)           (Basic y)           = x <! y
 defaultLess (Application a1 a2) (Application b1 b2) = defaultLess a1 b1 && defaultLess a2 b2
@@ -76,6 +85,11 @@ defaultLess Bot    Bot          = True
 defaultLess Bot    _            = False
 defaultLess _      Bot          = True
 defaultLess _      _            = False
+
+inferApp :: (MSemiLattice (ApplicativeType t)) => ApplicativeType t -> (ApplicativeType t, ApplicativeType t)
+inferApp x
+    | (Application p q) <- x /\ (Application Bot Bot) = (p, q)
+    | otherwise = error "how did x unify to * -> *, but the result is not T > T ?"
 
 instance HasBot (ApplicativeType b) where
     bot = Bot
@@ -150,6 +164,11 @@ instance (PartialOrd (ApplicativeType t)) => PartialOrd (ApplicativeType (Ref t)
     a <! b
         | (Just x) <- stripRefs a, (Just y) <- stripRefs b = x <! y
         | otherwise = False
+
+instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => MSemiLattice (ApplicativeType (Ref t)) where
+    a /\ b
+        | (Just x) <- stripRefs a, (Just y) <- stripRefs b = BasicRef <$> (x /\ y)
+        | otherwise = Bot
 
 stripRefs :: ApplicativeType (Ref t) -> Maybe (ApplicativeType t)
 stripRefs (Basic (BasicRef x)) = Just $ Basic x

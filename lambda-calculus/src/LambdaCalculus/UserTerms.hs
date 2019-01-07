@@ -25,7 +25,7 @@ import           Utils.Resolver
 import           Utils.Maths
 import qualified Utils.Parsing as P
 
-instance (Typed c t) => Typed (Ref c) (Ref t) where
+instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (Ref c) (Ref t) where
     typeOf (UnresolvedName _ _)  = T.Bot
     typeOf (BasicRef  x)         = T.basicTransform BasicRef $ typeOf x
 
