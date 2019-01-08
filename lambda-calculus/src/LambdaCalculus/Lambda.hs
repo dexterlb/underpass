@@ -25,10 +25,11 @@ import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 
 data LambdaTerm t c where
-    Constant    :: Typed c t => c              -> LambdaTerm t c
-    Application :: Typed c t => LambdaTerm t c -> LambdaTerm t c      -> LambdaTerm t c
-    Lambda      :: Typed c t => VarName        -> T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
-    Variable    :: Typed c t => Index          -> LambdaTerm t c
+    Constant    :: Typed c t => c                   -> LambdaTerm t c
+    Application :: Typed c t => LambdaTerm t c      -> LambdaTerm t c      -> LambdaTerm t c
+    Lambda      :: Typed c t => VarName             -> T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
+    Variable    :: Typed c t => Index               -> LambdaTerm t c
+    Cast        :: Typed c t => T.ApplicativeType t -> LambdaTerm t c      -> LambdaTerm t c
 
 instance (Show t, Show c) => Show (LambdaTerm t c) where
     show = showTerm emptyContext
@@ -42,6 +43,7 @@ showTerm context (Lambda x t a) = "λ " <> Text.unpack x <> ": " <> show t <> " 
 showTerm context (Variable i)
     | Just (x, _) <- at i context = Text.unpack x
     | otherwise = "<var " <> show i <> ">"
+showTerm context (Cast t x) = showTerm context x <> " : " <> show t
 
 
 instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (LambdaTerm t c) t where
@@ -59,18 +61,25 @@ typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) con
 typeOfTerm context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = throw $ UnknownVar i
+typeOfTerm context (Cast t x)
+    | t <!> tx = t
+    | otherwise = throw $ CannotCast (x, tx) t
+    where
+        tx = typeOfTerm context x
 
 transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c
 transform f g (Application a b) = Application (transform f g a) (transform f g b)
 transform f g (Lambda x t a)    = Lambda x (T.transform g t) (transform f g a)
 transform _ _ (Variable i)      = Variable i
+transform f g (Cast t x)        = Cast (T.transform g t) (transform f g x)
 
 transformConst :: (Typed c1 t1, Typed c2 t2) => (c1 -> c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transformConst f _ (Constant c)      = Constant $ f c
 transformConst f g (Application a b) = Application (transformConst f g a) (transformConst f g b)
 transformConst f g (Lambda x t a)    = Lambda x (T.transform g t) (transformConst f g a)
 transformConst _ _ (Variable i)      = Variable i
+transformConst f g (Cast t x)        = Cast (T.transform g t) (transformConst f g x)
 
 apply :: Typed c t => [LambdaTerm t c] -> LambdaTerm t c
 apply = foldl1 Application
@@ -84,6 +93,7 @@ parseTerm = parseApplication
 parseNonApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseNonApplication context
     =   parseLambda context
+    <|> parseCast context
     <|> parseVariable context
     <|> parseConstant
     <|> P.braces (parseTerm context)
@@ -102,6 +112,16 @@ parseLambda context = do
     _                <- P.operator "}"
 
     return (Lambda var varType term, T.Application varType termType)
+
+parseCast :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
+parseCast context = P.try $ do
+    newType          <- parser
+    _                <- P.operator "["
+    (term, termType) <- parseTerm context
+    _                <- P.operator "]"
+    pure $ case newType <!> termType of
+        True  -> (Cast newType term, newType)
+        False -> throw $ CannotCast (term, termType) newType
 
 parseApplication :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseApplication context = foldl1 makeApplication
@@ -160,9 +180,11 @@ up' (Variable x) d c
 up' (Application m n) d c = Application (up' m d c) (up' n d c)
 up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
 up' (Constant m) _ _ = Constant m
+up' (Cast t m) d c = Cast t (up' m d c)
 
 data LambdaException t c
     = CannotApply (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
+    | CannotCast  (LambdaTerm t c, T.ApplicativeType t) (T.ApplicativeType t)
     deriving (Typeable)
 
 newtype VarException

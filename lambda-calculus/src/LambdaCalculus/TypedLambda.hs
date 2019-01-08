@@ -75,6 +75,13 @@ typify context (L.Lambda x t a) = Lambda (T.Application t (typeOf a')) x a'
 typify context (L.Variable i)
     | Just (_, t) <- at i context = Variable t i
     | otherwise = throw $ L.UnknownVar i
+typify context (term @ (L.Cast _ a)) = setType (typeOf term) $ typify context a
+
+setType :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c
+setType t (Constant _ x)      = Constant t x
+setType t (Variable _ i)      = Variable t i
+setType t (Application _ a b) = Application t a b
+setType t (Lambda _ x a)      = Lambda t x a
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x

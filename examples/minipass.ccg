@@ -1,1 +1,5 @@
-main := in (name 'София').
+Town < String.
+
+sf := Town['София'].
+
+main := in (name sf).

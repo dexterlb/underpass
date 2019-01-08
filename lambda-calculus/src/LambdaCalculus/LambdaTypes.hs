@@ -22,7 +22,6 @@ import qualified Data.HashSet as HS
 import Utils.Latex (Latexable, latex)
 import Data.Text (Text)
 import qualified Data.Text as Text
-import Control.Applicative (liftA2)
 import GHC.Generics (Generic)
 import Utils.Maths
 import Data.MemoCombinators.Class (MemoTable, table)
@@ -161,17 +160,20 @@ instance (PartialOrd t) => PartialOrd (Ref t) where
     _            <! _            = False
 
 instance (PartialOrd (ApplicativeType t)) => PartialOrd (ApplicativeType (Ref t)) where
-    a <! b
-        | (Just x) <- stripRefs a, (Just y) <- stripRefs b = x <! y
-        | otherwise = False
+    a <! b = stripRefs a <! stripRefs b
 
 instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => MSemiLattice (ApplicativeType (Ref t)) where
     a /\ b
-        | (Just x) <- stripRefs a, (Just y) <- stripRefs b = BasicRef <$> (x /\ y)
-        | otherwise = Bot
+        | refless a, refless b = BasicRef <$> (stripRefs a /\ stripRefs b)
+        | otherwise = error "meet for types with unresolved components not yet implemented"
 
-stripRefs :: ApplicativeType (Ref t) -> Maybe (ApplicativeType t)
-stripRefs (Basic (BasicRef x)) = Just $ Basic x
-stripRefs (Application a b) = liftA2 Application (stripRefs a) (stripRefs b)
-stripRefs Bot = Just Bot
-stripRefs _ = Nothing
+stripRefs :: ApplicativeType (Ref t) -> ApplicativeType t
+stripRefs (Basic (BasicRef x)) = Basic x
+stripRefs (Application a b) = Application (stripRefs a) (stripRefs b)
+stripRefs _ = Bot
+
+refless :: ApplicativeType (Ref t) -> Bool
+refless (Basic (BasicRef _)) = True
+refless (Basic (UnresolvedName _ _)) = False
+refless (Application a b) = refless a && refless b
+refless _ = True

@@ -53,6 +53,7 @@ instance (Eq t, PartialOrd t, Typed c t) => Resolvable (CR c t) where
     fv CR (L.Application a b) = HS.union (fv CR a) (fv CR b)
     fv CR (L.Lambda _ _ a) = fv CR a
     fv CR (L.Variable _) = HS.empty
+    fv CR (L.Cast _ a) = fv CR a
 
     substituteAll CR m = L.transform resolveRef T.Basic
         where
