@@ -8,6 +8,7 @@
 module Ccg.Rules where
 
 import           Data.Text (Text)
+import qualified Data.Text as Text
 import           Data.List (intercalate)
 
 import           Utils.Parsing (Parseable, parser)
@@ -57,6 +58,9 @@ instance Parseable Matcher where
         where
             exactMatcherParser = P.try $ ExactMatcher <$> P.quotedString '"'
 
+matchText :: (FromMatch payload) => Lexer -> [Rule cat payload] -> Text -> [[(cat, payload)]]
+matchText lexer rules t = match rules (lexer t)
+
 match :: (FromMatch payload) => [Rule cat payload] -> [TokenData] -> [[(cat, payload)]]
 match rules = map matchToken
     where
@@ -70,3 +74,6 @@ matchRule :: TokenData -> Matcher -> Maybe MatchData
 matchRule (TokenData { text }) (ExactMatcher pattern)
     | text == pattern  = Just $ MatchData { token = text }
     | otherwise        = Nothing
+
+spaceyLexer :: Lexer
+spaceyLexer = (map (\t -> TokenData { text = t })) . (Text.splitOn " ")

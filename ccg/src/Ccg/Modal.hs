@@ -4,6 +4,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Ccg.Modal where
 
@@ -18,10 +19,13 @@ import qualified Data.HashSet as HS
 import           Data.Tuple (swap)
 
 import           Ccg.Category
+import           Ccg.Lambda (Compositional(..))
+
 import           Utils.Memoise()
 import           Utils.Latex
-
 import           Utils.Maths
+import qualified LambdaCalculus.LambdaTypes as T
+import qualified LambdaCalculus.Lambda as L
 
 type ModalCategory t = Category (NonTerm t) Slash
 
@@ -214,3 +218,12 @@ a </> b = Complex (RightSlash Dot) a b
 a <\> b = Complex (LeftSlash Dot) a b
 
 
+-- lambda instances
+
+instance (T.Typed x t) => T.Typed (NonTerm x) t where
+    typeOf (NonTerm x)  = T.typeOf x
+    typeOf (Variable _) = T.Bot
+
+instance Compositional Rule where
+    compose LeftApp  x y = L.Application y x
+    compose RightApp x y = L.Application x y

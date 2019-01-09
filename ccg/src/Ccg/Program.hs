@@ -6,7 +6,7 @@
 
 module Ccg.Program where
 
-import Ccg.Lambda   (UnresolvedLambdaRule, LambdaRule, resolveLambdaRule)
+import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, resolveLambdaRule)
 
 import LambdaCalculus.UserTerms
 import LambdaCalculus.UserTypeSystem
