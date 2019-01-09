@@ -38,6 +38,9 @@ deriving instance (Hashable b) => Hashable (ApplicativeType b)
 class (Show b, Show a, Typeable a, Typeable b, MSemiLattice (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
+instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => Typed (ApplicativeType t) t where
+    typeOf = id
+
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
     show (Application a b) = "(" <> show a <> " -> " <> show b <> ")"

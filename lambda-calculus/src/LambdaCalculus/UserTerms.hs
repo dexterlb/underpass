@@ -62,7 +62,9 @@ instance (Eq t, PartialOrd t, Typed c t) => Resolvable (CR c t) where
                 | (Just c) <- HM.lookup name m = c
                 | otherwise = throw $ NoSuchConst pos name
 
-resolveConsts :: (Eq t, PartialOrd t, Typed c t) => Library (CR c t) -> LambdaTerm (TypeWrapper t) (ConstRef c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+type TermLibrary c t = Library (CR c t)
+
+resolveConsts :: (Eq t, PartialOrd t, Typed c t) => TermLibrary c t -> LambdaTerm (TypeWrapper t) (ConstRef c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
 resolveConsts = resolveItem CR
 
 data TermDefinition c t = TermDefinition T.Name (LambdaTerm (Ref t) (Ref c))
@@ -70,17 +72,17 @@ data TermDefinition c t = TermDefinition T.Name (LambdaTerm (Ref t) (Ref c))
 deriving instance (Show c, Show t) => Show (TermDefinition c t)
 deriving instance (Eq c, Eq t) => Eq (TermDefinition c t)
 
-resolveTermLibrary :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> [TermDefinition c t] -> Library (CR c t)
+resolveTermLibrary :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> [TermDefinition c t] -> TermLibrary c t
 resolveTermLibrary tlib = (resolveLibrary CR) . HM.fromList
     -- this can be done in the other way (first resolve terms, then types),
     -- thus eliminating the need for tlib here. Since, however, I'm too lazy
     -- to do it now, it stays like this.
     . (map (\(TermDefinition x y) -> (x, resolveTypes tlib y)))
 
-resolveTerm :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> Library (CR c t) -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+resolveTerm :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> TermLibrary c t -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
 resolveTerm tlib clib = (resolveConsts clib) . (resolveTypes tlib)
 
-getTerm :: (Eq t, PartialOrd t, Typed c t) => T.Name -> Library (CR c t) -> Maybe (LambdaTerm (TypeWrapper t) (ConstWrapper c))
+getTerm :: (Eq t, PartialOrd t, Typed c t) => T.Name -> TermLibrary c t -> Maybe (LambdaTerm (TypeWrapper t) (ConstWrapper c))
 getTerm = getItem CR
 
 instance (Eq t, PartialOrd t, Typed c t, P.Parseable c, P.Parseable t) => P.Parseable (TermDefinition c t) where

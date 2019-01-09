@@ -66,6 +66,10 @@ class HasPrimaryDir a where
 
 data PrimaryDir = LeftPrimary | RightPrimary | NoPrimary deriving (Eq, Show)
 
+cmap :: (atom1 -> atom2) -> Category atom1 slash -> Category atom2 slash
+cmap f (Simple atom)         = Simple $ f atom
+cmap f (Complex slash c1 c2) = Complex slash (cmap f c1) (cmap f c2)
+
 -- lambda instances (maybe they shouldn't be here?)
 instance (Show payload, Typeable payload,  Typed atom t) => Typed (Category atom payload) t where
     typeOf (Simple a) = typeOf a

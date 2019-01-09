@@ -1,29 +1,72 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Ccg.Rules where
 
 import           Data.Text (Text)
+import           Data.List (intercalate)
 
 import           Utils.Parsing (Parseable, parser)
-import           LambdaCalculus.Lambda (LambdaTerm)
-import           LambdaCalculus.LambdaTypes (Typed)
+import qualified Utils.Parsing as P
 
 type Token = Text
 
-data Rule cat payload = Rule Matcher (cat, PayloadConstructor payload)
+type Lexer = Text -> [TokenData]
+
+data Rule cat payload = Rule Matcher [(cat, Constructor payload)]
+
+data TokenData = TokenData
+    { text :: Token
+    }
 
 data MatchData = MatchData
     { token :: Token
     }
 
-newtype PayloadConstructor payload = PayloadConstructor (MatchData -> payload)
+class FromMatch payload where
+    type Constructor payload
 
-data LambdaPayload t c = LambdaPayload (LambdaTerm t c) MatchData
+    construct :: (Constructor payload) -> MatchData -> payload
 
-instance (Typed c t, Parseable t, Parseable c) => Parseable (PayloadConstructor (LambdaPayload t c)) where
-    parser = do
-        term <- parser
-        pure $ PayloadConstructor $ LambdaPayload term
+
+instance (Parseable cat, Parseable (Constructor payload)) => Parseable (Rule cat payload) where
+    parser = P.try $ do
+        matcher <- P.parser
+        _       <- P.operator ":"
+        targets <- P.separated "," $ do
+            cat     <- P.parser
+            pcons   <- P.parser
+            pure (cat, pcons)
+        _       <- P.operator "."
+        pure $ Rule matcher targets
+
+instance (Show cat, Show (Constructor payload)) => Show (Rule cat payload) where
+    show (Rule matcher items) = show matcher <> " : " <> intercalate ", "
+        (map (\(cat, cons) -> show cat <> " " <> show cons) items)
 
 data Matcher
     = ExactMatcher Token
+    deriving (Show)
+
+instance Parseable Matcher where
+    parser = exactMatcherParser
+        where
+            exactMatcherParser = P.try $ ExactMatcher <$> P.quotedString '"'
+
+match :: (FromMatch payload) => [Rule cat payload] -> [TokenData] -> [[(cat, payload)]]
+match rules = map matchToken
+    where
+        matchToken token = foldr (++) [] $ map (matchRuleOn token) rules
+        matchRuleOn token (Rule matcher items)
+            | (Just matchData) <- matchRule token matcher
+                = map (\(cat, cons) -> (cat, construct cons matchData)) items
+            | otherwise = []
+
+matchRule :: TokenData -> Matcher -> Maybe MatchData
+matchRule (TokenData { text }) (ExactMatcher pattern)
+    | text == pattern  = Just $ MatchData { token = text }
+    | otherwise        = Nothing

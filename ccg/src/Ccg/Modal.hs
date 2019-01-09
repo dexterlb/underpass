@@ -30,6 +30,13 @@ data NonTerm t
     | Variable  Text
     deriving (Eq, Generic)
 
+instance Functor NonTerm where
+    fmap f (NonTerm t)  = NonTerm $ f t
+    fmap _ (Variable x) = Variable x
+
+mcmap :: (t1 -> t2) -> ModalCategory t1 -> ModalCategory t2
+mcmap f = cmap (f <$>)
+
 instance (MemoTable t) => MemoTable (NonTerm t) where
     table f (NonTerm  x) = table (f . NonTerm) x
     table f (Variable x) = table (f . Variable) x

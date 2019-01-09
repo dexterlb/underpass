@@ -7,6 +7,7 @@ module Utils.Parsing
     , Parseable, Parser, parser
     , lexeme, symbol, lambda, braces, curlyBraces, block
     , operator, word, identifier, literal, quotedString
+    , separated
     , floatNumber
     , ps
     , pss
@@ -92,6 +93,15 @@ literal = (lexeme . try) . string
 
 operator :: Text -> Parser Text
 operator = literal
+
+separated :: Text -> Parser a -> Parser [a]
+separated sep p = (try (multi)) <|> (pure <$> p)
+    where
+        multi = do
+            h <- p
+            _ <- literal sep
+            t <- separated sep p
+            pure $ h : t
 
 identifier :: Parser Text
 identifier = T.pack <$> (lexeme . try) (liftA2 (:) letterChar (many alphaNumChar))
