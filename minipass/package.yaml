@@ -18,6 +18,7 @@ dependencies:
 - hashable
 - unordered-containers
 - mtl
+- data-memocombinators
 
 - utils
 - lambda-calculus

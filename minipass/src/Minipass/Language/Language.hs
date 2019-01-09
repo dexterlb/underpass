@@ -2,6 +2,9 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE StandaloneDeriving    #-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DeriveAnyClass        #-}
 
 module Minipass.Language.Language where
 
@@ -9,6 +12,11 @@ import Data.Functor (($>))
 
 import Utils.Parsing as P
 import Utils.Maths
+import GHC.Generics (Generic)
+import Data.Hashable (Hashable)
+
+import           Data.MemoCombinators.Class (MemoTable, table)
+import qualified Data.MemoCombinators as Memo
 
 import qualified LambdaCalculus.LambdaTypes as T
 import           LambdaCalculus.LambdaTypes (Typed)
@@ -24,7 +32,9 @@ data Types
     | Num
     | List
     | Anything
-    deriving (Show, Eq)
+    deriving (Show, Eq, Generic, Enum)
+
+deriving instance Hashable Types
 
 instance PartialOrd Types where
     a <! b = a == b
@@ -62,6 +72,9 @@ instance Typed Constants Types where
     typeOf ConsList          = T.Application (T.Basic List) (T.Application (T.Basic List) (T.Basic List))
     typeOf Empty             = T.Basic List
 
+-- memo instances
+instance MemoTable Types where
+    table = Memo.enum
 
 -- convenience for creating lists
 data ListC
