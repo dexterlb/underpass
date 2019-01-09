@@ -22,11 +22,11 @@ data Rule cat payload = Rule Matcher [(cat, Constructor payload)]
 
 data TokenData = TokenData
     { text :: Token
-    }
+    } deriving (Show)
 
 data MatchData = MatchData
     { token :: Token
-    }
+    } deriving (Show)
 
 class FromMatch payload where
     type Constructor payload

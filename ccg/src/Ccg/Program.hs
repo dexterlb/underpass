@@ -6,7 +6,7 @@
 
 module Ccg.Program where
 
-import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, resolveLambdaRule)
+import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, LambdaCategory, UnresolvedLambdaCategory, resolveLambdaRule, resolveLambdaCategory)
 
 import LambdaCalculus.UserTerms
 import LambdaCalculus.UserTypeSystem
@@ -19,6 +19,7 @@ data Statement t c
     = SubtypeStatement (SubtypeAssertion t)
     | LambdaStatement  (TermDefinition c t)
     | MatchStatement   (UnresolvedLambdaRule t c)
+    | BeginStatement   (UnresolvedLambdaCategory t)
 
 deriving instance (Show t, Show c) => Show (Statement t c)
 
@@ -41,3 +42,11 @@ terms (prog @ (Program statements)) = resolveTermLibrary (types prog)
 rules :: (Eq t, PartialOrd t, Typed c t) => Program t c -> [LambdaRule t c]
 rules (prog @ (Program statements)) = map (resolveLambdaRule (types prog) (terms prog))
     [ def | (MatchStatement def) <- statements]
+
+begin :: Program t c -> LambdaCategory t
+begin (prog @ (Program statements))
+    | [beg] <- begins = resolveLambdaCategory (types prog) beg
+    | []    <- begins = error "no begin in sight"
+    | otherwise       = error "too many begins"
+    where
+        begins = [ beg | (BeginStatement beg) <- statements ]

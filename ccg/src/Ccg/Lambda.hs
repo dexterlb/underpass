@@ -51,5 +51,8 @@ instance (Typed c t, Parseable t, Parseable c) => Parseable (LambdaConstructor t
         term <- parser
         pure $ LambdaConstructor term
 
+instance (Show c, Show t) => Show (LambdaPayload t c) where
+    show (LambdaPayload t d) = show d <> " @ " <> show t
+
 instance (Show c, Show t) => Show (LambdaConstructor t c) where
     show (LambdaConstructor t) = " @ " <> show t

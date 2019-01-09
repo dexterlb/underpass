@@ -1,4 +1,4 @@
-name:                minipass
+name:                the-thing
 version:             0.1.0.0
 github:              "DexterLB/underpass"
 license:             MIT
@@ -13,14 +13,13 @@ description:         Please see the README on GitHub at <https://github.com/Dext
 
 dependencies:
 - base
-- megaparsec
 - text
-- hashable
-- unordered-containers
-- mtl
+- vector
 
-- utils
 - lambda-calculus
+- utils
+- ccg
+- minipass
 
 library:
   source-dirs: src
@@ -30,7 +29,7 @@ ghc-options:
 - -Werror
 
 executables:
-  minipass-exe:
+  underpass-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -38,10 +37,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - the-thing
 
 tests:
-  minipass-test:
+  the-thing-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -49,4 +48,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - the-thing
