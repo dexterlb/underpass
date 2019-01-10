@@ -4,8 +4,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NamedFieldPuns #-}
 
 module Ccg.Lambda where
+
+import           Data.Text (pack)
 
 import           Ccg.Category
 import           Ccg.Rules
@@ -15,6 +18,7 @@ import           Utils.Maths
 import           LambdaCalculus.Lambda (LambdaTerm(..))
 import           LambdaCalculus.LambdaTypes (Typed, typeOf, ApplicativeType(..))
 import           Utils.Parsing (Parseable, parser)
+import           Utils.Latex
 
 import qualified Utils.Parsing as P
 
@@ -56,3 +60,6 @@ instance (Show c, Show t) => Show (LambdaPayload t c) where
 
 instance (Show c, Show t) => Show (LambdaConstructor t c) where
     show (LambdaConstructor t) = " @ " <> show t
+
+instance (Show t, Show c) => Latexable (LambdaPayload t c) where
+    latex (LambdaPayload term (MatchData { token })) = token <> " -> " <> pack (show term)

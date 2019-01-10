@@ -183,8 +183,8 @@ up' (Constant m) _ _ = Constant m
 up' (Cast t m) d c = Cast t (up' m d c)
 
 data LambdaException t c
-    = CannotApply (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
-    | CannotCast  (LambdaTerm t c, T.ApplicativeType t) (T.ApplicativeType t)
+    = CannotApply  (LambdaTerm t c, T.ApplicativeType t) (LambdaTerm t c, T.ApplicativeType t)
+    | CannotCast   (LambdaTerm t c, T.ApplicativeType t) (T.ApplicativeType t)
     deriving (Typeable)
 
 newtype VarException
