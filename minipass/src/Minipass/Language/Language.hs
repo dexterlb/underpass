@@ -22,7 +22,8 @@ import qualified LambdaCalculus.LambdaTypes as T
 import           LambdaCalculus.LambdaTypes (Typed)
 import           LambdaCalculus.Lambda
 
-import Data.Text (Text)
+import Data.Text (Text, pack)
+import Utils.Latex
 
 import Minipass.Language.Constants
 
@@ -89,3 +90,6 @@ listTerm (NumC n:xs)    = Application (Application (Constant ConsNum) (Constant 
 listTerm (StringC n:xs) = Application (Application (Constant ConsString) (Constant $ StringLiteral n)) $ listTerm xs
 listTerm (ListC n:xs)   = Application (Application (Constant ConsList) (listTerm n)) $ listTerm xs
 
+
+instance Latexable Types where
+    latex = pack . show

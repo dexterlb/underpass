@@ -11,7 +11,8 @@ import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, LambdaCategory, Unre
 import LambdaCalculus.UserTerms
 import LambdaCalculus.UserTypeSystem
 import LambdaCalculus.LambdaTypes (Typed)
-import Utils.Parsing (Parseable, parser, (<|>), many)
+import Utils.Parsing (Parseable, parser, (<|>))
+import qualified Utils.Parsing as P
 import Utils.Resolver
 import Utils.Maths (PartialOrd)
 
@@ -24,12 +25,19 @@ data Statement t c
 deriving instance (Show t, Show c) => Show (Statement t c)
 
 instance (Eq t, Typed c t, PartialOrd t, Parseable t, Parseable c) => Parseable (Statement t c) where
-    parser = (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
+    parser =   (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
+           <|> (MatchStatement <$> parser) <|> beginParser
+        where
+            beginParser = P.try $ do
+                _   <- P.literal "begin"
+                cat <- parser
+                _   <- P.operator "."
+                pure cat
 
 newtype Program t c = Program [Statement t c] deriving (Monoid, Semigroup)
 
 instance (Eq t, Typed c t, PartialOrd t, Parseable t, Parseable c) => Parseable (Program t c) where
-    parser = Program <$> many parser
+    parser = Program <$> P.many parser
 
 types :: Program t c -> Library (TWR t)
 types (Program statements) = resolveTypeLibrary

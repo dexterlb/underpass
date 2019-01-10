@@ -7,7 +7,8 @@ module Minipass.Language.Constants where
 import Utils.Parsing as P
 import Data.Functor (($>))
 
-import Data.Text (Text)
+import Utils.Latex
+import Data.Text (Text, pack)
 
 data Constants = StringLiteral Text
                | NumLiteral    Float
@@ -49,3 +50,5 @@ parseKeyword
     <|> P.word "consList"    $> ConsList
     <|> P.word "empty"       $> Empty
 
+instance Latexable Constants where
+    latex = pack . show
