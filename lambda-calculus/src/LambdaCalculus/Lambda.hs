@@ -43,7 +43,7 @@ showTerm context (Lambda x t a) = "λ " <> Text.unpack x <> ": " <> show t <> " 
 showTerm context (Variable i)
     | Just (x, _) <- at i context = Text.unpack x
     | otherwise = "<var " <> show i <> ">"
-showTerm context (Cast t x) = showTerm context x <> " : " <> show t
+showTerm context (Cast t x) = show t <> "[" <> showTerm context x <> "]"
 
 
 instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (LambdaTerm t c) t where
