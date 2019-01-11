@@ -6,6 +6,9 @@
 
 module Ccg.Program where
 
+import Control.Monad (mapM)
+import Control.Monad.Fail (MonadFail)
+
 import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, LambdaCategory, UnresolvedLambdaCategory, resolveLambdaRule, resolveLambdaCategory)
 
 import LambdaCalculus.UserTerms
@@ -58,3 +61,11 @@ begin (prog @ (Program statements))
     | otherwise       = error "too many begins"
     where
         begins = [ beg | (BeginStatement beg) <- statements ]
+
+assert :: (Eq t, Typed c t, PartialOrd t, MonadFail m) => Program t c -> m ()
+assert p = do
+    _ <- mapM (pure $!) $ types p
+    _ <- mapM (pure $!) $ terms p
+    _ <- mapM (pure $!) $ rules p
+    _ <- pure $! begin p
+    pure ()

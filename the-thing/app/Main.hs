@@ -6,6 +6,7 @@ import System.IO (hFlush, stdout)
 
 import Underpass.Solution
 
+import Ccg.Program (assert)
 import Utils.Parsing (parseFiles)
 import Utils.Latex (latexPreview)
 
@@ -14,13 +15,10 @@ main = do
     args    <- getArgs
     program <- parseFiles $ args
 
-    rape program
+    assert program
 
     putStr "Enter query: "
     hFlush stdout
     query <- getLine
 
     latexPreview $ solve program (Text.pack query)
-
-rape :: a -> IO ()
-rape x = return $! (seq x ())
