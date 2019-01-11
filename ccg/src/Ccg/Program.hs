@@ -54,7 +54,7 @@ terms :: (Eq t, Typed c t, PartialOrd t) => Program t c -> Library (CR c t)
 terms (prog @ (Program statements)) = resolveTermLibrary (types prog)
     [ def | (LambdaStatement def) <- statements]
 
-rules :: (Eq t, PartialOrd t, Typed c t) => Program t c -> [LambdaRule t c]
+rules :: (Eq c, Eq t, PartialOrd t, Typed c t) => Program t c -> [LambdaRule t c]
 rules (prog @ (Program statements)) = map (resolveLambdaRule (types prog) (terms prog))
     [ def | (MatchStatement def) <- statements]
 
@@ -66,11 +66,11 @@ begin (prog @ (Program statements))
     where
         begins = [ beg | (BeginStatement beg) <- statements ]
 
-assert :: (Eq t, Typed c t, PartialOrd t, MonadFail m) => Program t c -> m ()
+assert :: (Eq c, Eq t, Typed c t, PartialOrd t, MonadFail m) => Program t c -> m ()
 assert p = do
     pure $! rnf (show p)
 
-instance (Show t, Show c, Eq t, Typed c t, PartialOrd t) => Show (Program t c) where
+instance (Show t, Show c, Eq c, Eq t, Typed c t, PartialOrd t) => Show (Program t c) where
     show prog = (showL "types" $ HM.toList $ types prog)
              <> (showL "terms" $ HM.toList $ terms prog)
              <> (showL "rules" $ rules prog)

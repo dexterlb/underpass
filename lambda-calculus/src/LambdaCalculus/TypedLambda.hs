@@ -4,6 +4,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module LambdaCalculus.TypedLambda where
 
@@ -77,11 +78,31 @@ typify context (L.Variable i)
     | otherwise = throw $ L.UnknownVar i
 typify context (term @ (L.Cast _ a)) = setType (typeOf term) $ typify context a
 
+unTypify :: forall c t. (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
+unTypify context term
+    | typeOf term == newType = newTerm
+    | otherwise              = L.Cast (typeOf term) newTerm
+    where
+        newType = typeOfTerm context newTerm :: T.ApplicativeType t
+        newTerm = unTypify'  context term
+
+        unTypify' :: (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
+        unTypify' _ (Constant _ x) = L.Constant x
+        unTypify' _ (Variable _ i) = L.Variable i
+        unTypify' context' (Lambda (T.Application tx _) x a)
+            = L.Lambda x tx (unTypify (push (x, tx) context') a)
+        unTypify' _ (Lambda t _ _) = throw $ T.WrongLambdaType t
+        unTypify' context' (Application _ a b)
+            = L.Application (unTypify context' a) (unTypify context' b)
+
 setType :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c
 setType t (Constant _ x)      = Constant t x
 setType t (Variable _ i)      = Variable t i
 setType t (Application _ a b) = Application t a b
 setType t (Lambda _ x a)      = Lambda t x a
+
+inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => LambdaTerm t c -> LambdaTerm t c
+inferTypesOnClosedTerm = (unTypify emptyContext) . (fixedPoint fixTypes) . (typify emptyContext)
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x
@@ -105,6 +126,7 @@ fixTypes :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> TS
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
         (x', vars) = fixTypesUp x
+
 
 fixTypesDown :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
 fixTypesDown targetType _      (Constant t x) = Constant (targetType /\ t) x

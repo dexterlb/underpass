@@ -17,6 +17,7 @@ import           Ccg.Modal (ModalCategory, mcmap)
 import           Ccg.Lambda
 
 import           Utils.Maths
+import           LambdaCalculus.TypedLambda (inferTypesOnClosedTerm)
 import           LambdaCalculus.Lambda (LambdaTerm(..))
 import           LambdaCalculus.LambdaTypes (Typed, Ref, UnresolvedType, typeOf)
 import           LambdaCalculus.UserTypeSystem (AppTypeWrapper, TypeWrapper, ConstWrapper, TypeWrappers, resolveType)
@@ -29,18 +30,18 @@ type UnresolvedLambdaRule t c = Rule (ModalCategory (UnresolvedType t)) (LambdaP
 type LambdaCategory t = ModalCategory (AppTypeWrapper t)
 type UnresolvedLambdaCategory t = ModalCategory (UnresolvedType t)
 
-resolveLambdaRule :: forall c t. (Eq t, PartialOrd t, Typed c t) => TypeWrappers t -> TermLibrary c t -> UnresolvedLambdaRule t c -> LambdaRule t c
+resolveLambdaRule :: forall c t. (Eq c, Eq t, PartialOrd t, Typed c t) => TypeWrappers t -> TermLibrary c t -> UnresolvedLambdaRule t c -> LambdaRule t c
 resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveItem) items)
     where
         resolveItem (cat, LambdaConstructor term)
             = check $ ( resolveLambdaCategory types cat
-              , LambdaConstructor (resolveTerm types terms term) )
+              , LambdaConstructor (inferTypesOnClosedTerm $ resolveTerm types terms term) )
 
         check :: (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c)) ->
                  (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c))
 
         check (x @ (cat, LambdaConstructor term))
-            | typeOfCat == typeOf term = x
+            | typeOfCat == typeOf term  = x
             | otherwise                 = throw $ TypeMismatch (cat, typeOfCat) (term, typeOf term)
             where
                 -- haskell is dumb and can't find this type by himself

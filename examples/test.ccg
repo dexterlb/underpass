@@ -2,6 +2,6 @@ begin Set .
 
 CityName < String.
 
-"в"     : Set / CityName @ lambda city : String { (lambda lam { and (and lam (amenity 'cafe')) (within 20 (and lam (amenity 'drinking_water')))}) (in (name city)) }.
+"в"     : Set / CityName @ lambda city : CityName { (lambda lam { and (and lam (amenity 'cafe')) (within 20 (and lam (amenity 'drinking_water')))}) (in (name city)) }.
 "софия" : CityName       @ CityName['София'].
 
