@@ -20,6 +20,7 @@ dependencies:
 - text
 - utils
 - lambda-calculus
+- deepseq
 
 library:
   source-dirs: src

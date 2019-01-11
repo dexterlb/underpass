@@ -8,8 +8,6 @@
 
 module Ccg.Lambda where
 
-import           Data.Text (pack)
-
 import           Ccg.Category
 import           Ccg.Rules
 import           Ccg.Trees (ParseTree(..))
@@ -67,4 +65,4 @@ instance (Show c, Show t) => Show (LambdaConstructor t c) where
     show (LambdaConstructor t) = " @ " <> show t
 
 instance (Show t, Show c) => Latexable (LambdaPayload t c) where
-    latex (LambdaPayload term (MatchData { token })) = token <> " -> " <> pack (show term)
+    latex (LambdaPayload _term (MatchData { token })) = token -- do something with term

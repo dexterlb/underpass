@@ -6,7 +6,9 @@
 
 module Ccg.Program where
 
-import Control.Monad (mapM)
+import qualified Data.HashMap.Lazy as HM
+import Control.DeepSeq (rnf)
+
 import Control.Monad.Fail (MonadFail)
 
 import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, LambdaCategory, UnresolvedLambdaCategory, resolveLambdaRule, resolveLambdaCategory)
@@ -18,6 +20,7 @@ import Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
 import Utils.Resolver
 import Utils.Maths (PartialOrd)
+
 
 data Statement t c
     = SubtypeStatement (SubtypeAssertion t)
@@ -65,8 +68,13 @@ begin (prog @ (Program statements))
 
 assert :: (Eq t, Typed c t, PartialOrd t, MonadFail m) => Program t c -> m ()
 assert p = do
-    _ <- mapM (pure $!) $ types p
-    _ <- mapM (pure $!) $ terms p
-    _ <- mapM (pure $!) $ rules p
-    _ <- pure $! begin p
-    pure ()
+    pure $! rnf (show p)
+
+instance (Show t, Show c, Eq t, Typed c t, PartialOrd t) => Show (Program t c) where
+    show prog = (showL "types" $ HM.toList $ types prog)
+             <> (showL "terms" $ HM.toList $ terms prog)
+             <> (showL "rules" $ rules prog)
+             <> (showL "begin" $ [begin prog])
+
+showL :: (Show a) => String -> [a] -> String
+showL s = ((s <> ":\n") <>) . (<> "\n") . unlines . (map show)

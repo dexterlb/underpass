@@ -152,6 +152,8 @@ instance Resolvable  (TWR t) where
                 | (Just t) <- HM.lookup name m = t
                 | otherwise = throw $ NoSuchType pos name
 
+    preprocess TWR name t = Basic $ SubType name t
+
 -- memo instances
 instance (MemoTable t) => MemoTable (TypeWrapper t) where
     table = mkmemo (table :: Memo t) (table :: Memo (AppTypeWrapper t))

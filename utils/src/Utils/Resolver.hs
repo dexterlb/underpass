@@ -24,13 +24,16 @@ class (Eq (ResolveKey a), Ord (ResolveKey a), Hashable (ResolveKey a)) => Resolv
 
     substituteAll :: a -> Library a -> Resolvee a -> (Resolved a)
 
+    preprocess :: a -> ResolveKey a -> Resolved a -> Resolved a
+    preprocess _ _ = id
+
 resolveLibrary :: (Resolvable a) => a -> HashMap (ResolveKey a) (Resolvee a) -> Library a
 resolveLibrary r plib = foldr (addToLibrary r) (emptyLib r) $ map (\k -> (k, plib HM.! k)) keys
     where
         keys = topoSort $ map (\(k, v) -> (k, HS.toList $ fv r v)) $ HM.toList plib
 
 addToLibrary :: (Resolvable a) => a -> (ResolveKey a, Resolvee a) -> Library a -> Library a
-addToLibrary r (k, v) lib = HM.insert k (resolveItem r lib v) lib
+addToLibrary r (k, v) lib = HM.insert k (preprocess r k $ resolveItem r lib v) lib
 
 resolveItem :: (Resolvable a) => a -> Library a -> (Resolvee a) -> (Resolved a)
 resolveItem = substituteAll -- maybe don't need a second name for this shit? just maybe?
