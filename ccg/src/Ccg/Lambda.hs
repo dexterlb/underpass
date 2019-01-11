@@ -29,15 +29,20 @@ treeTerm :: forall t c cat.
             (MSemiLattice (ApplicativeType t), Typed c t, Typed cat t, Combines cat, Compositional (CombineRule cat))
          => ParseTree cat (LambdaTerm t c) -> LambdaTerm t c
 treeTerm (Leaf cat term)
-    | (typeOf cat :: ApplicativeType t) <!> (typeOf term :: ApplicativeType t) = error $
-      "term/category inconsistency: " <> show term <> " !~ " <> show cat
-    | otherwise = term
+    | typeOfCat <!> typeOfTerm = term
+    | otherwise = error $
+      "term/category inconsistency: " <> show (term, typeOfTerm) <> " !~ " <> show (cat, typeOfCat)
+    where
+        typeOfCat  = typeOf cat  :: ApplicativeType t
+        typeOfTerm = typeOf term :: ApplicativeType t
 treeTerm (Vert cat rule left right)
-    | (typeOf cat :: ApplicativeType t) <!> (typeOf term :: ApplicativeType t) = error $
-      "term/category inconsistency at inner node: " <> show term <> " !~ " <> show cat
-    | otherwise = term
+    | typeOfCat <!> typeOfTerm = term
+    | otherwise = error $
+      "term/category inconsistency at inner node: " <> show (term, typeOfTerm) <> " !~ " <> show (cat, typeOfCat)
     where
         term = compose rule (treeTerm left) (treeTerm right)
+        typeOfCat  = typeOf cat  :: ApplicativeType t
+        typeOfTerm = typeOf term :: ApplicativeType t
 
 
 data LambdaPayload t c = LambdaPayload (LambdaTerm t c) MatchData

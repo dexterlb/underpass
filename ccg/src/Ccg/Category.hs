@@ -74,7 +74,7 @@ cmap f (Complex slash c1 c2) = Complex slash (cmap f c1) (cmap f c2)
 
 -- parsing
 instance (Parseable atom, Parseable slash) => Parseable (Category atom slash) where
-    parser = parseCatTerm
+    parser = parseCatExpr
         where
             parseCatExpr = P.makeExprParser parseCatTerm
                 -- the following is so elegant that it will take you 2 weeks to read

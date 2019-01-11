@@ -1,4 +1,4 @@
-begin Set.
+begin Set .
 
 CityName < String.
 

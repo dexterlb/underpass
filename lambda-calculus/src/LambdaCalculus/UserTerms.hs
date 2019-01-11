@@ -86,7 +86,7 @@ getTerm :: (Eq t, PartialOrd t, Typed c t) => T.Name -> TermLibrary c t -> Maybe
 getTerm = getItem CR
 
 instance (Eq t, PartialOrd t, Typed c t, P.Parseable c, P.Parseable t) => P.Parseable (TermDefinition c t) where
-    parser = do
+    parser = P.try $ do
         name    <- P.identifier
         _       <- P.operator ":="
         supType <- P.parser

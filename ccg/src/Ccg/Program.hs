@@ -28,14 +28,15 @@ data Statement t c
 deriving instance (Show t, Show c) => Show (Statement t c)
 
 instance (Eq t, Typed c t, PartialOrd t, Parseable t, Parseable c) => Parseable (Statement t c) where
-    parser =   (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
-           <|> (MatchStatement <$> parser) <|> beginParser
+    parser =   beginParser
+           <|> (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
+           <|> (MatchStatement <$> parser)
         where
             beginParser = P.try $ do
                 _   <- P.literal "begin"
                 cat <- parser
                 _   <- P.operator "."
-                pure cat
+                pure $ BeginStatement cat
 
 newtype Program t c = Program [Statement t c] deriving (Monoid, Semigroup)
 
