@@ -5,6 +5,7 @@ module Utils.Latex where
 
 import           Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import           System.Process (CreateProcess(..), readCreateProcess, CmdSpec(..), StdStream(..))
 import           System.Directory (createDirectory, removePathForcibly)
 
@@ -24,8 +25,8 @@ latexPreview x = do
     latexToFile x "/tmp/ccg_latex/stuff.tex"
     _ <- readCreateProcess (CreateProcess
         { cmdspec            = ShellCommand
-            "( latexmk -pdf -pdflatex=\"xelatex\" -halt-on-error &> log.txt ) \
-            \ && ( evince stuff.pdf &>/dev/null & )"
+            "bash -c '( latexmk -pdf -pdflatex=\"xelatex\" -halt-on-error &> log.txt ) \
+            \ && ( evince stuff.pdf &>/dev/null & )'"
         , cwd                = Just "/tmp/ccg_latex"
         , env                = Nothing
         , std_in             = Inherit
@@ -44,7 +45,7 @@ latexPreview x = do
     pure ()
 
 latexToFile :: Latexable a => a -> FilePath -> IO ()
-latexToFile x f = writeFile f $ T.unpack $ wrap $ latex x
+latexToFile x f = T.writeFile f $ wrap $ latex x
     -- fixme - use packed data
 
 wrap :: Text -> Text

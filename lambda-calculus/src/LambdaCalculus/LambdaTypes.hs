@@ -62,6 +62,7 @@ parseTypeExpr = P.makeExprParser parseTypeTerm
 parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeTerm
     =   P.braces parseTypeExpr
+    <|> (Bot   <$  P.operator "*")
     <|> (Basic <$> P.parser)
 
 defaultMeet :: MSemiLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
