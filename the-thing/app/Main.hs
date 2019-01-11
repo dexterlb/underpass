@@ -14,8 +14,13 @@ main = do
     args    <- getArgs
     program <- parseFiles $ args
 
+    rape program
+
     putStr "Enter query: "
     hFlush stdout
     query <- getLine
 
     latexPreview $ solve program (Text.pack query)
+
+rape :: a -> IO ()
+rape x = return $! (seq x ())

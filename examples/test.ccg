@@ -1,0 +1,7 @@
+begin Set.
+
+CityName < String.
+
+"в"     : Set / CityName @ lambda x : CityName { in (name x) }.
+"софия" : CityName       @ CityName['София'].
+
