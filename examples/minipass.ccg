@@ -2,4 +2,4 @@ Town < String.
 
 sf := Town['София'].
 
-main := in (name sf).
+main := (lambda lam { and (and lam (amenity 'cafe')) (within 20 (and lam (amenity 'drinking_water')))}) (in (name 'София')).
