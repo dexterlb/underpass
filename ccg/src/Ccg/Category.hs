@@ -21,6 +21,8 @@ import qualified LambdaCalculus.LambdaTypes as T
 import           LambdaCalculus.LambdaTypes (Typed, typeOf)
 
 import           Utils.Latex
+import           Utils.Parsing (Parseable(..), (<|>))
+import qualified Utils.Parsing as P
 
 data Category atom slash
     = Simple  atom
@@ -69,6 +71,19 @@ data PrimaryDir = LeftPrimary | RightPrimary | NoPrimary deriving (Eq, Show)
 cmap :: (atom1 -> atom2) -> Category atom1 slash -> Category atom2 slash
 cmap f (Simple atom)         = Simple $ f atom
 cmap f (Complex slash c1 c2) = Complex slash (cmap f c1) (cmap f c2)
+
+-- parsing
+instance (Parseable atom, Parseable slash) => Parseable (Category atom slash) where
+    parser = parseCatTerm
+        where
+            parseCatExpr = P.makeExprParser parseCatTerm
+                -- the following is so elegant that it will take you 2 weeks to read
+                [ [ P.InfixR (Complex <$> parser) ]
+                ]
+
+            parseCatTerm
+                =   P.braces parseCatExpr
+                <|> (Simple <$> parser)
 
 -- lambda instances (maybe they shouldn't be here?)
 instance (Show payload, Typeable payload,  Typed atom t) => Typed (Category atom payload) t where

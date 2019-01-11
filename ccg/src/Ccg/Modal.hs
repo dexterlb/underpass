@@ -17,6 +17,7 @@ import qualified Data.Text as T
 import           Data.HashSet (HashSet)
 import qualified Data.HashSet as HS
 import           Data.Tuple (swap)
+import           Data.Functor (($>))
 
 import           Ccg.Category
 import           Ccg.Lambda (Compositional(..))
@@ -26,6 +27,8 @@ import           Utils.Latex
 import           Utils.Maths
 import qualified LambdaCalculus.LambdaTypes as T
 import qualified LambdaCalculus.Lambda as L
+import           Utils.Parsing (Parseable(..), (<|>))
+import qualified Utils.Parsing as P
 
 type ModalCategory t = Category (NonTerm t) Slash
 
@@ -33,6 +36,10 @@ data NonTerm t
     = NonTerm   t
     | Variable  Text
     deriving (Eq, Generic)
+
+instance (Parseable t) => Parseable (NonTerm t) where
+    parser =   (P.try $ P.operator "$" *> (Variable <$> P.identifier))
+           <|>                            (NonTerm  <$> parser      )
 
 instance Functor NonTerm where
     fmap f (NonTerm t)  = NonTerm $ f t
@@ -71,6 +78,17 @@ data Slash
     deriving (Eq, Generic)
 deriving instance (Hashable Slash)
 
+instance Parseable Slash where
+    parser = parseSimpleSlash <|> parseModalSlash
+        where
+            parseSimpleSlash
+                =   (P.operator "/"  $> (RightSlash Dot))
+                <|> (P.operator "\\" $> (LeftSlash Dot))
+
+            parseModalSlash = (P.lexeme . P.try) $
+                    (P.try $ P.char  '/' *> (RightSlash <$> parser) <* P.char  '/')
+                <|> (P.try $ P.char '\\' *> (RightSlash <$> parser) <* P.char '\\')
+
 instance MemoTable Slash where
     table f (LeftSlash x) = table (f . LeftSlash) x
     table f (RightSlash x) = table (f . RightSlash) x
@@ -101,7 +119,12 @@ instance MSemiLattice Modality where
       | x == y    = x
       | otherwise = Star
 
-
+instance Parseable Modality where
+    parser
+        =   (P.try $ P.char '.' $> Dot)
+        <|> (P.try $ P.char 'd' $> Diamond)
+        <|> (P.try $ P.char 'x' $> X)
+        <|> (P.try $ P.char '*' $> Star)
 
 deriving instance (Hashable Modality)
 
