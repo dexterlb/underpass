@@ -87,7 +87,9 @@ evaluateArithmetic :: TTerm -> TTerm
 evaluateArithmetic = id
 
 reducible :: TTerm -> Bool
-reducible x = not (isSet $ typeOf x) || trivial x
+reducible _ = True -- not (isSet $ typeOf x) || trivial x
+    -- beta reduce everything for now, until I figure out how to
+    -- beta reduce nested redexes with alternating reducibility
 
 isSet :: T.ApplicativeType Types -> Bool
 isSet (T.Basic (Set _)) = True
