@@ -1,7 +1,8 @@
-begin Set .
+begin Set.
 
-CityName < String.
+PlaceName < String.
 
-"в"     : Set / CityName @ lambda city : CityName { (lambda lam { and (and lam (amenity 'cafe')) (within 20 (and lam (amenity 'drinking_water')))}) (in (name city)) }.
-"софия" : CityName       @ CityName['София'].
+"в"      : (Set / PlaceName) \ Set @ lambda things : Set { lambda place : PlaceName { and things ( in (name place) ) } }.
+"софия"  : PlaceName               @ PlaceName['София'].
+"кафета" : Set                     @ amenity 'cafe'.
 

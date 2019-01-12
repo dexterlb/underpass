@@ -1,5 +1,4 @@
-Town < String.
+PlaceName < String.
 
-sf := Town['София'].
-
-main := (lambda lam { and (and lam (amenity 'cafe')) (within 20 (and lam (amenity 'drinking_water')))}) (in (name 'София')).
+main := 
+    ((lambda things : Set { lambda place : String { and things ( in (name place) ) } }) (amenity 'cafe')) 'София'.
