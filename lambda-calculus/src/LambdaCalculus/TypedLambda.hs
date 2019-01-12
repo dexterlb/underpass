@@ -61,7 +61,7 @@ showBareTerm context (Variable _ i)
 typify :: Typed c t => VarContext t -> LambdaTerm t c -> TSLTerm t c
 typify context (L.Constant c) = Constant t c
     where
-        t = typeOfTerm context (L.Constant c)
+        t = typeOfTerm False context (L.Constant c)
 typify context (L.Application a b)
     | (p, q) <- T.inferApp ta', tb' <!> p = Application q a' b'
     | otherwise = throw $ L.CannotApply (a, ta') (b, tb')
@@ -76,15 +76,15 @@ typify context (L.Lambda x t a) = Lambda (T.Application t (typeOf a')) x a'
 typify context (L.Variable i)
     | Just (_, t) <- at i context = Variable t i
     | otherwise = throw $ L.UnknownVar i
-typify context (term @ (L.Cast _ a)) = setType (typeOf term) $ typify context a
+typify context (term @ (L.Cast _ a)) = setType (L.typeOfTerm False emptyContext term) $ typify context a
 
 unTypify :: forall c t. (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
 unTypify context term
     | typeOf term == newType = newTerm
     | otherwise              = L.Cast (typeOf term) newTerm
     where
-        newType = typeOfTerm context newTerm :: T.ApplicativeType t
-        newTerm = unTypify'  context term
+        newType = typeOfTerm False context newTerm :: T.ApplicativeType t
+        newTerm = unTypify'        context term
 
         unTypify' :: (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
         unTypify' _ (Constant _ x) = L.Constant x
@@ -101,8 +101,8 @@ setType t (Variable _ i)      = Variable t i
 setType t (Application _ a b) = Application t a b
 setType t (Lambda _ x a)      = Lambda t x a
 
-inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => LambdaTerm t c -> LambdaTerm t c
-inferTypesOnClosedTerm = (unTypify emptyContext) . (fixedPoint fixTypes) . (typify emptyContext)
+inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
+inferTypesOnClosedTerm t = (unTypify emptyContext) . (fixedPoint fixTypes) . (typify emptyContext) . (L.Cast t)
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x

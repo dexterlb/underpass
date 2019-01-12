@@ -47,25 +47,26 @@ showTerm context (Cast t x) = show t <> "[" <> showTerm context x <> "]"
 
 
 instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (LambdaTerm t c) t where
-    typeOf = typeOfTerm emptyContext
+    typeOf = typeOfTerm True emptyContext
 
-typeOfTerm :: (MSemiLattice (T.ApplicativeType t), Typed c t) => VarContext t -> LambdaTerm t c -> T.ApplicativeType t
-typeOfTerm _ (Constant c) = typeOf c
-typeOfTerm context (Application a b)
-    | (p, q) <- T.inferApp ta, tb <! p = q
+typeOfTerm :: (MSemiLattice (T.ApplicativeType t), Typed c t) => Bool -> VarContext t -> LambdaTerm t c -> T.ApplicativeType t
+typeOfTerm _ _ (Constant c) = typeOf c
+typeOfTerm safe context (Application a b)
+    | safe,     (p, q) <- T.inferApp ta, tb <!  p  = q
+    | not safe, (p, q) <- T.inferApp ta, tb <!> p = q
     | otherwise = throw $ CannotApply (a, ta) (b, tb)
     where
-        ta = typeOfTerm context a
-        tb = typeOfTerm context b
-typeOfTerm context (Lambda x t a) = T.Application t (typeOfTerm (push (x, t) context) a)
-typeOfTerm context (Variable i)
+        ta = typeOfTerm safe context a
+        tb = typeOfTerm safe context b
+typeOfTerm safe context (Lambda x t a) = T.Application t (typeOfTerm safe (push (x, t) context) a)
+typeOfTerm _ context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = throw $ UnknownVar i
-typeOfTerm context (Cast t x)
+typeOfTerm safe context (Cast t x)
     | t <!> tx = t
     | otherwise = throw $ CannotCast (x, tx) t
     where
-        tx = typeOfTerm context x
+        tx = typeOfTerm safe context x
 
 transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c

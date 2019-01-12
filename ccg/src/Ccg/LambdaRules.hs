@@ -34,8 +34,11 @@ resolveLambdaRule :: forall c t. (Eq c, Eq t, PartialOrd t, Typed c t) => TypeWr
 resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveItem) items)
     where
         resolveItem (cat, LambdaConstructor term)
-            = check $ ( resolveLambdaCategory types cat
-              , LambdaConstructor (inferTypesOnClosedTerm $ resolveTerm types terms term) )
+            = check $ ( resolvedCat
+              , LambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) )
+                where
+                    resolvedCat = resolveLambdaCategory types cat
+
 
         check :: (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c)) ->
                  (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c))

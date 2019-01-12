@@ -2,7 +2,9 @@ begin Set.
 
 PlaceName < String.
 
-"в"      : (Set / PlaceName) \ Set @ lambda things : Set { lambda place : PlaceName { and things ( in (name place) ) } }.
-"софия"  : PlaceName               @ PlaceName['София'].
+foo := lambda x : PlaceName { x }.
+
+"в"      : (Set / PlaceName) \ Set @ lambda things { lambda place { and things ( in (name place) ) } }.
+"софия"  : PlaceName               @ foo 'София'.
 "кафета" : Set                     @ amenity 'cafe'.
 
