@@ -193,7 +193,7 @@ uncurryTypes = map (\t -> (t, typeOf t)) . uncurryApplication
 -- reduction and substitution:
 
 betaReduce :: Typed c t => (TSLTerm t c -> Bool) -> TSLTerm t c -> TSLTerm t c
-betaReduce p (Application _ l@(Lambda (T.Application t _) _ m) n)
+betaReduce p (Application t l@(Lambda (T.Application _ _) _ m) n)
     | p n = up (substitute m 0 (up n 1)) (-1)
     | otherwise = Application t (betaReduce p l) (betaReduce p n)
 betaReduce _ (Application _ l@Lambda{} _) = error $ "fsck u " <> show l
