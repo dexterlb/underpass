@@ -10,9 +10,11 @@ module Ccg.Rules where
 import           Data.Text (Text)
 import qualified Data.Text as Text
 import           Data.List (intercalate)
+import           Data.Functor (($>))
 
-import           Utils.Parsing (Parseable, parser)
+import           Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
+
 
 type Token = Text
 
@@ -24,14 +26,10 @@ data TokenData = TokenData
     { text :: Token
     } deriving (Show)
 
-data MatchData = MatchData
-    { token :: Token
-    } deriving (Show)
-
 class FromMatch payload where
     type Constructor payload
 
-    construct :: (Constructor payload) -> MatchData -> payload
+    construct :: (Constructor payload) -> TokenData -> payload
 
 
 instance (Parseable cat, Parseable (Constructor payload)) => Parseable (Rule cat payload) where
@@ -50,13 +48,22 @@ instance (Show cat, Show (Constructor payload)) => Show (Rule cat payload) where
         (map (\(cat, cons) -> show cat <> " " <> show cons) items)
 
 data Matcher
-    = ExactMatcher Token
+    = ExactMatcher  Token
+    | OrMatcher     Matcher Matcher
+    | AndMatcher    Matcher Matcher
     deriving (Show)
 
 instance Parseable Matcher where
-    parser = exactMatcherParser
+    parser = exprParser
         where
-            exactMatcherParser = P.try $ ExactMatcher <$> P.quotedString '"'
+            primitiveParser = exactParser
+
+            exprParser = P.makeExprParser innerParser
+                [ [ P.InfixL $ P.operator "|" $> OrMatcher
+                  , P.InfixL $ P.operator "&" $> AndMatcher ] ]
+            innerParser = P.braces exprParser <|> primitiveParser
+
+            exactParser = P.try $ ExactMatcher <$> P.quotedString '"'
 
 matchText :: (FromMatch payload) => Lexer -> [Rule cat payload] -> Text -> [[(cat, payload)]]
 matchText lexer rules t = match rules (lexer t)
@@ -66,14 +73,14 @@ match rules = map matchToken
     where
         matchToken token = foldr (++) [] $ map (matchRuleOn token) rules
         matchRuleOn token (Rule matcher items)
-            | (Just matchData) <- matchRule token matcher
-                = map (\(cat, cons) -> (cat, construct cons matchData)) items
+            | matchRule token matcher
+                = map (\(cat, cons) -> (cat, construct cons token)) items
             | otherwise = []
 
-matchRule :: TokenData -> Matcher -> Maybe MatchData
-matchRule (TokenData { text }) (ExactMatcher pattern)
-    | text == pattern  = Just $ MatchData { token = text }
-    | otherwise        = Nothing
+matchRule :: TokenData -> Matcher -> Bool
+matchRule t (OrMatcher  a b) = matchRule t a || matchRule t b
+matchRule t (AndMatcher a b) = matchRule t a || matchRule t b
+matchRule (TokenData { text }) (ExactMatcher pattern) = text == pattern
 
 spaceyLexer :: Lexer
 spaceyLexer = (map (\t -> TokenData { text = t })) . (Text.splitOn " ")

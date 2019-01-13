@@ -43,7 +43,7 @@ treeTerm (Vert cat rule left right)
         typeOfTerm = typeOf term :: ApplicativeType t
 
 
-data LambdaPayload t c = LambdaPayload (LambdaTerm t c) MatchData
+data LambdaPayload t c = LambdaPayload (LambdaTerm t c) TokenData
 
 instance FromMatch (LambdaPayload t c) where
     type Constructor (LambdaPayload t c) = LambdaConstructor t c
@@ -65,4 +65,4 @@ instance (Show c, Show t) => Show (LambdaConstructor t c) where
     show (LambdaConstructor t) = " @ " <> show t
 
 instance (Show t, Show c) => Latexable (LambdaPayload t c) where
-    latex (LambdaPayload _term (MatchData { token })) = token -- do something with term
+    latex (LambdaPayload _term (TokenData { text })) = text -- do something with term
