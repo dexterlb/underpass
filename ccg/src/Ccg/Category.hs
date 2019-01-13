@@ -78,8 +78,7 @@ instance (Parseable atom, Parseable slash) => Parseable (Category atom slash) wh
         where
             parseCatExpr = P.makeExprParser parseCatTerm
                 -- the following is so elegant that it will take you 2 weeks to read
-                [ [ P.InfixR (Complex <$> parser) ]
-                ]
+                [ [ P.InfixL (Complex <$> parser) ] ]
 
             parseCatTerm
                 =   P.braces parseCatExpr
