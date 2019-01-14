@@ -5,3 +5,9 @@ packages:
 - utils
 - lambda-calculus
 - the-thing
+
+extra-deps:
+- chatter-0.9.1.0
+  # - cereal-0.5.3.0
+  # - fullstop-0.1.4
+  # - tokenize-0.3.0

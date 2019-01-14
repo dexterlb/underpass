@@ -21,6 +21,7 @@ dependencies:
 - utils
 - lambda-calculus
 - deepseq
+- chatter
 
 library:
   source-dirs: src

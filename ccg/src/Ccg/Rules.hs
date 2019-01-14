@@ -11,6 +11,8 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import           Data.List (intercalate)
 import           Data.Functor (($>))
+import           Data.HashSet (HashSet)
+import qualified Data.HashSet as HS
 
 import           Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
@@ -20,10 +22,13 @@ type Token = Text
 
 type Lexer = Text -> [TokenData]
 
+type Tag = Text -- no need for anything fancier for now
+
 data Rule cat payload = Rule Matcher [(cat, Constructor payload)]
 
 data TokenData = TokenData
     { text :: Token
+    , tags :: HashSet Tag
     } deriving (Show)
 
 class FromMatch payload where
@@ -83,4 +88,7 @@ matchRule t (AndMatcher a b) = matchRule t a || matchRule t b
 matchRule (TokenData { text }) (ExactMatcher pattern) = text == pattern
 
 spaceyLexer :: Lexer
-spaceyLexer = (map (\t -> TokenData { text = t })) . (Text.splitOn " ")
+spaceyLexer = (map (\t -> TokenData { text = t, tags = HS.empty })) . (Text.splitOn " ")
+
+instance Latexable TokenData where
+    latex (TokenData { text, tags }) = text <> "/" <> Text.join "/" tags

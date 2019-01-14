@@ -11,7 +11,8 @@ import Ccg.Trees (ParseTree, enumTrees)
 import Ccg.Lambda (LambdaPayload)
 import Ccg.LambdaRules (LambdaCategory, composeTerm)
 import Ccg.Cyk (cyk)
-import Ccg.Rules (matchText, spaceyLexer)
+import Ccg.Rules (matchText)
+import Ccg.POSTagging (simpleEnglishPosTaggingLexer)
 
 import Minipass.Overpass
 import LambdaCalculus.TypedLambda
@@ -31,25 +32,27 @@ data Solution = Solution
     , outQuery :: Text
     } deriving (Show)
 
-data Solutions = Solutions Text [Solution]
+data Solutions = Solutions [TokenData] [Solution]
 
-solve :: Program Types Constants -> Text -> Solutions
-solve p inQuery' = Solutions inQuery' $ map makeSolution trees
-    where
-        makeSolution tree' = Solution
-            { inQuery  = inQuery'
-            , tree     = tree'
-            , term     = term'
-            , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
-            }
-            where
-                term' = composeTerm tree'
+solve :: Program Types Constants -> Text -> IO Solutions
+solve p inQuery' = do
+    let makeSolution tree' = Solution
+        { inQuery  = inQuery'
+        , tree     = tree'
+        , term     = term'
+        , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
+        }
+        where
+            term' = composeTerm tree'
 
-        trees = enumTrees $ cyk (V.fromList $ matchText spaceyLexer (rules p) inQuery') (begin p)
+    let trees   =  enumTrees $ cyk (V.fromList $ match (rules p) tokens) (begin p)
+        lexer   <- simpleEnglishPosTaggingLexer
+    let tokens  =  lexer inQuery'
+    pure $ Solutions tokens $ map makeSolution trees
 
 instance Latexable Solutions where
-    latex (Solutions inQuery' sols)
-        =  "\\section{Input query}\n" <> inQuery' <> "\n\\section{Parses}\n"
+    latex (Solutions tokens sols)
+        =  "\\section{Input query}\n" <> Text.join " " (map latex tokens) <> "\n\\section{Parses}\n"
         <> (mconcat $ map (\(n, sol) -> "\\subsection{Parse " <> (pack $ show $ n + 1) <> "}\n" <> latex sol) $ indexed sols)
 
 instance Latexable Solution where

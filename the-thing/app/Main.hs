@@ -21,4 +21,5 @@ main = do
     hFlush stdout
     query <- getLine
 
-    latexPreview $ solve program (Text.pack query)
+    result <- solve program (Text.pack query)
+    latexPreview result

@@ -4,7 +4,7 @@ PlaceName < String.
 
 foo := lambda x : PlaceName { x }.
 
-"в" | "във"     : Set / PlaceName \ Set @ \things { \place { and things ( in (name place) ) } }.
-"софия"  : PlaceName             @ foo 'София'.
+"в" | "във"           : Set / PlaceName \ Set @ \things { \place { and things ( in (name place) ) } }.
+"софия"               : PlaceName             @ foo 'София'.
 "кафета" | "кафенета" : Set                   @ amenity 'cafe'.
 

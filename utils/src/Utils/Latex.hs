@@ -77,6 +77,7 @@ wrap body = " \n \
     \ \\setlength{\\emergencystretch}{3em} \n \
     \ \\setlength{\\parskip}{5pt} \n \
     \ \\setlength{\\parindent}{0pt} \n \
+    \ \\lstset{breaklines=true} \n \
     \  \n \
     \ \\usepackage{color} \n \
     \ \\definecolor{Bluish}{rgb}{0.39,0.55,0.78} \n \
