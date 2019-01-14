@@ -76,7 +76,7 @@ typify context (L.Lambda x t a) = Lambda (T.Application t (typeOf a')) x a'
 typify context (L.Variable i)
     | Just (_, t) <- at i context = Variable t i
     | otherwise = throw $ L.UnknownVar i
-typify context (term @ (L.Cast _ a)) = setType (L.typeOfTerm False emptyContext term) $ typify context a
+typify context (term @ (L.Cast _ a)) = setType (L.typeOfTerm False context term) $ typify context a
 
 unTypify :: forall c t. (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
 unTypify context term
