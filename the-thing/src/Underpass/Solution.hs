@@ -3,7 +3,8 @@
 
 module Underpass.Solution where
 
-import Data.Text (Text, pack)
+import           Data.Text (Text, pack)
+import qualified Data.Text as Text
 import qualified Data.Vector as V
 
 import Ccg.Program
@@ -11,7 +12,7 @@ import Ccg.Trees (ParseTree, enumTrees)
 import Ccg.Lambda (LambdaPayload)
 import Ccg.LambdaRules (LambdaCategory, composeTerm)
 import Ccg.Cyk (cyk)
-import Ccg.Rules (matchText)
+import Ccg.Rules (match, TokenData)
 import Ccg.POSTagging (simpleEnglishPosTaggingLexer)
 
 import Minipass.Overpass
@@ -25,10 +26,12 @@ import Minipass.Language.Constants (Constants)
 import LambdaCalculus.Lambda (LambdaTerm)
 import Utils.Latex
 
+type Tree = ParseTree (LambdaCategory Types) (LambdaPayload (TypeWrapper Types) (ConstWrapper Constants))
+type Term = LambdaTerm (TypeWrapper Types) (ConstWrapper Constants)
+
 data Solution = Solution
-    { inQuery  :: Text
-    , tree     :: ParseTree (LambdaCategory Types) (LambdaPayload (TypeWrapper Types) (ConstWrapper Constants))
-    , term     :: LambdaTerm (TypeWrapper Types) (ConstWrapper Constants)
+    { tree     :: Tree
+    , term     :: Term
     , outQuery :: Text
     } deriving (Show)
 
@@ -36,23 +39,28 @@ data Solutions = Solutions [TokenData] [Solution]
 
 solve :: Program Types Constants -> Text -> IO Solutions
 solve p inQuery' = do
-    let makeSolution tree' = Solution
-        { inQuery  = inQuery'
-        , tree     = tree'
+    lexer       <- simpleEnglishPosTaggingLexer
+    let tokens  =  lexer inQuery'
+    let trees   =  enumTrees $ cyk (V.fromList $ match (rules p) tokens) (begin p)
+    pure $ Solutions tokens $ map makeSolution trees
+
+makeSolution :: Tree -> Solution
+makeSolution tree' =
+    Solution
+        { tree     = tree'
         , term     = term'
         , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
         }
         where
             term' = composeTerm tree'
 
-    let trees   =  enumTrees $ cyk (V.fromList $ match (rules p) tokens) (begin p)
-        lexer   <- simpleEnglishPosTaggingLexer
-    let tokens  =  lexer inQuery'
-    pure $ Solutions tokens $ map makeSolution trees
-
 instance Latexable Solutions where
     latex (Solutions tokens sols)
-        =  "\\section{Input query}\n" <> Text.join " " (map latex tokens) <> "\n\\section{Parses}\n"
+        =  "\\section{Input query}\n"
+        <> "\\begin{lstlisting}\n"
+        <> Text.intercalate " " (map latex tokens) <> "\n"
+        <> "\\end{lstlisting}\n"
+        <> "\\section{Parses}\n"
         <> (mconcat $ map (\(n, sol) -> "\\subsection{Parse " <> (pack $ show $ n + 1) <> "}\n" <> latex sol) $ indexed sols)
 
 instance Latexable Solution where

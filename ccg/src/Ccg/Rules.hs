@@ -16,6 +16,7 @@ import qualified Data.HashSet as HS
 
 import           Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
+import           Utils.Latex (Latexable(..))
 
 
 type Token = Text
@@ -54,6 +55,7 @@ instance (Show cat, Show (Constructor payload)) => Show (Rule cat payload) where
 
 data Matcher
     = ExactMatcher  Token
+    | TagMatcher    Text
     | OrMatcher     Matcher Matcher
     | AndMatcher    Matcher Matcher
     deriving (Show)
@@ -61,7 +63,7 @@ data Matcher
 instance Parseable Matcher where
     parser = exprParser
         where
-            primitiveParser = exactParser
+            primitiveParser = exactParser <|> tagParser
 
             exprParser = P.makeExprParser innerParser
                 [ [ P.InfixL $ P.operator "|" $> OrMatcher
@@ -69,6 +71,7 @@ instance Parseable Matcher where
             innerParser = P.braces exprParser <|> primitiveParser
 
             exactParser = P.try $ ExactMatcher <$> P.quotedString '"'
+            tagParser   = P.try $ TagMatcher   <$> (P.operator "/" *> P.identifier)
 
 matchText :: (FromMatch payload) => Lexer -> [Rule cat payload] -> Text -> [[(cat, payload)]]
 matchText lexer rules t = match rules (lexer t)
@@ -86,9 +89,10 @@ matchRule :: TokenData -> Matcher -> Bool
 matchRule t (OrMatcher  a b) = matchRule t a || matchRule t b
 matchRule t (AndMatcher a b) = matchRule t a || matchRule t b
 matchRule (TokenData { text }) (ExactMatcher pattern) = text == pattern
+matchRule (TokenData { tags }) (TagMatcher tag)       = HS.member tag tags
 
 spaceyLexer :: Lexer
 spaceyLexer = (map (\t -> TokenData { text = t, tags = HS.empty })) . (Text.splitOn " ")
 
 instance Latexable TokenData where
-    latex (TokenData { text, tags }) = text <> "/" <> Text.join "/" tags
+    latex (TokenData { text, tags }) = text <> "/" <> Text.intercalate "/" (HS.toList tags)
