@@ -7,9 +7,9 @@ S < Set.
 /begin  : S / SE        @ \x: SE    { S[Set[x]] }.
 /end    : SE \ Set      @ \x: Set   { SE[x] }.
 
-/in     : Set / Set \ Set @ \things { \where { and things (in where) } }.
+/in     : Set / Set \ Set @ \things : Set { \where : Set { and things (in where) } }.
 "cafes" : Set             @ amenity 'cafe'.
-"sofia" : Set             @ name 'София'.
+"Sofia" : Set             @ name 'София'.
 
 
 

@@ -17,7 +17,6 @@ import           Ccg.Modal (ModalCategory, mcmap)
 import           Ccg.Lambda
 
 import           Utils.Maths
-import           LambdaCalculus.TypedLambda (inferTypesOnClosedTerm)
 import           LambdaCalculus.Lambda (LambdaTerm(..))
 import           LambdaCalculus.LambdaTypes (Typed, Ref, UnresolvedType, typeOf)
 import           LambdaCalculus.UserTypeSystem (AppTypeWrapper, TypeWrapper, ConstWrapper, TypeWrappers, resolveType)
@@ -35,7 +34,9 @@ resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveI
     where
         resolveItem (cat, LambdaConstructor term)
             = check $ ( resolvedCat
-              , LambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) )
+-- need a simpler, hackier type inference which doesn't mess up cross-branch casts
+--              , LambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) )
+              , LambdaConstructor (resolveTerm types terms term) )
                 where
                     resolvedCat = resolveLambdaCategory types cat
 
