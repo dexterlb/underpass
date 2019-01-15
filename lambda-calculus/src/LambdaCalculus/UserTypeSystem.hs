@@ -74,14 +74,16 @@ instance (Eq b, PartialOrd b) => PartialOrd (ApplicativeType (TypeWrapper b)) wh
     (<!) (Basic (SubType _ pa)) (r @ (Basic (Type  _))) = (<!) pa r
     (<!) (Basic (SubType _ pa)) (r @ (Application _ _)) = (<!) pa r
     (<!) Wildcard    Wildcard          = True
-    (<!) Wildcard    _            = True
-    (<!) _      Wildcard          = True
-    (<!) _      _            = False
+    (<!) Wildcard    _                 = True
+    (<!) _      Wildcard               = True
+    (<!) _      _                      = False
 
 
 instance (Show b, Eq b, Typeable b, PartialOrd b, MSemiLattice (ApplicativeType b)) => MSemiLattice (ApplicativeType (TypeWrapper b)) where
     (/\) (Basic (Type x)) (Basic (Type y)) = Type <$> (Basic x) /\ (Basic y)
     (/\) (Application a b) (Application c d) = Application (a /\ c) (b /\ d)
+    (/\) Wildcard x = x
+    (/\) x Wildcard = x
     (/\) x y
         | x <! y = x
         | x !> y = y
@@ -91,7 +93,7 @@ wrap :: (Eq t, PartialOrd t, MSemiLattice (ApplicativeType t), Typed c t) => Lam
 wrap = L.transformConst wrapConst wrapType
 
 unwrap :: (Eq t, PartialOrd t, MSemiLattice (ApplicativeType t), Typed c t) => LambdaTerm (TypeWrapper t) (ConstWrapper c) -> LambdaTerm t c
-unwrap = L.transformConst unwrapConst unwrapType
+unwrap = L.removeUselessCasts . (L.transformConst unwrapConst unwrapType)
 
 wrapConst :: c -> ConstWrapper c
 wrapConst = ConstWrapper

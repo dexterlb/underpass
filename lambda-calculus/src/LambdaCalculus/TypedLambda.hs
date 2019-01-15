@@ -8,6 +8,8 @@
 
 module LambdaCalculus.TypedLambda where
 
+import Debug.Trace
+
 import LambdaCalculus.LambdaTypes (Typed, typeOf)
 import qualified LambdaCalculus.LambdaTypes as T
 import LambdaCalculus.Lambda (LambdaTerm, typeOfTerm)
@@ -29,15 +31,17 @@ data TSLTerm t c where
     Application :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c -> TSLTerm t c
     Lambda      :: Typed c t => T.ApplicativeType t -> VarName     -> TSLTerm t c -> TSLTerm t c
     Variable    :: Typed c t => T.ApplicativeType t -> Index       -> TSLTerm t c
+    Cast        :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c
 
 instance Typed c t => Typed (TSLTerm t c) t where
     typeOf (Constant     t _     ) = t
     typeOf (Application  t _ _   ) = t
     typeOf (Lambda       t _ _   ) = t
     typeOf (Variable     t _     ) = t
+    typeOf (Cast         t _     ) = t
 
 instance (Show t, Show c) => Show (TSLTerm t c) where
-    show = showBareTerm emptyContext
+    show = showTerm emptyContext
 
 deriving instance (Eq c, Eq t, Typed c t) => Eq (TSLTerm t c)
 
@@ -48,6 +52,7 @@ showTerm context (Lambda t x a) = "λ " <> Text.unpack x <> " { " <> showTerm (p
 showTerm context (Variable t i)
     | Just (x, _) <- at i context = Text.unpack x <> " : " <> show t
     | otherwise = "<var " <> show i <> "> : " <> show t
+showTerm context (Cast t a) = show t <> "[" <> showTerm context a <> "]"
 
 showBareTerm :: (Show t, Show c) => VarContext t -> TSLTerm t c -> String
 showBareTerm _ (Constant _ c) = show c
@@ -56,6 +61,7 @@ showBareTerm context (Lambda t x a) = "λ " <> Text.unpack x <> " { " <> showBar
 showBareTerm context (Variable _ i)
     | Just (x, _) <- at i context = Text.unpack x
     | otherwise = "<var " <> show i <> ">"
+showBareTerm context (Cast t a) = show t <> "[" <> showBareTerm context a <> "]"
 
 
 typify :: Typed c t => VarContext t -> LambdaTerm t c -> TSLTerm t c
@@ -76,7 +82,7 @@ typify context (L.Lambda x t a) = Lambda (T.Application t (typeOf a')) x a'
 typify context (L.Variable i)
     | Just (_, t) <- at i context = Variable t i
     | otherwise = throw $ L.UnknownVar i
-typify context (term @ (L.Cast _ a)) = setType (L.typeOfTerm False context term) $ typify context a
+typify context (term @ (L.Cast _ a)) = Cast (L.typeOfTerm False context term) $ typify context a
 
 unTypify :: forall c t. (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
 unTypify context term
@@ -94,12 +100,14 @@ unTypify context term
         unTypify' _ (Lambda t _ _) = throw $ T.WrongLambdaType t
         unTypify' context' (Application _ a b)
             = L.Application (unTypify context' a) (unTypify context' b)
+        unTypify' context' (Cast t a) = L.Cast t (unTypify context' a)
 
 setType :: Typed c t => T.ApplicativeType t -> TSLTerm t c -> TSLTerm t c
 setType t (Constant _ x)      = Constant t x
 setType t (Variable _ i)      = Variable t i
 setType t (Application _ a b) = Application t a b
 setType t (Lambda _ x a)      = Lambda t x a
+setType t (Cast _ a)          = Cast t a
 
 inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
 inferTypesOnClosedTerm t = (unTypify emptyContext) . (fixedPoint fixTypes) . (typify emptyContext) . (L.Cast t)
@@ -120,12 +128,16 @@ updateTypes updater (Lambda t x a) = Lambda t' x a'
     where
         t' = updater $ Lambda t x a'
         a' = updateTypes updater a
+updateTypes updater (Cast t a) = Cast t' a'
+    where
+        t' = updater $ Cast t a'
+        a' = updateTypes updater a
 
 
 fixTypes :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> TSLTerm t c
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
-        (x', vars) = fixTypesUp x
+        (x', vars) = fixTypesUp $ traceShowId x
 
 
 fixTypesDown :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
@@ -148,6 +160,7 @@ fixTypesDown tnr upVars (Application tor a b)
         a'  = fixTypesDown (T.Application tb tr') upVars a
         tr' = tnr /\ tor
         tb  = typeOf b
+fixTypesDown _ upVars (Cast t a) = Cast t (fixTypesDown (typeOf a) upVars a)
 
 fixTypesUp :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> (TSLTerm t c, VarContext t)
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
@@ -166,12 +179,16 @@ fixTypesUp (Application tr a b)
         vars = meetContexts aVars bVars
         (a', aVars)  = fixTypesUp a
         (b', bVars)  = fixTypesUp b
+fixTypesUp (Cast t a) = (Cast t a', aVars)
+    where
+        (a', aVars)  = fixTypesUp a
 
 transformApplications :: Typed c t => ([TSLTerm t c] -> Maybe (TSLTerm t c)) -> TSLTerm t c -> TSLTerm t c
 transformApplications f term = fromMaybe (g term) $ f $ uncurryApplication term
     where
         g (Application t a b) = Application t (transformApplications f a) (transformApplications f b)
         g (Lambda t x a) = Lambda t x (transformApplications f a)
+        g (Cast t a) = Cast t (transformApplications f a)
         g term' = term'
 
 transform :: Typed c t => (TSLTerm t c -> Maybe (TSLTerm t c)) -> TSLTerm t c -> TSLTerm t c
@@ -179,6 +196,7 @@ transform f term = fromMaybe (g term) $ f term
     where
         g (Application t a b) = Application t (transform f a) (transform f b)
         g (Lambda t x a) = Lambda t x (transform f a)
+        g (Cast t a) = Cast t (transform f a)
         g term' = term'
 
 uncurryApplication :: Typed c t => TSLTerm t c -> [TSLTerm t c]
@@ -201,6 +219,7 @@ betaReduce p (Lambda t x m)                   = Lambda t x    (betaReduce p m)
 betaReduce p (Application t m n)              = Application t (betaReduce p m) (betaReduce p n)
 betaReduce _ (Variable t x)                   = Variable t x
 betaReduce _ (Constant t m)                   = Constant t m
+betaReduce p (Cast t a)                       = Cast t (betaReduce p a)
 
 substitute :: Typed c t => TSLTerm t c -> Index -> TSLTerm t c -> TSLTerm t c
 substitute (Variable t x) y to
@@ -208,7 +227,8 @@ substitute (Variable t x) y to
     | otherwise = Variable t x
 substitute (Application t m n) y to = Application t (substitute m y to) (substitute n y to)
 substitute (Lambda t x m) y to = Lambda t x (substitute m (y + 1) (up to 1))
-substitute (Constant t m) _ _ = Constant t m
+substitute (Constant t m) _ _  = Constant t m
+substitute (Cast t m)     y to = Cast t (substitute m y to)
 
 up :: Typed c t => TSLTerm t c -> Index -> TSLTerm t c
 up to n = up' to n 0
@@ -220,6 +240,7 @@ up' (Variable t x) d c
 up' (Application t m n) d c = Application t (up' m d c) (up' n d c)
 up' (Lambda t x m) d c = Lambda t x (up' m d (c + 1))
 up' (Constant t m) _ _ = Constant t m
+up' (Cast t m) d c     = Cast t (up' m d c)
 
 data LambdaException t c
     = CannotApply (TSLTerm t c) (TSLTerm t c)

@@ -83,6 +83,21 @@ transformConst f g (Lambda x t a)    = Lambda x (T.transform g t) (transformCons
 transformConst _ _ (Variable i)      = Variable i
 transformConst f g (Cast t x)        = Cast (T.transform g t) (transformConst f g x)
 
+
+removeUselessCasts :: (Eq t, Typed c t) => LambdaTerm t c -> LambdaTerm t c
+removeUselessCasts = removeUselessCasts' emptyContext
+
+removeUselessCasts' :: (Eq t, Typed c t) => VarContext t -> LambdaTerm t c -> LambdaTerm t c
+removeUselessCasts' context (Cast t x)
+    | tx == t   = x'
+    | otherwise = Cast t x'
+    where
+        tx = typeOfTerm False context x
+        x' = removeUselessCasts' context x
+removeUselessCasts' context (Application a b) = Application (removeUselessCasts' context a) (removeUselessCasts' context b)
+removeUselessCasts' context (Lambda x t a)    = Lambda x t (removeUselessCasts' (push (x, t) context) a)
+removeUselessCasts' _ term = term
+
 apply :: Typed c t => [LambdaTerm t c] -> LambdaTerm t c
 apply = foldl1 Application
 
