@@ -245,7 +245,7 @@ a <\> b = Complex (LeftSlash Dot) a b
 
 instance (T.Typed x t) => T.Typed (NonTerm x) t where
     typeOf (NonTerm x)  = T.typeOf x
-    typeOf (Variable _) = T.Bot
+    typeOf (Variable _) = T.Wildcard
 
 instance Compositional Rule where
     compose LeftApp  x y = L.Application y x

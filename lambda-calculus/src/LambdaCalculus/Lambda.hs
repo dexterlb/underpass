@@ -52,10 +52,11 @@ instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (LambdaTerm t 
 typeOfTerm :: (MSemiLattice (T.ApplicativeType t), Typed c t) => Bool -> VarContext t -> LambdaTerm t c -> T.ApplicativeType t
 typeOfTerm _ _ (Constant c) = typeOf c
 typeOfTerm safe context (Application a b)
-    | safe,     (p, q) <- T.inferApp ta, tb <!  p  = q
-    | not safe, (p, q) <- T.inferApp ta, tb <!> p = q
-    | otherwise = throw $ CannotApply (a, ta) (b, tb)
+    | safe,     tb <!  p = q
+    | not safe, tb <!> p = q
+    | otherwise = error $ show tb <> " is not <! " <> show p-- throw $ CannotApply (a, ta) (b, tb)
     where
+        (p, q) = T.inferApp ta
         ta = typeOfTerm safe context a
         tb = typeOfTerm safe context b
 typeOfTerm safe context (Lambda x t a) = T.Application t (typeOfTerm safe (push (x, t) context) a)

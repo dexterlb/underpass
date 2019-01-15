@@ -30,7 +30,7 @@ import Data.MemoCombinators (Memo, memo2)
 data ApplicativeType b
     = Basic b
     | Application (ApplicativeType b) (ApplicativeType b)
-    | Bot
+    | Wildcard
     deriving (Eq, Generic)
 
 deriving instance (Hashable b) => Hashable (ApplicativeType b)
@@ -44,7 +44,7 @@ instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => Typed (Applic
 instance (Show b) => Show (ApplicativeType b) where
     show (Basic x) = show x
     show (Application a b) = "(" <> show a <> " -> " <> show b <> ")"
-    show Bot = "*"
+    show Wildcard = "*"
 
 instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
     parser = parseTypeExpr
@@ -52,7 +52,7 @@ instance (P.Parseable b) => P.Parseable (ApplicativeType b) where
 instance Functor ApplicativeType where
     fmap f (Basic x)         = Basic $ f x
     fmap f (Application a b) = Application (fmap f a) (fmap f b)
-    fmap _ Bot               = Bot
+    fmap _ Wildcard               = Wildcard
 
 parseTypeExpr :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeExpr = P.makeExprParser parseTypeTerm
@@ -62,14 +62,14 @@ parseTypeExpr = P.makeExprParser parseTypeTerm
 parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeTerm
     =   P.braces parseTypeExpr
-    <|> (Bot   <$  P.operator "*")
+    <|> (Wildcard   <$  P.operator "*")
     <|> (Basic <$> P.parser)
 
 defaultMeet :: MSemiLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
 defaultMeet (Basic x) (Basic y) = Basic $ x /\ y
 defaultMeet (Application a1 a2) (Application b1 b2) = Application (defaultMeet a1 b1) (defaultMeet a2 b2)
-defaultMeet Bot x = x
-defaultMeet x Bot = x
+defaultMeet Wildcard x = x
+defaultMeet x Wildcard = x
 defaultMeet x y = throw $ CannotMeet x y
 
 defaultPartialMeet :: (Eq b, Show b, Typeable b) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
@@ -77,25 +77,25 @@ defaultPartialMeet (Basic x) (Basic y)
   | x == y    = Basic x
   | otherwise = throw $ CannotMeet (Basic x) (Basic y)
 defaultPartialMeet (Application a1 a2) (Application b1 b2) = Application (defaultPartialMeet a1 b1) (defaultPartialMeet a2 b2)
-defaultPartialMeet Bot x = x
-defaultPartialMeet x Bot = x
+defaultPartialMeet Wildcard x = x
+defaultPartialMeet x Wildcard = x
 defaultPartialMeet x y = throw $ CannotMeet x y
 
 defaultLess :: PartialOrd b => ApplicativeType b -> ApplicativeType b -> Bool
 defaultLess (Basic x)           (Basic y)           = x <! y
 defaultLess (Application a1 a2) (Application b1 b2) = defaultLess a1 b1 && defaultLess a2 b2
-defaultLess Bot    Bot          = True
-defaultLess Bot    _            = False
-defaultLess _      Bot          = True
+defaultLess Wildcard    Wildcard          = True
+defaultLess Wildcard    _            = True
+defaultLess _      Wildcard          = True
 defaultLess _      _            = False
 
 inferApp :: (MSemiLattice (ApplicativeType t)) => ApplicativeType t -> (ApplicativeType t, ApplicativeType t)
 inferApp x
-    | (Application p q) <- x /\ (Application Bot Bot) = (p, q)
+    | (Application p q) <- x /\ (Application Wildcard Wildcard) = (p, q)
     | otherwise = error "how did x unify to * -> *, but the result is not T > T ?"
 
 instance HasBot (ApplicativeType b) where
-    bot = Bot
+    bot = Wildcard
 
 basicTransform :: (t1 -> t2) -> ApplicativeType t1 -> ApplicativeType t2
 basicTransform f = transform (Basic . f)
@@ -103,7 +103,7 @@ basicTransform f = transform (Basic . f)
 transform :: (t1 -> ApplicativeType t2) -> ApplicativeType t1 -> ApplicativeType t2
 transform f (Basic x)           = f x
 transform f (Application a b)   = Application (transform f a) (transform f b)
-transform _ Bot                 = Bot
+transform _ Wildcard                 = Wildcard
 
 data TypeException t
     = CannotMeet t t
@@ -117,7 +117,7 @@ instance (Show t, Typeable t) => Exception (TypeException t)
 instance Latexable a => Latexable (ApplicativeType a) where
     latex (Basic x)         = latex x
     latex (Application a b) = latex a <> " \\rightarrow " <> latex b
-    latex Bot               = "*"
+    latex Wildcard               = "*"
 
 -- memo instances
 instance (MemoTable t) => MemoTable (ApplicativeType t) where
@@ -133,7 +133,7 @@ instance (MemoTable t) => MemoTable (ApplicativeType t) where
                 where
                     mapp :: (ApplicativeType t' -> s) -> (ApplicativeType t' -> s)
                     mapp = mkmemo mt
-            mkmemo _  f Bot = f Bot
+            mkmemo _  f Wildcard = f Wildcard
 
 -- parsing helpers
 type Name = Text
@@ -174,7 +174,7 @@ instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => MSemiLattice 
 stripRefs :: ApplicativeType (Ref t) -> ApplicativeType t
 stripRefs (Basic (BasicRef x)) = Basic x
 stripRefs (Application a b) = Application (stripRefs a) (stripRefs b)
-stripRefs _ = Bot
+stripRefs _ = Wildcard
 
 refless :: ApplicativeType (Ref t) -> Bool
 refless (Basic (BasicRef _)) = True

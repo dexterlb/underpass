@@ -26,7 +26,7 @@ import           Utils.Maths
 import qualified Utils.Parsing as P
 
 instance (MSemiLattice (T.ApplicativeType t), Typed c t) => Typed (Ref c) (Ref t) where
-    typeOf (UnresolvedName _ _)  = T.Bot
+    typeOf (UnresolvedName _ _)  = T.Wildcard
     typeOf (BasicRef  x)         = T.basicTransform BasicRef $ typeOf x
 
 newtype ConstRef c = ConstRef (Ref c)
@@ -37,7 +37,7 @@ deriving newtype instance (PartialOrd c) => PartialOrd (ConstRef c)
 
 instance (Eq t, PartialOrd t, Typed c t) => Typed (ConstRef c) (TypeWrapper t) where
     typeOf (ConstRef (BasicRef c)) = wrapType' $ typeOf c
-    typeOf (ConstRef            _) = T.Bot
+    typeOf (ConstRef            _) = T.Wildcard
 
 resolveTypes :: (Typed c t, Eq t, PartialOrd t) => TypeWrappers t -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstRef c)
 resolveTypes m = L.transformConst ConstRef (resolveBasicType m)

@@ -100,13 +100,13 @@ spec = do
     it "works on examples with parallel application" $ do
       checkLt (Application tA tP) (Application (Application tE tF) (Application tR tS))
     it "works on examples with *" $ do
-      checkLt (Application tA tP) (Application (Application tE tF) (Application tR Bot))
+      checkLt (Application tA tP) (Application (Application tE tF) (Application tR Wildcard))
   describe "less-than in unrelated cases" $ do
     it "works on simple example" $ do
       checkUnrelated tA tP
       checkUnrelated tB tR
   describe "meet in non-branch cases" $ do
     it "works on example with two *'s" $ do
-      (Application Bot tP) /\ (Application (Application tE tF) (Application tR Bot))
+      (Application Wildcard tP) /\ (Application (Application tE tF) (Application tR Wildcard))
         `shouldBe`
             (Application (Application tE tF) tP)

@@ -73,9 +73,9 @@ instance (Eq b, PartialOrd b) => PartialOrd (ApplicativeType (TypeWrapper b)) wh
         | otherwise = (<!) pa r
     (<!) (Basic (SubType _ pa)) (r @ (Basic (Type  _))) = (<!) pa r
     (<!) (Basic (SubType _ pa)) (r @ (Application _ _)) = (<!) pa r
-    (<!) Bot    Bot          = True
-    (<!) Bot    _            = False
-    (<!) _      Bot          = True
+    (<!) Wildcard    Wildcard          = True
+    (<!) Wildcard    _            = True
+    (<!) _      Wildcard          = True
     (<!) _      _            = False
 
 
