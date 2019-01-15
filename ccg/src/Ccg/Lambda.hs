@@ -65,4 +65,4 @@ instance (Show c, Show t) => Show (LambdaConstructor t c) where
     show (LambdaConstructor t) = " @ " <> show t
 
 instance (Show t, Show c) => Latexable (LambdaPayload t c) where
-    latex (LambdaPayload _term (TokenData { text })) = text -- do something with term
+    latex (LambdaPayload _term tokendata) = latex tokendata

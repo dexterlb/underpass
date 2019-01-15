@@ -59,7 +59,7 @@ instance Show t => Show (NonTerm t) where
 
 instance (Latexable t) => Latexable (NonTerm t) where
     latex (NonTerm t)  = "$" <> latex t <> "$"
-    latex (Variable t) = "$var(" <> t <> ")$"
+    latex (Variable t) = "$\\$" <> t <> "$"
 
 data Rule
     = LeftApp

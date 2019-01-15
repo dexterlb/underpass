@@ -7,6 +7,8 @@ import           Data.Text (Text, pack)
 import qualified Data.Text as Text
 import qualified Data.Vector as V
 
+import Debug.Trace
+
 import Ccg.Program
 import Ccg.Trees (ParseTree, enumTrees)
 import Ccg.Lambda (LambdaPayload)
@@ -17,6 +19,7 @@ import Ccg.POSTagging (simpleEnglishPosTaggingLexer)
 
 import Minipass.Overpass
 import LambdaCalculus.TypedLambda
+import LambdaCalculus.LambdaTypes (ApplicativeType(..))
 import LambdaCalculus.Context
 import LambdaCalculus.UserTypeSystem (unwrap, ConstWrapper, TypeWrapper)
 import Minipass.Language.Optimiser
@@ -51,10 +54,10 @@ makeSolution tree' =
     Solution
         { tree     = tree'
         , term     = term'
-        , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
+        , outQuery = traceShowId $ tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
         }
         where
-            term' = composeTerm tree'
+            term' = inferTypesOnClosedTerm Wildcard $ composeTerm tree'
 
 instance Latexable Solutions where
     latex (Solutions tokens sols)

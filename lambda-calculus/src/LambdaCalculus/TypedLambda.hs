@@ -95,9 +95,9 @@ unTypify context term
         unTypify' :: (Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => VarContext t -> TSLTerm t c -> LambdaTerm t c
         unTypify' _ (Constant _ x) = L.Constant x
         unTypify' _ (Variable _ i) = L.Variable i
-        unTypify' context' (Lambda (T.Application tx _) x a)
+        unTypify' context' (Lambda t x a)
             = L.Lambda x tx (unTypify (push (x, tx) context') a)
-        unTypify' _ (Lambda t _ _) = throw $ T.WrongLambdaType t
+                where (tx, _) = T.inferApp t
         unTypify' context' (Application _ a b)
             = L.Application (unTypify context' a) (unTypify context' b)
         unTypify' context' (Cast t a) = L.Cast t (unTypify context' a)
@@ -110,7 +110,7 @@ setType t (Lambda _ x a)      = Lambda t x a
 setType t (Cast _ a)          = Cast t a
 
 inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
-inferTypesOnClosedTerm t = (unTypify emptyContext) . (fixedPoint fixTypes) . (typify emptyContext) . (L.Cast t)
+inferTypesOnClosedTerm t = L.removeUselessCasts . (unTypify emptyContext) . (fixedPoint fixTypes) . (setType t) . (typify emptyContext)
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x
@@ -145,13 +145,13 @@ fixTypesDown targetType _      (Constant t x) = Constant (targetType /\ t) x
 fixTypesDown targetType upVars (Variable t i)
     | Just (_, t') <- at i upVars = Variable (targetType /\ t /\ t') i
     | otherwise = throw $ L.UnknownVar i
-fixTypesDown (T.Application tnx tna) upVars (Lambda (T.Application tx ta) x a) = Lambda (T.Application tx' ta') x a'
+fixTypesDown tn upVars (Lambda t x a) = Lambda (T.Application tx' ta') x a'
     where
         a'   = fixTypesDown ta' (push (x, tx') upVars) a
         tx'  = tx /\ tnx
         ta'  = ta /\ tna
-fixTypesDown (T.Application _ _) _ (Lambda q _ _) = throw $ T.WrongLambdaType q
-fixTypesDown q _ Lambda {}                        = throw $ T.WrongLambdaType q
+        (tnx, tna) = T.inferApp tn
+        (tx , ta ) = T.inferApp t
 fixTypesDown tnr upVars (Application tor a b)
     | (p, _) <- T.inferApp ta     = Application tr' a' (fixTypesDown p upVars b)
     | otherwise                 = throw $ CannotApply a b
@@ -165,13 +165,13 @@ fixTypesDown _ upVars (Cast t a) = Cast t (fixTypesDown (typeOf a) upVars a)
 fixTypesUp :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> (TSLTerm t c, VarContext t)
 fixTypesUp (Constant t x) = (Constant t x, emptyContext)
 fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
-fixTypesUp (Lambda (T.Application tx ta) x a)
+fixTypesUp (Lambda t x a)
     | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (tnx /\ tx) (ta' /\ ta)) x a', subVars)
     | otherwise                            = (Lambda (T.Application tx (ta' /\ ta)) x a', vars)
     where
         ta' = typeOf a'
         (a', vars) = fixTypesUp a
-fixTypesUp (Lambda t _ _) = throw $ T.WrongLambdaType t
+        (tx, ta)   = T.inferApp t
 fixTypesUp (Application tr a b)
     | (_, q) <- T.inferApp $ typeOf a'   = (Application (tr /\ q) a' b', vars)
     | otherwise                        = throw $ CannotApply a b
