@@ -9,6 +9,7 @@ import qualified NLP.Types as N
 import qualified NLP.POS as N
 
 import qualified Data.HashSet as HS
+import           Data.Text (Text)
 import qualified Data.Text as Text
 
 import           Ccg.Rules
@@ -28,7 +29,7 @@ processSentence (N.TaggedSent tokens) = map processToken tokens
 processToken :: N.Tag t => N.POS t -> TokenData
 processToken (N.POS { N.posTag, N.posToken = (N.Token posToken) }) = TokenData
     { text = posToken
-    , tags = HS.singleton $ Text.toLower $ N.fromTag posTag
+    , tags = HS.singleton $ replaceTag $ Text.toLower $ N.fromTag posTag
     }
 
 sentBegin :: [TokenData]
@@ -42,3 +43,7 @@ sentEnd = pure $ TokenData
     { text = ""
     , tags = HS.singleton "end"
     }
+
+replaceTag :: Text -> Text
+replaceTag "," = "comma"
+replaceTag x   = x

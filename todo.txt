@@ -1,14 +1,3 @@
-- implement topo sort
-- add a "cast" operator in LambdaCalculus to support constructing more concrete
-  types (essentially newtype)
-- simple token matching based on regexes
+- way to insert token data into lambda terms (parse templates?)
 - incorporate type raising (decide between unary rules or parametric combination)
-- token matching (tagged tokens?)
 - category features and feature variables
-
-ideas:
-    - DECISION TREES for matching tokens! A set of formulae like
-      '(matches(stem, <regex>) & verb & !past_tense) | foo | bar'
-      can be converted to a decision tree. Conjuncts can even have
-      side effects (e.g. matches(..) could set $1 $2 etc). So awesomely
-      dirty!

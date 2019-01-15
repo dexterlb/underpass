@@ -7,6 +7,8 @@ S < Set.
 /begin  : S / SE        @ \x: SE    { S[Set[x]] }.
 /end    : SE \ Set      @ \x: Set   { SE[x] }.
 
+/comma  : $X \ $X       @ \x { x }.
+
 /in     : Set / Set \ Set @ \things : Set { \where : Set { and things (in where) } }.
 "cafes" : Set             @ amenity 'cafe'.
 "Sofia" : Set             @ name 'София'.

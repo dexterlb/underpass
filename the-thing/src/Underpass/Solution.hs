@@ -39,9 +39,11 @@ data Solutions = Solutions [TokenData] [Solution]
 
 solve :: Program Types Constants -> Text -> IO Solutions
 solve p inQuery' = do
-    lexer       <- simpleEnglishPosTaggingLexer
-    let tokens  =  lexer inQuery'
-    let trees   =  enumTrees $ cyk (V.fromList $ match (rules p) tokens) (begin p)
+    lexer               <- simpleEnglishPosTaggingLexer
+    let tokens          =  lexer inQuery'
+    let categories      =  V.fromList $ match (rules p) tokens
+    putStrLn $ show categories
+    let trees           =  enumTrees $ cyk categories (begin p)
     pure $ Solutions tokens $ map makeSolution trees
 
 makeSolution :: Tree -> Solution
