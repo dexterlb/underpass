@@ -12,3 +12,5 @@ extra-deps:
 - cereal-text-0.1.0.2
 - fullstop-0.1.4
 - tokenize-0.3.0
+- git: git@github.com:DexterLB/HWordNet.git
+  commit: 075ef3bbf880ff00b52f50f383510fac9039574e
