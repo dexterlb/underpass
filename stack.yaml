@@ -5,6 +5,7 @@ packages:
 - utils
 - lambda-calculus
 - the-thing
+- wordnet
 
 extra-deps:
 - git: git@github.com:DexterLB/chatter.git

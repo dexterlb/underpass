@@ -1,0 +1,54 @@
+name:                wordnet
+version:             0.1.0.0
+github:              "DexterLB/underpass"
+license:             MIT
+author:              "dexterlb"
+maintainer:          "dexterlb@qtrp.org"
+copyright:           "2018 Angel Angelov"
+
+extra-source-files:
+- README.md
+
+description:         General wordnet library
+
+dependencies:
+- base
+- megaparsec
+- text
+- parser-combinators
+- unordered-containers
+- containers
+- hashable
+- process
+- data-memocombinators
+- directory
+
+library:
+  source-dirs:
+    - src
+    - lib
+  c-sources:
+    - lib/binsrch.c
+    - lib/morph.c
+    - lib/search.c
+    - lib/wnglobal.c
+    - lib/wnhelp.c
+    - lib/wnrtl.c
+    - lib/wnutil.c
+
+
+ghc-options:
+- -Wall
+- -Werror
+- -Wno-orphans
+
+tests:
+  wordnet-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - wordnet
