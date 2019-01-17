@@ -7,10 +7,5 @@ bool wn_init_wordnet() {
         return true;
     }
 
-    if (wninit()) {
-        // fprintf(stderr, "oops\n");
-        return false;
-    } else {
-        return true;
-    }
+    return (!wninit());
 }

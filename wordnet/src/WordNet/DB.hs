@@ -1,17 +1,18 @@
 module WordNet.DB where
 
 import Data.List.NonEmpty (NonEmpty(..))
+import Foreign.C.Types (CBool(..), CInt(..))
 import Foreign.C.String (CString, newCString, peekCString)
 import Foreign.Ptr (nullPtr)
 import Data.Text (Text, pack, unpack)
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 
-foreign import ccall "wn_init_wordnet" init_wordnet :: IO Bool
-foreign import ccall "morphstr"        morphstr     :: CString -> Int -> IO CString
+foreign import ccall "wn_init_wordnet" init_wordnet :: IO CBool
+foreign import ccall "morphstr"        morphstr     :: CString -> CInt -> IO CString
 
 initialise :: IO Bool
-initialise = init_wordnet
+initialise = (toEnum . fromEnum) <$> init_wordnet
 
 ensureInit :: IO ()
 ensureInit = do
@@ -39,7 +40,7 @@ morph w pos = do
 morph' :: CString -> Int -> IO [CString]
 morph' w i = do
     _      <- ensureInit
-    result <- morphstr w i
+    result <- morphstr w (fromIntegral i)
     if result == nullPtr then
         pure []
     else do
