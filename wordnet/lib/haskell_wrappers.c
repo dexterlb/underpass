@@ -8,6 +8,7 @@ bool wn_init_wordnet() {
     }
 
     if (wninit()) {
+        // fprintf(stderr, "oops\n");
         return false;
     } else {
         return true;

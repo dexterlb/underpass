@@ -21,30 +21,39 @@ import           Ccg.Rules
 type MetaTagger t = Text -> t -> [Tag]
 
 simpleEnglishPosTaggingLexer :: IO Lexer
-simpleEnglishPosTaggingLexer = posTaggingLexer englishMetaTagger <$> N.defaultTagger
+simpleEnglishPosTaggingLexer = do
+    mt <- englishMetaTagger
+    pt <- N.defaultTagger
+    pure $ posTaggingLexer mt pt
 
-englishMetaTagger :: MetaTagger NC.Tag
-englishMetaTagger w posTag
-    = map (\x -> ("lemma", x)) $ toList $ unsafePerformIO $ WN.morph1 w (toWN posTag)
+
+englishMetaTagger :: IO (MetaTagger NC.Tag)
+englishMetaTagger = do
+    _     <- WN.ensureInit
+    pure $ mt
+
     where
-        toWN :: NC.Tag -> WN.POS
-        toWN NC.JJ         = WN.Adj
-        toWN NC.JJR        = WN.Adj
-        toWN NC.JJS        = WN.Adj
-        toWN NC.NN         = WN.Noun
-        toWN NC.NNS        = WN.Noun
-        toWN NC.NNP        = WN.Noun
-        toWN NC.NNPS       = WN.Noun
-        toWN NC.RB         = WN.Adv
-        toWN NC.RBR        = WN.Adv
-        toWN NC.RBS        = WN.Adv
-        toWN NC.VB         = WN.Verb
-        toWN NC.VBD        = WN.Verb
-        toWN NC.VBG        = WN.Verb
-        toWN NC.VBN        = WN.Verb
-        toWN NC.VBP        = WN.Verb
-        toWN NC.VBZ        = WN.Verb
-        toWN _             = WN.Any
+        mt w posTag
+            = map (\x -> ("lemma", x)) $ toList $ unsafePerformIO $ WN.morph1 w (toWN posTag)
+            where
+                toWN :: NC.Tag -> WN.POS
+                toWN NC.JJ         = WN.Adj
+                toWN NC.JJR        = WN.Adj
+                toWN NC.JJS        = WN.Adj
+                toWN NC.NN         = WN.Noun
+                toWN NC.NNS        = WN.Noun
+                toWN NC.NNP        = WN.Noun
+                toWN NC.NNPS       = WN.Noun
+                toWN NC.RB         = WN.Adv
+                toWN NC.RBR        = WN.Adv
+                toWN NC.RBS        = WN.Adv
+                toWN NC.VB         = WN.Verb
+                toWN NC.VBD        = WN.Verb
+                toWN NC.VBG        = WN.Verb
+                toWN NC.VBN        = WN.Verb
+                toWN NC.VBP        = WN.Verb
+                toWN NC.VBZ        = WN.Verb
+                toWN _             = WN.Any
 
 posTaggingLexer :: N.Tag t => MetaTagger t -> N.POSTagger t -> Lexer
 posTaggingLexer mt tagger text = mergeSentences mt $ N.tag tagger text
