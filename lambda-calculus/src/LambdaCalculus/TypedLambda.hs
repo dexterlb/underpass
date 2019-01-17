@@ -8,8 +8,6 @@
 
 module LambdaCalculus.TypedLambda where
 
-import Debug.Trace
-
 import LambdaCalculus.LambdaTypes (Typed, typeOf)
 import qualified LambdaCalculus.LambdaTypes as T
 import LambdaCalculus.Lambda (LambdaTerm, typeOfTerm)
@@ -137,7 +135,7 @@ updateTypes updater (Cast t a) = Cast t' a'
 fixTypes :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> TSLTerm t c
 fixTypes x = fixTypesDown (typeOf x') vars x'
     where
-        (x', vars) = fixTypesUp $ traceShowId x
+        (x', vars) = fixTypesUp x
 
 
 fixTypesDown :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c

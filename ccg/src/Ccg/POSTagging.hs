@@ -3,45 +3,77 @@
 
 module Ccg.POSTagging where
 
+import           System.IO.Unsafe (unsafePerformIO)
+import           Data.List.NonEmpty (toList)
+
 import qualified NLP.Types.Tree as N
 import qualified NLP.Types.Tags as N
 import qualified NLP.Types as N
 import qualified NLP.POS as N
+import qualified NLP.Corpora.Conll as NC
 
-import qualified Data.HashSet as HS
 import           Data.Text (Text)
 import qualified Data.Text as Text
+import qualified WordNet.DB as WN
 
 import           Ccg.Rules
 
+type MetaTagger t = Text -> t -> [Tag]
+
 simpleEnglishPosTaggingLexer :: IO Lexer
-simpleEnglishPosTaggingLexer = posTaggingLexer <$> N.defaultTagger
+simpleEnglishPosTaggingLexer = posTaggingLexer englishMetaTagger <$> N.defaultTagger
 
-posTaggingLexer :: N.Tag t => N.POSTagger t -> Lexer
-posTaggingLexer tagger text = mergeSentences $ N.tag tagger text
+englishMetaTagger :: MetaTagger NC.Tag
+englishMetaTagger w posTag
+    = map (\x -> ("lemma", x)) $ toList $ unsafePerformIO $ WN.morph1 w (toWN posTag)
+    where
+        toWN :: NC.Tag -> WN.POS
+        toWN NC.JJ         = WN.Adj
+        toWN NC.JJR        = WN.Adj
+        toWN NC.JJS        = WN.Adj
+        toWN NC.NN         = WN.Noun
+        toWN NC.NNS        = WN.Noun
+        toWN NC.NNP        = WN.Noun
+        toWN NC.NNPS       = WN.Noun
+        toWN NC.RB         = WN.Adv
+        toWN NC.RBR        = WN.Adv
+        toWN NC.RBS        = WN.Adv
+        toWN NC.VB         = WN.Verb
+        toWN NC.VBD        = WN.Verb
+        toWN NC.VBG        = WN.Verb
+        toWN NC.VBN        = WN.Verb
+        toWN NC.VBP        = WN.Verb
+        toWN NC.VBZ        = WN.Verb
+        toWN _             = WN.Any
 
-mergeSentences :: N.Tag t => [N.TaggedSentence t] -> [TokenData]
-mergeSentences = concat . (map ((sentBegin ++) . (++ sentEnd) . processSentence))
+posTaggingLexer :: N.Tag t => MetaTagger t -> N.POSTagger t -> Lexer
+posTaggingLexer mt tagger text = mergeSentences mt $ N.tag tagger text
 
-processSentence :: N.Tag t => N.TaggedSentence t -> [TokenData]
-processSentence (N.TaggedSent tokens) = map processToken tokens
+mergeSentences :: N.Tag t => MetaTagger t -> [N.TaggedSentence t] -> [TokenData]
+mergeSentences mt = concat . (map ((sentBegin ++) . (++ sentEnd) . (processSentence mt)))
 
-processToken :: N.Tag t => N.POS t -> TokenData
-processToken (N.POS { N.posTag, N.posToken = (N.Token posToken) }) = TokenData
+processSentence :: N.Tag t => MetaTagger t -> N.TaggedSentence t -> [TokenData]
+processSentence mt (N.TaggedSent tokens) = map (processToken mt) tokens
+
+processToken :: N.Tag t => MetaTagger t -> N.POS t -> TokenData
+processToken mt (N.POS { N.posTag, N.posToken = (N.Token posToken) }) = TokenData
     { text = posToken
-    , tags = HS.singleton $ replaceTag $ Text.toLower $ N.fromTag posTag
+    , tags =
+        [ ("pos", replaceTag $ Text.toLower $ N.fromTag posTag)
+        , ("raw", posToken)
+        ] ++ (mt posToken posTag)
     }
 
 sentBegin :: [TokenData]
 sentBegin = pure $ TokenData
     { text = ""
-    , tags = HS.singleton "begin"
+    , tags = [("mark", "begin")]
     }
 
 sentEnd :: [TokenData]
 sentEnd = pure $ TokenData
     { text = ""
-    , tags = HS.singleton "end"
+    , tags = [("mark", "end")]
     }
 
 replaceTag :: Text -> Text

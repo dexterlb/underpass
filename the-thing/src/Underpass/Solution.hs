@@ -7,8 +7,6 @@ import           Data.Text (Text, pack)
 import qualified Data.Text as Text
 import qualified Data.Vector as V
 
-import Debug.Trace
-
 import Ccg.Program
 import Ccg.Trees (ParseTree, enumTrees)
 import Ccg.Lambda (LambdaPayload)
@@ -54,7 +52,7 @@ makeSolution tree' =
     Solution
         { tree     = tree'
         , term     = term'
-        , outQuery = traceShowId $ tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
+        , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
         }
         where
             term' = inferTypesOnClosedTerm Wildcard $ composeTerm tree'

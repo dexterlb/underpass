@@ -6,14 +6,14 @@ S < Set.
 
 id := \y { y }.
 
-/begin  : S / SE        @ \x: SE    { S[Set[x]] }.
-/end    : SE \ Set      @ \x: Set   { SE[x] }.
+mark="begin"  : S / SE        @ \x: SE    { S[Set[x]] }.
+mark="end"    : SE \ Set      @ \x: Set   { SE[x] }.
 
-/comma  : $X \ $X       @ id.
+pos="comma"   : $X \ $X       @ id.
 
-/in     : Set / Set \ Set @ \things { \where { and things (in where) } }.
-"cafes" : Set             @ amenity 'cafe'.
-"Sofia" : Set             @ name 'София'.
+pos="in"      : Set / Set \ Set @ \things { \where { and things (in where) } }.
+lemma="cafe"  : Set             @ amenity 'cafe'.
+raw="Sofia"   : Set             @ name 'София'.
 
 
 

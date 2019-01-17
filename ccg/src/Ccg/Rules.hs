@@ -11,8 +11,6 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import           Data.List (intercalate)
 import           Data.Functor (($>))
-import           Data.HashSet (HashSet)
-import qualified Data.HashSet as HS
 
 import           Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
@@ -23,13 +21,13 @@ type Token = Text
 
 type Lexer = Text -> [TokenData]
 
-type Tag = Text -- no need for anything fancier for now
+type Tag = (Text, Text) -- no need for anything fancier for now
 
 data Rule cat payload = Rule Matcher [(cat, Constructor payload)]
 
 data TokenData = TokenData
     { text :: Token
-    , tags :: HashSet Tag
+    , tags :: [Tag]
     } deriving (Show)
 
 class FromMatch payload where
@@ -54,8 +52,7 @@ instance (Show cat, Show (Constructor payload)) => Show (Rule cat payload) where
         (map (\(cat, cons) -> show cat <> " " <> show cons) items)
 
 data Matcher
-    = ExactMatcher  Token
-    | TagMatcher    Text
+    = ExactMatcher  Tag
     | OrMatcher     Matcher Matcher
     | AndMatcher    Matcher Matcher
     deriving (Show)
@@ -63,15 +60,19 @@ data Matcher
 instance Parseable Matcher where
     parser = exprParser
         where
-            primitiveParser = exactParser <|> tagParser
+            primitiveParser = exactParser
 
             exprParser = P.makeExprParser innerParser
                 [ [ P.InfixL $ P.operator "|" $> OrMatcher
                   , P.InfixL $ P.operator "&" $> AndMatcher ] ]
             innerParser = P.braces exprParser <|> primitiveParser
 
-            exactParser = P.try $ ExactMatcher <$> P.quotedString '"'
-            tagParser   = P.try $ TagMatcher   <$> (P.operator "/" *> P.identifier)
+            exactParser = P.try $ ExactMatcher <$> (do
+                    tagName <- P.identifier
+                    _       <- P.operator "="
+                    value   <- P.quotedString '"'
+                    pure $ (tagName, value)
+                )
 
 matchText :: (FromMatch payload) => Lexer -> [Rule cat payload] -> Text -> [[(cat, payload)]]
 matchText lexer rules t = match rules (lexer t)
@@ -88,11 +89,10 @@ match rules = map matchToken
 matchRule :: TokenData -> Matcher -> Bool
 matchRule t (OrMatcher  a b) = matchRule t a || matchRule t b
 matchRule t (AndMatcher a b) = matchRule t a || matchRule t b
-matchRule (TokenData { text }) (ExactMatcher pattern) = text == pattern
-matchRule (TokenData { tags }) (TagMatcher tag)       = HS.member tag tags
+matchRule (TokenData { tags }) (ExactMatcher tag) = elem tag tags
 
 spaceyLexer :: Lexer
-spaceyLexer = (map (\t -> TokenData { text = t, tags = HS.empty })) . (Text.splitOn " ")
+spaceyLexer = (map (\t -> TokenData { text = t, tags = [("raw", t)] })) . (Text.splitOn " ")
 
 instance Latexable TokenData where
-    latex (TokenData { text, tags }) = text <> "/" <> Text.intercalate "/" (HS.toList tags)
+    latex (TokenData { tags }) = Text.intercalate "," $ map (\(k, v) -> k <> ":" <> v) tags
