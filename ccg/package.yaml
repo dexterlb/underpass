@@ -22,7 +22,7 @@ dependencies:
 - lambda-calculus
 - deepseq
 - chatter
-- WordNet
+- wordnet
 
 library:
   source-dirs: src

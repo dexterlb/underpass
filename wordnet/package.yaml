@@ -35,6 +35,7 @@ library:
     - lib/wnhelp.c
     - lib/wnrtl.c
     - lib/wnutil.c
+    - lib/haskell_wrappers.c
 
 
 ghc-options:
