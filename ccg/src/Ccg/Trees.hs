@@ -45,7 +45,7 @@ showTreeLines (Vert cat rule left right) =
 
 instance (Latexable cat, Latexable payload, Latexable (CombineRule cat), HasPrimaryDir (CombineRule cat))
     => Latexable (ParseTree cat payload) where
-    latex tree = "\\vspace{1em}\n\\begin{tikzpicture}\n\\Tree [ " <> latex' tree <> " ]\n\\end{tikzpicture}\n\\vspace{1em}\n\n"
+    latex tree = "\\vspace{1em}\n\\resizebox{\\textwidth}{!}{\\begin{tikzpicture}\n\\Tree [ " <> latex' tree <> " ]\n\\end{tikzpicture}}\n\\vspace{1em}\n\n"
         where
             latex' (Leaf cat payload)
               =  ".{" <> latex cat <> " } { " <> latex payload <> "}"

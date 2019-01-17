@@ -95,4 +95,6 @@ spaceyLexer :: Lexer
 spaceyLexer = (map (\t -> TokenData { text = t, tags = [("raw", t)] })) . (Text.splitOn " ")
 
 instance Latexable TokenData where
-    latex (TokenData { tags }) = Text.intercalate "," $ map (\(k, v) -> k <> ":" <> v) tags
+    latex (TokenData { tags }) = "\\minibox[t,frame]{"
+        <> (Text.intercalate "\\\\" $ map (\(k, v) -> k <> ":" <> v) tags)
+        <> "}"

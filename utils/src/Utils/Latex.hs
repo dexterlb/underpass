@@ -68,6 +68,7 @@ wrap body = " \n \
     \ \\usepackage{amssymb} \n \
     \ \\usepackage{amsmath} \n \
     \ \\usepackage{graphicx} \n \
+    \ \\usepackage{minibox} \n \
     \ \\usepackage{adjustbox} \n \
     \ \\usepackage{listings} \n \
     \ \\usepackage{syntax} \n \
