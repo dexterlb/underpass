@@ -8,7 +8,7 @@
 
 module Ccg.LambdaRules where
 
-import           Control.Exception (Exception, throw)
+import           Utils.Exception (Exception, throw)
 import           Data.Dynamic (Typeable)
 
 import           Ccg.Trees (ParseTree(..), tmap)
@@ -20,6 +20,7 @@ import           Utils.Maths
 import           LambdaCalculus.TypedLambda (inferTypesOnClosedTerm)
 import           LambdaCalculus.Lambda (LambdaTerm(..))
 import           LambdaCalculus.LambdaTypes (Typed, Ref, UnresolvedType, typeOf)
+import qualified LambdaCalculus.LambdaTypes as T
 import           LambdaCalculus.UserTypeSystem (AppTypeWrapper, TypeWrapper, ConstWrapper, TypeWrappers, resolveType)
 import           LambdaCalculus.UserTerms (TermLibrary, resolveTerm)
 
@@ -40,10 +41,12 @@ resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveI
                     resolvedCat = resolveLambdaCategory types cat
         resolveItem (cat, TemplateLambdaConstructor term (Template templText templParser templType))
             = check $ ( resolvedCat
-              , TemplateLambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) resolvedTempl )
+              , TemplateLambdaConstructor (inferTypesOnClosedTerm resolvedCatType $ resolveTerm types terms term) resolvedTempl )
                 where
-                    resolvedCat   = resolveLambdaCategory types cat
-                    resolvedTempl = Template templText ((resolveTerm types terms) <$> templParser) (resolveType types templType)
+                    resolvedCatType   = T.Application resolvedTemplType (typeOf resolvedCat)
+                    resolvedCat       = resolveLambdaCategory types cat
+                    resolvedTempl     = Template templText ((resolveTerm types terms) <$> templParser) (resolvedTemplType)
+                    resolvedTemplType = resolveType types templType
 
 
         check :: (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c)) ->

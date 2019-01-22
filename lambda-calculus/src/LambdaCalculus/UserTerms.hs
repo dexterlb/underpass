@@ -13,7 +13,7 @@ module LambdaCalculus.UserTerms where
 
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.HashSet as HS
-import           Control.Exception (throw, Exception)
+import           Utils.Exception (throw, Exception)
 import           Data.Dynamic (Typeable)
 
 import qualified LambdaCalculus.LambdaTypes as T

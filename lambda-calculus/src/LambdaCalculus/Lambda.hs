@@ -21,7 +21,7 @@ import Control.Monad (fail)
 
 import LambdaCalculus.Context
 
-import Control.Exception (Exception, throw)
+import Utils.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 
 data LambdaTerm t c where

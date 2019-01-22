@@ -16,7 +16,7 @@ import           GHC.Generics (Generic)
 import           Data.Hashable (Hashable, hashWithSalt)
 import           Data.HashMap.Lazy (HashMap)
 import qualified Data.HashMap.Lazy as HM
-import           Control.Exception (throw, Exception)
+import           Utils.Exception (throw, Exception)
 import           Data.Dynamic (Typeable)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo2)

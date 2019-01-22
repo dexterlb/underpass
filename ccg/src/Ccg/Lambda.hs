@@ -12,7 +12,7 @@ module Ccg.Lambda where
 
 import           Data.Text (Text)
 import qualified Data.Text as Text
-import           Control.Exception (Exception, throw)
+import           Utils.Exception (Exception, throw)
 import           Data.Dynamic (Typeable)
 
 import           Ccg.Category

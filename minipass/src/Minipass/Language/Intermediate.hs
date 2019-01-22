@@ -23,7 +23,7 @@ import GHC.Generics (Generic)
 
 import LambdaCalculus.TypedLambda (TSLTerm)
 
-import Control.Exception (throw)
+import Utils.Exception (throw)
 
 data Types
     = Set SetTag

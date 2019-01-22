@@ -21,7 +21,7 @@ import LambdaCalculus.Context
 
 import Data.Maybe (fromMaybe)
 
-import Control.Exception (Exception, throw)
+import Utils.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 
 data TSLTerm t c where

@@ -14,7 +14,7 @@ import qualified Utils.Parsing as P
 import Utils.Parsing ((<|>))
 import Data.Functor (($>))
 
-import Control.Exception (Exception, throw)
+import Utils.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
 import Data.Hashable (Hashable)
 import Data.HashSet (HashSet)
