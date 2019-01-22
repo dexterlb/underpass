@@ -7,12 +7,22 @@ import Foreign.Ptr (nullPtr)
 import Data.Text (Text, pack, unpack)
 import Control.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
+import Paths_wordnet (getDataFileName)
 
-foreign import ccall "wn_init_wordnet" init_wordnet :: IO CBool
+import Debug.Trace
+
+foreign import ccall "wn_init_wordnet" init_wordnet :: CString -> IO CBool
 foreign import ccall "morphstr"        morphstr     :: CString -> CInt -> IO CString
 
 initialise :: IO Bool
-initialise = (toEnum . fromEnum) <$> init_wordnet
+initialise = do
+    dict <- getDataFileName "dict"
+    initialiseFrom $ traceShowId dict
+
+initialiseFrom :: FilePath -> IO Bool
+initialiseFrom path = do
+    cpath <- newCString path
+    (toEnum . fromEnum) <$> (init_wordnet cpath)
 
 ensureInit :: IO ()
 ensureInit = do

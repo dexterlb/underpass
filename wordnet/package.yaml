@@ -5,6 +5,7 @@ license:             MIT
 author:              "dexterlb"
 maintainer:          "dexterlb@qtrp.org"
 copyright:           "2018 Angel Angelov"
+build-type:          Custom
 
 extra-source-files:
 - README.md
@@ -37,6 +38,75 @@ library:
     - lib/wnutil.c
     - lib/haskell_wrappers.c
 
+data-dir: data
+data-files:
+  - get_dict.sh
+  - dict/dbfiles/noun.act
+  - dict/dbfiles/noun.plant
+  - dict/dbfiles/adj.pert
+  - dict/dbfiles/noun.attribute
+  - dict/dbfiles/noun.body
+  - dict/dbfiles/noun.group
+  - dict/dbfiles/noun.food
+  - dict/dbfiles/verb.communication
+  - dict/dbfiles/verb.stative
+  - dict/dbfiles/verb.Framestext
+  - dict/dbfiles/noun.animal
+  - dict/dbfiles/noun.quantity
+  - dict/dbfiles/noun.relation
+  - dict/dbfiles/verb.perception
+  - dict/dbfiles/noun.shape
+  - dict/dbfiles/noun.possession
+  - dict/dbfiles/noun.event
+  - dict/dbfiles/verb.competition
+  - dict/dbfiles/verb.contact
+  - dict/dbfiles/verb.consumption
+  - dict/dbfiles/noun.substance
+  - dict/dbfiles/verb.emotion
+  - dict/dbfiles/noun.feeling
+  - dict/dbfiles/noun.time
+  - dict/dbfiles/noun.process
+  - dict/dbfiles/verb.social
+  - dict/dbfiles/noun.cognition
+  - dict/dbfiles/noun.object
+  - dict/dbfiles/noun.communication
+  - dict/dbfiles/verb.motion
+  - dict/dbfiles/cntlist
+  - dict/dbfiles/adv.all
+  - dict/dbfiles/adj.ppl
+  - dict/dbfiles/verb.change
+  - dict/dbfiles/noun.phenomenon
+  - dict/dbfiles/noun.location
+  - dict/dbfiles/noun.artifact
+  - dict/dbfiles/noun.motive
+  - dict/dbfiles/verb.creation
+  - dict/dbfiles/noun.state
+  - dict/dbfiles/verb.possession
+  - dict/dbfiles/adj.all
+  - dict/dbfiles/verb.cognition
+  - dict/dbfiles/verb.body
+  - dict/dbfiles/noun.Tops
+  - dict/dbfiles/verb.weather
+  - dict/dbfiles/noun.person
+  - dict/sentidx.vrb
+  - dict/cntlist.rev
+  - dict/index.sense
+  - dict/verb.Framestext
+  - dict/index.verb
+  - dict/noun.exc
+  - dict/data.adj
+  - dict/index.adv
+  - dict/index.noun
+  - dict/verb.exc
+  - dict/cntlist
+  - dict/sents.vrb
+  - dict/adj.exc
+  - dict/data.noun
+  - dict/data.adv
+  - dict/cousin.exc
+  - dict/data.verb
+  - dict/index.adj
+  - dict/adv.exc
 
 ghc-options:
 - -Wall
