@@ -60,9 +60,7 @@ makeSolution tree' =
 instance Latexable Solutions where
     latex (Solutions tokens sols)
         =  "\\section{Input query}\n"
-        <> "\\begin{lstlisting}\n"
         <> Text.intercalate " " (map latex tokens) <> "\n"
-        <> "\\end{lstlisting}\n"
         <> "\\section{Parses}\n"
         <> (mconcat $ map (\(n, sol) -> "\\subsection{Parse " <> (pack $ show $ n + 1) <> "}\n" <> latex sol) $ indexed sols)
 

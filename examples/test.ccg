@@ -13,7 +13,7 @@ pos="comma"   : $X \ $X       @ id.
 
 pos="in"      : Set / Set \ Set @ \things { \where { and things (in where) } }.
 lemma="cafe"  : Set             @ amenity 'cafe'.
-raw="Sofia"   : Set             @ name 'София'.
+pos="nnp"     : Set             @ name `'$raw'` : String.
 
 
 

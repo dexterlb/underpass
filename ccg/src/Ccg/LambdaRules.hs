@@ -33,23 +33,26 @@ type UnresolvedLambdaCategory t = ModalCategory (UnresolvedType t)
 resolveLambdaRule :: forall c t. (Eq c, Eq t, PartialOrd t, Typed c t) => TypeWrappers t -> TermLibrary c t -> UnresolvedLambdaRule t c -> LambdaRule t c
 resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveItem) items)
     where
-        resolveItem (cat, LambdaConstructor term)
+        resolveItem (cat, SimpleLambdaConstructor term)
             = check $ ( resolvedCat
--- need a simpler, hackier type inference which doesn't mess up cross-branch casts
-              , LambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) )
---              , LambdaConstructor (resolveTerm types terms term) )
+              , SimpleLambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) )
                 where
                     resolvedCat = resolveLambdaCategory types cat
+        resolveItem (cat, TemplateLambdaConstructor term (Template templText templParser templType))
+            = check $ ( resolvedCat
+              , TemplateLambdaConstructor (inferTypesOnClosedTerm (typeOf resolvedCat) $ resolveTerm types terms term) resolvedTempl )
+                where
+                    resolvedCat   = resolveLambdaCategory types cat
+                    resolvedTempl = Template templText ((resolveTerm types terms) <$> templParser) (resolveType types templType)
 
 
         check :: (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c)) ->
                  (ModalCategory (AppTypeWrapper t), LambdaConstructor (TypeWrapper t) (ConstWrapper c))
 
-        check (x @ (cat, LambdaConstructor term))
-            | typeOfCat == typeOf term  = x
-            | otherwise                 = throw $ TypeMismatch (cat, typeOfCat) (term, typeOf term)
+        check (x @ (cat, constr))
+            | typeOfCat == typeOf constr  = x
+            | otherwise                   = throw $ TypeMismatch (cat, typeOfCat) (constr, typeOf constr)
             where
-                -- haskell is dumb and can't find this type by himself
                 typeOfCat = typeOf cat :: AppTypeWrapper t
 
 resolveLambdaCategory :: TypeWrappers t -> ModalCategory (UnresolvedType t) -> ModalCategory (AppTypeWrapper t)
@@ -59,7 +62,7 @@ composeTerm :: (Eq t, PartialOrd t, Typed c t) => ParseTree (ModalCategory (AppT
 composeTerm = treeTerm . (tmap (\(LambdaPayload term _) -> term))
 
 data LambdaRuleException t c
-    = TypeMismatch (LambdaCategory t, AppTypeWrapper t) (LambdaTerm (TypeWrapper t) (ConstWrapper c), AppTypeWrapper t)
+    = TypeMismatch (LambdaCategory t, AppTypeWrapper t) (LambdaConstructor (TypeWrapper t) (ConstWrapper c), AppTypeWrapper t)
     deriving (Typeable)
 
 deriving instance (Show t, Show c) => Show (LambdaRuleException t c)

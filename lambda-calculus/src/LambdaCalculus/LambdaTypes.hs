@@ -108,6 +108,7 @@ transform _ Wildcard                 = Wildcard
 data TypeException t
     = CannotMeet t t
     | WrongLambdaType t
+    | CannotApply t t
     deriving (Typeable)
 
 deriving instance Show t => Show (TypeException t)
@@ -118,6 +119,16 @@ instance Latexable a => Latexable (ApplicativeType a) where
     latex (Basic x)         = latex x
     latex (Application a b) = latex a <> " \\rightarrow " <> latex b
     latex Wildcard               = "*"
+
+apply :: (MSemiLattice (ApplicativeType t)) => ApplicativeType t -> ApplicativeType t -> ApplicativeType t
+apply f arg
+    | arg <! targ = tret
+    | otherwise   = throw $ CannotApply f arg
+    where
+        (targ, tret) = inferApp f
+
+
+
 
 -- memo instances
 instance (MemoTable t) => MemoTable (ApplicativeType t) where
