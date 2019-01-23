@@ -1,3 +1,2 @@
-- way to insert token data into lambda terms (parse templates?)
 - incorporate type raising (decide between unary rules or parametric combination)
 - category features and feature variables
