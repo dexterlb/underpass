@@ -1,4 +1,4 @@
-resolver: lts-13.2
+resolver: lts-13.4
 packages:
 - ccg
 - minipass
@@ -8,7 +8,7 @@ packages:
 
 extra-deps:
 - git: git@github.com:DexterLB/chatter.git
-  commit: 49a52c735f4a01625400830f58b2dab864c75257
+  commit: 23bc8a21c9b93be1e9db05facb12760df3f89c72
 - git: git@github.com:DexterLB/haskell-wordnet.git
   commit: efc832deb8267e813f916032470523048b63c1d4
 - cereal-text-0.1.0.2
