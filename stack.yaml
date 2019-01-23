@@ -5,11 +5,12 @@ packages:
 - utils
 - lambda-calculus
 - the-thing
-- wordnet
 
 extra-deps:
 - git: git@github.com:DexterLB/chatter.git
   commit: 49a52c735f4a01625400830f58b2dab864c75257
+- git: git@github.com:DexterLB/haskell-wordnet.git
+  commit: efc832deb8267e813f916032470523048b63c1d4
 - cereal-text-0.1.0.2
 - fullstop-0.1.4
 - tokenize-0.3.0
