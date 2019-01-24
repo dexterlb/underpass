@@ -5,6 +5,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module LambdaCalculus.Lambda where
 
@@ -23,6 +24,8 @@ import LambdaCalculus.Context
 
 import Utils.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
+import GHC.Generics (Generic)
+import Data.Hashable (Hashable(..))
 
 data LambdaTerm t c where
     Constant    :: Typed c t => c                   -> LambdaTerm t c
@@ -33,8 +36,6 @@ data LambdaTerm t c where
 
 instance (Show t, Show c) => Show (LambdaTerm t c) where
     show = showTerm emptyContext
-
-deriving instance (Eq t, Eq c) => Eq (LambdaTerm t c)
 
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
@@ -209,6 +210,20 @@ newtype VarException
     deriving (Show, Typeable)
 
 deriving instance (Show t, Show c) => Show (LambdaException t c)
+
+deriving instance (Eq t, Eq c) => Eq (LambdaTerm t c)
+
+-- hashing
+data LHashBin = HVariable | HApplication | HLambda | HConstant | HCast deriving (Generic)
+
+instance Hashable LHashBin
+
+instance (Hashable t, Hashable c) => Hashable (LambdaTerm t c) where
+    hashWithSalt salt (Variable x)      = hashWithSalt salt (HVariable, x)
+    hashWithSalt salt (Lambda t x m)    = hashWithSalt salt (HLambda, t, x, m)
+    hashWithSalt salt (Application m n) = hashWithSalt salt (HApplication, m, n)
+    hashWithSalt salt (Constant m)      = hashWithSalt salt (HConstant, m)
+    hashWithSalt salt (Cast t m)        = hashWithSalt salt (HCast, t, m)
 
 instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)
 instance Exception VarException

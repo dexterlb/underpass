@@ -22,4 +22,5 @@ main = do
     query <- getLine
 
     result <- solve program (Text.pack query)
+    summary result
     latexPreview result

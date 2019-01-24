@@ -5,7 +5,11 @@ module Underpass.Solution where
 
 import           Data.Text (Text, pack)
 import qualified Data.Text as Text
+import qualified Data.Text.IO as Text
 import qualified Data.Vector as V
+import           Data.Hashable (Hashable)
+import qualified Data.HashMap.Lazy as HM
+import           Control.Monad (forM_)
 
 import Ccg.Program
 import Ccg.Trees (ParseTree, enumTrees)
@@ -43,7 +47,6 @@ solve p inQuery' = do
     lexer               <- simpleEnglishPosTaggingLexer
     let tokens          =  lexer inQuery'
     let categories      =  V.fromList $ match (rules p) tokens
-    putStrLn $ show categories
     let trees           =  enumTrees $ cyk categories (begin p)
     pure $ Solutions tokens $ map makeSolution trees
 
@@ -56,6 +59,23 @@ makeSolution tree' =
         }
         where
             term' = inferTypesOnClosedTerm Wildcard $ composeTerm tree'
+
+summary :: Solutions -> IO ()
+summary (Solutions _tokens []) = do
+    putStrLn "no parses :("
+summary (Solutions _tokens sols) = do
+    let distinctSols = distinctBy outQuery sols
+    putStrLn $ show (length sols) <> " parses, of which " <> show (length distinctSols)
+            <> " distinct."
+
+    let first = take 5 distinctSols
+    putStrLn $ "here are the first " <> show (length first) <> " distinct queries:\n"
+    forM_ first $ \sol -> do
+        putStrLn "\n"
+        Text.putStrLn $ outQuery sol
+
+distinctBy :: (Eq k, Hashable k) => (a -> k) -> [a] -> [a]
+distinctBy key = (map snd) . HM.toList . HM.fromList . (map (\x -> (key x, x)))
 
 instance Latexable Solutions where
     latex (Solutions tokens sols)

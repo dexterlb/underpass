@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DeriveGeneric         #-}
 
 module Minipass.Language.Constants where
 
@@ -9,6 +10,9 @@ import Data.Functor (($>))
 
 import Utils.Latex
 import Data.Text (Text, pack)
+
+import GHC.Generics (Generic)
+import Data.Hashable (Hashable)
 
 data Constants = StringLiteral Text
                | NumLiteral    Float
@@ -25,7 +29,9 @@ data Constants = StringLiteral Text
                | ConsString
                | ConsList
 
-    deriving (Show, Eq)
+    deriving (Show, Eq, Generic)
+
+instance Hashable Constants
 
 instance P.Parseable Constants where
     parser = parseKeyword <|> parseStringLiteral <|> parseNumLiteral

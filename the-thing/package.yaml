@@ -16,6 +16,8 @@ dependencies:
 - text
 - vector
 - deepseq
+- hashable
+- unordered-containers
 
 - lambda-calculus
 - utils
