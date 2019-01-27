@@ -10,3 +10,4 @@ ways        :=  get (consString 'all' (consString 'ways' empty)).
 relations   :=  get (consString 'all' (consString 'relations' empty)).
 areas       :=  get (consString 'all' (consString 'areas' empty)).
 
+id          := \y { y }.
