@@ -12,8 +12,8 @@ import Utils.Latex (latexPreview)
 
 main :: IO ()
 main = do
-    args    <- getArgs
-    program <- parseFiles $ args
+    (action:args)    <- getArgs
+    program          <- parseFiles $ args
 
     assert program
 
@@ -22,5 +22,9 @@ main = do
     query <- getLine
 
     result <- solve program (Text.pack query)
-    summary result
-    latexPreview result
+    case action of
+      "summary" -> do
+          putStrLn "\n"
+          summary result
+      "latex"   -> latexPreview result
+      _         -> putStrLn $ "unknown action: " <> action

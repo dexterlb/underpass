@@ -28,24 +28,28 @@ import Minipass.Language.Intermediate
 import Minipass.Language.Constants
 import Minipass.Language.Language (ListC(..), listTerm)
 
-import           Utils.Maths ((/\))
-
 data Statement
     = OutputSet VarName
-    | PerformFilter (HashSet OsmType) [VarName] (HashSet FilterExpr) VarName
+    | PerformFilters [Filter] VarName
     | Comment Text
+
+data Filter = Filter (HashSet OsmType) [VarName] (HashSet FilterExpr)
 
 render :: Statement -> Text
 render (Comment x) = "/* " <> x <> " */\n"
 render (OutputSet var) = "." <> var <> " out;\n"
-render (PerformFilter types inputs filters out)
-    = renderUnion (map (renderFilter inputs filters) (HS.toList types)) out
+render (PerformFilters filters out)
+    = renderUnion (concat $ map renderFilter filters) out
 
 renderUnion :: [Text] -> VarName -> Text
 renderUnion items var = "( " <> Text.concat (map (<> "; ") items) <> ") -> ." <> var <> ";\n"
 
-renderFilter :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
-renderFilter vars filters t = Text.concat $ renderOsmType t : map ("." <>) vars ++ map renderFilterExpr (HS.toList filters)
+renderFilter :: Filter -> [Text]
+renderFilter (Filter types inputs exprs)
+    = map (renderFilterCase inputs exprs) (HS.toList types)
+
+renderFilterCase :: [VarName] -> HashSet FilterExpr -> OsmType -> Text
+renderFilterCase vars filters t = Text.concat $ renderOsmType t : map ("." <>) vars ++ map renderFilterExpr (HS.toList filters)
 
 renderOsmType :: OsmType -> Text
 renderOsmType OsmNode = "node"
@@ -115,27 +119,40 @@ translateApp [Constant _ ConsList, xTerm, xsTerm] = do
     (ListValue  x) <- translate xTerm
     (ListValue xs) <- translate xsTerm
     pure $ ListValue (ListC x : xs)
-translateApp term@[Constant _ And, left, right]  = translateFilter (T.typeOf left /\ T.typeOf right) term
-translateApp term@[Constant (T.Application _ (T.Application _ t)) Next, _, _] = translateFilter t term
-translateApp term@[Constant (T.Application _ t) Get, _] = translateFilter t term
+translateApp term@[Constant (T.Application _ (T.Application _ t)) And, _, _]  = translateFilters t term
+translateApp term@[Constant (T.Application _ (T.Application _ t))  Or, _, _]  = translateFilters t term
+translateApp term@[Constant (T.Application _ (T.Application _ t)) Next, _, _] = translateFilters t term
+translateApp term@[Constant (T.Application _ t) Get, _] = translateFilters t term
 translateApp [Lambda (T.Application t@(T.Basic (Set _)) _) _ m, n] = do
     (SetValue nVar) <- translate n
     translate $ substitute m 0 (Application t (Constant (T.Application (T.Basic List) t) Get) (typify emptyContext $ toIntermediate $ listTerm [StringC "setVariable", StringC nVar]))
 translateApp term = fail $ "I don't know how to translate " <> show term
 
-translateFilter :: TTypes -> [TTerm] -> EState Translator Value
-translateFilter t terms = do
-    let (T.Basic (Set tag)) = t
-    (vars, filters) <- walkFilterTree terms
-    result <- expression $ PerformFilter (osmTypes tag) vars filters
+translateFilters :: TTypes -> [TTerm] -> EState Translator Value
+translateFilters t term = do
+    filters <- walkFilterTree t term
+    result  <- expression $ PerformFilters filters
     pure $ SetValue result
 
-walkFilterTree :: [TTerm] -> EState Translator ([VarName], HashSet FilterExpr)
-walkFilterTree [Constant _ And, leftTerm, rightTerm] = do
-    (sets1, filters1) <- walkFilterTree $ uncurryApplication leftTerm
-    (sets2, filters2) <- walkFilterTree $ uncurryApplication rightTerm
+walkFilterTree :: TTypes -> [TTerm] -> EState Translator [Filter]
+walkFilterTree _ [Constant _ Or, left, right] = do
+    leftFilters  <- walkFilterTree (T.typeOf  left) $ uncurryApplication left
+    rightFilters <- walkFilterTree (T.typeOf right) $ uncurryApplication right
+    pure $ leftFilters ++ rightFilters
+walkFilterTree t term = do
+    let tag = case t of
+                (T.Basic (Set tag')) -> tag'
+                other                -> error $ "trying to perform Or on non-set type " <> show other
+    (vars, filters) <- walkConjunctiveFilterTree term
+    pure $ [Filter (osmTypes tag) vars filters]
+
+
+walkConjunctiveFilterTree :: [TTerm] -> EState Translator ([VarName], HashSet FilterExpr)
+walkConjunctiveFilterTree [Constant _ And, leftTerm, rightTerm] = do
+    (sets1, filters1) <- walkConjunctiveFilterTree $ uncurryApplication leftTerm
+    (sets2, filters2) <- walkConjunctiveFilterTree $ uncurryApplication rightTerm
     pure (sets1 <> sets2, HS.union filters1 filters2)
-walkFilterTree [Constant (T.Application _ _) Get, labelTerm] = do
+walkConjunctiveFilterTree [Constant (T.Application _ _) Get, labelTerm] = do
     (ListValue label)   <- translate labelTerm
     case label of
         [StringC "setVariable", StringC var] -> pure ([var], HS.empty)
@@ -143,14 +160,14 @@ walkFilterTree [Constant (T.Application _ _) Get, labelTerm] = do
             -> pure ([], HS.singleton $ KvFilter comparator key value)
         [StringC "all"] -> pure ([], HS.empty)  -- only filter the type, pure all objects
         _   -> fail $ "I don't know how to interpret this label: " <> show label
-walkFilterTree [Constant (T.Application _ (T.Application _ _)) Next, labelTerm, inTerm] = do
+walkConjunctiveFilterTree [Constant (T.Application _ (T.Application _ _)) Next, labelTerm, inTerm] = do
     (ListValue label)   <- translate labelTerm
     (SetValue  input)   <- translate inTerm
     case label of
         [StringC "in"] -> pure ([], HS.singleton $ AreaFilter input)
         [StringC "around", NumC dist] -> pure ([], HS.singleton $ AroundFilter dist input)
         _   -> fail $ "I don't know how to interpret this label: " <> show label
-walkFilterTree terms = do
+walkConjunctiveFilterTree terms = do
     (SetValue result) <- translateApp terms
     pure ([result], HS.empty)
 

@@ -1,5 +1,6 @@
-name        :=  lambda n : String { get (consString 'tagFilter' (consList (consString '==' (consString 'name' (consString n empty))) empty)) }.
-amenity     :=  lambda n : String { get (consString 'tagFilter' (consList (consString '==' (consString 'amenity' (consString n empty))) empty)) }.
+name        :=  \x { or (kv 'name' x) (kv 'int_name' x) } .
+amenity     :=  kv 'amenity'.
+kv          :=  lambda k: String { lambda n : String { get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty)) } }.
 within      :=  lambda dist : Num { next (consString 'around'   (consNum dist empty)) }.
 in          :=  next (consString 'in' empty).
 nodes       :=  get (consString 'all' (consString 'nodes' empty)).
