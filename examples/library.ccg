@@ -1,3 +1,5 @@
+city        := or (or (kv 'admin_level' '8') (kv 'admin_level' '6')) (kv 'capital' '4').
+
 name        :=  \x { or (kv 'name' x) (kv 'int_name' x) } .
 amenity     :=  kv 'amenity'.
 kv          :=  lambda k: String { lambda n : String { get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty)) } }.
