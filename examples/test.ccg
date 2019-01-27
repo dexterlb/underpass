@@ -4,6 +4,8 @@ SE < Set.
 
 S < Set.
 
+Entity < Set.
+
 id := \y { y }.
 
 mark="begin"  : S / SE        @ \x: SE    { S[Set[x]] }.
@@ -13,7 +15,7 @@ pos="comma"   : $X \ $X       @ id.
 
 pos="in"      : Set / Set \ Set @ \things { \where { and things (in where) } }.
 lemma="cafe"  : Set             @ amenity 'cafe'.
-pos="nnp"     : Set             @ name `'$raw'` : String.
-raw="city"    : Set \ Set       @ and city.
+pos="nnp"     : Entity          @ name `'$raw'` : String.
+raw="city"    : Set \ Entity    @ and city.
 
 
