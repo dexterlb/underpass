@@ -6,16 +6,16 @@ S < Set.
 
 Entity < Set.
 
-id := \y { y }.
-
 mark="begin"  : S / SE        @ \x: SE    { S[Set[x]] }.
 mark="end"    : SE \ Set      @ \x: Set   { SE[x] }.
 
 pos="comma"   : $X \ $X       @ id.
 
-pos="in"      : Set / Set \ Set @ \things { \where { and things (in where) } }.
+raw="in"      : Set / Set \ Set @ \things { \where { and things (in where) } }.
 lemma="cafe"  : Set             @ amenity 'cafe'.
 pos="nnp"     : Entity          @ name `'$raw'` : String.
 raw="city"    : Set \ Entity    @ and city.
+raw="near"    : Set \ Set / Set @ \b { \a { and a (near b)  } }.
+lemma="fountain" : Set @ amenity 'drinking_water'.
 
 
