@@ -19,7 +19,7 @@ main = do
     assert program
 
     case action of
-        "serve" -> serve
+        "serve" -> serve program
 
         _ -> do -- yeah, yeah, this is stupid, I know. Will rewrite some day.
             putStr "Enter query: "

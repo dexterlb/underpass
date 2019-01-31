@@ -21,6 +21,7 @@ dependencies:
 - snap-core
 - snap-server
 - bytestring
+- aeson
 
 - lambda-calculus
 - utils

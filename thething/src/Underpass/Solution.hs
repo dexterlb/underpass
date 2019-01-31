@@ -42,7 +42,9 @@ data Solution = Solution
 
 data Solutions = Solutions [TokenData] [Solution]
 
-solve :: Program Types Constants -> Text -> IO Solutions
+type UnderpassProgram = Program Types Constants
+
+solve :: UnderpassProgram -> Text -> IO Solutions
 solve p inQuery' = do
     lexer               <- simpleEnglishPosTaggingLexer
     let tokens          =  lexer inQuery'
