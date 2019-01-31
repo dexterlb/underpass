@@ -40,7 +40,7 @@ instance (Show t, Show c) => Show (LambdaTerm t c) where
 showTerm :: (Show t, Show c) => VarContext t -> LambdaTerm t c -> String
 showTerm _ (Constant c) = show c
 showTerm context (Application a b) = "(" <> showTerm context a <> " " <> showTerm context b <> ")"
-showTerm context (Lambda x t a) = "λ " <> Text.unpack x <> ": " <> show t <> " { " <> showTerm (push (x, t) context) a <> " }"
+showTerm context (Lambda x t a) = "λ " <> Text.unpack x <> ": " <> show t <> " ⇒ " <> showTerm (push (x, t) context) a
 showTerm context (Variable i)
     | Just (x, _) <- at i context = Text.unpack x
     | otherwise = "<var " <> show i <> ">"
@@ -55,7 +55,7 @@ typeOfTerm _ _ (Constant c) = typeOf c
 typeOfTerm safe context (Application a b)
     | safe,     tb <!  p = q
     | not safe, tb <!> p = q
-    | otherwise = error $ show tb <> " is not <! " <> show p-- throw $ CannotApply (a, ta) (b, tb)
+    | otherwise = throw $ CannotApply (a, ta) (b, tb)
     where
         (p, q) = T.inferApp ta
         ta = typeOfTerm safe context a
@@ -124,12 +124,16 @@ parseConstant = do
 parseLambda :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseLambda context = do
     _                <- P.word "lambda" <|> P.operator "\\" <|> P.operator "λ"
-    (var, varType)   <- parseVariableDeclaration
-    _                <- P.operator "{"
-    (term, termType) <- parseTerm (push (var, varType) context)
-    _                <- P.operator "}"
+    declarations     <- P.sepBy1 parseVariableDeclaration (P.operator ",")
+    _                <- P.operator "=>" <|> P.operator "⇒"
+    term             <- parseTerm (foldr push context $ reverse declarations)
+    pure $ makeAbstraction declarations term
 
-    return (Lambda var varType term, T.Application varType termType)
+makeAbstraction :: Typed c t => [(VarName, T.ApplicativeType t)] -> (LambdaTerm t c, T.ApplicativeType t) -> (LambdaTerm t c, T.ApplicativeType t)
+makeAbstraction [] t = t
+makeAbstraction ((var, varType):rest) t = (Lambda var varType term, T.Application varType termType)
+    where
+        (term, termType) = makeAbstraction rest t
 
 parseCast :: (Parseable t, Parseable c, Typed c t) => VarContext t -> Parser (LambdaTerm t c, T.ApplicativeType t)
 parseCast context = P.try $ do
