@@ -1,4 +1,4 @@
-name:                the-thing
+name:                thething
 version:             0.1.0.0
 github:              "DexterLB/underpass"
 license:             MIT
@@ -18,6 +18,9 @@ dependencies:
 - deepseq
 - hashable
 - unordered-containers
+- snap-core
+- snap-server
+- bytestring
 
 - lambda-calculus
 - utils
@@ -31,6 +34,9 @@ ghc-options:
 - -Wall
 - -Werror
 
+data-files:
+- data/static/*
+
 executables:
   underpass-exe:
     main:                Main.hs
@@ -40,10 +46,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - the-thing
+    - thething
 
 tests:
-  the-thing-test:
+  thething-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -51,4 +57,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - the-thing
+    - thething

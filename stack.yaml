@@ -1,10 +1,10 @@
-resolver: lts-13.4
+resolver: lts-13.5
 packages:
 - ccg
 - minipass
 - utils
 - lambda-calculus
-- the-thing
+- thething
 
 extra-deps:
 - git: git@github.com:DexterLB/chatter.git
