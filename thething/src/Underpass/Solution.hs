@@ -101,7 +101,7 @@ instance Latexable Solution where
 
 instance ToJSON Solution where
     toJSON (Solution { term, outQuery })
-        = object [ "minipass_term" .= term, "output_query" .= outQuery ]
+        = object [ "minipass_term" .= (humanJSON emptyContext $ typify emptyContext term), "output_query" .= outQuery ]
 
 indexed :: [a] -> [(Int, a)]
 indexed = indexed' 0

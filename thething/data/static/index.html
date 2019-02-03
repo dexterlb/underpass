@@ -14,7 +14,7 @@
         <div class="container" id="container">
             <div class="input-box">
                 <label for="input_query">Enter query:</label>
-                <input id="input_query" name="input_query" type="text" />
+                <input id="input_query" name="input_query" type="text" autofocus/>
             </div>
             <div class="loading">
                 loading
@@ -26,7 +26,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            main();
+            $('document').ready(main);
         </script>
     </body>
 </html>

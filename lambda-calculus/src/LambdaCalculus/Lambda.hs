@@ -236,9 +236,9 @@ instance Exception VarException
 -- json
 
 instance (ToJSON t, ToJSON c) => ToJSON (LambdaTerm t c) where
-    toJSON (Variable x)      = object ["_t" .= ("variable" :: Text),    "name" .= x]
-    toJSON (Application m n) = object ["_t" .= ("application" :: Text), "left" .= m, "right"   .= n]
-    toJSON (Lambda t x m)    = object ["_t" .= ("lambda" :: Text),      "type" .= t, "varname" .= x, "subterm" .= m]
-    toJSON (Constant c)      = object ["_t" .= ("constant" :: Text),    "name" .= c]
-    toJSON (Cast t m)        = object ["_t" .= ("cast" :: Text),        "type" .= t, "subterm" .= m]
+    toJSON (Variable x)      = object ["_t" .= ("variable" :: Text),    "index" .= x]
+    toJSON (Application m n) = object ["_t" .= ("application" :: Text), "left"  .= m, "right"   .= n]
+    toJSON (Lambda t x m)    = object ["_t" .= ("lambda" :: Text),      "type"  .= t, "varname" .= x, "subterm" .= m]
+    toJSON (Constant c)      = object ["_t" .= ("constant" :: Text),    "name"  .= c]
+    toJSON (Cast t m)        = object ["_t" .= ("cast" :: Text),        "type"  .= t, "subterm" .= m]
 

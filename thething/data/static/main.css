@@ -7,3 +7,67 @@
 .status-no-loading .loading {
     display: none;
 }
+
+.token {
+    position: relative;
+}
+
+.token-sep::before {
+    content: ' ';
+}
+
+.token.fictional::before {
+    content: '⚓';
+}
+
+.meta-container .meta-box {
+    display: none;
+}
+
+.meta-container-hovered .meta-box {
+    display: inline-block;
+    margin-left: 1em;
+    margin-right: 1em;
+    border: 1px solid red;
+    position: absolute;
+    left: -1em;
+    top: 2em;
+    background-color: yellow;
+    width: 15em;
+}
+
+.meta-container-hovered {
+    background-color: yellow;
+}
+
+.lambda-term {
+    display: inline-block;
+}
+.lambda-application::before {
+    content: ' (';
+}
+.lambda-application::after {
+    content: ') ';
+}
+.lambda-abstraction::before {
+    content: ' (';
+}
+.lambda-abstraction::after {
+    content: ') ';
+}
+.lambda-term {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.lambda-cast-subterm::before {
+    content: '[';
+}
+.lambda-cast-subterm::after {
+    content: ']';
+}
+.lambda-abstraction-variable::before {
+    content: 'λ';
+}
+.lambda-abstraction-variable::after {
+    content: '⇒';
+}

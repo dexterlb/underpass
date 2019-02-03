@@ -16,10 +16,12 @@ import qualified LambdaCalculus.Lambda as L
 import Utils.Maths
 
 import qualified Data.Text as Text
+import           Data.Text (Text)
 
 import LambdaCalculus.Context
 
 import Data.Maybe (fromMaybe)
+import           Data.Aeson (ToJSON(..), object, (.=), Value)
 
 import Utils.Exception (Exception, throw)
 import Data.Dynamic (Typeable)
@@ -247,3 +249,14 @@ data LambdaException t c
 deriving instance (Show t, Show c) => Show (LambdaException t c)
 
 instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)
+
+humanJSON :: (ToJSON t, ToJSON c) => VarContext t -> TSLTerm t c -> Value
+humanJSON _ (Constant t c)      = object ["_t" .= ("constant" :: Text),    ("type" :: Text) .= t, "name" .= c]
+humanJSON context (Variable t i)
+  | Just (x, _) <- at i context = object ["_t" .= ("variable" :: Text),    ("type" :: Text) .= t, "name" .= x, "index" .= i]
+  | otherwise                   = object ["_t" .= ("variable" :: Text),    ("type" :: Text) .= t, "name" .= ("<var " <> show i <> ">"), "index" .= i]
+humanJSON context (term@(Application t _ _))
+  = object ["_t" .= ("application" :: Text), "terms" .= (map (humanJSON context) $ uncurryApplication term), "type" .= t]
+humanJSON context (Lambda t@(T.Application tv _) x m)    = object ["_t" .= ("lambda" :: Text),      "type" .= t, "varname" .= x, "subterm" .= (humanJSON (push (x, t) context) m), "vartype" .= tv]
+humanJSON context (Lambda t x m)    = object ["_t" .= ("lambda" :: Text),      "type" .= t, "varname" .= x, "subterm" .= (humanJSON (push (x, t) context) m)]
+humanJSON context (Cast t m)        = object ["_t" .= ("cast" :: Text),        "type" .= t, "subterm" .= (humanJSON context m)]
