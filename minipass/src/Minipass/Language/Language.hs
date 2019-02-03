@@ -15,6 +15,7 @@ import Utils.Maths
 import GHC.Generics (Generic)
 import Data.Hashable (Hashable)
 
+import           Data.Aeson (ToJSON(..))
 import           Data.MemoCombinators.Class (MemoTable, table)
 import qualified Data.MemoCombinators as Memo
 
@@ -93,3 +94,6 @@ listTerm (ListC n:xs)   = Application (Application (Constant ConsList) (listTerm
 
 instance Latexable Types where
     latex = pack . show
+
+instance ToJSON Types where
+    toJSON = toJSON . show

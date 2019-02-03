@@ -17,6 +17,7 @@ dependencies:
 - hashable
 - data-memocombinators
 - vector
+- aeson
 - text
 - utils
 - lambda-calculus

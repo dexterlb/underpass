@@ -9,23 +9,24 @@
 
 module LambdaCalculus.Lambda where
 
-import qualified LambdaCalculus.LambdaTypes as T
-import LambdaCalculus.LambdaTypes (Typed, typeOf)
+import           Utils.Exception (Exception, throw)
+import           Data.Dynamic (Typeable)
+import           GHC.Generics (Generic)
+import           Data.Hashable (Hashable(..))
+import           Data.Aeson (ToJSON(..), object, (.=))
+import           Control.Monad (fail)
+import qualified Data.Text as Text
+import           Data.Text (Text)
 
-import Utils.Maths
-import Utils.Parsing (Parser, Parseable, parser, (<|>))
+import           Utils.Maths
+import           Utils.Parsing (Parser, Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
 
-import qualified Data.Text as Text
+import qualified LambdaCalculus.LambdaTypes as T
+import           LambdaCalculus.LambdaTypes (Typed, typeOf)
+import           LambdaCalculus.Context
 
-import Control.Monad (fail)
 
-import LambdaCalculus.Context
-
-import Utils.Exception (Exception, throw)
-import Data.Dynamic (Typeable)
-import GHC.Generics (Generic)
-import Data.Hashable (Hashable(..))
 
 data LambdaTerm t c where
     Constant    :: Typed c t => c                   -> LambdaTerm t c
@@ -231,3 +232,13 @@ instance (Hashable t, Hashable c) => Hashable (LambdaTerm t c) where
 
 instance (Show t, Show c, Typeable t, Typeable c) => Exception (LambdaException t c)
 instance Exception VarException
+
+-- json
+
+instance (ToJSON t, ToJSON c) => ToJSON (LambdaTerm t c) where
+    toJSON (Variable x)      = object ["_t" .= ("variable" :: Text),    "name" .= x]
+    toJSON (Application m n) = object ["_t" .= ("application" :: Text), "left" .= m, "right"   .= n]
+    toJSON (Lambda t x m)    = object ["_t" .= ("lambda" :: Text),      "type" .= t, "varname" .= x, "subterm" .= m]
+    toJSON (Constant c)      = object ["_t" .= ("constant" :: Text),    "name" .= c]
+    toJSON (Cast t m)        = object ["_t" .= ("cast" :: Text),        "type" .= t, "subterm" .= m]
+

@@ -6,7 +6,7 @@ import Snap.Core
 import Snap.Http.Server
 import Snap.Util.FileServe
 
-import Data.Aeson.Encode (encode)
+import Data.Aeson (encode)
 import Control.Applicative
 import Control.Monad.IO.Class (liftIO)
 import Data.ByteString.Lazy as BL
@@ -14,7 +14,6 @@ import Data.Text.Encoding (decodeUtf8)
 
 import Paths_thething
 
-import Ccg.Program (Program)
 import Underpass.Solution
 
 serve :: UnderpassProgram -> IO ()
@@ -35,5 +34,5 @@ queryHandler :: UnderpassProgram -> Snap ()
 queryHandler program = do
     (Just query) <- getParam "query"
     sol <- liftIO $ solve program $ decodeUtf8 query
-
     writeBS $ BL.toStrict $ encode sol
+    modifyResponse (setContentType "application/json")

@@ -11,6 +11,7 @@ import           Data.Text (Text)
 import qualified Data.Text as Text
 import           Data.List (intercalate)
 import           Data.Functor (($>))
+import           Data.Aeson (ToJSON(..), object, (.=))
 
 import           Utils.Parsing (Parseable, parser, (<|>))
 import qualified Utils.Parsing as P
@@ -29,6 +30,10 @@ data TokenData = TokenData
     { text :: Token
     , tags :: [Tag]
     } deriving (Show)
+
+instance ToJSON TokenData where
+    toJSON (TokenData { text, tags})
+        = object [ "text" .= text, "tags" .= (object $ map (uncurry (.=)) tags) ]
 
 class FromMatch payload where
     type Constructor payload

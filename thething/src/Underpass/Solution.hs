@@ -10,6 +10,7 @@ import qualified Data.Vector as V
 import           Data.Hashable (Hashable)
 import qualified Data.HashMap.Lazy as HM
 import           Control.Monad (forM_)
+import           Data.Aeson (ToJSON(..), object, (.=))
 
 import Ccg.Program
 import Ccg.Trees (ParseTree, enumTrees)
@@ -86,6 +87,10 @@ instance Latexable Solutions where
         <> "\\section{Parses}\n"
         <> (mconcat $ map (\(n, sol) -> "\\subsection{Parse " <> (pack $ show $ n + 1) <> "}\n" <> latex sol) $ indexed sols)
 
+instance ToJSON Solutions where
+    toJSON (Solutions tokens sols)
+        = object [ "input" .= tokens, "parses" .= sols ]
+
 instance Latexable Solution where
     latex (Solution { tree, term, outQuery })
         =  "\\subsubsection{Parse tree}\n" <> latex tree
@@ -93,6 +98,10 @@ instance Latexable Solution where
             <> "\\begin{lstlisting}\n" <> (pack $ show term) <> "\\end{lstlisting}\n"
         <> "\\subsubsection{Output query}\n"
             <> "\\begin{lstlisting}\n" <> outQuery <> "\\end{lstlisting}\n"
+
+instance ToJSON Solution where
+    toJSON (Solution { term, outQuery })
+        = object [ "minipass_term" .= term, "output_query" .= outQuery ]
 
 indexed :: [a] -> [(Int, a)]
 indexed = indexed' 0

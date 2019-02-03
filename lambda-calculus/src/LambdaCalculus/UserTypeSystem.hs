@@ -20,6 +20,7 @@ import           Utils.Exception (throw, Exception)
 import           Data.Dynamic (Typeable)
 import           Data.MemoCombinators.Class (MemoTable, table)
 import           Data.MemoCombinators (Memo, memo2)
+import           Data.Aeson (ToJSON(..), object, (.=))
 
 import           LambdaCalculus.LambdaTypes (ApplicativeType(..), TypeException(..), Typed(..))
 import           LambdaCalculus.Lambda (LambdaTerm)
@@ -184,3 +185,9 @@ data SubtypeException
     = NoSuchType P.SourcePos T.Name
     deriving (Typeable, Exception, Show)
 
+-- JSON stuff
+instance (ToJSON b) => ToJSON (TypeWrapper b) where
+    toJSON (Type b)         = object ["_t" .= ("basic_type" :: String), "type" .= b]
+    toJSON (SubType name t) = object ["_t" .= ("subtype" :: String),    "name" .= name, "parent" .= t]
+
+deriving instance (ToJSON c) => ToJSON (ConstWrapper c)

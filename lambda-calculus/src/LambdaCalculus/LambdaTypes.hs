@@ -10,6 +10,7 @@
 
 module LambdaCalculus.LambdaTypes where
 
+import           Data.Aeson (ToJSON(..), object, (.=))
 import qualified Utils.Parsing as P
 import Utils.Parsing ((<|>))
 import Data.Functor (($>))
@@ -192,3 +193,8 @@ refless (Basic (BasicRef _)) = True
 refless (Basic (UnresolvedName _ _)) = False
 refless (Application a b) = refless a && refless b
 refless _ = True
+
+instance (ToJSON t) => ToJSON (ApplicativeType t) where
+    toJSON (Application m n) = object ["_t" .= ("application" :: Text), "left" .= m, "right" .= n]
+    toJSON (Basic m)         = object ["_t" .= ("basic" :: Text),       "type" .= m]
+    toJSON Wildcard          = object ["_t" .= ("wildcard" :: Text)]

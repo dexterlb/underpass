@@ -1,0 +1,9 @@
+.status-no-error .error {
+    display: none;
+}
+.status-no-ok .result {
+    display: none;
+}
+.status-no-loading .loading {
+    display: none;
+}

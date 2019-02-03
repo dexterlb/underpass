@@ -1,8 +1,32 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>fu</title>
+        <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+        <script src="static/index.js"></script>
+        <link rel="stylesheet" type="text/css" href="static/main.css"></link>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     </head>
     <body>
-        fuck
+        <div class="container" id="container">
+            <div class="input-box">
+                <label for="input_query">Enter query:</label>
+                <input id="input_query" name="input_query" type="text" />
+            </div>
+            <div class="loading">
+                loading
+            </div>
+            <div class="error" id="error">
+                no error
+            </div>
+            <div class="result" id="result">
+            </div>
+        </div>
+        <script type="text/javascript">
+            main();
+        </script>
     </body>
 </html>
