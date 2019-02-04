@@ -6,18 +6,22 @@
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <script src="static/index.js"></script>
         <link rel="stylesheet" type="text/css" href="static/main.css"></link>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <script src="//twemoji.maxcdn.com/2/twemoji.min.js?11.3"></script>
     </head>
     <body>
         <div class="container" id="container">
-            <div class="input-box">
-                <label for="input_query">Enter query:</label>
-                <input id="input_query" name="input_query" type="text" autofocus/>
-            </div>
-            <div class="title">Try query</div>
-            <div id="history" class="history">
+            <div class="input-container">
+                <div class="input-box">
+                    <label for="input_query">Enter query:</label>
+                    <input id="input_query" name="input_query" type="text" autofocus/>
+                </div>
+                <div class="title">Try query</div>
+                <div id="history" class="history">
+                </div>
             </div>
             <div class="loading">
                 loading

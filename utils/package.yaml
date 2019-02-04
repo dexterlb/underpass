@@ -22,6 +22,11 @@ dependencies:
 - process
 - data-memocombinators
 - directory
+- base64-bytestring
+- bytestring
+
+data-files:
+- data/latex_error.svg
 
 library:
   source-dirs: src

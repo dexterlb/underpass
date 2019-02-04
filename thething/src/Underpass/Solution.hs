@@ -39,6 +39,7 @@ type Term = LambdaTerm (TypeWrapper Types) (ConstWrapper Constants)
 data Solution = Solution
     { tree     :: Tree
     , term     :: Term
+    , treeSVG  :: Text
     , outQuery :: Text
     } deriving (Show)
 
@@ -52,12 +53,15 @@ solve p inQuery' = do
     let tokens          =  lexer inQuery'
     let categories      =  V.fromList $ match (rules p) tokens
     let trees           =  enumTrees $ cyk categories (begin p)
-    pure $ Solutions tokens $ map makeSolution trees
 
-makeSolution :: Tree -> Solution
-makeSolution tree' =
-    Solution
+    Solutions tokens <$> mapM makeSolution trees
+
+makeSolution :: Tree -> IO Solution
+makeSolution tree' = do
+    svg <- latexSVG tree'
+    pure $ Solution
         { tree     = tree'
+        , treeSVG  = svg
         , term     = term'
         , outQuery = tr $ optimise $ typify emptyContext $ toIntermediate $ unwrap term'
         }
@@ -101,11 +105,12 @@ instance Latexable Solution where
             <> "\\begin{lstlisting}\n" <> outQuery <> "\\end{lstlisting}\n"
 
 instance ToJSON Solution where
-    toJSON (Solution { term, outQuery })
+    toJSON (Solution { term, treeSVG, outQuery })
         = object
             [ "result_term"   .= (humanJSON emptyContext $ typify emptyContext term)
             , "detyped_term"  .= (humanJSON emptyContext $ typify emptyContext $ unwrap term)
             , "reduced_term"  .= (humanJSON emptyContext $ fixedPoint (betaReduce $ const True) $ typify emptyContext $ unwrap term)
+            , "parse_tree"    .= treeSVG
             , "output_query"  .= outQuery ]
 
 indexed :: [a] -> [(Int, a)]

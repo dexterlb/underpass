@@ -1,13 +1,20 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Utils.Latex where
 
+import qualified Data.ByteString.Base64 as B64
+import qualified Data.ByteString as B
 import           Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
+import qualified Data.Text.Encoding as T
 import           System.Process (CreateProcess(..), readCreateProcess, CmdSpec(..), StdStream(..))
 import           System.Directory (createDirectory, removePathForcibly)
+import           Control.Exception (catch, SomeException)
+
+import Paths_utils
 
 class Latexable a where
     latex :: a -> Text
@@ -43,6 +50,42 @@ latexPreview x = do
         , use_process_jobs   = False
         }) ""
     pure ()
+
+latexSVG :: Latexable a => a -> IO Text
+latexSVG x = do
+    removePathForcibly "/tmp/ccg_latex"
+    createDirectory "/tmp/ccg_latex"
+    latexToFile x "/tmp/ccg_latex/stuff.tex"
+
+    content <- catch (
+        do
+            _ <- readCreateProcess (CreateProcess
+                { cmdspec            = ShellCommand
+                    "bash -c '( latexmk -pdf -pdflatex=\"xelatex\" -halt-on-error \
+                        \ && pdf2svg stuff.pdf out.svg ) &> log.txt'"
+                , cwd                = Just "/tmp/ccg_latex"
+                , env                = Nothing
+                , std_in             = Inherit
+                , std_out            = Inherit
+                , std_err            = Inherit
+                , close_fds          = False
+                , create_group       = False
+                , detach_console     = False
+                , create_new_console = False
+                , delegate_ctlc      = False
+                , new_session        = False
+                , child_group        = Nothing
+                , child_user         = Nothing
+                , use_process_jobs   = False
+                }) ""
+            B.readFile "/tmp/ccg_latex/out.svg"
+                ) (\(_ :: SomeException) ->
+        do
+            filename <- getDataFileName "data/latex_error.svg"
+            B.readFile filename
+                )
+
+    pure $ T.decodeUtf8 $ B64.encode content
 
 latexToFile :: Latexable a => a -> FilePath -> IO ()
 latexToFile x f = T.writeFile f $ wrap $ latex x

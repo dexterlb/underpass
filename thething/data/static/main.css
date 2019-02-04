@@ -1,3 +1,7 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
 .title {
     margin-top: 1em;
     margin-bottom: 0.3em;
@@ -23,6 +27,9 @@
     display: none;
 }
 .status-no-loading .loading {
+    display: none;
+}
+.status-loading .input-container {
     display: none;
 }
 

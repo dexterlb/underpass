@@ -262,6 +262,11 @@ var render_term = function(term) {
     }());
 }
 
+var render_parse_tree = function(data) {
+    return $('<img />')
+        .attr('src', 'data:image/svg+xml;charset=utf-8;base64,' + data);
+}
+
 var render_parse = function(name, parse) {
     return expander($('<div />'))
         .addClass('parse')
@@ -272,6 +277,15 @@ var render_parse = function(name, parse) {
             .text(name))
         .append($('<div />')
             .addClass('expandable')
+            .append(expander($('<div />'))
+                .addClass('parse-tree')
+                .append($('<div />')
+                    .addClass('expander-header')
+                    .addClass('title')
+                    .text('Parse tree'))
+                .append($('<div />')
+                    .append(render_parse_tree(parse.parse_tree))
+                    .addClass('expandable')))
             .append(expander($('<div />'))
                 .addClass('result-term')
                 .append($('<div />')
@@ -355,7 +369,13 @@ var perform_query = function() {
         },
         error: function(o, err, e) {
             set_status('error');
-            $('#error').text(error);
+            $('#error').empty()
+                .append($('<div />')
+                    .addClass('error-status')
+                    .text(e))
+                .append($('<pre />')
+                    .addClass('error-content')
+                    .text(o.responseText));
         },
     });
     set_status('loading');
