@@ -132,6 +132,7 @@ var meta_container = function(el) {
         .addClass('meta-container')
         .prepend($('<span />')
             .addClass('meta-container-button')
+            .addClass('noclose')
             .click(function() {
                 el.toggleClass('meta-container-active');
             })
@@ -394,6 +395,15 @@ var main = function() {
         }
     });
     $('#input_query').focus();
+    $('body').click(function(e) {
+        if ($(e.target).hasClass('noclose')) {
+            return;
+        }
+        var outerMetaBoxes = $(e.target).parents('.meta-box');
+        if (outerMetaBoxes.length > 0) {
+            $(outerMetaBoxes[0]).parent().removeClass('meta-container-active');
+        }
+    });
     render_history();
     set_status('empty');
 }
