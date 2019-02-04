@@ -1,4 +1,4 @@
 PlaceName < String.
 
 main := 
-    ((lambda things : Set { lambda place : String { and things ( in (name place) ) } }) (amenity 'cafe')) 'София'.
+((λx⇒x) ((λx⇒x) ((λthings⇒(λwhere⇒(and things (next (consString 'in' empty) where)))) ((λk⇒(λn⇒(get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'amenity' 'cafe') ((λx⇒(or ((λk⇒(λn⇒(get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'name' x) ((λk⇒(λn⇒(get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'int_name' x))) 'Sofia')))).

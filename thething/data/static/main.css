@@ -1,3 +1,21 @@
+.title {
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    border-bottom: 1px solid #222;
+    display: inline-block;
+}
+
+.history-item {
+    display: table;
+    border-bottom: 1px solid #76a9fc;
+    color: #2770e8;
+    cursor: pointer;
+}
+
+.history-item:hover {
+    color: #003fa8;
+}
+
 .status-no-error .error {
     display: none;
 }
@@ -87,34 +105,11 @@
     margin-left: 1em;
 }
 
+
 .lambda-term {
     display: inline-block;
-}
-.lambda-application::before {
-    content: ' (';
-}
-.lambda-application::after {
-    content: ') ';
-}
-.lambda-abstraction::before {
-    content: ' (';
-}
-.lambda-abstraction::after {
-    content: ') ';
 }
 .lambda-term {
     margin-left: 2px;
     margin-right: 2px;
-}
-.lambda-cast-subterm::before {
-    content: '[';
-}
-.lambda-cast-subterm::after {
-    content: ']';
-}
-.lambda-abstraction-variable::before {
-    content: 'λ';
-}
-.lambda-abstraction-variable::after {
-    content: '⇒';
 }

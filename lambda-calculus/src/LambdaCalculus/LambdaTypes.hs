@@ -57,7 +57,7 @@ instance Functor ApplicativeType where
 
 parseTypeExpr :: (P.Parseable b) => P.Parser (ApplicativeType b)
 parseTypeExpr = P.makeExprParser parseTypeTerm
-    [ [ P.InfixR (P.operator "->" $> Application) ]
+    [ [ P.InfixR ((P.operator "->" <|> P.operator "→") $> Application) ]
     ]
 
 parseTypeTerm :: (P.Parseable b) => P.Parser (ApplicativeType b)
