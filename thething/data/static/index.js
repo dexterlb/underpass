@@ -149,7 +149,7 @@ var render_input = function(input) {
 
     for (var i = 0; i < input.length; i++) {
         if (i != 0) {
-            box.append($('<span />').addClass('token-sep'));
+            box.append(filler(' '));
         }
         box.append(render_token(input[i]));
     }
@@ -368,6 +368,9 @@ var perform_query = function() {
             $('#result').append(render_response(data));
         },
         error: function(o, err, e) {
+            if (!e) {
+                e = "an unexplained error has occured!";
+            }
             set_status('error');
             $('#error').empty()
                 .append($('<div />')
