@@ -22,6 +22,7 @@ dependencies:
 - snap-server
 - bytestring
 - aeson
+- directory
 
 - lambda-calculus
 - utils

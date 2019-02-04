@@ -31,6 +31,7 @@ import Minipass.Language.Language (Types)
 import Minipass.Language.Constants (Constants)
 import LambdaCalculus.Lambda (LambdaTerm)
 import Utils.Latex
+import Utils.Maths
 
 type Tree = ParseTree (LambdaCategory Types) (LambdaPayload (TypeWrapper Types) (ConstWrapper Constants))
 type Term = LambdaTerm (TypeWrapper Types) (ConstWrapper Constants)
@@ -101,7 +102,11 @@ instance Latexable Solution where
 
 instance ToJSON Solution where
     toJSON (Solution { term, outQuery })
-        = object [ "minipass_term" .= (humanJSON emptyContext $ typify emptyContext term), "output_query" .= outQuery ]
+        = object
+            [ "result_term"   .= (humanJSON emptyContext $ typify emptyContext term)
+            , "detyped_term"  .= (humanJSON emptyContext $ typify emptyContext $ unwrap term)
+            , "reduced_term"  .= (humanJSON emptyContext $ fixedPoint (betaReduce $ const True) $ typify emptyContext $ unwrap term)
+            , "output_query"  .= outQuery ]
 
 indexed :: [a] -> [(Int, a)]
 indexed = indexed' 0

@@ -11,6 +11,7 @@ import Control.Applicative
 import Control.Monad.IO.Class (liftIO)
 import Data.ByteString.Lazy as BL
 import Data.Text.Encoding (decodeUtf8)
+import System.Directory (createDirectoryIfMissing)
 
 import Paths_thething
 
@@ -18,6 +19,7 @@ import Underpass.Solution
 
 serve :: UnderpassProgram -> IO ()
 serve program = do
+    createDirectoryIfMissing True "log" -- must fix this
     rootFile  <- getDataFileName "data/static/index.html"
     staticDir <- getDataFileName "data/static"
     quickHttpServe (site program rootFile staticDir)

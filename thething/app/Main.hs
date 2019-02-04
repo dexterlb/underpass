@@ -13,7 +13,11 @@ import Utils.Latex (latexPreview)
 
 main :: IO ()
 main = do
-    (action:args)    <- getArgs
+    sysArgs <- getArgs
+    let (action:args) = case sysArgs of
+                            (foo:bar) -> (foo:bar)
+                            []        -> ["serve", "examples/library.ccg", "examples/test.ccg"]
+
     program          <- parseFiles $ args
 
     assert program
