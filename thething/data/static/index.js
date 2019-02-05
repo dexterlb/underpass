@@ -56,7 +56,7 @@ var add_to_history = function(query) {
 var render_history = function() {
     var history = get_history();
     if (!history) {
-        history = ["cafes in Sofia"];
+        history = ["fountains in Sofia", "cafes near hospitals in Bristol"];
         set_history(history);
     }
     $('#history').empty();
