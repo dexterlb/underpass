@@ -39,10 +39,11 @@ instance (Eq t, Typed c t, PartialOrd t, Parseable t, Parseable c) => Parseable 
            <|> (SubtypeStatement <$> parser) <|> (LambdaStatement <$> parser)
            <|> (MatchStatement <$> parser)
         where
-            beginParser = P.try $ fmap BeginStatement $
-                   P.literal "begin"
-                *> parser
-                <* P.operator "."
+            beginParser = P.try $ do
+                _   <- P.literal "begin"
+                cat <- parser
+                _   <- P.operator "."
+                pure $ BeginStatement cat
             requireParser = P.try $ do
                 _       <- P.literal "import"
                 path    <- P.quotedString '"'
