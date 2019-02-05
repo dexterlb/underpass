@@ -7,18 +7,17 @@ import System.IO (hFlush, stdout)
 import Underpass.Solution
 import Underpass.Web (serve)
 
-import Ccg.Program (assert)
-import Utils.Parsing (parseFiles)
+import Ccg.Program (assert, load)
 import Utils.Latex (latexPreview)
 
 main :: IO ()
 main = do
     sysArgs <- getArgs
-    let (action:args) = case sysArgs of
+    let (action:arg:[]) = case sysArgs of
                             (foo:bar) -> (foo:bar)
-                            []        -> ["serve", "examples/library.ccg", "examples/test.ccg"]
+                            []        -> ["serve", "examples/test.ccg"]
 
-    program          <- parseFiles $ args
+    program          <- load arg
 
     assert program
 

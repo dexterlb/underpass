@@ -1,4 +1,4 @@
-resolver: lts-13.5
+resolver: lts-13.6
 packages:
 - ccg
 - minipass
