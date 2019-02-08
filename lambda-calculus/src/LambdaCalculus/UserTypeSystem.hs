@@ -131,18 +131,18 @@ instance (P.Parseable t) => P.Parseable (SubtypeAssertion t) where
 
 type TypeWrappers t = HashMap T.Name (AppTypeWrapper t)
 
-resolveTypeLibrary :: [SubtypeAssertion t] -> TypeWrappers t
-resolveTypeLibrary = (resolveLibrary TWR) . HM.fromList
+resolveTypeLibrary :: (Typeable t) => [SubtypeAssertion t] -> TypeWrappers t
+resolveTypeLibrary = (resolveLibrary TWR)
     . (map (\(SubtypeAssertion x y) -> (x, y)))
 
-resolveType :: TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
+resolveType :: (Typeable t) => TypeWrappers t -> T.UnresolvedType t -> AppTypeWrapper t
 resolveType = resolveItem TWR
 
-resolveBasicType :: TypeWrappers t -> T.Ref t -> AppTypeWrapper t
+resolveBasicType :: (Typeable t) => TypeWrappers t -> T.Ref t -> AppTypeWrapper t
 resolveBasicType m = (resolveType m) . T.Basic
 
-data TWR t = TWR -- term wrapper resolver
-instance Resolvable  (TWR t) where
+data TWR t = TWR deriving (Show, Typeable) -- term wrapper resolver
+instance (Typeable t) => Resolvable  (TWR t) where
     type Resolvee    (TWR t) = T.UnresolvedType t
     type ResolveKey  (TWR t) = T.Name
     type Resolved    (TWR t) = AppTypeWrapper t

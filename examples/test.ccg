@@ -18,20 +18,9 @@ raw="in"
     : Set / Set \ Set 
     @ \things, where => and things (in where).
 
-pos="nnp"     : Entity          @ name `'$raw'` : String.
+pos="nnp" `'$raw'` : String
+    : Entity          
+    @ name.
+
 raw="city"    : Set \ Entity    @ and city.
 raw="near"    : Set \ Set / Set @ \b, a => and a (near b).
-
-
-foo # raw="drinking" <> bar # raw="water" 
-    : Amenity
-    @ \x, y => (or (amenity x) (amenity y)) foo`'$raw'` : String, bar`'$raw'` : String.
-
-/*
-raw="drinking"
-    : Amenity / Foo
-    @ \p => (amenity 'drinking_water').
-
-Foo < * -> *.
-raw="water"
-    : Foo @ Foo[\x => x].

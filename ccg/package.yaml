@@ -19,6 +19,7 @@ dependencies:
 - vector
 - aeson
 - text
+- filepath
 - utils
 - lambda-calculus
 - deepseq

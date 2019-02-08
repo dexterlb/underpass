@@ -13,7 +13,8 @@ import Data.Text (unpack)
 
 import Control.Monad.Fail (MonadFail)
 
-import Ccg.LambdaRules   (UnresolvedLambdaRule, LambdaRule, LambdaCategory, UnresolvedLambdaCategory, resolveLambdaRule, resolveLambdaCategory)
+import Ccg.LambdaRules   (LambdaRule, LambdaCategory, UnresolvedLambdaCategory, resolveLambdaRule, resolveLambdaCategory)
+import Ccg.SugaredRules  (SugaredRule, desugar)
 
 import LambdaCalculus.UserTerms
 import LambdaCalculus.UserTypeSystem
@@ -28,7 +29,7 @@ import Utils.Paths (relativeFrom)
 data Statement t c
     = SubtypeStatement (SubtypeAssertion t)
     | LambdaStatement  (TermDefinition c t)
-    | MatchStatement   (UnresolvedLambdaRule t c)
+    | MatchStatement   (SugaredRule t c)
     | BeginStatement   (UnresolvedLambdaCategory t)
     | ImportStatement   FilePath
 
@@ -55,9 +56,10 @@ newtype Program t c = Program [Statement t c] deriving (Monoid, Semigroup)
 instance (Eq t, Typed c t, PartialOrd t, Parseable t, Parseable c) => Parseable (Program t c) where
     parser = Program <$> P.many parser
 
-types :: Program t c -> Library (TWR t)
-types (Program statements) = resolveTypeLibrary
+types :: Typed c t => Program t c -> Library (TWR t)
+types (Program statements) = resolveTypeLibrary $
     [ def | (SubtypeStatement def) <- statements ]
+ ++ [ ass | (MatchStatement def) <- statements, ass <- snd $ desugar def]
 
 terms :: (Eq t, Typed c t, PartialOrd t) => Program t c -> Library (CR c t)
 terms (prog @ (Program statements)) = resolveTermLibrary (types prog)
@@ -65,13 +67,13 @@ terms (prog @ (Program statements)) = resolveTermLibrary (types prog)
 
 rules :: (Eq c, Eq t, PartialOrd t, Typed c t) => Program t c -> [LambdaRule t c]
 rules (prog @ (Program statements)) = map (resolveLambdaRule (types prog) (terms prog))
-    [ def | (MatchStatement def) <- statements]
+    [ rule | (MatchStatement def) <- statements, rule <- fst $ desugar def]
 
 imports :: (Eq c, Eq t, PartialOrd t, Typed c t) => Program t c -> [FilePath]
 imports (Program statements) =
     [ def | (ImportStatement def) <- statements]
 
-begin :: Program t c -> LambdaCategory t
+begin :: Typed c t => Program t c -> LambdaCategory t
 begin (prog @ (Program statements))
     | [beg] <- begins = resolveLambdaCategory (types prog) beg
     | []    <- begins = error "no begin in sight"

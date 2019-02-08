@@ -42,7 +42,7 @@ instance (Eq t, PartialOrd t, Typed c t) => Typed (ConstRef c) (TypeWrapper t) w
 resolveTypes :: (Typed c t, Eq t, PartialOrd t) => TypeWrappers t -> LambdaTerm (Ref t) (Ref c) -> LambdaTerm (TypeWrapper t) (ConstRef c)
 resolveTypes m = L.transformConst ConstRef (resolveBasicType m)
 
-data CR c t = CR -- const resolver
+data CR c t = CR deriving (Show) -- const resolver
 instance (Eq t, PartialOrd t, Typed c t) => Resolvable (CR c t) where
     type Resolvee    (CR c t) = LambdaTerm (TypeWrapper t) (ConstRef c)
     type ResolveKey  (CR c t) = T.Name
@@ -73,7 +73,7 @@ deriving instance (Show c, Show t) => Show (TermDefinition c t)
 deriving instance (Eq c, Eq t) => Eq (TermDefinition c t)
 
 resolveTermLibrary :: (Eq t, PartialOrd t, Typed c t) => Library (TWR t) -> [TermDefinition c t] -> TermLibrary c t
-resolveTermLibrary tlib = (resolveLibrary CR) . HM.fromList
+resolveTermLibrary tlib = (resolveLibrary CR)
     -- this can be done in the other way (first resolve terms, then types),
     -- thus eliminating the need for tlib here. Since, however, I'm too lazy
     -- to do it now, it stays like this.
