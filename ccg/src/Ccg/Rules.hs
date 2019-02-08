@@ -9,7 +9,6 @@ module Ccg.Rules where
 
 import           Data.Text (Text)
 import qualified Data.Text as Text
-import           Data.List (intercalate)
 import           Data.Functor (($>))
 import           Data.Aeson (ToJSON(..), object, (.=))
 
@@ -24,7 +23,7 @@ type Lexer = Text -> [TokenData]
 
 type Tag = (Text, Text) -- no need for anything fancier for now
 
-data Rule cat payload = Rule Matcher [(cat, Constructor payload)]
+data Rule cat payload = Rule Matcher cat (Constructor payload)
 
 data TokenData = TokenData
     { text :: Token
@@ -40,21 +39,8 @@ class FromMatch payload where
 
     construct :: (Constructor payload) -> TokenData -> payload
 
-
-instance (Parseable cat, Parseable (Constructor payload)) => Parseable (Rule cat payload) where
-    parser = P.try $ do
-        matcher <- P.parser
-        _       <- P.operator ":"
-        targets <- P.separated "," $ do
-            cat     <- P.parser
-            pcons   <- P.parser
-            pure (cat, pcons)
-        _       <- P.operator "."
-        pure $ Rule matcher targets
-
 instance (Show cat, Show (Constructor payload)) => Show (Rule cat payload) where
-    show (Rule matcher items) = show matcher <> " : " <> intercalate ", "
-        (map (\(cat, cons) -> show cat <> " " <> show cons) items)
+    show (Rule matcher cat cons) = show matcher <> " : " <> show cat <> show cons
 
 data Matcher
     = ExactMatcher  Tag
@@ -86,9 +72,9 @@ match :: (FromMatch payload) => [Rule cat payload] -> [TokenData] -> [[(cat, pay
 match rules = map matchToken
     where
         matchToken token = foldr (++) [] $ map (matchRuleOn token) rules
-        matchRuleOn token (Rule matcher items)
+        matchRuleOn token (Rule matcher cat cons)
             | matchRule token matcher
-                = map (\(cat, cons) -> (cat, construct cons token)) items
+                = [(cat, construct cons token)]
             | otherwise = []
 
 matchRule :: TokenData -> Matcher -> Bool

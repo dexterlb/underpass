@@ -32,7 +32,7 @@ type LambdaCategory t = ModalCategory (AppTypeWrapper t)
 type UnresolvedLambdaCategory t = ModalCategory (UnresolvedType t)
 
 resolveLambdaRule :: forall c t. (Eq c, Eq t, PartialOrd t, Typed c t) => TypeWrappers t -> TermLibrary c t -> UnresolvedLambdaRule t c -> LambdaRule t c
-resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveItem) items)
+resolveLambdaRule types terms (Rule matcher cat' cons) = (uncurry $ Rule matcher) $ resolveItem (cat', cons)
     where
         resolveItem (cat, SimpleLambdaConstructor term)
             = check $ ( resolvedCat
@@ -58,7 +58,7 @@ resolveLambdaRule types terms (Rule matcher items) = Rule matcher (map (resolveI
             where
                 typeOfCat = typeOf cat :: AppTypeWrapper t
 
-resolveLambdaCategory :: TypeWrappers t -> ModalCategory (UnresolvedType t) -> ModalCategory (AppTypeWrapper t)
+resolveLambdaCategory :: (Typeable t) => TypeWrappers t -> ModalCategory (UnresolvedType t) -> ModalCategory (AppTypeWrapper t)
 resolveLambdaCategory types = mcmap (resolveType types)
 
 composeTerm :: (Eq t, PartialOrd t, Typed c t) => ParseTree (ModalCategory (AppTypeWrapper t)) (LambdaPayload (TypeWrapper t) (ConstWrapper c)) -> LambdaTerm (TypeWrapper t) (ConstWrapper c)

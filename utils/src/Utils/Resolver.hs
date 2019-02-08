@@ -2,6 +2,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
 module Utils.Resolver where
 
@@ -12,10 +14,12 @@ import qualified Data.HashSet as HS
 import           Data.HashSet (HashSet)
 import           Data.Hashable (Hashable)
 import qualified Data.Graph as G
+import           Utils.Exception (throw, Exception)
+import           Data.Dynamic (Typeable)
 
 type Library a = HashMap (ResolveKey a) (Resolved a)
 
-class (Eq (ResolveKey a), Ord (ResolveKey a), Hashable (ResolveKey a)) => Resolvable a where
+class (Show a, Typeable a, Eq (ResolveKey a), Ord (ResolveKey a), Hashable (ResolveKey a), Show (ResolveKey a)) => Resolvable a where
     type ResolveKey a
     type Resolvee a
     type Resolved a
@@ -27,8 +31,11 @@ class (Eq (ResolveKey a), Ord (ResolveKey a), Hashable (ResolveKey a)) => Resolv
     preprocess :: a -> ResolveKey a -> Resolved a -> Resolved a
     preprocess _ _ = id
 
-resolveLibrary :: (Resolvable a) => a -> HashMap (ResolveKey a) (Resolvee a) -> Library a
-resolveLibrary r plib = foldr (addToLibrary r) (emptyLib r) $ map (\k -> (k, plib HM.! k)) keys
+resolveLibrary :: (Resolvable a) => a -> [(ResolveKey a, Resolvee a)] -> Library a
+resolveLibrary r = (resolveLibraryFromTable r) . (makeTable r)
+
+resolveLibraryFromTable :: (Resolvable a) => a -> HashMap (ResolveKey a) (Resolvee a) -> Library a
+resolveLibraryFromTable r plib = foldr (addToLibrary r) (emptyLib r) $ map (\k -> (k, plib HM.! k)) keys
     where
         keys = topoSort $ map (\(k, v) -> (k, HS.toList $ fv r v)) $ HM.toList plib
 
@@ -53,3 +60,19 @@ topoSort l = map (vertex . index) $ G.topSort graph
         vertex ((), k, _) = k
         (graph, index, _) = G.graphFromEdges $ map (\(k, e) -> ((), k, e)) l
 
+makeTable :: (Resolvable a) => a -> [(ResolveKey a, Resolvee a)] -> HashMap (ResolveKey a) (Resolvee a)
+makeTable _ [] = HM.empty
+makeTable r ((k, v):xs)
+    | HM.member k rest = throw $ DefinedTwice r k
+    | otherwise                        = HM.insert k v rest
+    where
+        rest = makeTable r xs
+
+data ResolverException a
+    = DefinedTwice a (ResolveKey a)
+    | Loop         a [ResolveKey a] -- todo: throw this
+
+    deriving (Typeable)
+
+deriving instance (Resolvable a) => Show (ResolverException a)
+deriving instance (Resolvable a) => Exception (ResolverException a)
