@@ -3,7 +3,7 @@ Amenity < Set.
 lemma="parking"
     : Amenity
     @ amenity 'parking'.
-lemma="place_of" <> lemma="worship"
+lemma="place" <> lemma="of" <> lemma="worship"
     : Amenity
     @ amenity 'place_of_worship'.
 lemma="bench"
@@ -213,10 +213,10 @@ lemma="embassy"
 lemma="motorcycle" <> lemma="parking"
     : Amenity
     @ amenity 'motorcycle_parking'.
-lemma="bureau_de" <> lemma="change"
+lemma="bureau" <> lemma="de" <> lemma="change"
     : Amenity
     @ amenity 'bureau_de_change'.
-lemma="mobile_money" <> lemma="agent"
+lemma="mobile" <> lemma="money" <> lemma="agent"
     : Amenity
     @ amenity 'mobile_money_agent'.
 lemma="biergarten"
@@ -228,7 +228,7 @@ lemma="prison"
 lemma="car" <> lemma="sharing"
     : Amenity
     @ amenity 'car_sharing'.
-lemma="waste_dump" <> lemma="site"
+lemma="waste" <> lemma="dump" <> lemma="site"
     : Amenity
     @ amenity 'waste_dump_site'.
 lemma="food" <> lemma="court"
@@ -249,7 +249,7 @@ lemma="casino"
 lemma="null"
     : Amenity
     @ amenity 'null'.
-lemma="bicycle_repair" <> lemma="station"
+lemma="bicycle" <> lemma="repair" <> lemma="station"
     : Amenity
     @ amenity 'bicycle_repair_station'.
 lemma="public" <> lemma="bookcase"
@@ -264,7 +264,7 @@ lemma="boat" <> lemma="storage"
 lemma="public" <> lemma="bath"
     : Amenity
     @ amenity 'public_bath'.
-lemma="sanitary_dump" <> lemma="station"
+lemma="sanitary" <> lemma="dump" <> lemma="station"
     : Amenity
     @ amenity 'sanitary_dump_station'.
 lemma="events" <> lemma="venue"
@@ -321,7 +321,7 @@ lemma="training"
 lemma="ranger" <> lemma="station"
     : Amenity
     @ amenity 'ranger_station'.
-lemma="waste_transfer" <> lemma="station"
+lemma="waste" <> lemma="transfer" <> lemma="station"
     : Amenity
     @ amenity 'waste_transfer_station'.
 lemma="retirement" <> lemma="home"
@@ -345,7 +345,7 @@ lemma="feeding" <> lemma="place"
 lemma="weighbridge"
     : Amenity
     @ amenity 'weighbridge'.
-lemma="kneipp_water" <> lemma="cure"
+lemma="kneipp" <> lemma="water" <> lemma="cure"
     : Amenity
     @ amenity 'kneipp_water_cure'.
 lemma="crematorium"
