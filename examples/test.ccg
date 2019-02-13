@@ -8,6 +8,7 @@ SE < Set.
 S < Set.
 
 Entity < Set.
+NamedEntity < String.
 
 mark="begin"  : S / SE        @ \x: SE    => S[Set[x]] .
 mark="end"    : SE \ Set      @ \x: Set   => SE[x] .
@@ -22,5 +23,10 @@ pos="nnp" `'$raw'` : String
     : Entity          
     @ name.
 
+pos="nnp" `'$raw'` : String
+    : NamedEntity       
+    @ \x => NamedEntity[x].
+
+raw="like"    : Set \ NamedEntity @ nameLike.
 raw="city"    : Set \ Entity    @ and city.
 raw="near"    : Set \ Set / Set @ \b, a => and a (near b).
