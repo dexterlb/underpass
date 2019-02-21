@@ -10,6 +10,7 @@
 \usepackage{indentfirst}
 \usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
 \usepackage{url}
+\usepackage{hyperref}
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{amsthm}
@@ -20,6 +21,8 @@
 \usepackage{listings}
 \usepackage{syntax}
 \usepackage{subfiles}
+\usepackage{csquotes}
+\usepackage[style=alphabetic]{biblatex}
 \usepackage{tikz-qtree}
 \usepackage{tikz-qtree-compat}
 \renewcommand{\baselinestretch}{1.1}
@@ -27,6 +30,7 @@
 \setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
 
+\addbibresource{references.bib}
 
 \lstset{
 	backgroundcolor = \color{light-gray},
@@ -60,7 +64,6 @@
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
 \definecolor{light-gray}{gray}{0.9}
 
-\usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
     linktoc=all,
