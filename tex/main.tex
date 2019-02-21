@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{color}
 \usepackage{xcolor}
+\usepackage[framemethod=TikZ]{mdframed}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -33,6 +34,17 @@
 \addbibresource{references.bib}
 
 \graphicspath{ {./images/} }
+
+\newmdenv[%
+    backgroundcolor=green!8,
+    linecolor=gray!50!green!60,
+    outerlinewidth=0.5pt,
+    roundcorner=5mm,
+    skipabove=\baselineskip,
+    skipbelow=\baselineskip,
+    leftmargin=1cm,
+    rightmargin=1cm,
+]{greenbox}
 
 \lstset{
 	backgroundcolor = \color{light-gray},
