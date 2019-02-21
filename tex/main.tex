@@ -1,0 +1,102 @@
+ % !TEX program = xelatex
+\documentclass[12pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+\usepackage{libertine}
+
+\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage[bulgarian,english]{babel}
+\usepackage{indentfirst}
+\usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
+\usepackage{url}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{syntax}
+\usepackage{subfiles}
+\usepackage{tikz-qtree}
+\usepackage{tikz-qtree-compat}
+\renewcommand{\baselinestretch}{1.1}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+
+
+\lstset{
+	backgroundcolor = \color{light-gray},
+    language = C,
+    xleftmargin = 1cm,
+    framexleftmargin = 1em,
+    basicstyle=\ttfamily,
+	moredelim=[is][\underbar]{_}{_},
+}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newcommand\tree[1]{
+    \begin{tikzpicture}
+    \Tree[ #1 ]
+    \end{tikzpicture}
+}
+
+\newcommand\centree[1]{
+    \begin{center}
+    \tree{ #1 }
+    \end{center}
+}
+
+\usepackage{color}
+\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
+\definecolor{light-gray}{gray}{0.9}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\usepackage{tabularx}
+
+
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+
+\theoremstyle{definition} \newtheorem{defn}{Definition}
+\theoremstyle{definition} \newtheorem{prop}{Proposition}
+\theoremstyle{definition} \newtheorem{property}{Property}
+
+\newcommand{\lc}{\textcolor{red}{\backslash}}
+\newcommand{\rc}{\textcolor{red}{/}}
+\newcommand{\mc}{\textcolor{red}{|}}
+\newcommand{\lb}{\textcolor{red}{[}}
+\newcommand{\rb}{\textcolor{red}{]}}
+\newcommand{\lp}{\textcolor{red}{(}}
+\newcommand{\rp}{\textcolor{red}{)}}
+
+\title{Fancy title}
+\author{Nobody <nobody@example.com>}
+\date{2019}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\pagebreak
+
+\input{./scaffold.tex}
+\end{document}
