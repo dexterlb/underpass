@@ -1,8 +1,9 @@
  % !TEX program = xelatex
 \documentclass[12pt]{extarticle}
-\usepackage[T1]{fontenc}
+\usepackage{fontenc}
 \usepackage{fontspec}
 \usepackage{libertine}
+% \setmainfont{Droid Sans}
 
 \defaultfontfeatures{Ligatures=TeX}
 
@@ -17,6 +18,7 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{mathabx}
 \usepackage{graphicx}
 \usepackage{adjustbox}
 \usepackage{listings}
@@ -104,6 +106,11 @@
 \newcommand{\rb}{\textcolor{red}{]}}
 \newcommand{\lp}{\textcolor{red}{(}}
 \newcommand{\rp}{\textcolor{red}{)}}
+
+\newcommand{\meet}{\wedge}
+\newcommand{\less}{\leq}
+\newcommand{\tot}{\rightarrow}
+\newcommand{\wildcard}{\Asterisk}
 
 \title{Fancy title}
 \author{Nobody <nobody@example.com>}

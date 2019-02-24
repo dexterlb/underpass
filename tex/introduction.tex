@@ -3,7 +3,7 @@
 
 \section{Introduction}
 This project seeks to provide means for translating from a subset of English
-into Overpass queries.
+into Overpass queries using Combinatory Categorial Grammar.
 
 \subsection{Motivation}
 It is often the case that humans need to communicate a concrete question
@@ -42,6 +42,13 @@ DSL.
 
 \subsection{Architecture}
 The system consists of several parts:
+
+\begin{figure}[htbp!]
+    \includegraphics[width=\textwidth]{arch.eps}
+    \caption{Architecture overview}
+    \label{arch}
+\end{figure}
+
 \begin{itemize}
     \item Generic CCG definition language: a language for defining CCGs and
           their respective type systems and term libraries. Can be used
@@ -69,11 +76,5 @@ The system consists of several parts:
 
 An architecture overview can be seen at Figure \ref{arch}.
 
-
-\begin{figure}[htbp!]
-    \includegraphics[width=\textwidth]{arch.eps}
-    \caption{Architecture overview}
-    \label{arch}
-\end{figure}
 
 \end{document}

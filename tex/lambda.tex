@@ -1,0 +1,72 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Simply Typed Lambda calculus}
+
+For representing compositional terms, a version of simply typed lambda calculus
+will be used.
+
+\subsubsection{Types}
+\begin{defn}\label{lessmeet}
+    Let $T$ be a countable partially ordered
+    set with a comparison operator $\less$.
+    Its elements shall be called \emph{basic types}.
+    Moreover, let there be a operator $\meet : T \times T \nrightarrow T$,
+    such that:
+    \begin{itemize}
+        \item $\sigma \meet \tau = \nu \iff \tau \meet \sigma = \nu$
+        \item $\sigma \meet \tau = \nu \implies \nu \less \sigma$
+        \item $\sigma \meet \tau = \nu \implies \nu \less \tau$
+        \item $\sigma \in T       \implies \sigma \meet \sigma = \sigma$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    For a set of basic types $T$, its \emph{applicative closure} is defined inductively:
+    \begin{itemize}
+        \item $\wildcard \in App(T)$
+        \item $\sigma \in T \implies \sigma \in App(T)$
+        \item $\sigma \in App(T), \tau \in App(T) \implies \sigma \tot \tau \in App(T)$
+    \end{itemize}
+
+    Moreover, the $\less$ operator could be defined as follows:
+    \begin{itemize}
+        \item For $\sigma \in T, \tau \in T$, $\sigma \less \tau$ is already defined.
+        \item For $\sigma', \sigma'', \tau', \tau'' \in App(T)$,
+                  $\sigma' \tot \tau' \less \sigma'' \tot \tau''
+                  \Leftrightarrow (\sigma' \less \tau') \land (\sigma'' \less \tau'')$
+        \item For $\sigma \in App(T)$, $\sigma \less \wildcard$
+    \end{itemize}
+
+
+    And the $\meet$ operator could be defined as follows:
+    \begin{itemize}
+        \item For $\sigma \in T, \tau \in T$, $\sigma \meet \tau$ is already defined.
+        \item For $\sigma', \sigma'', \tau', \tau'' \in App(T)$,
+                  $\sigma' \tot \tau' \meet \sigma'' \tot \tau''
+                  = (\sigma' \meet \tau') \tot (\sigma'' \meet \tau'')$
+        \item For $\sigma \in App(T)$, $\wildcard \meet \sigma = \sigma$
+                                   and $\sigma \meet \wildcard = \sigma$
+    \end{itemize}
+
+\end{defn}
+
+\begin{prop}
+    The default definitions for $\meet$ and $\less$ for applicative closure
+    satisfy the properties in definition \ref{lessmeet}.
+\end{prop}
+
+\subsubsection{Terms}
+\begin{defn}
+    Let $\mathbb{V}$ be an infinite countable set. We shall call its elements
+    \emph{variables}.
+\end{defn}
+
+\begin{defn}
+    Let $C$ be a countable set whose elements we call \emph{constants}.
+
+    The set $\Lambda_T^C$ is defined inductively:
+
+\end{defn}
+
+\end{document}
