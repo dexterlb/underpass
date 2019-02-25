@@ -1,14 +1,14 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\subsection{Simply Typed Lambda calculus}
+\subsection{Simply typed $\lambda$-calculus}
 
 For representing compositional terms, a version of simply typed lambda calculus
 will be used.
 
 \subsubsection{Types}
-\begin{defn}\label{lessmeet}
-    Let $T$ be a countable partially ordered
+\begin{defn}
+    Let $T$ be a partially ordered
     set with a comparison operator $\less$.
     Its elements shall be called \emph{basic types}.
     Moreover, let there be a operator $\meet : T \times T \nrightarrow T$,
@@ -48,13 +48,7 @@ will be used.
         \item For $\sigma \in App(T)$, $\wildcard \meet \sigma = \sigma$
                                    and $\sigma \meet \wildcard = \sigma$
     \end{itemize}
-
 \end{defn}
-
-\begin{prop}
-    The default definitions for $\meet$ and $\less$ for applicative closure
-    satisfy the properties in definition \ref{lessmeet}.
-\end{prop}
 
 \subsubsection{Terms}
 \begin{defn}
