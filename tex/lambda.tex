@@ -19,6 +19,8 @@ will be used.
         \item $\sigma \meet \tau = \nu \implies \nu \less \tau$
         \item $\sigma \in T       \implies \sigma \meet \sigma = \sigma$
     \end{itemize}
+
+    If the above properties hold, a set $T$ shall be called a \emph{set of types}.
 \end{defn}
 
 \begin{defn}
@@ -48,6 +50,20 @@ will be used.
         \item For $\sigma \in App(T)$, $\wildcard \meet \sigma = \sigma$
                                    and $\sigma \meet \wildcard = \sigma$
     \end{itemize}
+
+    From here on, if not explicitly specified, the $\less$ and $\meet$ operators
+    for $App(T)$ for sets $T$ will be defined as such.
+\end{defn}
+
+\begin{prop}
+    Let $T$ be a set of types.
+    Then $App(T)$ with the default definitions of $\less$ and $\meet$
+    is a set of types.
+\end{prop}
+
+\begin{defn}
+    We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
+    \[ typeof : X \rightarrow T \] and $T$ is a set of types.
 \end{defn}
 
 \subsubsection{Terms}
@@ -57,10 +73,15 @@ will be used.
 \end{defn}
 
 \begin{defn}
-    Let $C$ be a countable set whose elements we call \emph{constants}.
+    Let $C$ be a countable set, typed in $T$,
+    whose elements we call \emph{constants}.
 
     The set $\Lambda_T^C$ is defined inductively:
+    \begin{itemize}
+        \item for $c \in C, c \in \Lambda_T^C$
+            and $typeof(c)$ is already defined.
 
+    \end{itemize}
 \end{defn}
 
 \end{document}
