@@ -8,62 +8,66 @@ will be used.
 
 \subsubsection{Types}
 \begin{defn}
-    Let $T$ be a partially ordered
-    set with a comparison operator $\less$.
-    Its elements shall be called \emph{basic types}.
-    Moreover, let there be a operator $\meet : T \times T \nrightarrow T$,
-    such that:
+    A set $T$ is a \emph{meet-semilattice with top and bottom} when:
     \begin{itemize}
-        \item $\sigma \meet \tau = \nu \iff \tau \meet \sigma = \nu$
-        \item $\sigma \meet \tau = \nu \implies \nu \less \sigma$
-        \item $\sigma \meet \tau = \nu \implies \nu \less \tau$
-        \item $\sigma \in T       \implies \sigma \meet \sigma = \sigma$
+        \item the partial order relation
+            $\less \subseteq T \times T$ is defined
+        \item the operator $\meet : T \times T \rightarrow T$ is defined
+        \item $\top \in T, \bot \in T$
+        \item For any $\sigma, \tau, \nu \in T$:
+            \begin{itemize}
+                \item $(\sigma \meet \tau) \meet \nu = \sigma \meet (\tau \meet \nu)$
+                \item $\sigma \meet \tau = \tau \meet \sigma$
+                \item $\sigma \meet \tau = \nu \implies \nu \less \sigma$
+                \item $\sigma \meet \tau = \nu \implies \nu \less \tau$
+                \item $\sigma \meet \sigma = \sigma$
+                \item $\sigma \meet \top = \top \meet \sigma = \sigma$
+                \item $\sigma \meet \bot = \bot \meet \sigma = \bot$
+                \item $\sigma \less \top$, $\bot \less \sigma$
+            \end{itemize}
     \end{itemize}
 
-    If the above properties hold, a set $T$ shall be called a \emph{set of types}.
 \end{defn}
 
 \begin{defn}
-    For a set of basic types $T$, its \emph{applicative closure} is defined inductively:
+    A set $T$ is a \emph{type semilattice} when:
     \begin{itemize}
-        \item $\wildcard \in App(T)$
-        \item $\sigma \in T \implies \sigma \in App(T)$
-        \item $\sigma \in App(T), \tau \in App(T) \implies \sigma \tot \tau \in App(T)$
+        \item For any $\sigma, \tau \in T$, $(\sigma \tot \tau) \in T$
+        \item $T$ is a bounded meet-semilattice with top and bottom.
     \end{itemize}
 
-    Moreover, the $\less$ operator could be defined as follows:
-    \begin{itemize}
-        \item For $\sigma \in T, \tau \in T$, $\sigma \less \tau$ is already defined.
-        \item For $\sigma', \sigma'', \tau', \tau'' \in App(T)$,
-                  $\sigma' \tot \tau' \less \sigma'' \tot \tau''
-                  \Leftrightarrow (\sigma' \less \tau') \land (\sigma'' \less \tau'')$
-        \item For $\sigma \in App(T)$, $\sigma \less \wildcard$
-    \end{itemize}
-
-
-    And the $\meet$ operator could be defined as follows:
-    \begin{itemize}
-        \item For $\sigma \in T, \tau \in T$, $\sigma \meet \tau$ is already defined.
-        \item For $\sigma', \sigma'', \tau', \tau'' \in App(T)$,
-                  $\sigma' \tot \tau' \meet \sigma'' \tot \tau''
-                  = (\sigma' \meet \tau') \tot (\sigma'' \meet \tau'')$
-        \item For $\sigma \in App(T)$, $\wildcard \meet \sigma = \sigma$
-                                   and $\sigma \meet \wildcard = \sigma$
-    \end{itemize}
-
-    From here on, if not explicitly specified, the $\less$ and $\meet$ operators
-    for $App(T)$ for sets $T$ will be defined as such.
+    For convenience, the $\rightarrow$ operator will be regarded as
+    right-associative.
 \end{defn}
 
+\begin{defn}
+    For a meet-semilattice with top and bottom $T$, we can define the
+    \emph{type closure} $\mathcal{T}(T)$ and extend $\less$ and $\meet$ as follows:
+    \begin{itemize}
+        \item $\sigma \in T \implies \sigma \in \mathcal{T}(T)$
+        \item $(\sigma' \rightarrow \tau'), (\sigma'' \rightarrow \tau'') \in
+            \mathcal{T}(T) \implies
+            (\sigma' \rightarrow \tau') \less (\sigma'' \rightarrow \tau'')
+            \Leftrightarrow
+            (\sigma' \less \sigma'') \& (\tau' \less \tau'')$
+        \item $(\sigma' \rightarrow \tau'), (\sigma'' \rightarrow \tau'') \in
+            \mathcal{T}(T) \implies
+            (\sigma' \rightarrow \tau') \meet (\sigma'' \rightarrow \tau'')
+            =
+            (\sigma' \meet \sigma'') \rightarrow (\tau' \meet \tau'')$
+        \item $(\sigma' \rightarrow \sigma'') \in \mathcal{T}(T), \tau \in T
+            \implies (\sigma' \rightarrow \sigma'') \meet \tau
+            = \tau \meet (\sigma' \rightarrow \sigma'') = \bot$
+    \end{itemize}
+\end{defn}
 \begin{prop}
-    Let $T$ be a set of types.
-    Then $App(T)$ with the default definitions of $\less$ and $\meet$
-    is a set of types.
+    If $T$ is a meet-semilattice with top and bottom, $\mathcal{T}(T)$ is
+    a type semilattice.
 \end{prop}
 
 \begin{defn}
     We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
-    \[ typeof : X \rightarrow T \] and $T$ is a set of types.
+    \[ typeof : X \rightarrow T \] and $T$ is a type semilattice.
 \end{defn}
 
 \subsubsection{Terms}
