@@ -71,6 +71,10 @@ will be used.
 \end{defn}
 
 \subsubsection{Terms}
+To define $\lambda$ terms with the types introduced above, a system similar
+to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
+extends the original system with constants and constructors.
+
 \begin{defn}
     Let $\mathbb{V}$ be an infinite countable set. We shall call its elements
     \emph{variables}.
@@ -80,11 +84,97 @@ will be used.
     Let $C$ be a countable set, typed in $T$,
     whose elements we call \emph{constants}.
 
-    The set $\Lambda_T^C$ is defined inductively:
-    \begin{itemize}
-        \item for $c \in C, c \in \Lambda_T^C$
-            and $typeof(c)$ is already defined.
+    For a type semilattice $T$, we can define the set of
+    \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
+    \begin{itemize}
+        \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
+        \item Variable:    \[ v \in \mathbb{V} \implies v \in \Lambda_T^C \]
+        \item Application: \[ A, B \in \Lambda_T^C \implies (AB) \in \Lambda_T^C \]
+        \item Abstraction: \[ v \in \mathbb{V}, A \in \Lambda_T^C, \sigma \in T
+                \implies (\lambda v : \sigma \abstr A) \in \Lambda_T^C \]
+        \item Construction: \[ \sigma \in T, A \in \Lambda_T^C
+                \implies \sigma[A] \in \Lambda_T^C \]
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    Statement, declaration, context, judgement
+    \begin{itemize}
+        \item For $M \in \Lambda_T^C, \sigma \in T$, $M : \sigma$ is called
+            a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
+            is called a \emph{type}.
+        \item A statement with a variable as a subject is called a \emph{declaration}.
+        \item A set of declarations with different subjects is called a \emph{context}.
+        \item A \emph{judgement} has the form $\Gamma \vdash M: \sigma$, where
+            $\Gamma$ is a context and $M: \sigma$ is a statement.
+    \end{itemize}
+
+    Moreover, appending to contexts is defined as follows:
+    \[ \Gamma \circ x : \sigma = \{ y : \tau \in \Gamma \mid y \neq x \}
+       \cup \{ x : \sigma \} \]
+\end{defn}
+
+\begin{defn}
+    To define what it means for a term $M \in \Lambda_T^C$ to have a type,
+    we will use derivation rules.
+    \begin{itemize}
+        \item Constant
+            \cenderiv{
+                \hypo{c \in C}
+                \infer1{\Gamma \vdash x : typeof(c)}
+            }
+        \item Variable
+            \cenderiv{
+                \hypo{x : \sigma \in \Gamma}
+                \infer1{\Gamma \vdash x : \sigma}
+            }
+        \item Application
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\Gamma \vdash B : \tau}
+                \hypo{\sigma \meet (\tau \tot \top) = (\nu' \tot \nu'')}
+                \infer3{\Gamma \vdash (AB) : \nu''}
+            }
+        \item Abstraction
+            \cenderiv{
+                \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
+                \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
+            }
+        \item Construction via downcast
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\tau \less \sigma}
+                \infer2{\Gamma \vdash \tau[A] : \tau}
+            }
+        \item Construction via upcast (dangerous, doesn't need to be included in most cases)
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\sigma \less \tau}
+                \infer2{\Gamma \vdash \tau[A] : \tau}
+            }
+    \end{itemize}
+
+    Now, $typeof(M)$ for $M \in \Lambda_T^C$ is defined as such:
+    \[
+        typeof(M) =
+        \begin{cases*}
+            \sigma & if $\varnothing \vdash M : \sigma$ \\
+            \neg ! & otherwise
+        \end{cases*}
+    \]
+    Of course, the above function is nowhere defined for non-closed terms.
+\end{defn}
+
+\begin{defn}
+    A term is \emph{subtype-sound}, if for every subterm $M$
+    ($\Gamma \vdash M : \sigma$) and local context
+    $\Gamma_M$ the following apply:
+    \begin{itemize}
+        \item $\bot \not \in \sigma$
+        \item if $M = (AB), \Gamma_M \vdash A : \sigma, \Gamma_M \vdash B : \tau,
+            \sigma \meet (\tau \tot \top) = (\nu' \tot \nu'')$, then
+            $\tau \less \nu'$
     \end{itemize}
 \end{defn}
 

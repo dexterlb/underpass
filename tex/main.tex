@@ -14,12 +14,14 @@
 \usepackage{hyperref}
 \usepackage{color}
 \usepackage{xcolor}
+\usepackage{mathtools}
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{mathabx}
 \usepackage{graphicx}
+\usepackage{ebproof}
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{syntax}
@@ -76,6 +78,18 @@
     \end{center}
 }
 
+\newcommand\deriv[1]{
+    \begin{prooftree}
+        #1
+    \end{prooftree}
+}
+
+\newcommand\cenderiv[1]{
+    \begin{center}
+        \deriv{ #1 }
+    \end{center}
+}
+
 \usepackage{color}
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
 \definecolor{light-gray}{gray}{0.9}
@@ -110,6 +124,7 @@
 \newcommand{\meet}{\wedge}
 \newcommand{\less}{\leq}
 \newcommand{\tot}{\rightarrow}
+\newcommand{\abstr}{\Rightarrow}
 \newcommand{\wildcard}{\Asterisk}
 
 \title{Fancy title}
