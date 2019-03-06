@@ -1,0 +1,28 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\subsection{The CCG definition language}
+\begin{grammar}
+    <program> ::= <tstatement> <tstatement>*
+
+    <tstatement> ::= <statement> `.'
+
+    <statement>  ::= <import-statement>
+           \alt <begin-statement>
+           \alt <match-statement>
+           \alt <term-definition>
+           \alt <type-definition>
+
+    <import-statement> ::= `import' <filepath>
+
+    <begin-statement>  ::= `begin' <category>
+
+    <match-statement>  ::= <phrase-rule> `:' <target> (`,' <target>)*
+
+    <phrase-rule> ::= <match-rule> (`<' <phrase-id> `>' <match-rule>)*
+    <match-rule> ::= <matcher> (<template> | $\varepsilon$)
+
+    <target> ::= <category> `@' <term>
+
+    <filepath> ::= <quoted-string>
+\end{grammar}
+\end{document}
