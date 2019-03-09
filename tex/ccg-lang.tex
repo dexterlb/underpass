@@ -18,10 +18,59 @@
 
     <match-statement>  ::= <phrase-rule> `:' <target> (`,' <target>)*
 
+    <term-definition>  ::= <identifier> `:=' <term>
+
+    <type-definition>  ::= <identifier> `<' <type>
+
     <phrase-rule> ::= <match-rule> (`<' <phrase-id> `>' <match-rule>)*
+
     <match-rule> ::= <matcher> (<template> | $\varepsilon$)
 
+    <matcher> ::= <simple-matcher> | <or-matcher> | <and-matcher>
+
+    <not-or-matcher> ::= <simple-matcher> | <and-matcher>
+
+    <not-and-matcher> ::= <simple-matcher> | <or-matcher>
+
+    <simple-matcher> ::= <exact-matcher> | <regex-matcher> | `(' <matcher> `)'
+
+    <or-matcher> ::= <not-or-matcher> `|' <matcher>
+
+    <and-matcher> ::= <not-and-matcher> `\&' <matcher>
+
+    <template> ::= <backtick-quoted-string> `:' <type>
+
     <target> ::= <category> `@' <term>
+
+    <category> ::= <simple-category> | <simple-category> <slash> <category>
+
+    <simple-category> ::= <type> | `(' <category> `)'
+
+    <slash> ::= `/' <modality> | `\\' <modality>
+
+    <modality> ::= `.' | `d' | `x' | `*' | $\varepsilon$
+
+    <type> ::= <simple-type> | <type> <arrow> <simple-type>
+
+    <simple-type> ::= <identifier> | `*' | `(' <type> `)'
+
+    <arrow> ::= `->'
+
+    <term> ::= <nonapp-term> | <nonapp-term> <term>
+
+    <nonapp-term> ::= <constant> | <variable> | <constr> | <abstr> | `(' <term> `)'
+
+    <constant> ::= <identifier>
+
+    <variable> ::= <identifier>
+
+    <constr> ::= <type> `[' <term> `]'
+
+    <abstr> ::= <lambda> <declaration> `=>' <term>
+
+    <lambda> ::= `\\' | `lambda'
+
+    <declaration> ::= <variable> | <variable> `:' <type>
 
     <filepath> ::= <quoted-string>
 \end{grammar}
