@@ -1,65 +1,39 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\subsection{The Intermediate Language}
-Note: this is very much subject to change.
+\subsection{The Intermediate Language (Minipass)}
+Overpass is a relatively complex language with assignment, sequentiality
+and specialised syntax. As such, it is not well-suited for performing
+AST transofmations.
 
-Let our world be a directed graph whose vertices we call \emph{elements}.
-Each \emph{edge} carries a \emph{label}. Each \emph{label} is a heterogenous
-\emph{List} of \emph{Numbers}, \emph{Strings} and other \emph{Lists}.
+Minipass addresses this problem: its goal is to be easy to manipulate
+and reason about, and be translatable to Overpass. It is based on the typed
+lambda calculus variant described in \ref{sec:lambda} and speaks about a
+world much simpler than the one described by Overpass - a directed graph
+with labeled edges and vertices.
 
-\begin{grammar}
-
-<term> ::= <variable>
-\alt <constant>
-\alt <term> <term>
-\alt `lambda' <declaration> `{' <term> `}'
-\alt `(' <term> `)'
-
-<constant> ::= <stringliteral>
-          \alt <numberliteral>
-          \alt `and'
-          \alt `or'
-          \alt `get'
-          \alt `next'
-          \alt `empty'
-          \alt `consNum'
-          \alt `consString'
-          \alt `consList'
+The graph abstraction works as follows:
+\begin{itemize}
+    \item Overpass objects (nodes, ways, relations, areas) are regarded as
+        vertices
+    \item Object tags are encoded into vertex labels - for example, we
+        may have a label for "named London" or "is a cafe".
+    \item Edges labels represent relations between objects: for example,
+        we may have an edge which means "nearby" or an edge "on the same
+        transport route"
+\end{itemize}
 
 
-<variable> ::= <identifier>
-
-<declaration> ::= <variable> `:' <type>
-\alt <variable>
-
-<type> :: <type> `->' <type>
-\alt <basictype>
-\alt `(' <type> `)'
-
-<basictype> ::= `Set'
-\alt `Num'
-\alt `String'
-\alt `List'
-\alt `*'
-
-<identifier> ::= [a-zA-Z_][a-zA-Z_0-9]*
-
-<numberliteral>     ::= -?[0-9]+(\textbackslash.[0-9]+)?
-
-<stringliteral>     ::= <todo>
-\end{grammar}
-
-For ease of writing, let us consider that types are right-associative,
-applications are left-associative and that we can write list literals
-within square brackets:
-\begin{lstlisting}
-[42, "foo"] := consNum 42 (consString "foo" empty)
-\end{lstlisting}
-
-And here are the types for all constants:
+Minipass consists of the following set of constants and basic types:
 
 \begin{lstlisting}
+-- basic types
+Num, String     -- self explanatory
+List            -- list of Nums, Strings or Lists
+Set             -- represents a set of Overpass objects
+                -- (nodes, ways, relations, areas)
+
+-- constants
 <stringliteral> : String
 <numberliteral> : Num
 
@@ -77,6 +51,22 @@ consString  : String   -> List -> List
 consList    : List     -> List -> List
 
 \end{lstlisting}
+
+
+
+Let our world be a directed graph whose vertices we call \emph{elements}.
+Each \emph{edge} carries a \emph{label}. Each \emph{label} is a heterogenous
+\emph{List} of \emph{Numbers}, \emph{Strings} and other \emph{Lists}.
+
+For ease of writing, let us consider that types are right-associative,
+applications are left-associative and that we can write list literals
+within square brackets:
+\begin{lstlisting}
+[42, "foo"] := consNum 42 (consString "foo" empty)
+\end{lstlisting}
+
+And here are the types for all constants:
+
 
 With this abstraction, we can represent most of the Overpass queries for
 constructing sets (filters, recurse, in/is_in, set operations, conditions)
