@@ -59,6 +59,19 @@ will be used.
     \[ typeof : X \rightarrow \tclos{T} \] and $T$ is a partial meet-semilattice.
 \end{defn}
 
+\begin{defn}
+    If $X, Y$ is a set of basic types and $\varphi: X \rightarrow \tclos{Y}$,
+    then $\hat{\varphi} : \tclos{X} \rightarrow \tclos{Y}$ is defined inductively:
+    \begin{equation*}
+        \hat{\varphi}(\sigma) =
+        \begin{cases*}
+            \sigma, & $\sigma \in X$ \\
+            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma''), &
+                $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
+        \end{cases*}
+    \end{equation*}
+\end{defn}
+
 \subsubsection{Terms}
 To define $\lambda$ terms with the types introduced above, a system similar
 to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
@@ -155,6 +168,7 @@ extends the original system with constants and constructors.
     Of course, the above function is nowhere defined for non-closed terms.
 \end{defn}
 
+\pagebreak
 \subsubsection{Subtype libraries}
 \begin{defn}
     A statement in the form $\sigma \lass \tau (\sigma, \tau \in \mathbb{T})$
@@ -198,5 +212,24 @@ extends the original system with constants and constructors.
     A finite sequence of subtype assertions
     $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library}
     if $T_{\Theta} = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
+
+    Also, $left(\Theta) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
 \end{defn}
+
+\begin{prop}
+    If $T$ is a set of basic types and
+    $\Theta = \theta_1 ... \theta_n$ is a subtype library, then the function
+    $\varphi = id_T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n:
+     (T \cup left(\Theta)) \rightarrow \tclos{T_{\Theta}}$
+    has the following properties:
+    \begin{itemize}
+        \item $\restr{\hat{\varphi}}{\tclos{T}}$ is homomorphic over $\less$, namely, for
+            $\sigma, \tau \in \tclos{T}$:
+            \[ \sigma \less \tau \implies
+                \hat{\varphi}(\sigma) \less \hat{\varphi}(\tau) \]
+        \item $\hat{\varphi}$ is consistent with $\lass$, namely:
+            \[ \sigma \lass \tau \in \Theta \implies
+                \hat{\varphi}(\sigma) \less \hat{\varphi}(\tau) \]
+    \end{itemize}
+\end{prop}
 \end{document}
