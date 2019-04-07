@@ -9,49 +9,54 @@ will be used.
 
 \subsubsection{Types}
 \begin{defn}
-    If the partial-order relation $\less \subseteq X \times X$ exists,
-    we can define the operator $\meet : X \times X \rightarrow X$ as the
-    maximum element lower than both arguments, namely:
-    \[ x \meet y = z \iff z \less x, z \less y,
-        \forall t \in X (t \less x, t \less y \implies t \less z) \]
-\end{defn}
-
-\begin{defn}
-    A set $T$ is called a \emph{set of types} whenever all of the following
-    are true:
+    A \emph{partial meet-semilattice} is a pair $\langle X, \less \rangle$ where:
     \begin{itemize}
-        \item $T$ is finite
-        \item There exists a partial order relation $\less \subseteq T \times T$
-        \item If $x \meet y = z'$ and $x \meet y = z''$, then $z' = z''$
+        \item $\less$ is a partial-order relation
+        \item for any $x, y \in X$, there is at most one $z$ such that
+        \[  z \less x, z \less y,
+            \forall t \in X (t \less x, t \less y \implies t \less z) \]
+        We can define the partial function $\meet : X \times X \leadsto X$ to
+        be $x \meet y = z$ for any $x, y, z$ satisfying this condition.
     \end{itemize}
 \end{defn}
 
 \begin{defn}
-    For a set $T$, its \emph{type closure} $\mathcal{T}(T)$ is defined
+    Let $\mathbb{T}$ be an infinitely countable set of items we call
+    \emph{type variables}.
+
+    For obvious reasons  $\{ \tot, ), ( \} \cap \mathbb{T} = \emptyset$.
+\end{defn}
+
+\begin{defn}
+    A set $T \subseteq \mathbb{T}$ is called a \emph{set of basic types}
+    if it is finite and forms a partial meet-semilattice.
+\end{defn}
+
+\begin{defn}
+    For a set of basic types $T$, its \emph{type closure}
+    $\tclos{T} \subseteq (T \, \dot\cup \,\{\, \tot, ), ( \,\})^*$ is defined
     inductively:
 
     \begin{itemize}
-        \item $\sigma \in T \implies \sigma \in \mathcal{T}(T)$
-        \item $\sigma, \tau \in \mathcal{T}(T) \implies (\sigma \tot \tau) \in \mathcal{T}(T)$
+        \item $\sigma \in T \implies \sigma \in \tclos{T}$
+        \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
     \end{itemize}
 
-    Moreover, we can define a relation $\lesss$ which extends $\less$ over
-    $\mathcal{T}(T)$:
+    Moreover, we can extend $\less$ over
+    $\tclos{T}$:
     \begin{itemize}
-        \item $\sigma, \tau \in T \implies \sigma \lesss \tau = \sigma \less \tau$
-        \item $(\sigma \tot \sigma'), (\tau \tot \tau') \in \mathcal{T}(T) \implies
-            (\sigma \tot \sigma') \lesss (\tau \tot \tau') = (\sigma \less \sigma')
+        \item $(\sigma \tot \sigma') \less (\tau \tot \tau') \iff (\sigma \less \sigma')
             \& (\tau \less \tau')$
     \end{itemize}
 \end{defn}
 
 \begin{prop}
-    If $T$ is a set of types, then $\mathcal{T}(T)$ is a set of types.
+    If $T$ is a set of basic types, then $\tclos{T}$ is a partial meet-semilattice.
 \end{prop}
 
 \begin{defn}
     We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
-    \[ typeof : X \rightarrow T \] and $T$ is a type closure.
+    \[ typeof : X \rightarrow \tclos{T} \] and $T$ is a partial meet-semilattice.
 \end{defn}
 
 \subsubsection{Terms}
@@ -68,14 +73,14 @@ extends the original system with constants and constructors.
     Let $C$ be a countable set, typed in $T$,
     whose elements we call \emph{constants}.
 
-    For a type semilattice $T$, we can define the set of
+    For a set of basic types $T$, we can define the set of
     \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
         \item Variable:    \[ v \in \mathbb{V} \implies v \in \Lambda_T^C \]
         \item Application: \[ A, B \in \Lambda_T^C \implies (AB) \in \Lambda_T^C \]
-        \item Abstraction: \[ v \in \mathbb{V}, A \in \Lambda_T^C, \sigma \in T
+        \item Abstraction: \[ v \in \mathbb{V}, A \in \Lambda_T^C, \sigma \in \tclos{T}
                 \implies (\lambda v : \sigma \abstr A) \in \Lambda_T^C \]
         \item Construction: \[ \sigma \in T, A \in \Lambda_T^C
                 \implies \sigma[A] \in \Lambda_T^C \]
@@ -85,7 +90,7 @@ extends the original system with constants and constructors.
 \begin{defn}
     Statement, declaration, context, judgement
     \begin{itemize}
-        \item For $M \in \Lambda_T^C, \sigma \in T$, $M : \sigma$ is called
+        \item For $M \in \Lambda_T^C, \sigma \in \tclos{T}$, $M : \sigma$ is called
             a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
             is called a \emph{type}.
         \item A statement with a variable as a subject is called a \emph{declaration}.
@@ -106,7 +111,7 @@ extends the original system with constants and constructors.
         \item Constant
             \cenderiv{
                 \hypo{c \in C}
-                \infer1{\Gamma \vdash x : typeof(c)}
+                \infer1{\Gamma \vdash c : typeof(c)}
             }
         \item Variable
             \cenderiv{
@@ -117,7 +122,7 @@ extends the original system with constants and constructors.
             \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma' \tot \sigma''}
                 \hypo{\Gamma \vdash B : \tau}
-                \hypo{!(\tau \meet \sigma')}
+                \hypo{\tau \less \sigma'}
                 \infer3{\Gamma \vdash (AB) : \sigma''}
             }
         \item Abstraction
@@ -125,16 +130,16 @@ extends the original system with constants and constructors.
                 \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
                 \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
             }
-        \item Construction via downcast
-            \cenderiv{
-                \hypo{\Gamma \vdash A : \sigma}
-                \hypo{\tau \less \sigma}
-                \infer2{\Gamma \vdash \tau[A] : \tau}
-            }
-        \item Construction via upcast (dangerous, doesn't need to be included in most cases)
+        \item Construction via upcast
             \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma}
                 \hypo{\sigma \less \tau}
+                \infer2{\Gamma \vdash \tau[A] : \tau}
+            }
+        \item Construction via downcast (dangerous, doesn't need to be included in most cases)
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\tau \less \sigma}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
             }
     \end{itemize}
@@ -150,59 +155,48 @@ extends the original system with constants and constructors.
     Of course, the above function is nowhere defined for non-closed terms.
 \end{defn}
 
-\begin{defn}
-    A term is \emph{subtype-sound}, if for every subterm $M$
-    ($\Gamma \vdash M : \sigma$) and local context
-    $\Gamma_M$ the following applies:
-        \[ \text{if } M = (AB), \Gamma_M \vdash A : \sigma' \tot \sigma'',
-            \Gamma_M \vdash B : \tau,
-            !(\sigma' \meet \tau) \text{, then }
-            \tau \less \sigma' \]
-\end{defn}
-
 \subsubsection{Subtype libraries}
 \begin{defn}
-    Let $\mathbb{T}$ be an infinitely countable set of items we call
-    \emph{type variables}.
-
-    Let $T$ be a set of types.
-
-    A statement in the form $\sigma \lass \tau$, where
-    $\sigma \in \mathbb{T}, \tau \in \mathcal{T}(T \cup \mathbb{T})$,
-    $\sigma \not\in \tau$,
+    A statement in the form $\sigma \lass \tau (\sigma, \tau \in \mathbb{T})$
     is called a \emph{subtype assertion}.
-
-    A set of subtype assertions $\Theta$ is called a \emph{subtype library}.
 \end{defn}
 
 \begin{defn}
-    Subtypes according to a subtype library
+    If we have
     \begin{itemize}
-        \item $\sigma \lass \tau \in \Theta
-            \implies \Theta \vdash \sigma \lesss \tau$
-        \item $\Theta \vdash \sigma \lesss (\tau' \tot \tau'')
-            \implies \Theta \vdash \sigma_{\tau'} \lesss \tau',
-            \Theta \vdash \sigma_{\tau''} \lesss \tau''$
+        \item a set of basic types $T$
+        \item $\tau \in \tclos{T}$
+        \item $\sigma \in \mathbb{T} \setminus T$
+    \end{itemize}
+    We can define \[ T' = T \tadd (\sigma \lass \tau) \] as:
+    \begin{itemize}
+        \item If $\tau \in T$, then:
+            \begin{itemize}
+                \item $T' = T \cup \{ \sigma \}$
+                \item $\less$ is extended with $\sigma \less \tau$
+            \end{itemize}
+        \item If $\tau = \tau' \tot \tau''$, then, for the fresh type variables $\sigma', \sigma''$:
+            \begin{itemize}
+                \item $T' = T \tadd \sigma' \lass \tau' \tadd \sigma'' \lass \tau''$
+            \end{itemize}
+    \end{itemize}
+
+    Moreover, if we have an injective function $\varphi : X \rightarrow \tclos{T}$ and
+    $T' = T \tadd (\sigma \lass \tau)$, we can define
+    \[\varphi' = \varphi \tadd (\sigma \lass \tau) : X \cup \sigma \rightarrow \tclos{T'}\]
+    as:
+    \begin{itemize}
+        \item If $\tau \in T$, then:
+            \[ \varphi' = \varphi \cup \{ (\sigma, \sigma) \} \]
+        \item If $\tau = \tau' \tot \tau'', T \tadd \sigma \lass \tau
+            = T \tadd \sigma' \lass \tau' \tadd \sigma''$:
+            \[ \varphi' = \varphi \cup \{ (\sigma, \sigma' \tot \sigma'') \} \]
     \end{itemize}
 \end{defn}
 
 \begin{defn}
-    A subtype library can induce a set of basic types and its respective
-    subtype relation:
-    \begin{itemize}
-        \item $basic(\Theta) = \{ \sigma \mid
-            \Theta \vdash \sigma \lesss \pi, \sigma \neq (\tau' \tot \tau'') \} $
-        \item For $\sigma, \tau \in basic(\Theta),
-            \sigma \less \tau \iff \Theta \vdash \sigma \lesss \tau$
-    \end{itemize}
+    A finite sequence of subtype assertions
+    $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library}
+    if $T_{\Theta} = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
 \end{defn}
-
-\begin{prop}
-    For $\sigma, \tau \in \mathcal{T}(basic(\Theta))$,
-    \[ \sigma \lesss \tau \iff \Theta \vdash \sigma \lesss \tau \]
-\end{prop}
-
-\begin{prop}
-    $\mathcal{T}(basic(\Theta))$ is a set of types
-\end{prop}
 \end{document}
