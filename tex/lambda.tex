@@ -22,9 +22,10 @@ will be used.
 
 \begin{defn}
     Let $\mathbb{T}$ be an infinitely countable set of items we call
-    \emph{type variables}.
+    \emph{type symbols}.
 
-    For obvious reasons  $\{ \tot, ), ( \} \cap \mathbb{T} = \emptyset$.
+    For obvious reasons we want $(\{ \tot, ), ( \} \cup \mathbb{T})^*
+    \cap \mathbb{T} = \emptyset$.
 \end{defn}
 
 \begin{defn}
@@ -47,6 +48,17 @@ will be used.
     \begin{itemize}
         \item $(\sigma \tot \sigma') \less (\tau \tot \tau') \iff (\sigma \less \sigma')
             \& (\tau \less \tau')$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    The function $tv : \tclos{\mathbb{T}} \rightarrow 2^\mathbb{T}$, which
+    returns the set of type symbols used in a complex type, is defined inductively:
+
+    \begin{itemize}
+        \item if $\sigma \in \mathbb{T}$ then $tv(\sigma) = \sigma$
+        \item if $\sigma = \sigma' \rightarrow \sigma''$ then
+            $tv(\sigma) = tv(\sigma') \cup tv(\sigma'')$
     \end{itemize}
 \end{defn}
 
@@ -175,36 +187,51 @@ extends the original system with constants and constructors.
     is called a \emph{subtype assertion}.
 \end{defn}
 
+Since our definition of "subtype" doesn't allow us to subtype a complex type,
+we have to work around this by making $\sigma$ be a complex type with the same
+syntactic structure as $\tau$ and then subtyping on the level of individual
+basic types it is made of. To do this, we need a way to create a new term
+with the same syntactic structure of another term - essentially an image which
+maps basic types into new basic types.
+
+\begin{defn}
+    For $O \subseteq \mathbb{T}, \tau \in \tclos{\mathbb{T} \setminus O}$,
+    \[ clone_O(\tau) : tv(\tau) \rightarrow \mathbb{T} \setminus O \]
+    is defined inductively:
+    \begin{itemize}
+        \item if $\tau \in \mathbb{T}$, then for a fresh element
+            \footnote{Assume $\mathbb{T}$ is ordered and get the lowest element
+            in $\mathbb{T} \setminus O$. Alternatively, an animal (exact species is
+            implementation-specific) needs to be sacrificed to the god of
+            Choice, lest His unwillingness to bestow upon us a pristine virgin
+            symbol.}
+            $\tau' \in \mathbb{T} \setminus O$, define
+            $clone_O(\tau) = \{ (\tau, \tau') \}$
+        \item if $\tau = \tau' \tot \tau''$, then:
+
+            Let $clone_O(\tau') = \varphi$, $O' = O \cup range(\varphi)$,
+            $clone_{O'}(\tau'') = \psi$.
+
+            Now, define $clone_O(\tau) = \varphi \cup \psi$.
+    \end{itemize}
+\end{defn}
+
 \begin{defn}
     If we have
     \begin{itemize}
         \item a set of basic types $T$
         \item $\tau \in \tclos{T}$
         \item $\sigma \in \mathbb{T} \setminus T$
+        \item a mapping $\varphi: X \rightarrow \tclos{T}$
     \end{itemize}
-    We can define \[ T' = T \tadd (\sigma \lass \tau) \] as:
+    Let $\xi = clone_{T \cup \{ \sigma \}}(\tau)$
+    We can define \[ T' = T \tadd (\sigma \lass \tau) \text{ and }
+                     \varphi' = \varphi \tadd (\sigma \lass \tau) \] as:
     \begin{itemize}
-        \item If $\tau \in T$, then:
-            \begin{itemize}
-                \item $T' = T \cup \{ \sigma \}$
-                \item $\less$ is extended with $\sigma \less \tau$
-            \end{itemize}
-        \item If $\tau = \tau' \tot \tau''$, then, for the fresh type variables $\sigma', \sigma''$:
-            \begin{itemize}
-                \item $T' = T \tadd \sigma' \lass \tau' \tadd \sigma'' \lass \tau''$
-            \end{itemize}
-    \end{itemize}
-
-    Moreover, if we have an injective function $\varphi : X \rightarrow \tclos{T}$ and
-    $T' = T \tadd (\sigma \lass \tau)$, we can define
-    \[\varphi' = \varphi \tadd (\sigma \lass \tau) : X \cup \sigma \rightarrow \tclos{T'}\]
-    as:
-    \begin{itemize}
-        \item If $\tau \in T$, then:
-            \[ \varphi' = \varphi \cup \{ (\sigma, \sigma) \} \]
-        \item If $\tau = \tau' \tot \tau'', T \tadd \sigma \lass \tau
-            = T \tadd \sigma' \lass \tau' \tadd \sigma''$:
-            \[ \varphi' = \varphi \cup \{ (\sigma, \sigma' \tot \sigma'') \} \]
+        \item $T' = T \cup range(\xi)$
+        \item extend $\less$ for $T'$ with $\sigma' \less \tau'$ for each
+            $\xi(\tau') = \sigma'$
+        \item $\varphi' = \varphi \cup \{ (\sigma, \hat{\xi}(\tau)) \}$
     \end{itemize}
 \end{defn}
 
@@ -213,23 +240,23 @@ extends the original system with constants and constructors.
     $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library}
     if $T_{\Theta} = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
 
-    Also, $left(\Theta) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
+    Also, we can define the function which gives us all the new type names
+    asserted by the subtype library as
+    $left(\Theta) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
+
+    And we can define the function which maps those new type names to their
+    respective types as
+    $\varphi = \emptyset \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
 \end{defn}
 
 \begin{prop}
     If $T$ is a set of basic types and
-    $\Theta = \theta_1 ... \theta_n$ is a subtype library, then the function
-    $\varphi = id_T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n:
-     (T \cup left(\Theta)) \rightarrow \tclos{T_{\Theta}}$
-    has the following properties:
+    $\Theta = \theta_1 ... \theta_n$ is a subtype library, it has the
+    following properties:
     \begin{itemize}
-        \item $\restr{\hat{\varphi}}{\tclos{T}}$ is homomorphic over $\less$, namely, for
-            $\sigma, \tau \in \tclos{T}$:
-            \[ \sigma \less \tau \implies
-                \hat{\varphi}(\sigma) \less \hat{\varphi}(\tau) \]
-        \item $\hat{\varphi}$ is consistent with $\lass$, namely:
-            \[ \sigma \lass \tau \in \Theta \implies
-                \hat{\varphi}(\sigma) \less \hat{\varphi}(\tau) \]
+        \item $\varphi : left(\Theta) \rightarrow \tclos{T_{\Theta}}$
+        \item $\sigma \less_{\tclos{T}} \tau \implies \sigma \less_{\tclos{T_{\Theta}}} \tau$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less \varphi(\tau)$
     \end{itemize}
 \end{prop}
 \end{document}
