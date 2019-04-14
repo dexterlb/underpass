@@ -180,7 +180,58 @@ extends the original system with constants and constructors.
     Of course, the above function is nowhere defined for non-closed terms.
 \end{defn}
 
-\pagebreak
+\subsubsection{Type set subsumption}
+\begin{defn}
+    If $T$ and $S$ are sets of basic types, we say that $T \less S$ if:
+    \begin{itemize}
+        \item $S \subseteq T$
+        \item $\forall \tau \in T \exists \sigma \in S ( \tau \less \sigma )$
+    \end{itemize}
+
+    Essentially, this says that $T$ is a specialisation of $S$: any type in
+    $T$ is a more concrete variant of some type in $S$.
+\end{defn}
+
+If we have $T \less S$, it would be convenient to be able to convert between them.
+The conversion from $S$ to $T$ is trivial. The conversion from $T$ to $S$,
+however, involves discarding information.
+
+\begin{example}
+    For example, let $S = \{ Int, String \}$, supposing the obvious semantics
+    behind those names. This is a nice type system - however, one might want to
+    be able to encode extra information within types: this comes especially
+    handy in the context of CCGs.
+
+    So, we add some extra types: \[ T = \{ Int, String, Distance, Count, NamedEntity \} \]
+    We want $\less$ to be defined as \[ Distance \less Int, Count \less Int,
+    NamedEntity \less String \]
+
+    Now while doing natural language parsing, we can use $T$. Afterwards
+    we no longer need the extra information, so we could discard the extra
+    types and return to $S$. To do this, we define a \emph{squash function}.
+\end{example}
+
+\begin{defn}
+    $\omega: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if:
+    \begin{itemize}
+        \item $\omega(\tau)$ is a minimal element in $S$
+        \item $\tau \less \omega(\tau)$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    If $\omega: T \rightarrow S$ is a squash function for $T \less S$, we can define
+    $\omega_{\lambda}: \Lambda_T^C \rightarrow \Lambda_S^C$ inductively:
+\end{defn}
+
+From here on $\omega$ will be used freely in place of $\omega_{\lambda}$.
+
+\begin{prop}
+    For a squash function $\omega: T \rightarrow S$, $\omega_{\lambda}$ is
+    well-defined, namely
+    \[ \Gamma \vdash M : \sigma \iff \omega(\Gamma) \vdash \omega(M) : \omega(\sigma) \]
+\end{prop}
+
 \subsubsection{Subtype libraries}
 \begin{defn}
     A statement in the form $\sigma \lass \tau (\sigma, \tau \in \mathbb{T})$
@@ -234,8 +285,8 @@ maps basic types into new basic types.
 
 \begin{defn}
     A finite sequence of subtype assertions
-    $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library}
-    if $T_{\Theta} = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
+    $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
+    if $bt(\Theta) = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
 
     Also, we can define the function which gives us all the new type names
     asserted by the subtype library as
@@ -248,12 +299,19 @@ maps basic types into new basic types.
 
 \begin{prop}
     If $T$ is a set of basic types and
-    $\Theta = \theta_1 ... \theta_n$ is a subtype library, it has the
+    $\Theta = \theta_1 ... \theta_n$ is a subtype library over $T$, it has the
     following properties:
     \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{T_{\Theta}}$
-        \item $\sigma \less_{\tclos{T}} \tau \implies \sigma \less_{\tclos{T_{\Theta}}} \tau$
+        \item $\varphi : left(\Theta) \rightarrow \tclos{bt(\Theta)}$
+        \item $\sigma \less_{\tclos{T}} \tau \implies \sigma \less_{\tclos{bt(\Theta)}} \tau$
         \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less \varphi(\tau)$
     \end{itemize}
 \end{prop}
+
+\begin{prop}
+    If $T$ is a set of basic types and $\Theta$ is a subtype library, then
+    $bt(\Theta) \less T$. Even more, there is a unique squash function
+    $\omega_{\Theta} : bt(\Theta) \rightarrow T$.
+\end{prop}
+
 \end{document}
