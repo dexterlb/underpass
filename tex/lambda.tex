@@ -29,12 +29,22 @@ will be used.
 \end{defn}
 
 \begin{defn}
-    A set $T \subseteq \mathbb{T}$ is called a \emph{set of basic types}
-    if it is finite and forms a partial meet-semilattice.
+    A partial meet-semilattice $\langle T, \less \rangle$ where
+    $T \subseteq \mathbb{T}$ is called a \emph{type semilattice}.
+
+    Whenever the relation is unambiguous, $T$ and $\langle T, \less \rangle$
+    will be used interchangeably: we could say "let $T$ be a
+    type semilattice", which would refer to $\langle T, \less \rangle$.
 \end{defn}
 
 \begin{defn}
-    For a set of basic types $T$, its \emph{type closure}
+    For a type semilattice $T$, its \emph{type closure}\footnote{
+        To make this completely rigorous, $\mathcal{T}$ would have to be defined
+        over \emph{lattices}, not their carrier sets, so that the notion of
+        "extending the relation" makes sense (because we actually create a
+        new relation). These details, however, have been omitted since they don't
+        help get the idea across.
+    }
     $\tclos{T} \subseteq (T \, \dot\cup \,\{\, \tot, ), ( \,\})^*$ is defined
     inductively:
 
@@ -43,7 +53,9 @@ will be used.
         \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
     \end{itemize}
 
-    Moreover, we can extend $\less$ over
+    Moreover, we can extend\footnote{Whenever "extending" a partial-order relation,
+        that also means adding any extra links to account for transitivity and
+        reflexivity.} $\less$ over
     $\tclos{T}$:
     \begin{itemize}
         \item $(\sigma \tot \sigma') \less (\tau \tot \tau') \iff (\sigma \less \sigma')
@@ -52,18 +64,18 @@ will be used.
 \end{defn}
 
 \begin{defn}
-    The function $tv : \tclos{\mathbb{T}} \rightarrow 2^\mathbb{T}$, which
+    The function $ts : \tclos{\mathbb{T}} \rightarrow 2^\mathbb{T}$, which
     returns the set of type symbols used in a complex type, is defined inductively:
 
     \begin{itemize}
-        \item if $\sigma \in \mathbb{T}$ then $tv(\sigma) = \sigma$
+        \item if $\sigma \in \mathbb{T}$ then $ts(\sigma) = \sigma$
         \item if $\sigma = \sigma' \rightarrow \sigma''$ then
-            $tv(\sigma) = tv(\sigma') \cup tv(\sigma'')$
+            $ts(\sigma) = ts(\sigma') \cup ts(\sigma'')$
     \end{itemize}
 \end{defn}
 
 \begin{prop}
-    If $T$ is a set of basic types, then $\tclos{T}$ is a partial meet-semilattice.
+    If $T$ is a type semilattice, then $\tclos{T}$ is a partial meet-semilattice.
 \end{prop}
 
 \begin{defn}
@@ -72,12 +84,12 @@ will be used.
 \end{defn}
 
 \begin{defn}
-    If $X, Y$ is a set of basic types and $\varphi: X \rightarrow \tclos{Y}$,
+    If $X, Y$ are type semilattices and $\varphi: X \rightarrow \tclos{Y}$,
     then $\hat{\varphi} : \tclos{X} \rightarrow \tclos{Y}$ is defined inductively:
     \begin{equation*}
         \hat{\varphi}(\sigma) =
         \begin{cases*}
-            \sigma, & $\sigma \in X$ \\
+            \varphi(\sigma), & $\sigma \in X$ \\
             \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma''), &
                 $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
         \end{cases*}
@@ -98,7 +110,7 @@ extends the original system with constants and constructors.
     Let $C$ be a countable set, typed in $T$,
     whose elements we call \emph{constants}.
 
-    For a set of basic types $T$, we can define the set of
+    For a set of type semilattice $T$, we can define the set of
     \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
     \begin{itemize}
@@ -113,7 +125,7 @@ extends the original system with constants and constructors.
 \end{defn}
 
 \begin{defn}
-    Statement, declaration, context, judgement
+    Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
     \begin{itemize}
         \item For $M \in \Lambda_T^C, \sigma \in \tclos{T}$, $M : \sigma$ is called
             a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
@@ -182,7 +194,7 @@ extends the original system with constants and constructors.
 
 \subsubsection{Type set subsumption}
 \begin{defn}
-    If $T$ and $S$ are sets of basic types, we say that $T \less S$ if:
+    If $T$ and $S$ are type semilattices, we say that $T \less S$ if:
     \begin{itemize}
         \item $S \subseteq T$
         \item $\forall \tau \in T \exists \sigma \in S ( \tau \less \sigma )$
@@ -245,14 +257,36 @@ basic types it is made of. To do this, we need a way to create a new term
 with the same syntactic structure of another term - essentially an image which
 maps basic types into new basic types.
 
+\begin{example}
+    Suppose we have the basic types $Int$ and $String$, and we want to extend
+    them.
+
+    For example, take the subtype assertion $F \lass ( Int \tot String )$.
+    Let $\tau = ( Int \tot String )$. We want $F$ to correspond to a type
+    $\sigma$ such that $\sigma \less \tau$. To do this, we clone
+    the complex type $\tau$, creating a new type with the same
+    syntactic structure: $\sigma = ( Int' \tot String' )$
+
+    Now we extend our subtyping relation to include $ Int' \less Int, String' \less String $,
+    which indeed gives that $\sigma \less \tau$.
+
+    To remember that $F$ stands for $\sigma$, we will iteratively build a
+    function $\varphi$ such that $\varphi(F) = \sigma$.
+
+    The next few definitions will formalise this process.
+\end{example}
+
 \begin{defn}
     For $O \subseteq \mathbb{T}, \tau \in \tclos{\mathbb{T} \setminus O}$,
-    \[ clone_O(\tau) : tv(\tau) \rightarrow \mathbb{T} \setminus O \]
+    the following function constructs a \emph{mapping} which returns a new (not
+    in $O$) symbol for each basic type found in $\tau$.
+
+    \[ clone_O(\tau) : ts(\tau) \rightarrow \mathbb{T} \setminus O \]
     is defined inductively:
     \begin{itemize}
-        \item if $\tau \in \mathbb{T}$, then for a fresh element
-            \footnote{Assume $\mathbb{T}$ is ordered and get the lowest element
-            in $\mathbb{T} \setminus O$.}
+        \item if $\tau \in \mathbb{T}$, then for a fresh element\footnote{
+            For example, assume $\mathbb{T}$ is ordered and get the lowest element
+            in $\mathbb{T} \setminus O$ to make this choice unique.}
             $\tau' \in \mathbb{T} \setminus O$, define
             $clone_O(\tau) = \{ (\tau, \tau') \}$
         \item if $\tau = \tau' \tot \tau''$, then:
@@ -264,54 +298,69 @@ maps basic types into new basic types.
     \end{itemize}
 \end{defn}
 
+\begin{example}
+    In light of our example, $clone_O( Int \tot String ) =
+    \xi: ts(\tau) \rightarrow \mathbb{T} \setminus O$ such that
+    \[ \xi(\sigma) = \begin{cases*}
+            Int', & $\sigma = Int$ \\
+            String', & $\sigma = String $
+        \end{cases*} \]
+\end{example}
+
 \begin{defn}
+    \label{def:subadd}
     If we have
     \begin{itemize}
-        \item a set of basic types $T$
+        \item a type semilattice $\langle T, \less \rangle$
         \item $\tau \in \tclos{T}$
         \item $\sigma \in \mathbb{T} \setminus T$
-        \item a mapping $\varphi: X \rightarrow \tclos{T}$
+        \item a mapping $\varphi$ with $range(\varphi) = \tclos{T}$
     \end{itemize}
-    Let $\xi = clone_{T \cup \{ \sigma \}}(\tau)$
-    We can define \[ T' = T \tadd (\sigma \lass \tau) \text{ and }
-                     \varphi' = \varphi \tadd (\sigma \lass \tau) \] as:
+    Let $\xi = clone_{T \cup \{ \sigma \}}(\tau)$.
+    Now we will define \[ \langle \langle T', \less' \rangle, \varphi' \rangle
+        = \langle \langle T, \less \rangle, \varphi \rangle
+        \tadd (\sigma \lass \tau) \] as:
     \begin{itemize}
         \item $T' = T \cup range(\xi)$
-        \item extend $\less$ for $T'$ with $\sigma' \less \tau'$ for each
-            $\xi(\tau') = \sigma'$
+        \item $\less'$ is the transitive and reflexive closure of
+            $\less \cup \{ (\sigma', \tau') \mid \xi(\tau') = \sigma' \}$
         \item $\varphi' = \varphi \cup \{ (\sigma, \hat{\xi}(\tau)) \}$
     \end{itemize}
 \end{defn}
 
 \begin{defn}
     A finite sequence of subtype assertions
-    $\Theta = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
-    if $bt(\Theta) = T \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$ is defined.
+    $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
+    if $\hat{\Theta}_T = \langle \langle T, \less \rangle, \emptyset \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    is defined\footnote{
+        When trying to redefine a previously defined type, the sequence is not
+        a subtype library because of the restriction for $\sigma$
+        in definition \ref{def:subadd}.
+    }.
 
     Also, we can define the function which gives us all the new type names
     asserted by the subtype library as
-    $left(\Theta) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
-
-    And we can define the function which maps those new type names to their
-    respective types as
-    $\varphi = \emptyset \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
 \end{defn}
 
 \begin{prop}
-    If $T$ is a set of basic types and
-    $\Theta = \theta_1 ... \theta_n$ is a subtype library over $T$, it has the
-    following properties:
+    If $T$ is a type semilattice and
+    $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
+    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$
+    the following properties hold:
     \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{bt(\Theta)}$
-        \item $\sigma \less_{\tclos{T}} \tau \implies \sigma \less_{\tclos{bt(\Theta)}} \tau$
-        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less \varphi(\tau)$
+        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$
+        \item $\sigma \less \tau \implies \sigma \less' \tau$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less \hat{\varphi}(\tau)$
     \end{itemize}
 \end{prop}
 
 \begin{prop}
-    If $T$ is a set of basic types and $\Theta$ is a subtype library, then
-    $bt(\Theta) \less T$. Even more, there is a unique squash function
-    $\omega_{\Theta} : bt(\Theta) \rightarrow T$.
+    If $T$ is a type semilattice and
+    $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
+    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
+    then $T' \less T$. Even more, there is a unique squash function
+    $\omega_{\Theta} : T' \rightarrow T$.
 \end{prop}
 
 \end{document}
