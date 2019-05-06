@@ -6,7 +6,7 @@ The CCG formalism is used in a multitude of variants. The form presented here
 will be most basic and of little practical use: it will only allow composition
 rules and the only restriction will be a global maximum arity.
 
-It is based on the Vijay-Shanker CCG formalism \cite{vs}.
+It is based on the Vijay-Shanker CCG formalism \cite{shanker}.
 
 This is enough for understanding the parsing algorithms, and can be further
 extended to include features such as type-raising,
@@ -55,7 +55,7 @@ category features, category variables and feature variables.
 
     Since using this notation everywhere is tedious, $X \mc Y$ shall mean
     $X \circ_{\mc} Y$ throughout this text, in contrast to
-    $\lp X \mc Y \rp$, which shall mean $\lp X \mc \lp A \lc_1 Y_1 \mc_2 Y_2 ... \mc_m Y_m \rp \rp$.
+    $X \mc \lp Y \rp$.
 \end{defn}
 
 \begin{defn}

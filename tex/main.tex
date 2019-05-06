@@ -1,4 +1,9 @@
- % !TEX program = xelatex
+% !TEX program = xelatex
+% arara: xelatex: {synctex: yes, options: ["-halt-on-error", "-file-line-error-style"]}
+% arara: biber
+% arara: xelatex: {synctex: yes, options: ["-halt-on-error", "-file-line-error-style"]}
+% arara: xelatex: {synctex: yes, options: ["-halt-on-error", "-file-line-error-style"]}
+
 \documentclass[12pt]{extarticle}
 \usepackage{fontenc}
 \usepackage{fontspec}
@@ -133,6 +138,7 @@
 \newcommand{\rp}{\textcolor{red}{)}}
 
 \newcommand{\meet}{\wedge}
+\newcommand{\unify}{\hat{\wedge}}
 \newcommand{\less}{\leq}
 \newcommand{\lesss}{\ll}
 \newcommand{\lass}{<:}
