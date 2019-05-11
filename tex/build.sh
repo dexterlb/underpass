@@ -4,9 +4,11 @@ shopt -s nullglob
 
 cd "$(dirname "$(readlink -f "${0}")")"
 
+OPTS=(-latexoption="-shell-escape" -halt-on-error -xelatex)
+
 case "${1}" in
     "")
-        latexmk -latexoption="-shell-escape" -halt-on-error -xelatex main.tex
+        latexmk ${OPTS[@]} main.tex
         ;;
     clean)
         latexmk -C
@@ -15,9 +17,9 @@ case "${1}" in
         done
         ;;
     watch)
-        latexmk -halt-on-error -xelatex -pvc main.tex
+        latexmk ${OPTS[@]} -pvc main.tex
         ;;
     *)
-        echo "what?"
+        echo "say whaaa?"
         ;;
 esac
