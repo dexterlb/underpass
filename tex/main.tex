@@ -30,6 +30,7 @@
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{syntax}
+\usepackage{ulem}
 \usepackage{subfiles}
 \usepackage{csquotes}
 \usepackage[style=alphabetic]{biblatex}
@@ -43,6 +44,8 @@
     -halt-on-error -interaction=batchmode -shell-escape
     -jobname "\image" "\texsource"}}
 \tikzexternalize
+
+\DeclareRobustCommand{\hsout}[1]{\texorpdfstring{\sout{#1}}{#1}}
 
 \renewcommand{\baselinestretch}{1.1}
 \setlength{\emergencystretch}{3em}

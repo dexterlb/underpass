@@ -1,0 +1,51 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{\hsout{Hacks} Extensions of the CCG formalism}
+
+The CCG formalism described in \ref{sec:ccg} is too weak to represent most
+phenomena in natural languages \cite{steedman}. Thus, several extensions have
+been developed to deal with them.
+
+\subsubsection{Categorial variables}
+This is a very powerful extension which adds simple unification based on variables
+to categorial derivation. To define it formally, it is convenient to assume
+the existence of an infinitely countable set $\mathbb{V}$ whose elements
+we call \emph{variables}\footnote{That set is magical in the sense that it is
+    disjoint with every set we feel convenient that it be disjoint with.}
+and introduce variable substitution over categories.
+
+\begin{defn}
+    We extend the definition of categorial closure to include variables:
+    \begin{enumerate}
+        \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
+        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
+        \item \label{itm:var}    $\alpha \in \mathbb{V} \Rightarrow \alpha \in C(\tau)$
+    \end{enumerate}
+\end{defn}
+
+\begin{defn}
+    The function $fv: C(\tau) \rightarrow 2^{\mathbb{V}}$ gives us the set of
+    all variables used in a category:
+    \[
+        fv(Z) =
+        \begin{cases*}
+            \varnothing, & $Z \in \tau$ \\
+            fv(X) \cup fv(Y), & $Z = \lp X \rc Y \rp$ \\
+            fv(X) \cup fv(Y), & $Z = \lp X \lc Y \rp$ \\
+            \{ \alpha \}, & $Z = \alpha \in \mathbb{V}$ \\
+        \end{cases*}
+    \]
+\end{defn}
+
+\subsubsection{Type-raising}
+This extension adds two unary rules for constructing derivations: \cite[sec.~5.3.1]{nts}
+\begin{center}
+    \tree{.{$\lb \alpha \rc \lp \alpha \lc X \rp \rb$} \edge[very thick]; {$\lb X \rb$} }
+        ( Forward type-raising )
+    \tree{.{$\lb \alpha \lc \lp \alpha \rc X \rp \rb$} \edge[very thick]; {$\lb X \rb$} }
+        ( Backward type-raising )
+\end{center}
+
+\end{document}
