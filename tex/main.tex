@@ -35,6 +35,15 @@
 \usepackage[style=alphabetic]{biblatex}
 \usepackage{tikz-qtree}
 \usepackage{tikz-qtree-compat}
+\usepackage{tikz}
+\usetikzlibrary{external}
+\tikzset{
+    external/system call={%
+    xelatex \tikzexternalcheckshellescape
+    -halt-on-error -interaction=batchmode -shell-escape
+    -jobname "\image" "\texsource"}}
+\tikzexternalize
+
 \renewcommand{\baselinestretch}{1.1}
 \setlength{\emergencystretch}{3em}
 \setlength{\parskip}{5pt}
