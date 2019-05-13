@@ -38,6 +38,46 @@ and introduce variable substitution over categories.
         \end{cases*}
     \]
 \end{defn}
+\begin{defn}
+    Variable substitution over categories is defined as
+    \[
+        \subst{Z}{\alpha}{W} =
+        \begin{cases*}
+            Z, & $Z \in \tau$ \\
+            \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \rc Y \rp$ \\
+            \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \lc Y \rp$ \\
+            \beta, & $Z = \beta \in \mathbb{V}$ \\
+            W, & $Z = \alpha$ \\
+        \end{cases*}
+    \]
+    for $Z \in C(\tau), W \in C(\tau), \alpha \in \mathbb{V}$
+\end{defn}
+
+Having extended the notion of categorial closure to include categorial variables,
+we also add a family of derivation rules to deal with variables, namely:
+\begin{center}
+    \tree{.{$\lb \subst{X}{\alpha}{Y} \rb$} \edge[very thick]; {$\lb X \rb$} }
+\end{center}
+for any $X \in C(\tau), Y \in C(\tau), \alpha \in \mathbb{V}$.
+
+This essentially allows us to generate any category and substitute it in place
+of variables during derivation.
+
+When parsing, we can observe that after processing all leaf nodes,
+there's no way to generate new variables while building the parse tree
+bottom-up. Thus, it is sufficient to eliminate variables by unification.
+
+Namely, in the $CYK'$ algorithm we can replace the rules (see \ref{cyk:rules})
+by the following:
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$,
+        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$,
+        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+\end{enumerate}
+
 
 \subsubsection{Type-raising}
 This extension adds two unary rules for constructing derivations: \cite[sec.~5.3.1]{nts}
