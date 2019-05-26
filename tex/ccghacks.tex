@@ -7,6 +7,76 @@ The CCG formalism described in \ref{sec:ccg} is too weak to represent most
 phenomena in natural languages \cite{steedman}. Thus, several extensions have
 been developed to deal with them.
 
+\subsubsection{Rule restrictions or modalities}
+The only restriction on rules within the pure CCG formalism is the limit to
+the number of arguments ($n$). For natural languages, this causes overgeneration.
+
+The simplest method to alleviate this is to allow arbitrary rule restrictions
+depending, essentially creating a new formalism for each new target language.
+Another method is the so called \emph{slash modalities}, which have been shown
+\cite{modal}
+to be equivalent to rule restrictions in terms of expressive power, and will
+be used here.
+
+\begin{defn}
+    The elements of the set
+    $\mathcal{M} = \{ \modstar, \modr, \modx, \moddot \}$ are called
+    \emph{slash modalities}.
+
+    Slash modalities make up the following lattice:
+
+    \begin{center}
+        \begin{tikzpicture}
+            \node[main node] (1) {$\modstar$};
+            \node[main node] (2) [below left = 1cm and 1.5cm of 1]  {$\modr$};
+            \node[main node] (3) [below right = 1cm and 1.5cm of 1] {$\modx$};
+            \node[main node] (4) [below = 2cm of 1] {$\moddot$};
+
+            \path[draw,thick]
+            (1) edge node {} (2)
+            (1) edge node {} (3)
+            (2) edge node {} (4)
+            (3) edge node {} (4);
+        \end{tikzpicture}
+    \end{center}
+\end{defn}
+
+\begin{defn}
+    We extend the definition of categorial closure to use modalities:
+    \begin{enumerate}
+        \item \label{cmod:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{cmod:right}  $X, Y \in C(\tau), M \in \mathcal{M} \Rightarrow \lp X \rc_M Y \rp \in C(\tau)$
+        \item \label{cmod:left}   $X, Y \in C(\tau), M \in \mathcal{M} \Rightarrow \lp X \lc_M Y \rp \in C(\tau)$
+    \end{enumerate}
+\end{defn}
+
+Now, we restrict derivations according to modalities (in all cases, $m \leq n$):
+\begin{itemize}
+    \item "Application"
+        \[ \lb X \rb \rightarrow \lb X \rc_\modstar Y \rb \lb Y \rb \]
+        \[ \lb X \rb \rightarrow \lb Y \rb \lb X \lc_\modstar Y \rb \]
+    \item "Harmonic composition"
+        \[ \lb X \rc_\modr Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc_\modr Y \rb \lb Y \rc_\modr Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+        \[ \lb X \lc_\modr Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \lc_\modr Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\modr Y \rb \]
+    \item "Crossing composition"
+        \[ \lb X \lc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc_\modx Y \rb \lb Y \lc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+        \[ \lb X \rc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \rc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\modx Y \rb \]
+\end{itemize}
+
+In the above templates, modalities on the right-hand side stand for any
+modality that is less-than or equal (according to the modality lattice)
+to the one specified. The modalities on the left-hand side are produced by
+unifying (lowest common ancestor) the modalities on the right.
+
+\example{
+    For example, here are a few valid derivations:
+    \[ \lb X \rb \rightarrow \lb X \rc_\modr Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rc_\modx Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rc_\moddot Y \rb \lb Y \rb \]
+    \[ \lb X \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc_\modr Y \rb \lb Y \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+    \[ \lb X \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \rc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\moddot Y \rb \]
+}
+
 \subsubsection{Categorial variables}
 This is a very powerful extension which adds simple unification based on variables
 to categorial derivation. To define it formally, it is convenient to assume
@@ -18,10 +88,10 @@ and introduce variable substitution over categories.
 \begin{defn}
     We extend the definition of categorial closure to include variables:
     \begin{enumerate}
-        \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
-        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
-        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
-        \item \label{itm:var}    $\alpha \in \mathbb{V} \Rightarrow \alpha \in C(\tau)$
+        \item \label{cvar:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{cvar:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
+        \item \label{cvar:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
+        \item \label{cvar:var}    $\alpha \in \mathbb{V} \Rightarrow \alpha \in C(\tau)$
     \end{enumerate}
 \end{defn}
 
@@ -78,6 +148,16 @@ by the following:
         then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
 \end{enumerate}
 
+\subsubsection{Coordination}
+\emph{Coordination} refers to a technique which allows conjunctions (such as
+$and$, $or$ etc.) to combine identical categories on both sides.
+
+This can be emulated completely by using categorial variables and setting
+$f(and) = \{ \alpha \lc \alpha \rc \alpha \}$\footnote{
+    In practice, one would need to set
+    $f(and) = \{ X \lc X \rc X, \lp X \mc \alpha \rp \lc \lp X \mc \alpha \rp \rc \lp X \mc \alpha \rp, ...\}$
+    in order to properly define semantics.
+} and similar.
 
 \subsubsection{Type-raising}
 This extension adds two unary rules for constructing derivations: \cite[sec.~5.3.1]{nts}
@@ -87,5 +167,77 @@ This extension adds two unary rules for constructing derivations: \cite[sec.~5.3
     \tree{.{$\lb \alpha \lc \lp \alpha \rc X \rp \rb$} \edge[very thick]; {$\lb X \rb$} }
         ( Backward type-raising )
 \end{center}
+
+Since considering type-raising at any level would make parsing much slower,
+it is usually only considered on categories which appear in leaves.
+
+\example{
+    Consider the following simple grammar:
+    \begin{align*}
+        f(cities) &= \{ Set \} \\
+        f(villages) &= \{ Set \} \\
+        f(Finland) &= \{ Set \} \\
+        f(and) &= \{ \alpha \lc \alpha \rc \alpha \} \\
+        f(in) &= \{ Set \lc Set \rc Set \} \\
+        f(near) &= \{ Set \lc Set \rc Set \} \\
+    \end{align*}
+
+    It permits derivations as such:
+
+    \centree{
+        .{$\lb Set \rb$}
+            \edge[very thick];
+            [ .{$\lb Set \rb$}
+                [ .{$\lb Set \rb$}
+                    [ .{$cities$} ]
+                ]
+                [ .{$\lb Set \lc Set \rb$}
+                    [ .{$\lb Set \lc Set \rc Set \rb$}
+                        [ .{$\lb \alpha \lc \alpha \rc \alpha \rb$} [ .{$and$} ] ]
+                    ]
+                    [ .{$\lb Set \rb$}
+                        [ .{$villages$} ]
+                    ]
+                ]
+            ]
+            [ .{$\lb Set \lc Set \rb$}
+                [ .{$\lb Set \lc Set \rc Set \rb$}
+                    [ .{$in$} ]
+                ]
+                [ .{$\lb Set \rb$}
+                    [ .{$Finland$} ]
+                ]
+            ]
+    }
+
+    If we would like to be able to accept queries like "cities in and villages
+    near Finland", we could permit type-raising:
+
+    \scaledtree{0.7}{
+        .{$\lb Set \rb$}
+        [ .{$\lb Set \rc Set \rb$}
+            [ .{$ \lb Set \rc Set \rb$}
+                [ .{$\lb Set \rc \lp Set \lc Set \rp \rb$}
+                    [ .{$\lb \alpha \rc \lp \alpha \lc Set \rp \rb$} [ .{$\lb Set \rb$} [ .{$cities$} ] ] ]
+                ]
+                [ .{$\lb Set \lc Set \rc Set \rb$} [ .{$in$} ]
+                ]
+            ]
+            [ .{$ \lb \lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rb$}
+                [ .{$\lb \lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rc \lp Set \rc Set \rp \rb$}
+                    [ .{$\lb \alpha \lc \alpha \rc \alpha \rb$} [ .{$and$} ] ]
+                ]
+                    [ .{$\lb Set \rc Set \rb$}
+                    [ .{$\lb Set \rc \lp Set \lc Set \rp \rb$}
+                        [ .{$\lb \alpha \rc \lp \alpha \lc Set \rp \rb$} [ .{$\lb Set \rb$} [ .{$villages$} ] ] ]
+                    ]
+                    [ .{$\lb Set \lc Set \rc Set \rb$} [ .{$near$} ]
+                    ]
+                ]
+            ]
+        ]
+        [ .{$ \lb Set \rb$} [ .{$Finland$} ] ]
+    }
+}
 
 \end{document}

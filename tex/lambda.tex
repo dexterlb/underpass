@@ -208,7 +208,7 @@ If we have $T \less S$, it would be convenient to be able to convert between the
 The conversion from $S$ to $T$ is trivial. The conversion from $T$ to $S$,
 however, involves discarding information.
 
-\begin{example}
+\example{
     For example, let $S = \{ Int, String \}$, supposing the obvious semantics
     behind those names. This is a nice type system - however, one might want to
     be able to encode extra information within types: this comes especially
@@ -221,7 +221,7 @@ however, involves discarding information.
     Now while doing natural language parsing, we can use $T$. Afterwards
     we no longer need the extra information, so we could discard the extra
     types and return to $S$. To do this, we define a \emph{squash function}.
-\end{example}
+}
 
 \begin{defn}
     $\omega: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if:
@@ -257,7 +257,7 @@ basic types it is made of. To do this, we need a way to create a new term
 with the same syntactic structure of another term - essentially an image which
 maps basic types into new basic types.
 
-\begin{example}
+\example{
     Suppose we have the basic types $Int$ and $String$, and we want to extend
     them.
 
@@ -274,7 +274,7 @@ maps basic types into new basic types.
     function $\varphi$ such that $\varphi(F) = \sigma$.
 
     The next few definitions will formalise this process.
-\end{example}
+}
 
 \begin{defn}
     For $O \subseteq \mathbb{T}, \tau \in \tclos{\mathbb{T} \setminus O}$,
@@ -298,14 +298,14 @@ maps basic types into new basic types.
     \end{itemize}
 \end{defn}
 
-\begin{example}
+\example{
     In light of our example, $clone_O( Int \tot String ) =
     \xi: ts(\tau) \rightarrow \mathbb{T} \setminus O$ such that
     \[ \xi(\sigma) = \begin{cases*}
             Int', & $\sigma = Int$ \\
             String', & $\sigma = String $
         \end{cases*} \]
-\end{example}
+}
 
 \begin{defn}
     \label{def:subadd}

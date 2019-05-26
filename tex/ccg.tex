@@ -88,6 +88,7 @@ category features, category variables and feature variables.
         \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
         \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
             then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+
             Furthermore, we call $ X \rc Y $ the \emph{primary category} of the rule
             instance, while $ Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ is its
             \emph{secondary category}.
@@ -365,11 +366,11 @@ This is the most straight-forward algorithm for parsing a string with the help
 of CCG. It is easy to understand, but has exponential runtime with respect to
 the input word length.
 
-\begin{greenbox}
+\greenbox{
     I call this algorithm CYK' and not something else because it very much
     resembles the CYK algorithm for context-free grammars. It's not called
     CYK because CYK is already taken.
-\end{greenbox}
+}
 
 Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
 be a word.

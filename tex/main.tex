@@ -38,6 +38,9 @@
 \usepackage{tikz-qtree-compat}
 \usepackage{tikz}
 \usetikzlibrary{external}
+\usetikzlibrary{positioning}
+\tikzset{main node/.style={circle,fill=blue!5,draw,minimum size=1cm,inner sep=0pt},
+            }
 \tikzset{
     external/system call={%
     xelatex \tikzexternalcheckshellescape
@@ -56,27 +59,43 @@
 
 \graphicspath{ {./images/} }
 
-\newmdenv[%
-    backgroundcolor=green!8,
-    linecolor=gray!50!green!60,
-    outerlinewidth=0.5pt,
-    roundcorner=5mm,
-    skipabove=\baselineskip,
-    skipbelow=\baselineskip,
-    leftmargin=1cm,
-    rightmargin=1cm,
-]{greenbox}
+\newcommand\greenbox[1]{
+    \tikzexternaldisable
+    \begin{samepage}
+        \begin{mdframed}[%
+            backgroundcolor=green!8,
+            linecolor=gray!50!green!60,
+            outerlinewidth=0.5pt,
+            roundcorner=5mm,
+            skipabove=\baselineskip,
+            skipbelow=\baselineskip,
+            leftmargin=1cm,
+            rightmargin=1cm,
+        ]
+            #1
+        \end{mdframed}
+    \end{samepage}
+    \tikzexternalenable
+}
 
-\newmdenv[%
-    backgroundcolor=red!8,
-    linecolor=gray!50!red!60,
-    outerlinewidth=0.5pt,
-    roundcorner=5mm,
-    skipabove=\baselineskip,
-    skipbelow=\baselineskip,
-    leftmargin=1cm,
-    rightmargin=1cm,
-]{example}
+\newcommand\example[1]{
+    \tikzexternaldisable
+    \begin{samepage}
+        \begin{mdframed}[%
+            backgroundcolor=red!8,
+            linecolor=gray!50!red!60,
+            outerlinewidth=0.5pt,
+            roundcorner=5mm,
+            skipabove=\baselineskip,
+            skipbelow=\baselineskip,
+            leftmargin=5mm,
+            rightmargin=5mm,
+        ]
+            #1
+        \end{mdframed}
+    \end{samepage}
+    \tikzexternalenable
+}
 
 \lstset{
 	backgroundcolor = \color{light-gray},
@@ -103,6 +122,14 @@
 \newcommand\centree[1]{
     \begin{center}
     \tree{ #1 }
+    \end{center}
+}
+
+\newcommand\scaledtree[2]{
+    \begin{center}
+    \begin{tikzpicture}[thick,scale=#1, every node/.style={transform shape}]
+    \Tree[ #2 ]
+    \end{tikzpicture}
     \end{center}
 }
 
@@ -152,6 +179,10 @@
 \newcommand{\rb}{\textcolor{red}{]}}
 \newcommand{\lp}{\textcolor{red}{(}}
 \newcommand{\rp}{\textcolor{red}{)}}
+\newcommand{\modstar}{\star}
+\newcommand{\moddot}{.}
+\newcommand{\modr}{\lozenge}
+\newcommand{\modx}{\times}
 
 \newcommand{\meet}{\wedge}
 \newcommand{\unify}{\hat{\wedge}}
