@@ -191,7 +191,7 @@ unifyLeft (Complex sl al bl) (Complex sr ar br) = do
     (a, alSub, arSub) <- unifyLeft al ar
     let bl' = substitute alSub bl
     let br' = substitute arSub br
-    (b, blSub, brSub) <- unifyLeft bl' br'
+    (b, blSub, brSub) <- unifyLeft br' bl'
     s <- unifySlash sl sr
     pure (Complex s a b, alSub <> blSub, arSub <> brSub)
 unifyLeft _ _ = Nothing

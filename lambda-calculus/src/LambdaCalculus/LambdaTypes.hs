@@ -82,9 +82,11 @@ defaultPartialMeet Wildcard x = x
 defaultPartialMeet x Wildcard = x
 defaultPartialMeet x y = throw $ CannotMeet x y
 
+
+-- be wary of the contravariance!
 defaultLess :: PartialOrd b => ApplicativeType b -> ApplicativeType b -> Bool
 defaultLess (Basic x)           (Basic y)           = x <! y
-defaultLess (Application a1 a2) (Application b1 b2) = defaultLess a1 b1 && defaultLess a2 b2
+defaultLess (Application a1 a2) (Application b1 b2) = defaultLess b1 a1 && defaultLess a2 b2
 defaultLess Wildcard    Wildcard          = True
 defaultLess Wildcard    _            = True
 defaultLess _      Wildcard          = True
@@ -93,7 +95,7 @@ defaultLess _      _            = False
 inferApp :: (MSemiLattice (ApplicativeType t)) => ApplicativeType t -> (ApplicativeType t, ApplicativeType t)
 inferApp x
     | (Application p q) <- x /\ (Application Wildcard Wildcard) = (p, q)
-    | otherwise = error "how did x unify to * -> *, but the result is not T > T ?"
+    | otherwise = error "how did x unify to * -> * but the result is not T -> T ?"
 
 instance HasBot (ApplicativeType b) where
     bot = Wildcard
