@@ -126,7 +126,7 @@ and introduce variable substitution over categories.
 Having extended the notion of categorial closure to include categorial variables,
 we also add a family of derivation rules to deal with variables, namely:
 \begin{center}
-    \tree{.{$\lb \subst{X}{\alpha}{Y} \rb$} \edge[very thick]; {$\lb X \rb$} }
+    \tree{.{$\\subst{X}{\alpha}{Y}$} \edge[very thick]; {$X$} }
 \end{center}
 for any $X \in C(\tau), Y \in C(\tau), \alpha \in \mathbb{V}$.
 
@@ -162,9 +162,9 @@ $f(and) = \{ \alpha \lc \alpha \rc \alpha \}$\footnote{
 \subsubsection{Type-raising}
 This extension adds two unary rules for constructing derivations: \cite[sec.~5.3.1]{nts}
 \begin{center}
-    \tree{.{$\lb \alpha \rc \lp \alpha \lc X \rp \rb$} \edge[very thick]; {$\lb X \rb$} }
+    \tree{.{$\\alpha \rc \lp \alpha \lc X \rp$} \edge[very thick]; {$X$} }
         ( Forward type-raising )
-    \tree{.{$\lb \alpha \lc \lp \alpha \rc X \rp \rb$} \edge[very thick]; {$\lb X \rb$} }
+    \tree{.{$\alpha \lc \lp \alpha \rc X \rp$} \edge[very thick]; {$X$} }
         ( Backward type-raising )
 \end{center}
 
@@ -185,26 +185,26 @@ it is usually only considered on categories which appear in leaves.
     It permits derivations as such:
 
     \centree{
-        .{$\lb Set \rb$}
+        .{$Set$}
             \edge[very thick];
-            [ .{$\lb Set \rb$}
-                [ .{$\lb Set \rb$}
+            [ .{$Set$}
+                [ .{$Set$}
                     [ .{$cities$} ]
                 ]
-                [ .{$\lb Set \lc Set \rb$}
-                    [ .{$\lb Set \lc Set \rc Set \rb$}
-                        [ .{$\lb \alpha \lc \alpha \rc \alpha \rb$} [ .{$and$} ] ]
+                [ .{$Set \lc Set$}
+                    [ .{$Set \lc Set \rc Set$}
+                        [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
                     ]
-                    [ .{$\lb Set \rb$}
+                    [ .{$Set$}
                         [ .{$villages$} ]
                     ]
                 ]
             ]
-            [ .{$\lb Set \lc Set \rb$}
-                [ .{$\lb Set \lc Set \rc Set \rb$}
+            [ .{$Set \lc Set$}
+                [ .{$Set \lc Set \rc Set$}
                     [ .{$in$} ]
                 ]
-                [ .{$\lb Set \rb$}
+                [ .{$Set$}
                     [ .{$Finland$} ]
                 ]
             ]
@@ -214,29 +214,29 @@ it is usually only considered on categories which appear in leaves.
     near Finland", we could permit type-raising:
 
     \scaledtree{0.7}{
-        .{$\lb Set \rb$}
-        [ .{$\lb Set \rc Set \rb$}
-            [ .{$ \lb Set \rc Set \rb$}
-                [ .{$\lb Set \rc \lp Set \lc Set \rp \rb$}
-                    [ .{$\lb \alpha \rc \lp \alpha \lc Set \rp \rb$} [ .{$\lb Set \rb$} [ .{$cities$} ] ] ]
+        .{$Set$}
+        [ .{$Set \rc Set$}
+            [ .{$ Set \rc Set$}
+                [ .{$Set \rc \lp Set \lc Set \rp$}
+                    [ .{$\alpha \rc \lp \alpha \lc Set \rp$} [ .{$Set$} [ .{$cities$} ] ] ]
                 ]
-                [ .{$\lb Set \lc Set \rc Set \rb$} [ .{$in$} ]
+                [ .{$Set \lc Set \rc Set$} [ .{$in$} ]
                 ]
             ]
-            [ .{$ \lb \lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rb$}
-                [ .{$\lb \lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rc \lp Set \rc Set \rp \rb$}
-                    [ .{$\lb \alpha \lc \alpha \rc \alpha \rb$} [ .{$and$} ] ]
+            [ .{$ \lp Set \rc Set \rp \lc \lp Set \rc Set \rp$}
+                [ .{$\lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rc \lp Set \rc Set \rp$}
+                    [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
                 ]
-                    [ .{$\lb Set \rc Set \rb$}
-                    [ .{$\lb Set \rc \lp Set \lc Set \rp \rb$}
-                        [ .{$\lb \alpha \rc \lp \alpha \lc Set \rp \rb$} [ .{$\lb Set \rb$} [ .{$villages$} ] ] ]
+                    [ .{$Set \rc Set$}
+                    [ .{$Set \rc \lp Set \lc Set \rp$}
+                        [ .{$\alpha \rc \lp \alpha \lc Set \rp$} [ .{$Set$} [ .{$villages$} ] ] ]
                     ]
-                    [ .{$\lb Set \lc Set \rc Set \rb$} [ .{$near$} ]
+                    [ .{$Set \lc Set \rc Set$} [ .{$near$} ]
                     ]
                 ]
             ]
         ]
-        [ .{$ \lb Set \rb$} [ .{$Finland$} ] ]
+        [ .{$ Set$} [ .{$Finland$} ] ]
     }
 }
 
