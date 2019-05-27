@@ -240,4 +240,23 @@ it is usually only considered on categories which appear in leaves.
     }
 }
 
+\subsubsection{Category features}
+
+Some models allow each simple category to be extended with a set of \emph{features}
+which refine its scope, and then define rules for unification of said features.
+
+For example, we could assume a global set of features $Feat$ to be the
+set of finite functions $f: [a-zA-Z\_]^* \rightarrow [a-zA-Z\_]^*$
+and instead of using $C(\tau)$ directly, we use $C(\tau \times Feat)$.
+For brevity, categories like $(V, \{ (tense, past), (person, first) \})$
+are written as $X[tense=past, person=first]$.
+
+A common unification scheme is to do an union of the two feature functions,
+and see if the result is also a function - this determines whether the
+categories actually unify.
+
+This can be further extended by concepts such as \emph{feature variables}
+(which allows the use of variables within feature expressions and
+performs variable substitution while unifying) and embedding regular expressions.
+
 \end{document}
