@@ -1,0 +1,143 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Simply typed $\lambda$-calculus}
+\label{sec:purelambda}
+
+For representing compositional terms, a version of simply typed lambda calculus
+will be used.
+
+\subsubsection{Types}
+\label{purelambda:types}
+\begin{defn}
+    Let $\mathbb{T}$ be an infinitely countable set of items we call
+    \emph{type symbols}.
+
+    For obvious reasons we want $(\{ \tot, ), ( \} \cup \mathbb{T})^*
+    \cap \mathbb{T} = \emptyset$.
+
+    We will call the subsets of $\mathbb{T}$ \emph{sets of types}.
+\end{defn}
+
+\begin{defn}
+    For a set of types $T$, its \emph{type closure}
+    $\tclos{T} \subseteq (T \, \dot\cup \,\{\, \tot, ), ( \,\})^*$ is defined
+    inductively:
+
+    \begin{itemize}
+        \item $\sigma \in T \implies \sigma \in \tclos{T}$
+        \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    The function $ts : \tclos{\mathbb{T}} \rightarrow 2^\mathbb{T}$, which
+    returns the set of type symbols used in a complex type, is defined inductively:
+
+    \begin{itemize}
+        \item if $\sigma \in \mathbb{T}$ then $ts(\sigma) = \sigma$
+        \item if $\sigma = \sigma' \rightarrow \sigma''$ then
+            $ts(\sigma) = ts(\sigma') \cup ts(\sigma'')$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
+    \[ typeof : X \rightarrow \tclos{T} \]
+\end{defn}
+
+\begin{defn}
+    If $X, Y$ are sets of types and $\varphi: X \rightarrow \tclos{Y}$,
+    then $\hat{\varphi} : \tclos{X} \rightarrow \tclos{Y}$ is defined inductively:
+    \begin{equation*}
+        \hat{\varphi}(\sigma) =
+        \begin{cases*}
+            \varphi(\sigma), & $\sigma \in X$ \\
+            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma''), &
+                $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
+        \end{cases*}
+    \end{equation*}
+\end{defn}
+
+\subsubsection{Terms}
+To define $\lambda$ terms with the types introduced above, a system similar
+to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
+extends the original system with constants.
+
+\begin{defn}
+    Let $\mathbb{V}$ be an infinite countable set. We shall call its elements
+    \emph{variables}.
+\end{defn}
+
+\begin{defn}
+    Let $C$ be a countable set, typed in $T$,
+    whose elements we call \emph{constants}.
+
+    For a set of types $T$, we can define the set of
+    \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
+
+    \begin{itemize}
+        \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
+        \item Variable:    \[ v \in \mathbb{V} \implies v \in \Lambda_T^C \]
+        \item Application: \[ A, B \in \Lambda_T^C \implies (AB) \in \Lambda_T^C \]
+        \item Abstraction: \[ v \in \mathbb{V}, A \in \Lambda_T^C, \sigma \in \tclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \Lambda_T^C \]
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
+    \begin{itemize}
+        \item For $M \in \Lambda_T^C, \sigma \in \tclos{T}$, $M : \sigma$ is called
+            a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
+            is called a \emph{type}.
+        \item A statement with a variable as a subject is called a \emph{declaration}.
+        \item A set of declarations with different subjects is called a \emph{context}.
+        \item A \emph{judgement} has the form $\Gamma \vdash M: \sigma$, where
+            $\Gamma$ is a context and $M: \sigma$ is a statement.
+    \end{itemize}
+
+    Moreover, appending to contexts is defined as follows:
+    \[ \Gamma \circ x : \sigma = \{ y : \tau \in \Gamma \mid y \neq x \}
+       \cup \{ x : \sigma \} \]
+\end{defn}
+
+\begin{defn}
+    To define what it means for a term $M \in \Lambda_T^C$ to have a type,
+    we will use derivation rules.
+    \begin{itemize}
+        \item Constant
+            \cenderiv{
+                \hypo{c \in C}
+                \infer1{\Gamma \vdash c : typeof(c)}
+            }
+        \item Variable
+            \cenderiv{
+                \hypo{x : \sigma \in \Gamma}
+                \infer1{\Gamma \vdash x : \sigma}
+            }
+        \item Application
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma' \tot \sigma''}
+                \hypo{\Gamma \vdash B : \sigma'}
+                \infer2{\Gamma \vdash (AB) : \sigma''}
+            }
+        \item Abstraction
+            \cenderiv{
+                \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
+                \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
+            }
+    \end{itemize}
+
+    Now, $typeof(M)$ for $M \in \Lambda_T^C$ is defined as such:
+    \[
+        typeof(M) =
+        \begin{cases*}
+            \sigma & if $\varnothing \vdash M : \sigma$ \\
+            \neg ! & otherwise
+        \end{cases*}
+    \]
+    Of course, the above function is nowhere defined for non-closed terms.
+\end{defn}
+
+\end{document}
