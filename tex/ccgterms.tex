@@ -1,6 +1,56 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\subsection{Extracting lambda terms from CCG derivations}
+\subsection{Extracting $\lambda$-terms from CCG derivations}
+
+A great strength of CCG comes from the ability to directly construct $\lambda$-terms
+from CCG derivations. This relies on the assumption that the target
+language has a compositional nature, namely that the semantics of any construction
+can be determined by composing the semantics of its constituents.
+
+So, we shall to provide the semantics for the basic blocks (in our case
+the elements of $\Sigma$) in the form of $\lambda$-terms, and then define rules
+for composing those terms in accordance with a CCG derivation tree.
+
+\begin{defn}
+    Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG.
+    For some $T$ and $C$,
+    \[ \psi : \Sigma \times C(N) \rightarrow 2^{\Lambda_T^C} \] is called a
+    \emph{semantic function} for G.
+\end{defn}
+
+\begin{defn}
+    Let $G$ be a CCG, $\psi$ be a semantic function for $G$ and $T$ be a
+    derivation tree for $G$.
+
+    We will inductively define $sem_{\psi}(T) \in 2^{\Lambda_T^C}$ with
+    respect to $T$:
+    \begin{itemize}
+        \item If $T$ is
+            \centree{.$X$ \edge[very thick]; $a$ }
+            and $X \in f(a)$, then
+            \[ sem_{\psi}(T) = \psi(a, X) \]
+        \item If $T$ is
+            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                \edge[very thick];
+                [ .{$T_1$} ]
+                [ .{$T_2$} ]
+            }
+            where $root(T_1) = X \rc Y$ and $root(T_2) = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ then
+            \[ sem_{\psi}(T) = \lambda z_m {:} Z_m, z_{m - 1} {:} Z_{m - 1} ... z_1 {:} Z_1 \abstr
+                sem_{\psi}(T_1) ( sem_{\psi}(T_2) z_m z_{m - 1} ... z_1 ) \]
+            for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
+        \item If $T$ is
+            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                \edge[very thick];
+                [ .{$T_1$} ]
+                [ .{$T_2$} ]
+            }
+            where $root(T_1) = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and $root(T_2) = X \lc Y$ then
+            \[ sem_{\psi}(T) = \lambda z_m {:} Z_m, z_{m - 1} {:} Z_{m - 1} ... z_1 {:} Z_1 \abstr
+                sem_{\psi}(T_2) ( sem_{\psi}(T_1) z_m z_{m - 1} ... z_1 ) \]
+            for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
+    \end{itemize}
+\end{defn}
 
 \end{document}
