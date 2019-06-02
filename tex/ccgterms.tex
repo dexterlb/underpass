@@ -13,17 +13,39 @@ the elements of $\Sigma$) in the form of $\lambda$-terms, and then define rules
 for composing those terms in accordance with a CCG derivation tree.
 
 \begin{defn}
-    Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG.
-    For some $T$ and $C$,
-    \[ \psi : \Sigma \times C(N) \rightarrow 2^{\Lambda_T^C} \] is called a
-    \emph{semantic function} for G.
+    For a type semilattice $N$, we can define
+    \[ typeof : C(N) \rightarrow \tclos{N} \]
+    in the following way:
+
+    \[
+        typeof(Z) =
+        \begin{cases*}
+            Z, & $Z \in N$ \\
+            Y \tot X, & $Z = \lp X \lc Y \rp$ \\
+            Y \tot X, & $Z = \lp X \rc Y \rp$ \\
+        \end{cases*}
+    \]
+
+    This gives meaning to categories in the context of $\lambda$-calculus:
+    $\lp X \lc Y \rp$ refers to a function which returns a value of type
+    $X$ and takes an argument of type $Y$ \emph{on the right side}, while
+    $\lp X \lc Y \rp$ refers to a function which returns a value of type
+    $X$ and takes an argument of type $Y$ \emph{on the left side}.
+\end{defn}
+
+\begin{defn}
+    Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG, and $C$ be a set
+    of constants typed in $N$.
+    \[ \psi : \Sigma \times C(N) \rightarrow 2^{\Lambda_N^C} \] is called a
+    \emph{semantic function} for G, given that
+    \[ dom(\psi) = \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \]
 \end{defn}
 
 \begin{defn}
     Let $G$ be a CCG, $\psi$ be a semantic function for $G$ and $T$ be a
     derivation tree for $G$.
 
-    We will inductively define $sem_{\psi}(T) \in 2^{\Lambda_T^C}$ with
+    We will inductively define $sem_{\psi}(T) \in 2^{\Lambda_N^C}$ with
     respect to $T$:
     \begin{itemize}
         \item If $T$ is
@@ -42,8 +64,8 @@ for composing those terms in accordance with a CCG derivation tree.
             for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
         \item If $T$ is
             \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                \edge[very thick];
                 [ .{$T_1$} ]
+                \edge[very thick];
                 [ .{$T_2$} ]
             }
             where $root(T_1) = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and $root(T_2) = X \lc Y$ then
@@ -52,5 +74,28 @@ for composing those terms in accordance with a CCG derivation tree.
             for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
     \end{itemize}
 \end{defn}
+
+\begin{defn}
+    A semantic function $\psi$ is called \emph{consistent with} a context
+    $\Gamma$ when
+    \[
+        \forall a, X: \psi(a, X) = M \implies \Gamma \vdash M : typeof(X)
+    \]
+\end{defn}
+
+\begin{prop}
+    \label{ccg:typeconsistent}
+    If $ G = \langle \Sigma, N, S, f, n \rangle $ is a CCG and $\psi$ is a
+    semantic function for $G$ that is consistent with $\Gamma$, then
+    for every valid derivation tree $T$, $sem_{\psi}$ is well-defined (contains
+    only correct $\lambda$-terms in $\Lambda_N^C$). Moreover, for any valid
+    derivation tree $T$:
+    \[
+        M \in sem_{\psi}(T) \implies \Gamma \vdash M : typeof(root(T))
+    \]
+\end{prop}
+
+Given proposition \autoref{ccg:typeconsistent}, we know that all terms generated
+from CCG derivation trees will be consistent.
 
 \end{document}
