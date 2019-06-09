@@ -16,7 +16,6 @@
 \usepackage{indentfirst}
 \usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
 \usepackage{url}
-\usepackage{hyperref}
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{mathtools}
@@ -24,9 +23,12 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{cleveref}
 \usepackage{mathabx}
 \usepackage{graphicx}
 \usepackage{ebproof}
+\usepackage[toc,page]{appendix}
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{syntax}
@@ -35,8 +37,8 @@
 \usepackage{csquotes}
 \usepackage[style=alphabetic]{biblatex}
 \usepackage{tikz-qtree}
-\usepackage{tikz-qtree-compat}
 \usepackage{tikz}
+\usetikzlibrary{fit}
 \usetikzlibrary{external}
 \usetikzlibrary{positioning}
 \tikzset{main node/.style={circle,fill=blue!5,draw,minimum size=1cm,inner sep=0pt},
@@ -46,7 +48,14 @@
     xelatex \tikzexternalcheckshellescape
     -halt-on-error -interaction=batchmode -shell-escape
     -jobname "\image" "\texsource"}}
-\tikzexternalize
+% \tikzexternalize
+
+
+\usepackage{color}
+\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
+\definecolor{light-gray}{gray}{0.9}
+\definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
+\definecolor{asparagus}{rgb}{0.53, 0.66, 0.42}
 
 \DeclareRobustCommand{\hsout}[1]{\texorpdfstring{\sout{#1}}{#1}}
 
@@ -58,6 +67,16 @@
 \addbibresource{references.bib}
 
 \graphicspath{ {./images/} }
+
+\tikzset{%
+  boxcola/.style={rectangle,rounded corners,fill=asparagus,draw=asparagus,fill opacity=0.02,thick,inner sep=5pt}
+}
+\newcommand\boxtexta{asparagus}
+
+\tikzset{%
+  boxcolb/.style={rectangle,rounded corners,fill=blue,draw=blue,fill opacity=0.02,thick,inner sep=5pt}
+}
+\newcommand\boxtextb{blue}
 
 \newcommand\greenbox[1]{
     \tikzexternaldisable
@@ -148,10 +167,6 @@
 \newcommand\subst[3]{
     #1 [ #2 := #3 ]
 }
-
-\usepackage{color}
-\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
-\definecolor{light-gray}{gray}{0.9}
 
 \hypersetup{
     colorlinks=true,
