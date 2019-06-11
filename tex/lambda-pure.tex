@@ -1,6 +1,5 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
-
 \subsection{Simply typed $\lambda$-calculus}
 \label{sec:purelambda}
 
@@ -9,18 +8,11 @@ will be used.
 
 \subsubsection{Types}
 \label{purelambda:types}
-\begin{defn}
-    Let $\mathbb{T}$ be an infinitely countable set of items we call
+Let $\mathbb{T}$ be a magical set of items we call
     \emph{type symbols}.
 
-    For obvious reasons we want $(\{ \tot, ), ( \})^*
-    \cap \mathbb{T} = \emptyset$.
-
-    We will call the subsets of $\mathbb{T}$ \emph{sets of types}.
-\end{defn}
-
 \begin{defn}
-    For a set of types $T$, its \emph{type closure}
+    For a set of type symbols $T$, its \emph{type closure}
     $\tclos{T} \subseteq (T \, \dot\cup \,\{\, \tot, ), ( \,\})^*$ is defined
     inductively:
 
@@ -44,10 +36,12 @@ will be used.
 \begin{defn}
     We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
     \[ typeof : X \rightarrow \tclos{T} \]
+    For brevity, we will denote
+    \[ \typeof{x} = typeof(x) \]
 \end{defn}
 
 \begin{defn}
-    If $X, Y$ are sets of types and $\varphi: X \rightarrow \tclos{Y}$,
+    If $X, Y$ are sets of type symbols and $\varphi: X \rightarrow \tclos{Y}$,
     then $\hat{\varphi} : \tclos{X} \rightarrow \tclos{Y}$ is defined inductively:
     \begin{equation*}
         \hat{\varphi}(\sigma) =
@@ -64,16 +58,15 @@ To define $\lambda$ terms with the types introduced above, a system similar
 to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
 extends the original system with constants.
 
-\begin{defn}
-    Let $\mathbb{V}$ be an infinite countable set. We shall call its elements
-    \emph{variables}.
-\end{defn}
+Let $\mathbb{V}$ be an magical set. We shall call its
+elements \emph{variables}.
+Respectively, let $Const$ be a magical set whose elements
+we call \emph{constants}.
 
 \begin{defn}
-    Let $C$ be a countable set, typed in $T$,
-    whose elements we call \emph{constants}.
+    Let $C$ be a set of constants, typed in $T$.
 
-    For a set of types $T$, we can define the set of
+    We can define the set of
     \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
     \begin{itemize}

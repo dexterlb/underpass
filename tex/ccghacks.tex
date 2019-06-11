@@ -2,6 +2,7 @@
 \begin{document}
 
 \subsection{\hsout{Hacks} Extensions of the CCG formalism}
+\label{sec:hacks}
 
 The CCG formalism described in \ref{sec:ccg} is too weak to represent most
 phenomena in natural languages \cite{steedman}. Thus, several extensions have
@@ -86,10 +87,9 @@ can combine with any other type of slash).
 
 \subsubsection{Categorial variables}
 This is a very powerful extension which adds simple unification based on variables
-to categorial derivation. To define it formally, it is convenient to assume
-the existence of an infinitely countable set $\mathbb{V}$ whose elements
-we call \emph{variables}\footnote{That set is magical in the sense that it is
-    disjoint with every set we feel convenient that it be disjoint with.}
+to categorial derivation. To define it formally, it is convenient to have a
+magical set of variables $\mathbb{V}$ (we could reuse the one from the definition
+of $\lambda$-terms)
 and introduce variable substitution over categories.
 
 \begin{defn}

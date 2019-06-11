@@ -14,16 +14,20 @@ extended to include features such as type-raising,
 arbitrary rule restrictions, slash modalities,
 category features, category variables and feature variables.
 
+Let $Cat$ be a magical set whose elements we call
+\emph{atomic categories}.
+
 \begin{defn}
-    For a set $\tau$, its \emph{categorial closure} $C(\tau)$ is defined as follows:
+    For a set of atomic categories $\tau$, its
+    \emph{categorial closure} $C(\tau)$ is defined as follows:
     \begin{enumerate}
         \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
         \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
         \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
     \end{enumerate}
 
-    Letters like $A, B, C$ will be used to denote atomic categories (produced
-    by rule \ref{itm:atomic}), while letters like $X, Y, Z$ will be used to
+    Letters like $A, B, C$ will be used to denote atomic categories,
+    while letters like $X, Y, Z$ will be used to
     denote complex categories (produced by rules \ref{itm:left} and \ref{itm:right}).
 
     Such expressions are called \emph{categories}. The $\mc$ symbol will be
@@ -503,6 +507,8 @@ This algorithm behaves like the CYK' algorithm for derivations which use only
 short categories. In order to pack longer categories in a way which would not
 result in exponential complexity, it uses some clever tricks.
 
+A detailed explanation and proof can be found in the original paper \cite{shanker}.
+
 Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
 be a word.
 
@@ -561,5 +567,14 @@ The invariant here is composed of two parts:
             \item $\lb A \nu Y \mc_* B \rb \Rightarrow^* w_p ... w_q$
         \end{itemize}
 \end{itemize}
+
+For smaller grammars, which rarely generate very long categories during
+parsing, this algorithm is in fact slower than simple CYK-based alternatives.
+The strength of this algorithm comes when parsing automatically-generated
+grammars from treebanks.
+
+For this reason, this algorithm will not be used. For a more indepth
+overview, see \cite{shanker}.
+
 
 \end{document}

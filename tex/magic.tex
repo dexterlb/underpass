@@ -1,0 +1,41 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Of mythical creatures and magical sets}
+
+Sooner or later, in every work related to formal logic ariese the need for
+a set of basic objects. For example, we want construct a system for basic
+arithmetic, for which we need "variables".
+At a first glance, this is a trivial matter - just take an arbitrary countable
+set and call it a "set of variables" - but wait! What if the left parenthesis
+symbol ends up in this set? Well, let's fix that: we banish all parentheses
+from our set of variables.
+\[ \{ (, ) \} \cap \mathbb{V} = \varnothing \]
+Fine. But what if the number $7$ ends up in our set of variables? Then,
+when we say 7, did we mean the number or the variable? Well. No place for
+numbers in our set of variables as well.
+\[ ( \{ (, ) \} \cup \mathbb{N} ) \cap \mathbb{V} = \varnothing \]
+
+But wait! What if the string $(42)$ ends up in our set of variables? That will
+surely lead to problems. Try again:
+\[ ( \{ (, ) \} \cup \mathbb{N} )^* \cap \mathbb{V} = \varnothing \]
+
+Alas, this is still not enough. We haven't excluded strings like $foo(bar$.
+
+Hmm, maybe this problem isn't that easy after all - why not give up and make
+$\mathbb{V}$ be the set of all splotches of ink which an ancient greek would
+recognise as a sequence of their letters?
+
+As entertaining as it is to think about this problem instead of trying to write
+the actual thesis, it's time for a quick solution. Fortunately, mathematicians
+have found a magical word - \emph{alphabet} - which means a set which contains
+no elements that we have used anywhere: essentially a set which is disjoint
+with any set we feel convenient that it be disjoint with. It contains none of
+the special symbols we use elsewhere. So, let's use it:
+
+Let $\Sigma$ be an alphabet.
+\begin{defn}
+    A \emph{magical} set is an infinitely countable subset of $\Sigma$
+    that is disjoint with all other magical sets mentioned in this text.
+\end{defn}
+\end{document}
