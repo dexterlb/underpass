@@ -1,8 +1,5 @@
-- make modality restriction clearer by using variables
 - make slash indices red
 - example sentence for modalities
-- clarify usage of free variables when composing derivation tree semantics
-- phrase def 18 as "we extend typeof to include those two additional items"
 - in examples with trees fix \alpha's and \beta's
 - example for subtyping uses lt instead of le
 - make lambda^le stand for terms with subtypes instead of lambda^circ

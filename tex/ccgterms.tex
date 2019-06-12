@@ -14,18 +14,17 @@ the elements of $\Sigma$) in the form of $\lambda$-terms, and then define rules
 for composing those terms in accordance with a CCG derivation tree.
 
 \begin{defn}
-    For a set of basic categories $N$ typed in $\Theta$, we can define
-    \[ typeof : C(N) \rightarrow \tclos{\Theta} \]
+    For a set of basic categories $N$ typed in $\Theta$, we can extend the
+    definition of the typing function $\typeoff$ over their closure:
+
+    \[ \typeoff : C(N) \rightarrow \tclos{\Theta} \]
+
     in the following way:
 
-    \[
-        typeof(Z) =
-        \begin{cases*}
-            typeof(Z), & $Z \in N$ \\
-            Y \tot X,  & $Z = \lp X \lc Y \rp$ \\
-            Y \tot X,  & $Z = \lp X \rc Y \rp$ \\
-        \end{cases*}
-    \]
+    \begin{align*}
+        \typeof{\lp X \lc Y \rp} \defeq & \typeof{Y} \tot \typeof{X} \\
+        \typeof{\lp X \rc Y \rp} \defeq & \typeof{Y} \tot \typeof{X} \\
+    \end{align*}
 
     This gives meaning to categories in the context of $\lambda$-calculus:
     $\lp X \lc Y \rp$ refers to a function which returns a value of type
@@ -137,6 +136,16 @@ of the same type as its category.
             for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
     \end{itemize}
 \end{defn}
+
+While it is easier to only compose closed terms, there are cases when free
+variables are useful. We will not restrict ourselves to closed terms and will
+therefore take some extra care to make this construction support free variables.
+
+One way to do this is to have a global context for all terms that are given
+by the semantic function: this way we have an universal way of finding the
+type of each subterm, even if it contains free variables. Then, consistency
+between the terms returned by $\psi$ and their categories can be defined
+cleanly:
 
 \begin{defn}
     A semantic function $\psi$ is called \emph{consistent with} a context

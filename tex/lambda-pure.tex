@@ -33,11 +33,13 @@ Let $\mathbb{T}$ be a magical set of items we call
     \end{itemize}
 \end{defn}
 
+We will now introduce a notation for easily getting the types of items -
+$\typeof{x}$ shall mean "the type of $x$":
+
 \begin{defn}
     We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
-    \[ typeof : X \rightarrow \tclos{T} \]
-    For brevity, we will denote
-    \[ \typeof{x} = typeof(x) \]
+    \[ \typeoff : X \rightarrow \tclos{T} \]
+    which we call a \emph{typing function}.
 \end{defn}
 
 \begin{defn}
@@ -102,7 +104,7 @@ we call \emph{constants}.
         \item Constant
             \cenderiv{
                 \hypo{c \in C}
-                \infer1{\Gamma \vdash c : typeof(c)}
+                \infer1{\Gamma \vdash c : \typeof{c}}
             }
         \item Variable
             \cenderiv{
@@ -122,9 +124,9 @@ we call \emph{constants}.
             }
     \end{itemize}
 
-    Now, $typeof(M)$ for $M \in \Lambda_T^C$ is defined as such:
+    Now, $\typeof{M}$ for $M \in \Lambda_T^C$ is defined as such:
     \[
-        typeof(M) =
+        \typeof{M} =
         \begin{cases*}
             \sigma & if $\varnothing \vdash M : \sigma$ \\
             \neg ! & otherwise
