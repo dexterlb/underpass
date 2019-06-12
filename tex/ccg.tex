@@ -54,9 +54,9 @@ Let $Cat$ be a magical set whose elements we call
 
 \begin{defn}
     Concatenating categories: If $X \in C(\tau)$,
-    $Y = A \mc_1 Y_1 \mc_2 Y_2 ... \mc_m Y_m \in C(\tau)$, we define
-    \[ X \circ_{\rc} Y = X \rc A \mc_1 Y_1 \mc_2 Y_2 ... \mc_m Y_m \]
-    \[ X \circ_{\lc} Y = X \lc A \lc_1 Y_1 \mc_2 Y_2 ... \mc_m Y_m \]
+    $Y = A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \in C(\tau)$, we define
+    \[ X \circ_{\rc} Y = X \rc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
+    \[ X \circ_{\lc} Y = X \lc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
 
     Since using this notation everywhere is tedious, $X \mc Y$ shall mean
     $X \circ_{\mc} Y$ throughout this text, in contrast to
@@ -90,18 +90,18 @@ Let $Cat$ be a magical set whose elements we call
 
     \begin{itemize}
         \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
-        \item If $ X \rc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
-            then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
+        \item If $ X \rc Y \in C(N), Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 
             Furthermore, we call $ X \rc Y $ the \emph{primary category} of the rule
-            instance, while $ Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ is its
+            instance, while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is its
             \emph{secondary category}.
             We also call $ X \rc Y $ the \emph{left category} of the rule instance,
-            and $  Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ its \emph{right category}.
-        \item If $ X \lc Y \in C(N), Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \in C(N), 0 \leq m \leq n $
-            then \[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc Y \rb \]
+            and $  Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ its \emph{right category}.
+        \item If $ X \lc Y \in C(N), Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
             Here, $ X \lc Y $ is the \emph{primary} and \emph{right} category,
-            while $ Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $ is the \emph{secondary}
+            while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is the \emph{secondary}
             and \emph{left} category.
     \end{itemize}
 \end{defn}
@@ -204,41 +204,41 @@ Let $Cat$ be a magical set whose elements we call
             \begin{center}
                 \tree{.{$X \rc Y$} \edge[roof]; $\alpha$} ($\pi'$)
                 \quad and \quad
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$} ($\pi''$)
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$} ($\pi''$)
             \end{center}
 
             are derivation trees such that $ root(\pi') = X \rc Y $,
-            $ root(\pi'') = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ root(\pi'') = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\pi') = \alpha, crown(\pi'') = \beta $
             where $m \leq n$, then
             \begin{center}
-                \tree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+                \tree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                     \edge[very thick];
                     [ .{$X \rc Y$} \edge[roof]; $\alpha$ ]
-                    [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
+                    [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
                 } ($\tau$)
             \end{center}
-            $ \tau \in \mathbb{T}, root(\tau) = X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ \tau \in \mathbb{T}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi'$, $prefix(\tau) = X$
         \item If
             \begin{center}
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$} ($\pi'$)
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$} ($\pi'$)
                 \quad and \quad
                 \tree{.{$X \lc Y$} \edge[roof]; $\alpha$} ($\pi''$)
             \end{center}
             are derivation trees such that
-            $ root(\pi') = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ root(\pi') = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ root(\pi'') = X \lc Y $,
             $ crown(\pi') = \alpha, crown(\pi'') = \beta $
             where $m \leq n$, then
             \begin{center}
-                \tree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                    [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\alpha$ ]
+                \tree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                    [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\alpha$ ]
                     \edge[very thick];
                     [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
                 } ($\tau$)
             \end{center}
-            $ \tau \in \mathbb{T}, root(\tau) = X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m $,
+            $ \tau \in \mathbb{T}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi''$, $prefix(\tau) = X$
     \end{itemize}
 
@@ -262,28 +262,28 @@ Let $Cat$ be a magical set whose elements we call
             \centree{.$X$ \edge[very thick]; $a$ }
             and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$
         \item For a tree
-            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+            \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 \edge[very thick];
                 [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\gamma$ ]
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\gamma$ ]
             }
             we have $\alpha = \beta \gamma$, and inductively
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \beta$ and
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
             $\lb X \rc Y \rb \Rightarrow^* \alpha$. Thus,
-            $\lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^*$
-            $\lb X \lc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb X \lc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$
             $ \Rightarrow^* \beta \gamma = \alpha$
         \item For a tree
-            \centree{.{$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\beta$ ]
+            \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
                 \edge[very thick];
                 [ .{$X \lc Y$} \edge[roof]; $\gamma$ ]
             }
             we have $\alpha = \beta \gamma$, and inductively
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \beta$ and
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
             $\lb X \lc Y \rb \Rightarrow^* \alpha$. Thus,
-            $\lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^*$
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc Y \rb$
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb$
             $ \Rightarrow^* \beta \gamma = \alpha$
     \end{itemize}
 
@@ -297,46 +297,46 @@ Let $Cat$ be a magical set whose elements we call
         \item $\beta = a \in \Sigma, X \in f(a)$. Then $\alpha = \beta$ and
             \centree{.$X$ \edge[very thick]; $a$ }
             is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
-        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
-            $\beta = \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\beta = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
             According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
                 \item $\lb W \rc Y \rb \Rightarrow^* \eta$
-                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \xi$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \xi$
             \end{itemize}
             However, according to the inductive hypothesis, this means that we
             have the derivation trees
             \begin{center}
                 \tree{.{$W \rc Y$} \edge[roof]; $\eta$}
                 and
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\xi$}
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\xi$}
             \end{center}
             Thus, by definition, we can construct the derivation tree
-            \centree{.{$X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
+            \centree{.{$X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 \edge[very thick];
                 [ .{$W \rc Y$} \edge[roof]; $\eta$ ]
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\xi$ ]
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\xi$ ]
             }
             for $\lb X \rb \Rrightarrow \alpha$.
-        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
-            $\beta = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\beta = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$.
             According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
-                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* \eta$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \eta$
                 \item $\lb W \lc Y \rb \Rightarrow^* \xi$
             \end{itemize}
             However, according to the inductive hypothesis, this means that we
             have the derivation trees
             \begin{center}
-                \tree{.{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\eta$}
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\eta$}
                 and
                 \tree{.{$W \lc Y$} \edge[roof]; $\xi$}
             \end{center}
             Thus, by definition, we can construct the derivation tree
-            \centree{.{$X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$}
-                [ .{$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$} \edge[roof]; $\eta$ ]
+            \centree{.{$X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\eta$ ]
                 \edge[very thick];
                 [ .{$W \lc Y$} \edge[roof]; $\xi$ ]
             }
@@ -380,10 +380,10 @@ $(S, 1, k)$.
 \begin{enumerate}
 \label{cyk:rules}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$,
-        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$,
-        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+    \item If $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
 \end{enumerate}
 
 To reason about the algorithm, we will use the following invariant:
@@ -410,39 +410,39 @@ To reason about the algorithm, we will use the following invariant:
             $\lb X \rb \rightarrow w_i \implies \lb X \rb \Rightarrow^* w_i = w_i ... w_j$
         \item \label{itm:rightslash} $i < j$ and
             \begin{itemize}
-                \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$
+                \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$
                 \item $(W \rc Y, i, p) \in P$
-                \item $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$
+                \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
             \end{itemize}
             for some $i \leq p < j, m \leq n$. By inductive hypothesis,
             $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
             and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_{p + 1} ... w_j$.
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p + 1} ... w_j$.
             Then, by the definition of $\rightarrow$ and by concatenativity of
             $\Rightarrow$, we have:
             \[
-                \lb X \rb = \lb W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
                 \rightarrow
-                \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
                 \Rightarrow^*
                 w_i ... w_p w_{p + 1} ... w_j = w
             \]
         \item $i < j$ and (analogous to \ref{itm:rightslash})
             \begin{itemize}
-                \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$
+                \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$
                 \item $(W \lc Y, p + 1, j) \in P$
-                \item $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$
+                \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
             \end{itemize}
             for some $i \leq p < j, m \leq n$. By inductive hypothesis,
             $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
             and
-            $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_i ... w_p$.
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$.
             Then, by the definition of $\rightarrow$ and by concatenativity of
             $\Rightarrow$, we have:
             \[
-                \lb X \rb = \lb W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb
+                \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
                 \rightarrow
-                \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb
+                \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb
                 \Rightarrow^*
                 w_i ... w_p w_{p + 1} ... w_j = w
             \]
@@ -470,31 +470,31 @@ To reason about the algorithm, we will use the following invariant:
     \begin{enumerate}
         \item $\alpha = a \in \Sigma, X \in f(a)$. Then $w = \alpha, i = j, w_i = a$,
             which means $(X, i, i) = (X, i, j) \in P$.
-        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
-            $\alpha = \lb W \rc Y \rb \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\alpha = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
             According to Proposition \ref{prop:concat}, there exists $p$ such that
             \begin{itemize}
                 \item $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
-                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
             \end{itemize}
             However, according to the inductive hypothesis, this means that
             $(W \rc Y, i, p) \in P$ and
-            $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$. Thus,
+            $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$. Thus,
             by the algorithm definition,
-            $(X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$.
-        \item $X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and
-            $\alpha = \lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb W \lc Y \rb$
+            $(X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\alpha = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$
             (analogous to \ref{eq:right}).
             According to Proposition \ref{prop:concat}, there exists $p$ such that
             \begin{itemize}
-                \item $\lb Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \Rightarrow^* w_i ... w_p$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$
                 \item $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
             \end{itemize}
             However, according to the inductive hypothesis, this means that
             $(W \lc Y, p + 1, j) \in P$ and
-            $(Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$. Thus,
+            $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$. Thus,
             by the algorithm definition,
-            $(X = W \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$.
+            $(X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
     \end{enumerate}
 
 \end{proof}
@@ -523,30 +523,30 @@ $(S, 1, k)$.
 
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc B, i, t) \in P, (B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
-        $|X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| \leq c$
-        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \item If $(A \mc_* X \rc B, i, t) \in P, (B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
-        $|A \mc_* X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m| > c$
-        then $(A, \mc_1, Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, t) \in P$
+    \item If $(X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $|X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| \leq c$
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(A \mci{*} X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $|A \mci{*} X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| > c$
+        then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$
     \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
-        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
-        $m > 1$, then $(A, \xi, Z_1 \mc_2 Z_2 ... \mc_m Z_m, \rc B, i, j, i, t) \in P$.
+        $(B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \xi, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$.
     \item If $(A, \rc, B, T, i, t, p, q) \in P$,
-        $(B \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, t + 1, j) \in P$,
-        $m > 1$, then $(A, \mc_1, Z_1 \mc_2 Z_2 ... \mc_m Z_m, T, i, j, p, q) \in P$.
+        $(B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, T, i, j, p, q) \in P$.
     \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
-        $(B \mc_* Z, t + 1, j) \in P$,
-        then $(A, \xi, X \mc_* Z, T, i, j, p, q) \in P$.
+        $(B \mci{*} Z, t + 1, j) \in P$,
+        then $(A, \xi, X \mci{*} Z, T, i, j, p, q) \in P$.
     \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
         $(B, t + 1, j) \in P$,
         then $(A, \xi, X, T, i, j, p, q) \in P$.
     \item If $(A, \rc, B, T, i, t, p, q) \in P$,
-        $(B, t + 1, j) \in P$, $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, i, j) \in P$,
-        then $(A \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m, i, j) \in P$.
+        $(B, t + 1, j) \in P$, $(A \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m T, i, j) \in P$,
+        then $(A \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m, i, j) \in P$.
     \item If $(A, \rc, B, T, i, t, p, q) \in P$,
-        $(B, t + 1, j) \in P$, $(A, \mc_1 X_1 \mc_2 X_2 ... \mc_m X_m T, T', i, j, r, s) \in P$,
-        then $(A, \mc_1, X_1 \mc_2 X_2 ... \mc_m X_m, T', i, j, r, s) \in P$.
+        $(B, t + 1, j) \in P$, $(A, \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m T, T', i, j, r, s) \in P$,
+        then $(A, \mci{1}, X_1 \mci{2} X_2 ... \mci{m} X_m, T', i, j, r, s) \in P$.
 \end{enumerate}
 
 The other 8 rules regarding backward composition
@@ -557,12 +557,12 @@ The invariant here is composed of two parts:
 
 \begin{itemize}
     \item $(X, i, j) \in P \iff |X| \leq c \land \lb X \rb \Rightarrow^* w_i ... w_j$
-    \item $(A, \xi, X, \mc_* B, i, j, p, q) \in P$
+    \item $(A, \xi, X, \mci{*} B, i, j, p, q) \in P$
         exactly when there exists $\nu \in \{ \lc, \rc \}, Y \in C(N)$ such that
         \begin{itemize}
             \item $1 \leq |Y| \leq c'$
-            \item $\lb A \nu Y \xi X \rb \Rightarrow^* w_i ... w_{p - 1} \lb A \nu Y \mc_* B \rb w_{q + 1} ... w_j$
-            \item $\lb A \nu Y \mc_* B \rb \Rightarrow^* w_p ... w_q$
+            \item $\lb A \nu Y \xi X \rb \Rightarrow^* w_i ... w_{p - 1} \lb A \nu Y \mci{*} B \rb w_{q + 1} ... w_j$
+            \item $\lb A \nu Y \mci{*} B \rb \Rightarrow^* w_p ... w_q$
         \end{itemize}
 \end{itemize}
 

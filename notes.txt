@@ -1,4 +1,3 @@
-- make slash indices red
 - example sentence for modalities
 - add a lot of text to def 36. Actually, instead of clone() we can get an
   arbitrary bijection from ts(tau) onto T\O, can we? Also fix the usage of

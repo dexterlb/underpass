@@ -42,34 +42,34 @@ be used here.
     \end{center}
 \end{defn}
 
-For clarity, slash indices will be denoted with latin letters ($\mc_i$
+For clarity, slash indices will be denoted with latin letters ($\mci{i}$
 denotes the $i$'th respective slash, including its direction and modality)
 while slash modalities will be denoted by greek letters
-($\lc_\mu$ and  $\rc_\mu$ denote the respective
+($\lci{\mu}$ and  $\rci{\mu}$ denote the respective
 slash with modality $\mu$).
 
 \begin{defn}
     We extend the definition of categorial closure to use modalities:
     \begin{enumerate}
         \item \label{cmod:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
-        \item \label{cmod:right}  $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \rc_\mu Y \rp \in C(\tau)$
-        \item \label{cmod:left}   $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \lc_\mu Y \rp \in C(\tau)$
+        \item \label{cmod:right}  $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \rci{\mu} Y \rp \in C(\tau)$
+        \item \label{cmod:left}   $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \lci{\mu} Y \rp \in C(\tau)$
     \end{enumerate}
 \end{defn}
 
 Now, we restrict derivations according to modalities (in all cases, $m \leq n$):
 \begin{itemize}
     \item "Application"
-        \[ \lb X \rb \rightarrow \lb X \rc_\mu Y \rb \lb Y \rb \]
-        \[ \lb X \rb \rightarrow \lb Y \rb \lb X \lc_\mu Y \rb \]
+        \[ \lb X \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rb \]
+        \[ \lb X \rb \rightarrow \lb Y \rb \lb X \lci{\mu} Y \rb \]
         where $\mu \less \modstar$ (effectively for any $\mu$).
     \item "Harmonic composition"
-        \[ \lb X \rc_\eta Z_1 \mc_2 Z_2 ... \mc_\mu Z_m \rb \rightarrow \lb X \rc_\mu Y \rb \lb Y \rc_\nu Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
-        \[ \lb X \lc_\eta Z_1 \mc_2 Z_2 ... \mc_\mu Z_m \rb \rightarrow \lb Y \lc_\mu Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\nu Y \rb \]
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb Y \lci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
         where $\mu \less \modr, \nu \less \modr, \eta = \mu \meet \nu$.
     \item "Crossing composition"
-        \[ \lb X \lc_\eta Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc_\mu Y \rb \lb Y \lc_\nu Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
-        \[ \lb X \rc_\eta Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \rc_\mu Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\nu Y \rb \]
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \lci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \rci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
         where $\mu \less \modx, \nu \less \modx, l = \mu \meet \nu$.
 \end{itemize}
 
@@ -80,18 +80,18 @@ unifying (lowest common ancestor) the modalities on the right.
 
 \example{
     For example, here are a few valid derivations:
-    \[ \lb X \rb \rightarrow \lb X \rc_\modr Y \rb \lb Y \rb \]
-    \[ \lb X \rb \rightarrow \lb X \rc_\modx Y \rb \lb Y \rb \]
-    \[ \lb X \rb \rightarrow \lb X \rc_\moddot Y \rb \lb Y \rb \]
-    \[ \lb X \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc_\modr Y \rb \lb Y \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
-    \[ \lb X \rc_\moddot Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y \rc_\modx Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc_\moddot Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rci{\modr} Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rci{\modx} Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rci{\moddot} Y \rb \lb Y \rb \]
+    \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\modr} Y \rb \lb Y \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+    \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \rci{\modx} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\moddot} Y \rb \]
 }
 
 This way, one can restrict the ways in which a category would
 combine by choosing appropriate slash modalities.
 
 When using slash modalities, the bare slashes ($\lc$ and $\rc$) will actually
-mean $\lc_\moddot$ and $\rc_\moddot$, being the most generic (they
+mean $\lci{\moddot}$ and $\rci{\moddot}$, being the most generic (they
 can combine with any other type of slash).
 
 \subsubsection{Categorial variables}
@@ -181,10 +181,10 @@ by the following:
 
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc Y, i, p) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, p + 1, j) \in P$,
-        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
-    \item If $(X \lc Y, p + 1, j) \in P, (Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, p) \in P$,
-        then $(X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m, i, j) \in P$
+    \item If $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
 \end{enumerate}
 
 \subsubsection{Coordination}
@@ -202,9 +202,9 @@ $f(and) = \{ \alpha \lc \alpha \rc \alpha \}$\footnote{
 This extension adds a family of unary rules for constructing derivations \cite[sec.~5.3.1]{nts},
 parametrised for any slash modality $i$:
 \begin{center}
-    \tree{.{$\alpha \rc_i \lp \alpha \lc_i X \rp$} \edge[very thick]; {$X$} }
+    \tree{.{$\alpha \rci{i} \lp \alpha \lci{i} X \rp$} \edge[very thick]; {$X$} }
         ( Forward type-raising )
-    \tree{.{$\alpha \lc_i \lp \alpha \rc_i X \rp$} \edge[very thick]; {$X$} }
+    \tree{.{$\alpha \lci{i} \lp \alpha \rci{i} X \rp$} \edge[very thick]; {$X$} }
         ( Backward type-raising )
 \end{center}
 
@@ -212,7 +212,7 @@ The semantics are defined as follows:
 \begin{center}
     \begin{tikzpicture}[node distance=1mm]
         \Tree[
-            .\node(outtop){$\alpha \rc_i \lp \alpha \lc_i X \rp$};
+            .\node(outtop){$\alpha \rci{i} \lp \alpha \lci{i} X \rp$};
                 \edge[very thick];
                 [ .\node(intop){$X$};
                     \edge[roof];
@@ -228,7 +228,7 @@ The semantics are defined as follows:
     \hspace{2cm}
     \begin{tikzpicture}[node distance=1mm]
         \Tree[
-            .\node(outtop){$\alpha \lc_i \lp \alpha \rc_i X \rp$};
+            .\node(outtop){$\alpha \lci{i} \lp \alpha \rci{i} X \rp$};
                 \edge[very thick];
                 [ .\node(intop){$X$};
                     \edge[roof];
@@ -357,7 +357,7 @@ which might not be the desired result.
 
 If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely
-\[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \]
-\[ \lb X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \rightarrow \lb Y_2 \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m \rb \lb X \lc Y_1 \rb \]
+\[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+\[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
 only if $Y_2 \less Y_1$.
 \end{document}

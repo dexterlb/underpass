@@ -80,13 +80,13 @@ of the same type as its category.
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
                     \Tree[
-                        .\node(outtop){$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$};
+                        .\node(outtop){$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
                             \edge[very thick];
                             [ .\node(intopl){$X \rc Y$};
                                 \edge[roof];
                                 [ .\node(inbotl){$\alpha$}; ]
                             ]
-                            [ .\node(intopr){$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$};
+                            [ .\node(intopr){$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
                                 \edge[roof];
                                 [ .\node(inbotr){$\beta$}; ]
                             ]
@@ -101,7 +101,7 @@ of the same type as its category.
                     \node[right=of outbox,text=\boxtextb](outlabel){$T$};
                 \end{tikzpicture}
             \end{center}
-            where $root(T_1) = X \rc Y$ and $root(T_2) = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ then
+            where $root(T_1) = X \rc Y$ and $root(T_2) = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ then
             \[ sem_{\psi}(T) = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
                 sem_{\psi}(T_1) ( sem_{\psi}(T_2) z_m z_{m - 1} ... z_1 ) \]
             for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
@@ -109,8 +109,8 @@ of the same type as its category.
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
                     \Tree[
-                        .\node(outtop){$X \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$};
-                            [ .\node(intopl){$Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$};
+                        .\node(outtop){$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
+                            [ .\node(intopl){$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
                                 \edge[roof];
                                 [ .\node(inbotl){$\alpha$}; ]
                             ]
@@ -130,7 +130,7 @@ of the same type as its category.
                     \node[right=of outbox,text=\boxtextb](outlabel){$T$};
                 \end{tikzpicture}
             \end{center}
-            where $root(T_1) = Y \mc_1 Z_1 \mc_2 Z_2 ... \mc_m Z_m$ and $root(T_2) = X \lc Y$ then
+            where $root(T_1) = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and $root(T_2) = X \lc Y$ then
             \[ sem_{\psi}(T) = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
                 sem_{\psi}(T_2) ( sem_{\psi}(T_1) z_m z_{m - 1} ... z_1 ) \]
             for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
