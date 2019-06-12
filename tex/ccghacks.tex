@@ -94,6 +94,44 @@ When using slash modalities, the bare slashes ($\lc$ and $\rc$) will actually
 mean $\lci{\moddot}$ and $\rci{\moddot}$, being the most generic (they
 can combine with any other type of slash).
 
+\example{
+    Consider the following simple grammar:
+    \begin{align*}
+        f(small) &= \{ Set \rc Set \} \\
+        f(cities) &= \{ Set \} \\
+        f(in) &= \{ Set \lc Set \rc Set \} \\
+        f(Russia) &= \{ Set \} \\
+    \end{align*}
+
+    It generates the following query, which looks well:
+    \centree{.{$Set$}
+        [ .{$Set$}
+            [ .{$Set \rc Set$} [ .{$small$} ] ]
+            [ .{$Set$} [ .{$cities$} ] ]
+        ]
+        [ .{$Set \lc Set$}
+            [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
+            [ .{$Set$} [ .{$Russia$} ] ]
+        ]
+    }
+
+    However, it also generates this query, which is undesirable:
+    \centree{.{$Set$}
+        [ .{$Set$} [ .{$cities$} ] ]
+        [ .{$Set \lc Set$}
+            [ .{$Set \rc Set$} [ .{$small$} ] ]
+            [ .{$Set \lc Set$}
+                [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
+                [ .{$Set$} [ .{$Russia$} ] ]
+            ]
+        ]
+    }
+
+    It appears that adjectives such as $small$ should not be allowed to combine
+    in this way. This can be remedied by setting $f(small) = Set \rci{\modr} Set$
+    in order to disallow crossing composition.
+}
+
 \subsubsection{Categorial variables}
 This is a very powerful extension which adds simple unification based on variables
 to categorial derivation. To define it formally, it is convenient to have a
