@@ -360,17 +360,15 @@ Let $Cat$ be a magical set whose elements we call
     \end{itemize}
 \end{defn}
 
-\subsubsection{The CYK' algorithm}
+\subsubsection{The Categorial CYK algorithm}
 
 This is the most straight-forward algorithm for parsing a string with the help
 of CCG. It is easy to understand, but has exponential runtime with respect to
 the input word length.
 
-\greenbox{
-    I call this algorithm CYK' and not something else because it very much
-    resembles the CYK algorithm for context-free grammars. It's not called
-    CYK because CYK is already taken.
-}
+It follows the same logic as the original CYK algorithm for context-free
+grammars, with the difference that it uses the asymmetric combinator rules
+from CCG to produce items.
 
 Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
 be a word.
@@ -503,7 +501,7 @@ To reason about the algorithm, we will use the following invariant:
 
 \subsubsection{The Vijay-Shanker algorithm}
 
-This algorithm behaves like the CYK' algorithm for derivations which use only
+This algorithm behaves like the categorial CYK algorithm for derivations which use only
 short categories. In order to pack longer categories in a way which would not
 result in exponential complexity, it uses some clever tricks.
 
@@ -520,7 +518,7 @@ The algorithm uses two types of items:
     \item $(A, \xi, X, T, i, j, p, q), A \in N, T \in \{ \lc, \rc \} N, \xi \in \{ \lc, \rc \}, X \in C(N), 1 \leq i \leq p \leq q \leq j \leq k$
 \end{enumerate}
 
-As with the CYK' algorithm, we build a set ${P}$ of items and aims to produce the item
+As with the categorial CYK algorithm, we build a set ${P}$ of items and aims to produce the item
 $(S, 1, k)$.
 
 \begin{enumerate}

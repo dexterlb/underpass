@@ -1,11 +1,5 @@
 - make slash indices red
 - example sentence for modalities
-- make cyk' something less conspicous. Explain why it's different: (2) and (3)
-  are asymmetric.
 - add a lot of text to def 36. Actually, instead of clone() we can get an
   arbitrary bijection from ts(tau) onto T\O, can we? Also fix the usage of
   contravariance. NEED A FUCKING EXAMPLE.
-
-
-to ask:
-how to correctly write the overloading in def. 19?
