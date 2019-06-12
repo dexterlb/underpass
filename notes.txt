@@ -1,14 +1,7 @@
 - make slash indices red
 - example sentence for modalities
-- in examples with trees fix \alpha's and \beta's
-- example for subtyping uses lt instead of le
-- make lambda^le stand for terms with subtypes instead of lambda^circ
-- make def 36 more verbose
-- fix definition 33 - not the globally minimal, but minimal on our branch
-- fill definition 34
 - make cyk' something less conspicous. Explain why it's different: (2) and (3)
   are asymmetric.
-- example in def 35 uses covariance instead of contravariance
 - add a lot of text to def 36. Actually, instead of clone() we can get an
   arbitrary bijection from ts(tau) onto T\O, can we? Also fix the usage of
   contravariance. NEED A FUCKING EXAMPLE.

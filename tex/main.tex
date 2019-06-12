@@ -57,7 +57,9 @@
 \definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
 \definecolor{asparagus}{rgb}{0.53, 0.66, 0.42}
 
-\newcommand\fancylambda{\mathring{\Lambda}}
+\newcommand\fixme[1]{\\ \textbf{\textcolor{red}{FIXME:} } #1 \\}
+
+\newcommand\fancylambda{\overset{\less}{\Lambda}}
 
 \DeclareRobustCommand{\hsout}[1]{\texorpdfstring{\sout{#1}}{#1}}
 

@@ -177,16 +177,15 @@ however, involves discarding information.
 }
 
 \begin{defn}
-    $\omega: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if:
-    \begin{itemize}
-        \item $\omega(\tau)$ is a minimal element in $S$
-        \item $\tau \less \omega(\tau)$
-    \end{itemize}
+    $\omega: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if
+    for each $\tau$, $\omega(\tau)$ is a minimal element in $S$ such that
+    $\tau \less \omega(\tau)$.
 \end{defn}
 
 \begin{defn}
     If $\omega: T \rightarrow S$ is a squash function for $T \less S$, we can define
     $\omega_{\lambda}: \fancylambda_T^C \rightarrow \fancylambda_S^C$ inductively:
+    \fixme{fill this}
 \end{defn}
 
 From here on $\omega$ will be used freely in place of $\omega_{\lambda}$.
@@ -220,14 +219,16 @@ maps basic types into new basic types.
     the complex type $\tau$, creating a new type with the same
     syntactic structure: $\sigma = ( Int' \tot String' )$
 
-    Now we extend our subtyping relation to include $ Int' \less Int, String' \less String $,
+    Now we extend our subtyping relation to include $ Int \less Int', String' \less String $,
     which indeed gives that $\sigma \less \tau$.
+
+    Again, take note of the argument contravariance.
 
     To remember that $F$ stands for $\sigma$, we will iteratively build a
     function $\varphi$ such that $\varphi(F) = \sigma$.
-
-    The next few definitions will formalise this process.
 }
+
+The following few definitions will formalise this process.
 
 \begin{defn}
     For $O \subseteq \mathbb{T}, \tau \in \tclos{\mathbb{T} \setminus O}$,
