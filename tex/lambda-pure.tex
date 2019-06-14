@@ -80,6 +80,10 @@ we call \emph{constants}.
     \end{itemize}
 \end{defn}
 
+In this text, chained abstractions will be squashed, i.e.
+$\lambda x_1 : T_1, x_2: T_2, ..., y_n: T_n \abstr M$ shall mean
+$\lambda x_1 : T_1 \abstr (\lambda x_2: T_2 \abstr (... (\lambda x_n: T_n \abstr M) ...))$.
+
 \begin{defn}
     Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
     \begin{itemize}
