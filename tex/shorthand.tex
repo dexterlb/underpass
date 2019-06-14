@@ -1,6 +1,61 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
+\subsubsection{Parsing phrases}
 \subsubsection{Shorthand for specifying grammars}
 \label{shorthand}
-\fixme{write this up}
+When giving examples with grammars, it is tedious to write definitions
+for $f$ and $\psi$ using standard mathematical notation.
+
+Thus, we will adopt the syntax on the left to mean the definitions on the right:
+\begin{center}
+    \begin{minipage}{.4\textwidth}
+        \gramshort{
+            \gramrow{\alpha_1}{X_{11}}{M_{11}}
+            \gramrow{}{X_{12}}{M_{12}}
+            &  & ... & \\
+            \gramrow{}{X_1{m_1}}{M_1{m_1}}
+            \gramrow{\alpha_2}{X_{21}}{M_{21}}
+            \gramrow{}{X_{22}}{M_{22}}
+            &  & ... & \\
+            \gramrow{}{X_2{m_2}}{M_2{m_2}}
+            &  ... & ... & \\
+            \gramrow{\alpha_n}{X_{n1}}{M_{n1}}
+            \gramrow{}{X_{n2}}{M_{n2}}
+            &  & ... & \\
+            \gramrow{}{X_n{m_n}}{M_n{m_n}}
+        }
+    \end{minipage}
+    \hspace{.15\textwidth}
+    \begin{minipage}{.4\textwidth}
+        \begin{align*}
+            f(\alpha_1) &= \{ X_{11}, X_{12}, ..., X_{1m_1} \} \\
+            f(\alpha_2) &= \{ X_{21}, X_{22}, ..., X_{2m_2} \} \\
+            ...& \\
+            f(\alpha_n) &= \{ X_{n1}, X_{n2}, ..., X_{nm_n} \} \\
+            \\
+            \psi(\alpha_1, X_{11}) &= M_{11} \\
+            \psi(\alpha_1, X_{12}) &= M_{12} \\
+            \psi(\alpha_1, X_{1m_1}) &= M_{1m_1} \\
+            \psi(\alpha_2, X_{21}) &= M_{21} \\
+            \psi(\alpha_2, X_{22}) &= M_{22} \\
+            \psi(\alpha_2, X_{2m_2}) &= M_{2m_2} \\
+            ...& \\
+            \psi(\alpha_n, X_{n1}) &= M_{n1} \\
+            \psi(\alpha_n, X_{n2}) &= M_{n2} \\
+            \psi(\alpha_n, X_{2m_n}) &= M_{nm_n} \\
+        \end{align*}
+    \end{minipage}
+\end{center}
+\example{
+    This meta-example shows a couple of rules to illustrate the syntax:
+    \gramshort{
+        \gramrow{german \sq cities}{ Set }{ and \app inGermany \app city }
+        \gramrow{near}{ Set \lc Set \rc Set }{ \lambda from: Set, things: Set \abstr }
+            \gramrow{}{}{ and \app things \app (within \app nearDistance \app from) }
+    }
+}
+
+Definitions for phrases such as $german \sq cities$ in the above example can
+either be swept under the rug for the sake of example, or be assumed to use the
+technique discussed in \cref{hack:phrases}.
 \end{document}
