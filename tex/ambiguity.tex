@@ -16,12 +16,12 @@ sentence actually has several meanings.
     \end{center}
     With the following simple grammar:
 
-    \begin{align*}
-        f(Memorials) &= \{ Set \} \\
-        f(cities) &= \{ Set \} \\
-        f(near) &= \{ Set \lc Set \rc Set \} \\
-        f(in) &= \{ Set \lc Set \rc Set \} \\
-    \end{align*}
+    \gramshort{
+        \gramrow{Memorials}{ Set }{}
+        \gramrow{cities}{ Set }{}
+        \gramrow{near}{ Set \lc Set \rc Set }{}
+        \gramrow{in}{ Set \lc Set \rc Set }{}
+    }
 
     There are two possible derivation trees:
 
@@ -94,15 +94,11 @@ compositions but in a different order.
     \end{center}
 
     With the following simple grammar:
-    \begin{align*}
-        f(small) &= \{ Set \rc Set \} \\
-        f(capital) &= \{ Set \rc Set \} \\
-        f(cities) &= \{ Set \} \\
-        \\
-        \psi(small, Set \rc Set) &= \{ small \} \\
-        \psi(capital, Set \rc Set) &= \{ capital \}  \\
-        \psi(cities, Set) &= \{ cities \} \\
-    \end{align*}
+    \gramshort{
+        \gramrow{small}{Set \rc Set}{small}
+        \gramrow{capital}{Set \rc Set}{small}
+        \gramrow{cities}{Set}{cities}
+    }
     where $\typeof{small} = Set \tot Set$, $\typeof{capital} = Set \tot Set$
     and $\typeof{cities} = Set$.
 

@@ -63,9 +63,9 @@
     }
 }
 
-\newcommand\catdefsep{\quad {:} \quad}
-\newcommand\cataddsep{\quad , \quad}
-\newcommand\termdefsep{\quad @ \quad}
+\newcommand\catdefsep{\hspace{0.5em} {:} \hspace{0.5em}}
+\newcommand\cataddsep{\hspace{0.5em} , \hspace{0.5em}}
+\newcommand\termdefsep{\hspace{0.5em} @ \hspace{0.5em}}
 
 \newcommand\gramshort[1]{
     \begin{alignat*}{2}
@@ -139,22 +139,17 @@
 }
 
 \newcommand\example[1]{
-    \tikzexternaldisable
-    \begin{samepage}
-        \begin{mdframed}[%
-            backgroundcolor=red!8,
-            linecolor=gray!50!red!60,
-            outerlinewidth=0.5pt,
-            roundcorner=5mm,
-            skipabove=\baselineskip,
-            skipbelow=\baselineskip,
-            leftmargin=5mm,
-            rightmargin=5mm,
-        ]
+    \begin{mdframed}[%
+        backgroundcolor=red!5,
+        rightline=false,
+        topline=false,
+        bottomline=false,
+        leftline=false,
+    ]
+        \begin{examplethm}
             #1
-        \end{mdframed}
-    \end{samepage}
-    \tikzexternalenable
+        \end{examplethm}
+    \end{mdframed}
 }
 
 \lstset{
@@ -225,8 +220,13 @@
 \setlength{\grammarindent}{12em} % increase separation between LHS/RHS
 
 \theoremstyle{definition} \newtheorem{defn}{Definition}
+                          \numberwithin{defn}{section}
 \theoremstyle{definition} \newtheorem{prop}{Proposition}
+                          \numberwithin{prop}{section}
 \theoremstyle{definition} \newtheorem{property}{Property}
+                          \numberwithin{property}{section}
+\theoremstyle{definition} \newtheorem{examplethm}{Example}
+                          \numberwithin{examplethm}{section}
 
 \newcommand{\lc}{\textcolor{red}{\backslash}}
 \newcommand{\rc}{\textcolor{red}{/}}

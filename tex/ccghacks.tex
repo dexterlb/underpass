@@ -96,12 +96,12 @@ can combine with any other type of slash).
 
 \example{
     Consider the following simple grammar:
-    \begin{align*}
-        f(small) &= \{ Set \rc Set \} \\
-        f(cities) &= \{ Set \} \\
-        f(in) &= \{ Set \lc Set \rc Set \} \\
-        f(Russia) &= \{ Set \} \\
-    \end{align*}
+    \gramshort{
+        \gramrow{small}{ Set \rc Set }{}
+        \gramrow{cities}{ Set }{}
+        \gramrow{in}{ Set \lc Set \rc Set }{}
+        \gramrow{Russia}{ Set }{}
+    }
 
     It generates the following query, which looks well:
     \centree{.{$Set$}
@@ -128,7 +128,7 @@ can combine with any other type of slash).
     }
 
     It appears that adjectives such as $small$ should not be allowed to combine
-    in this way. This can be remedied by setting $f(small) = Set \rci{\modr} Set$
+    in this way. This can be remedied by setting $small \catdefsep Set \rci{\modr} Set$
     in order to disallow crossing composition.
 }
 
@@ -230,9 +230,9 @@ by the following:
 $and$, $or$ etc.) to combine identical categories on both sides.
 
 This can be emulated completely by using categorial variables and setting
-$f(and) = \{ \alpha \lc \alpha \rc \alpha \}$\footnote{
+$and \catdefsep \alpha \lc \alpha \rc \alpha $\footnote{
     In practice, one would need to set
-    $f(and) = \{ X \lc X \rc X, \lp X \mc \alpha \rp \lc \lp X \mc \alpha \rp \rc \lp X \mc \alpha \rp, ...\}$
+    $and \catdefsep X \lc X \rc X, \lp X \mc \alpha \rp \lc \lp X \mc \alpha \rp \rc \lp X \mc \alpha \rp, ...$
     in order to properly define semantics.
 } and similar.
 
@@ -288,17 +288,15 @@ it is usually only considered on categories which appear in leaves.
 
 \example{
     Consider the following simple grammar:
-    \begin{align*}
-        f(cities) &= \{ Set \} \\
-        f(villages) &= \{ Set \} \\
-        f(Finland) &= \{ Set \} \\
-        f(and) &= \{ \alpha \lc \alpha \rc \alpha \} \\
-        f(in) &= \{ Set \lc Set \rc Set \} \\
-        f(near) &= \{ Set \lc Set \rc Set \} \\
-    \end{align*}
-
+    \gramshort{
+        \gramrow{cities}{ Set }{}
+        \gramrow{villages}{ Set }{}
+        \gramrow{Finland}{ Set }{}
+        \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
+        \gramrow{in}{ Set \lc Set \rc Set }{}
+        \gramrow{near}{ Set \lc Set \rc Set }{}
+    }
     It permits derivations as such:
-
     \centree{
         .{$Set$}
             \edge[very thick];
