@@ -406,13 +406,16 @@ only if $Y_2 \less Y_1$.
 \example{
     Imagine we want to be able to parse the following queries:
     \begin{itemize}
-        \item $german \sq cities \sq less \sq than \sq 20km \sq from \sq Bruges$
-        \item $german \sq cities \sq less \sq than \sq 20km \sq north \sq of \sq Bruges$
+        \item $german \sq cities \sq less \sq than \sq 20km \sq from \sq Cologne$
+        \item $german \sq cities \sq less \sq than \sq 20km \sq north \sq of \sq Cologne$
     \end{itemize}
 
     For the sake of the example, subtrees for phrases like $german \sq cities$
-    will be squashed and functions like $germanCities$, $within$ etc will be
-    used without implementations.
+    will be squashed and constants like $germanCity$, $within$ etc will be
+    used without implementations\footnote{
+        This example uses minipass-like semantics for $\lambda$-terms to
+        better illustrate the application. See \cref{sec:minipass}.
+    }.
 
     The grammar uses the following subtype definitions:
     \begin{align*}
@@ -421,8 +424,8 @@ only if $Y_2 \less Y_1$.
     \end{align*}
     and looks like this:
     \gramshort{
-        \gramrow{german \sq cities}{Set}{germanCities}
-        \gramrow{Bruges}{Set}{bruges}
+        \gramrow{german \sq cities}{Set}{germanCity}
+        \gramrow{Cologne}{Set}{cologne}
         \gramrow{20km}{Dist}{twentykm}
         \gramrow{less \sq than}{Set \lc Set \rc DistCheck}{
             \lambda b {:} DistCheck, s{:} Set \abstr}
@@ -438,6 +441,30 @@ only if $Y_2 \less Y_1$.
             }
             \gramrow{}{}{ \quad \quad and \app s \app (withinNorth \app d \app c)}
             \gramrow{}{}{ \quad )}
+        \gramrow{from}{DistCheck \lc Dist \rc Set}{
+            \lambda c {:} Set, d {:} Dist \abstr DistCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
+            \gramrow{}{}{]}
     }
+
+    Here is a derivation tree for one of the forementioned queries:
+    \centree{.{$Set$}
+        [ .{$Set$} \edge[roof]; [ .{$german \sq cities$} ] ]
+        [ .{$Set \lc Set$}
+            [ .{$Set \lc Set \rc DistCheck$} \edge[roof]; [ .{$less \sq than$} ] ]
+            [ .{$DistCheck$}
+                [ .{$Dist$} [ .{$20km$} ] ]
+                [ .{$DistCheck \lc Dist$}
+                    [ .{$DistCheck \lc Dist \rc Set$} [ .{$from$} ] ]
+                    [ .{$Set$} [ .{$Cologne$} ] ]
+                ]
+            ]
+        ]
+    }
+
+    Which results in the $\lambda$-term we wanted (after reduction):
+    \[ and \app germanCity \app (within \app twentykm \app cologne) \]
+    And for the other query respectively:
+    \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]
 }
 \end{document}
