@@ -57,7 +57,44 @@
 \definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
 \definecolor{asparagus}{rgb}{0.53, 0.66, 0.42}
 
-\newcommand\fixme[1]{\\ \textbf{\textcolor{red}{FIXME:} } #1 \\}
+\newcommand\fixme[1]{
+    \greenbox{
+        \textbf{\textcolor{red}{FIXME:} } #1
+    }
+}
+
+\newcommand\catdefsep{\quad {:} \quad}
+\newcommand\cataddsep{\quad , \quad}
+\newcommand\termdefsep{\quad @ \quad}
+
+\newcommand\gramshort[1]{
+    \begin{alignat*}{2}
+        #1
+    \end{alignat*}
+}
+
+\newcommand\gramrow[3]{
+    \ifstrempty{#2}{
+        % category is empty, we'll leave just the term
+        & \phantom{\catdefsep} & \phantom{\termdefsep} & #3
+    }{
+        % category is not empty
+        \ifstrempty{#1}{
+            % token is empty, this is an additional category to the previous token
+            \phantom{ } & \cataddsep #2
+        }{
+            % token is not empty
+            #1 &\catdefsep #2
+        }
+        \ifstrempty{#3}{
+            % term is empty
+            & \phantom{} & \phantom{}
+        }{
+            % term is not empty
+            & \termdefsep & #3
+        }
+    } \\
+}
 
 \newcommand\fancylambda{\overset{\less}{\Lambda}}
 
@@ -216,6 +253,7 @@
 \newcommand{\tot}{\rightarrow}
 \newcommand{\abstr}{\Rightarrow}
 \newcommand{\app}{\text{ }}
+\newcommand{\sq}{\text{ }}
 \newcommand{\wildcard}{\Asterisk}
 \newcommand{\typeof}[1]{\overline{#1}}
 \newcommand{\typeoff}{\typeof{\cdot}}
