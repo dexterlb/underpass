@@ -443,6 +443,10 @@ only if $Y_2 \less Y_1$.
             \lambda c {:} Set, d {:} Dist \abstr DistCheck [}
             \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
             \gramrow{}{}{]}
+        \gramrow{north of}{NorthCheck \lc Dist \rc Set}{
+            \lambda c {:} Set, d {:} Dist \abstr NorthCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
+            \gramrow{}{}{]}
     }
 
     Here is a derivation tree for one of the forementioned queries:
@@ -464,5 +468,9 @@ only if $Y_2 \less Y_1$.
     \[ and \app germanCity \app (within \app twentykm \app cologne) \]
     And for the other query respectively:
     \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]
+
+    Without subtyping, it would be difficult to discern the two categories
+    NorthCheck and DistCheck without resorting to things like passing a
+    dummy argument whose type encodes whether we're in one case or the other.
 }
 \end{document}
