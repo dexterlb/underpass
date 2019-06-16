@@ -207,9 +207,8 @@ From here on $\omega$ will be used freely in place of $\omega_{\lambda}$.
 Since our definition of "subtype" doesn't allow us to subtype a complex type,
 we have to work around this by making $\sigma$ be a complex type with the same
 syntactic structure as $\tau$ and then subtyping on the level of individual
-basic types it is made of. To do this, we need a way to create a new term
-with the same syntactic structure of another term - essentially an image which
-maps basic types into new basic types.
+basic types it is made of. To do this, we need to be able to create a new term
+with the same syntactic structure of another term.
 
 \example{
     Suppose we have the basic types $Int$ and $String$, and we want to extend
@@ -232,55 +231,93 @@ maps basic types into new basic types.
 
 The following few definitions will formalise this process.
 
+First, having a type $\tau$, we need to be able to create a new type
+that is its clone
+(has the same syntactic structure), and is a subtype of $\tau$.
+
+To deal with contravariance, we will differentiate between a "subtype clone"
+($\subtyper{clone}$),
+which clones a type into a new one which will be its subtype, and a
+"supertype clone", ($\suptyper{clone}$)
+which does the opposite - this way we will be able to
+use the $\suptyper{clone}$ in arguments and $\subtyper{clone}$ in return
+values.
+
+To do this, we will use the mappings $\subtyper{\xi}$ and $\suptyper{\xi}$
+which rename the basic types used in $\tau$ into new type symbols. To clone
+$\tau$, we will recursively replace argument types and return value types
+with their respective clones. One way to deal with contravariance is
+
+\newcommand\clonesub{\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
+\newcommand\clonesup{\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
+
 \begin{defn}
-    For $O \subseteq \mathbb{T}, \tau \in \tclos{\mathbb{T} \setminus O}$,
-    the following function constructs a \emph{mapping} which returns a new (not
-    in $O$) symbol for each basic type found in $\tau$.
+    Let $\langle T, \less \rangle$ be a type semilattice, $\tau \in \tclos{T}$
+    be a type and $\subtyper{\xi}, \suptyper{\xi}$ be mappings from a
+    superset of
+    $ts(\tau)$ into $\mathbb{T}$ such that
+    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$.
 
-    \[ clone_O(\tau) : ts(\tau) \rightarrow \mathbb{T} \setminus O \]
-    is defined inductively:
-    \begin{itemize}
-        \item if $\tau \in \mathbb{T}$, then for a fresh element\footnote{
-            For example, assume $\mathbb{T}$ is ordered and get the lowest element
-            in $\mathbb{T} \setminus O$ to make this choice unique.}
-            $\tau' \in \mathbb{T} \setminus O$, define
-            $clone_O(\tau) = \{ (\tau, \tau') \}$
-        \item if $\tau = \tau' \tot \tau''$, then:
+    $\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ and
+    $\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ are defined by
+    mutial recursion:
 
-            Let $clone_O(\tau') = \varphi$, $O' = O \cup range(\varphi)$,
-            $clone_{O'}(\tau'') = \psi$.
+    \[
+        \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
+        \begin{cases*}
+            \subtyper{\xi}(\tau), &
+                $\tau \in T$ \\
+            \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
+                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2), &
+                $\tau = \tau_1 \tot \tau_2$ \\
+        \end{cases*}
+    \]
 
-            Now, define $clone_O(\tau) = \varphi \cup \psi$.
-    \end{itemize}
+    \[
+        \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
+        \begin{cases*}
+            \suptyper{\xi}(\tau), &
+                $\tau \in T$ \\
+            \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
+                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2), &
+                $\tau = \tau_1 \tot \tau_2$ \\
+        \end{cases*}
+    \]
+
 \end{defn}
-
-\example{
-    In light of our example, $clone_O( Int \tot String ) =
-    \xi: ts(\tau) \rightarrow \mathbb{T} \setminus O$ such that
-    \[ \xi(\sigma) = \begin{cases*}
-            Int', & $\sigma = Int$ \\
-            String', & $\sigma = String $
-        \end{cases*} \]
-}
 
 \begin{defn}
     \label{def:subadd}
-    If we have
+    Suppose we have
     \begin{itemize}
         \item a type semilattice $\langle T, \less \rangle$
-        \item $\tau \in \tclos{T}$
-        \item $\sigma \in \mathbb{T} \setminus T$
+        \item a type $\tau \in \tclos{T}$
+        \item a type symbol$\sigma \in \mathbb{T} \setminus T$
         \item a mapping $\varphi$ with $range(\varphi) = \tclos{T}$
     \end{itemize}
-    Let $\xi = clone_{T \cup \{ \sigma \}}(\tau)$.
-    Now we will define \[ \langle \langle T', \less' \rangle, \varphi' \rangle
-        = \langle \langle T, \less \rangle, \varphi \rangle
-        \tadd (\sigma \lass \tau) \] as:
+    Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
+    $ts(\tau)$ into $\mathbb{T} \setminus (T \cup \{ \sigma \})$ such that
+    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$\footnote{
+        $\suptyper{\xi}$ and $\subtyper{\xi}$ depend on $\tau$, $T$ and
+        $\sigma$. If one wants to make their choice constrictive, they may,
+        for example, assume that $\mathbb{T}$ is ordered, take the minimal
+        elements that aren't in $T \cup \{ \sigma \}$ and map to them in
+        order.
+    }.
+
+    Now define the operation $\tadd$ as:
+        \[ \langle \langle T, \less \rangle, \varphi \rangle
+            \tadd (\sigma \lass \tau)
+            \defeq
+            \langle \langle T', \less' \rangle, \varphi' \rangle
+        \] where:
     \begin{itemize}
-        \item $T' = T \cup range(\xi)$
+        \item $\rho = \clonesub(\tau)$
+        \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap ts(\rho))$
         \item $\less'$ is the transitive and reflexive closure of
-            $\less \cup \{ (\sigma', \tau') \mid \xi(\tau') = \sigma' \}$
-        \item $\varphi' = \varphi \cup \{ (\sigma, \hat{\xi}(\tau)) \}$
+            $\less \cup \{ (\sigma', \tau') \in T' \times T' \mid \subtyper{\xi}(\tau') = \sigma' \}
+                   \cup \{ (\sigma', \tau') \in T' \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
+        \item $\varphi' = \varphi \cup \{ \rho \}$
     \end{itemize}
 \end{defn}
 
