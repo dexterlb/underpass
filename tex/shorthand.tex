@@ -3,7 +3,7 @@
 \subsubsection{Parsing phrases}
 \subsubsection{Shorthand for specifying grammars}
 \label{shorthand}
-When giving examples with grammars, it is tedious to write definitions
+When manually defining grammars, it is tedious to write definitions
 for $f$ and $\psi$ using standard mathematical notation.
 
 Thus, we will adopt the syntax on the left to mean the definitions on the right:
@@ -49,10 +49,21 @@ Thus, we will adopt the syntax on the left to mean the definitions on the right:
 \example{
     This meta-example shows a couple of rules to illustrate the syntax:
     \gramshort{
-        \gramrow{german \sq cities}{ Set }{ and \app inGermany \app city }
         \gramrow{near}{ Set \lc Set \rc Set }{ \lambda from: Set, things: Set \abstr }
             \gramrow{}{}{ and \app things \app (within \app nearDistance \app from) }
+        \gramrow{german \sq city}{ Set }{ and \app inGermany \app city }
+        \gramrow{}{ Set \rc Name }{ \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) }
     }
+    The grammar it specifies is the following:
+    \begin{align*}
+        f[german \sq city] &= \{ Set, Set \rc Name \} \\
+        f(near) &= \{ Set \lc Set \rc Set \} \\
+        \\
+        \psi(near, Set \lc Set \rc Set) &= \lambda from: Set, things: Set \abstr \\
+        & \phantom{=} \qquad and \app things \app (within \app nearDistance \app from) \\
+        \psi[german \sq city, Set] &= and \app inGermany \app city \\
+        \psi[german \sq city, Set \rc Set] &= \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) \\
+     \end{align*}
 }
 
 Definitions for phrases such as $german \sq cities$ in the above example can

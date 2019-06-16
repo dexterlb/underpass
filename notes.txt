@@ -5,23 +5,3 @@ fix now:
 
 sections for later:
     - explain about fixed phrases and templates
-
-sandbox
-
-cities more than 20km from sofia
-cities less than 20km from sofia
-cities more than 20km north of sofia
-cities less than 20km north of sofia
-
-DistCheck < ((Dist -> Set -> Set) -> Set)
-NorthCheck < ((Dist -> Set -> Set) -> Set)
-
-20km: Dist
-sofia: Set
-from: DistCheck \ Dist / Set: \c,d,f => f d c
-less than: Set \ Set / DistCheck: \b,s => b (\d,c => and s (within d c))
-less than: Set \ Set / NorthCheck: \b,s => b (\d,c => and s (and (withinLongitude d c) (dir "north" c))
-
-
-
-
