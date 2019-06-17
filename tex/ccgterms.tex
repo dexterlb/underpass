@@ -113,9 +113,16 @@ for the entire tree:
                 \end{tikzpicture}
             \end{center}
             where $root(T_1) = X \rc Y$ and $root(T_2) = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ then
-            \[ sem_{\psi}(T) = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
-                sem_{\psi}(T_1) ( sem_{\psi}(T_2) z_m z_{m - 1} ... z_1 ) \]
-            for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
+            \[
+                \begin{split}
+                    sem_{\psi}(T) =& \{
+                        \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
+                        M ( N z_m z_{m - 1} ... z_1 ) \\
+                        & \quad \mid M \in sem_{\psi}(T_1), N \in sem_{\psi}(T_2) \} \\
+                \end{split}
+            \]
+            for freshly-picked
+            $z_1 ... z_m \in \mathbb{V} \setminus fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
         \item If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
@@ -142,11 +149,22 @@ for the entire tree:
                 \end{tikzpicture}
             \end{center}
             where $root(T_1) = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and $root(T_2) = X \lc Y$ then
-            \[ sem_{\psi}(T) = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
-                sem_{\psi}(T_2) ( sem_{\psi}(T_1) z_m z_{m - 1} ... z_1 ) \]
-            for $z_1 ... z_m \not\in fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
+            \[
+                \begin{split}
+                    sem_{\psi}(T) =& \{
+                        \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
+                        N ( M z_m z_{m - 1} ... z_1 ) \\
+                        & \quad \mid M \in sem_{\psi}(T_1), N \in sem_{\psi}(T_2) \} \\
+                \end{split}
+            \]
+            for freshly-picked
+            $z_1 ... z_m \in \mathbb{V} \setminus fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
     \end{itemize}
 \end{defn}
+
+Observe that since $\psi$ returns valid $\lambda$-terms and everything
+returned by $sem_{\psi}$ is constructed via basic $\lambda$-calculus operations,
+$sem_{\psi}$ returns only valid $\lambda$-terms.
 
 While it is easier to only compose closed terms, there are cases when free
 variables are useful. We will not restrict ourselves to closed terms and will
@@ -166,13 +184,15 @@ cleanly:
     \]
 \end{defn}
 
+Another observation is that the construction for $sem_{\psi}$ includes no
+additional free variables other than the ones already present in the terms
+returned by $\psi$.
+
 \begin{prop}
     \label{ccg:typeconsistent}
     If $ G = \langle \Sigma, N, S, f, n \rangle $ is a CCG and $\psi$ is a
     semantic function for $G$ that is consistent with $\Gamma$, then
-    for every valid derivation tree $T$, $sem_{\psi}$ is well-defined (contains
-    only correct $\lambda$-terms in $\Lambda_N^C$). Moreover, for any valid
-    derivation tree $T$:
+    for every valid derivation tree $T$:
     \[
         M \in sem_{\psi}(T) \implies \Gamma \vdash M : \typeof{root(T)}
     \]
