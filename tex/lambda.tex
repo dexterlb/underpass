@@ -356,52 +356,5 @@ with their respective clones. One way to deal with contravariance is
     then $T' \less T$. Even more, there is a unique squash function
     $\omega_{\Theta} : T' \rightarrow T$.
 \end{prop}
-\fixme{need proof}
-
-\subsubsection{Type-based term rewriting}
-
-\[
-rewrite(R, \Gamma, A, \tau) =
-\begin{cases*}
-    \langle A'', \Gamma' \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $R(A', \tau) = A''$ \\
-        $\langle A', \Gamma' \rangle = coerce(R, \Gamma, A, \tau)$ \\
-        \vspace{1em}} \\
-\end{cases*}
-\]
-
-\[
-coerce(R, \Gamma, A, \tau) =
-\begin{cases*}
-    \langle x, \{ x : (\tau \unify \sigma) \} \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $(x : \sigma) \in \Gamma, A = x$
-        \vspace{1em}} \\
-    \langle M'N', \Gamma' \unify \Gamma'' \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $\langle M', \Gamma' \rangle = rewrite(R, \Gamma, N, \sigma \unify \sigma')$ \\
-        $\langle N', \Gamma'' \rangle = rewrite(R, \Gamma, M, (\sigma \unify \sigma') \tot (\tau \unify \tau'))$ \\
-        $\Gamma \vdash N : \sigma$ \\
-        $\Gamma \vdash M : \sigma' \tot \tau', A = MN$\\
-        \vspace{1em}} \\
-    \langle \lambda x : (\sigma' \unify \sigma'') \abstr M', \Gamma' \setminus x \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $(x : \sigma'') \in \Gamma'$ \\
-        $\Gamma' = rewrite(R, \Gamma \circ x : \sigma, M, \nu \unify \nu')$ \\
-        $\tau = \sigma' \tot \nu'$ \\
-        $(\Gamma \circ x : \sigma) \vdash M : \nu, A = \lambda x : \sigma \abstr M$ \\
-        \vspace{1em}} \\
-    \langle c, \{ \} \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $A = c \in C$ \\
-        \vspace{1em}} \\
-    \langle \sigma[M'], \Gamma' \rangle,
-    & \parbox{.6\textwidth}{\vspace{1em}
-        $\langle M', \Gamma' \rangle = rewrite(R, \Gamma, M, \sigma)$ \\
-        $A = \sigma[M]$ \\
-        \vspace{1em}} \\
-\end{cases*}
-\]
-
+\fixme{need proof!}
 \end{document}
