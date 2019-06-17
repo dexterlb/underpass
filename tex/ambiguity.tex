@@ -102,6 +102,9 @@ compositions but in a different order.
     where $\typeof{small} = Set \tot Set$, $\typeof{capital} = Set \tot Set$
     and $\typeof{cities} = Set$.
 
+    Please take note that $small$ (the token) is different from $small$ (
+    the $\lambda$-constant with type $Set \tot Set$ and so on.
+
     There are two possible derivation trees:
     \begin{center}
         \begin{tikzpicture}[node distance=1mm,sibling distance=1cm,scale=0.9,every node/.style={transform shape}]
@@ -131,9 +134,9 @@ compositions but in a different order.
     \end{center}
     Where by the definition of $sem_\psi$:
     \begin{align*}
-        sem_\psi(T_1) &= (\lambda x {:} Set \abstr capital \app (small \app x))
-            \app cities \\
-        sem_\psi(T_2) &= small \app capital \app cities \\
+        (\lambda x {:} Set \abstr capital \app (small \app x))
+            \app cities & \in sem_{\psi}(T_1) \\
+        small \app capital \app cities & \in sem_\psi(T_2) \\
     \end{align*}
 
     However, $sem_\psi(T_1)$ can also be $\beta$-reduced to

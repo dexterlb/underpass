@@ -92,16 +92,16 @@ to work with subtypes.
     whose elements we call \emph{constants}.
 
     For a of type semilattice $T$, we can define the set of
-    \emph{pre-typed $\lambda$-terms with subtypes} ($\fancylambda_T^C$).
+    \emph{pre-typed $\lambda$-terms with subtypes} ($\fancylambda{T}{C}$).
 
     \begin{itemize}
-        \item Constant:    \[ c \in C \implies c \in \fancylambda_T^C \]
-        \item Variable:    \[ v \in \mathbb{V} \implies v \in \fancylambda_T^C \]
-        \item Application: \[ A, B \in \fancylambda_T^C \implies (AB) \in \fancylambda_T^C \]
-        \item Abstraction: \[ v \in \mathbb{V}, A \in \fancylambda_T^C, \sigma \in \tclos{T}
-                \implies (\lambda v : \sigma \abstr A) \in \fancylambda_T^C \]
-        \item Construction: \[ \sigma \in T, A \in \fancylambda_T^C
-                \implies \sigma[A] \in \fancylambda_T^C \]
+        \item Constant:    \[ c \in C \implies c \in \fancylambda{T}{C} \]
+        \item Variable:    \[ v \in \mathbb{V} \implies v \in \fancylambda{T}{C} \]
+        \item Application: \[ A, B \in \fancylambda{T}{C} \implies (AB) \in \fancylambda{T}{C} \]
+        \item Abstraction: \[ v \in \mathbb{V}, A \in \fancylambda{T}{C}, \sigma \in \tclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \fancylambda{T}{C} \]
+        \item Construction: \[ \sigma \in T, A \in \fancylambda{T}{C}
+                \implies \sigma[A] \in \fancylambda{T}{C} \]
     \end{itemize}
 \end{defn}
 
@@ -185,7 +185,7 @@ however, involves discarding information.
 
 \begin{defn}
     If $\omega: T \rightarrow S$ is a squash function for $T \less S$, we can define
-    $\omega_{\lambda}: \fancylambda_T^C \rightarrow \fancylambda_S^C$ inductively:
+    $\omega_{\lambda}: \fancylambda{T}{C} \rightarrow \fancylambda{S}{C}$ inductively:
     \fixme{fill this}
 \end{defn}
 

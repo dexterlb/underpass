@@ -205,7 +205,7 @@ For a more detailed explanation, see \cref{lambda:typevars}.
     \end{tikzpicture}
 \end{center}
 
-\[ sem_{\psi}(T) = sem_{\psi}(T')) \]
+\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\alpha}{Y} \]
 
 This essentially allows us to generate any category and substitute it in place
 of variables during derivation.
@@ -214,7 +214,7 @@ When parsing, we can observe that after processing all leaf nodes,
 there's no way to generate new variables while building the parse tree
 bottom-up. Thus, it is sufficient to eliminate variables by unification.
 
-Namely, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
+In particular, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
 by the following:
 
 \begin{enumerate}
@@ -281,7 +281,7 @@ The semantics are defined as follows:
     \end{tikzpicture}
 \end{center}
 
-\[ sem_{\psi}(T) = \lambda f {:} ( X \tot \alpha ) \abstr f (sem_{\psi}(T')) \]
+\[ sem_{\psi}(T) = \{ \lambda f {:} ( X \tot \alpha ) \abstr f M \mid M \in sem_{\psi}(T') \} \]
 
 Since considering type-raising at any level would make parsing much slower,
 it is usually only considered on categories which appear in leaves.
@@ -443,7 +443,7 @@ only if $Y_2 \less Y_1$.
             \lambda c {:} Set, d {:} Dist \abstr DistCheck [}
             \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
             \gramrow{}{}{]}
-        \gramrow{north of}{NorthCheck \lc Dist \rc Set}{
+        \gramrow{north \sq of}{NorthCheck \lc Dist \rc Set}{
             \lambda c {:} Set, d {:} Dist \abstr NorthCheck [}
             \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
             \gramrow{}{}{]}
@@ -472,5 +472,18 @@ only if $Y_2 \less Y_1$.
     Without subtyping, it would be difficult to discern the two categories
     NorthCheck and DistCheck without resorting to things like passing a
     dummy argument whose type encodes whether we're in one case or the other.
+    Note that this cannot be done by simply using a type variable in the place
+    of $DistCheck$ and $NorthCheck$ because of the different semantics
+    (they are paired with different $\lambda$-terms).
+
+    This example may seem strange to some (why would
+    we want $less \sq than$ to know about $within$ and $withinNorth$?
+    wouldn't it be better to pair them with $from$?) but in reality the
+    other way round is also strange - these semantics come from $less \sq than$
+    and $from$ \emph{combined}. This violation of compositionality arises
+    from the natural language itself, and subtyping is a useful "hack" to
+    deal with it: we tag our type with additional information to denote that
+    we're looking for something specific, and when we find it we can unwrap the
+    type.
 }
 \end{document}
