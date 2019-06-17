@@ -43,14 +43,27 @@ to be correct and consistent, we will also want the terms of each node to be
 of the same type as its category.
 
 \begin{defn}
-    Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG, $N$ be
-    a set of categories typed in $T$ and $C$ be a set
+    Let $\Theta$ be a set of type symbols,
+    $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG, $N$ be
+    a set of categories typed in $\Theta$ and $C$ be a set
     of constants typed in $\Theta$.
     A function
     \[ \psi : \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \rightarrow 2^{\Lambda_{\Theta}^C} \] is called a
     \emph{semantic function} for G.
-
 \end{defn}
+
+\greenbox{
+    While here we differentiate between \emph{categories} and their \emph{types},
+    it is often sufficient for types and categories to be the same set:
+    when that is the case, the typing function is simply identity.
+
+    For simplicity, in most examples from here onward, the types of atomic
+    categories will be the atomic categories themselves.
+}
+
+Now that we have our semantic function that can yield the possible terms
+for each \emph{leaf} in a derivation tree, we will build the semantic function
+for the entire tree:
 
 \begin{defn}
     Let $G$ be a CCG, $\psi$ be a semantic function for $G$ and $T$ be a

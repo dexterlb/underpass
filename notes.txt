@@ -1,5 +1,4 @@
 fix now:
-    - fix def. 2.19 (theta and T), maybe say what exactly is theta
     - def. 2.20 : need to handle sets returned by sem, not terms.
       afterwards, fix the note about contexts
     - fix the shorthand (sets of terms not handled) and make it more concise
