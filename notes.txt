@@ -1,7 +1,14 @@
 fix now:
-    - add a lot of text to def 36. Actually, instead of clone() we can get an
-      arbitrary bijection from ts(tau) onto T\O, can we? Also fix the usage of
-      contravariance. NEED A FUCKING EXAMPLE.
+    - fix def. 2.19 (theta and T), maybe say what exactly is theta
+    - def. 2.20 : need to handle sets returned by sem, not terms.
+      afterwards, fix the note about contexts
+    - fix the shorthand (sets of terms not handled) and make it more concise
+    - example 2.1 - explain that we have ambiguity (german cities has 2 categories)
+    - example 2.3 : what's the difference between small and small? also sets returned by sem
+    - explain that in example 2.7 why we can't do it with variables (different terms)
+      also, why do we need to give less-than the semantics of from?
+    - fix notation for fancy lambda
+    - substitution of type variables in type raising
 
 sections for later:
     - explain about fixed phrases and templates

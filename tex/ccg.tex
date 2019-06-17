@@ -41,15 +41,6 @@ Let $Cat$ be a magical set whose elements we call
     $n$ is the category's \emph{arity}. $A$ is called its \emph{target} or
     return type, while
     $X_1 ... X_n$ are called its \emph{arguments} or argument types.
-
-    For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
-    finite set, we define $C(\alpha)$ to be the set of all categories which
-    can be found in $\alpha$, namely:
-    \begin{itemize}
-        \item $C(\varepsilon) = \emptyset$
-        \item for $a \in \Sigma$, $C(a\beta) = C(\beta)$
-        \item for $X \in C(\tau)$, $C(\lb X \rb \beta) = X \cup C(\beta)$
-    \end{itemize}
 \end{defn}
 
 \begin{defn}
@@ -82,6 +73,28 @@ Let $Cat$ be a magical set whose elements we call
 \end{defn}
 
 \subsubsection{Derivations}
+
+We will now formalise the way CCGs generate strings of terminals. There
+are two approaches to do this: iterative derivation and derivation trees. Since
+they are both useful for different things, we will also show equivalence
+between them.
+
+For iterative derivation, we will use strings in $(\lb C(\tau) \rb \cup \Sigma)^*$,
+i.e. strings of terminals intermixed with categories. To make our derivations
+equivalent to context-free grammar derivations, we will use the square
+brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
+
+\begin{defn}
+    For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
+    finite alphabet of terminals, we define $C(\alpha)$ to be the set of all
+    categories which
+    can be found in $\alpha$, namely:
+    \begin{itemize}
+        \item $C(\varepsilon) = \emptyset$
+        \item for $a \in \Sigma$, $C(a\beta) = C(\beta)$
+        \item for $X \in C(\tau)$, $C(\lb X \rb \beta) = X \cup C(\beta)$
+    \end{itemize}
+\end{defn}
 
 \begin{defn}
     For a CCG $G$, we can construct a set $R \subset (\lb C(N) \rb) \times (\Sigma \cup \lb C(N) \rb)^*$
@@ -168,28 +181,96 @@ string.
     \end{itemize}
 \end{proof}
 
+\example{
+    \label{ex:deriv}
+
+    We will construct a simple grammar $G = \langle \Sigma, N, S, f, n \rangle$
+    which can generate the string \code{cities in Germany}.
+
+    \begin{align*}
+        \Sigma \defeq& \{ cities, in, Germany \} \\
+        N \defeq& \{ Set \} \\
+        S \defeq& Set \\
+        f(x) \defeq&
+            \begin{cases*}
+                \{ Set \},& x = cities \\
+                \{ Set \},& x = Germany \\
+                \{ Set \lc Set \rc Set \},& x = in \\
+            \end{cases*} \\
+        n \defeq& 1 \\
+    \end{align*}
+
+    Here is a possible derivation process (categories to which we apply
+    derivation rules on the next step are underlined):
+    \begin{center}
+        \begin{tabular}{c}
+            $\underline{\lb Set \rb}$ \\ $\Rightarrow$ \\
+            $\lb Set \rb \underline{\lb Set \lc Set \rb}$ \\ $\Rightarrow$ \\
+            $\underline{\lb Set \rb} \lb Set \lc Set \rc Set \rb \lb Set \rb$ \\ $\Rightarrow$ \\
+            $cities \sq \underline{\lb Set \lc Set \rc Set \rb} \lb Set \rb$ \\ $\Rightarrow$ \\
+            $cities \sq in \sq \underline{\lb Set \rb}$ \\ $\Rightarrow$ \\
+            $cities \sq in \sq Germany$ \\
+        \end{tabular}
+    \end{center}
+}
+
+\example{
+    \label{ex:derivsimple}
+
+    And now an even dumber grammar $G = \langle \Sigma, N, S, f, n \rangle$
+    which can generate strings like \code{count to two},
+    \code{count to twice two}, \code{count to twice twice two}
+    and so on.
+
+    \begin{align*}
+        \Sigma \defeq& \{ count, to, twice, two \} \\
+        N \defeq& \{ Action, Num \} \\
+        S \defeq& Action \\
+        f(x) \defeq&
+            \begin{cases*}
+                \{ Num \},& x = two \\
+                \{ Action \},& x = count \\
+                \{ Num \rc Num \},& x = twice \\
+                \{ Action \lc Action \rc Num \},& x = to \\
+            \end{cases*} \\
+        n \defeq& 2 \\
+    \end{align*}
+
+    Here is one possible derivation process:
+    \begin{center}
+        \begin{tabular}{c}
+            $\underline{\lb Action \rb}$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rb}$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rc Num \rb} \lb Num \rb$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \underline{\lb Num \rc Num} \rb \lb Num \rb$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \lb Num \rc Num \rb \lb Num \rc Num \rb \lb Num \rb$ \\ $\Rightarrow^*$ \\
+            $count \sq to \sq twice \sq twice \sq two$ \\
+        \end{tabular}
+    \end{center}
+}
+
+Derivation trees for CCG are ordered binary trees with categories labeling
+their internal nodes and terminals labeling their leaves.
+
+We shall also consider the concept of \emph{primary edges} in the context
+of derivation trees, in correspondence to the concept of
+\emph{primary categories} in the context of derivations. Primary edges
+will be drawn with a thick line.
+
+We will construct the set $ \mathbb{T} $ of all derivation trees, as well
+as the functions $ crown: \mathbb{T} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
+$ root: \mathbb{T} \rightarrow C(N) \cup \Sigma$,
+$ primary : \mathbb{T} \rightarrow \mathbb{T} $ and
+$ prefix : \mathbb{T} \rightarrow C(N) \cup \Sigma $.
+
+If there exists $\tau \in \mathbb{T}$ such that $root(\tau) = X \in C(N),
+crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
+
+Derivation trees are constructed as follows:
+
+
 \begin{defn}
     Derivation tree
-
-    Derivation trees for CCG are ordered binary trees with categories labeling
-    their internal nodes and terminals labeling their leaves.
-
-    We shall also consider the concept of \emph{primary edges} in the context
-    of derivation trees, in correspondence to the concept of
-    \emph{primary categories} in the context of derivations. Primary edges
-    will be drawn with a thick line.
-
-    We will construct the set $ \mathbb{T} $ of all derivation trees, as well
-    as the functions $ crown: \mathbb{T} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
-    $ root: \mathbb{T} \rightarrow C(N) \cup \Sigma$,
-    $ primary : \mathbb{T} \rightarrow \mathbb{T} $ and
-    $ prefix : \mathbb{T} \rightarrow C(N) \cup \Sigma $.
-
-    If there exists $\tau \in \mathbb{T}$ such that $root(\tau) = X \in C(N),
-    crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
-
-    Derivation trees are constructed as follows:
-
     \begin{itemize}
         \item If $ a \in \Sigma $, then
             $ a \in \mathbb{T}, crown(a) = a, root(a) = a, primary(a) = a, prefix(a) = a$.
@@ -240,8 +321,41 @@ string.
             $ \tau \in \mathbb{T}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi''$, $prefix(\tau) = X$
     \end{itemize}
-
 \end{defn}
+
+\example{
+    Here are the derivation trees for the derivations shown in
+    \cref{ex:deriv} and \cref{ex:derivsimple}
+    respectively:
+
+    \centree{.{$Set$}
+        [ .{$Set$} [ .{$cities$} ] ]
+        \edge[very thick];
+        [ .{$Set \lc Set$}
+            \edge[very thick];
+            [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
+            [ .{$Set$} [ .{$Germany$} ] ]
+        ]
+    }
+
+    \centree{.{$Action$}
+        [ .{$Action$} [ .{$count$} ] ]
+        \edge[very thick];
+        [ .{$Action \lc Action$}
+            \edge[very thick];
+            [ .{$Action \lc Action \rc Num$}
+                \edge[very thick];
+                [ .{$Action \lc Action \rc Num$} [ .{$to$} ] ]
+                [ .{$Num \rc Num$}
+                    \edge[very thick];
+                    [ .{$Num \rc Num$} [ .{$twice$} ] ]
+                    [ .{$Num \rc Num$} [ .{$twice$} ] ]
+                ]
+            ]
+            [ .{$Num$} [ .{$two$} ] ]
+        ]
+    }
+}
 
 \begin{prop}
     Equivalence of derivation trees and derivations
