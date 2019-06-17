@@ -1,6 +1,9 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \subsection{The CCG definition language}
+The language for defining CCGs consists of the intermediate language (
+\cite{minipass:grammar}) extended by additional syntax for defining
+token matchers and categories.
 \begin{grammar}
     <program> ::= <tstatement> <tstatement>*
 
@@ -17,10 +20,6 @@
     <begin-statement>  ::= `begin' <category>
 
     <match-statement>  ::= <phrase-rule> `:' <target> (`,' <target>)*
-
-    <term-definition>  ::= <identifier> `:=' <term>
-
-    <type-definition>  ::= <identifier> `<' <type>
 
     <phrase-rule> ::= <match-rule> (`<' <phrase-id> `>' <match-rule>)*
 
@@ -49,29 +48,5 @@
     <slash> ::= `/' <modality> | `\\' <modality>
 
     <modality> ::= `.' | `d' | `x' | `*' | $\varepsilon$
-
-    <type> ::= <simple-type> | <type> <arrow> <simple-type>
-
-    <simple-type> ::= <identifier> | `*' | `(' <type> `)'
-
-    <arrow> ::= `->'
-
-    <term> ::= <nonapp-term> | <nonapp-term> <term>
-
-    <nonapp-term> ::= <constant> | <variable> | <constr> | <abstr> | `(' <term> `)'
-
-    <constant> ::= <identifier>
-
-    <variable> ::= <identifier>
-
-    <constr> ::= <type> `[' <term> `]'
-
-    <abstr> ::= <lambda> <declaration> `=>' <term>
-
-    <lambda> ::= `\\' | `lambda'
-
-    <declaration> ::= <variable> | <variable> `:' <type>
-
-    <filepath> ::= <quoted-string>
 \end{grammar}
 \end{document}

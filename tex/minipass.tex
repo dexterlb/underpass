@@ -3,7 +3,6 @@
 
 \subsection{The Intermediate Language (Minipass)}
 \label{sec:minipass}
-
 Overpass is a relatively complex language with assignment, sequentiality
 and specialised syntax. As such, it is not well-suited for performing
 AST transofmations.
@@ -25,36 +24,93 @@ The graph abstraction works as follows:
         transport route"
 \end{itemize}
 
+\subsubsection{Language grammar}
+\label{minipass:grammar}
+Here is a BNF grammar for the intermediate language.
+\begin{grammar}
+    <term-definition>  ::= <identifier> `:=' <term>
 
-Minipass consists of the following set of constants and basic types:
+    <type-definition>  ::= <identifier> `<' <type>
 
-\begin{lstlisting}
--- basic types
-Num, String     -- self explanatory
-List            -- list of Nums, Strings or Lists
-Set             -- represents a set of Overpass objects
-                -- (nodes, ways, relations, areas)
+    <type> ::= <simple-type> | <type> <arrow> <simple-type>
 
--- constants
-<stringliteral> : String
-<numberliteral> : Num
+    <simple-type> ::= <identifier> | `*' | `(' <type> `)'
 
-and       : Set -> Set -> Set   -- set intersection
-or        : Set -> Set -> Set   -- set union
-not       : Set -> Set          -- set negation
+    <arrow> ::= `->'
 
-get       : List -> Set         -- get elements by label
-next      : List -> Set -> Set  -- traverse edges
+    <term> ::= <nonapp-term> | <nonapp-term> <term>
 
--- constructing lists
-empty       :                     List
-consNum     : Num      -> List -> List
-consString  : String   -> List -> List
-consList    : List     -> List -> List
+    <nonapp-term> ::= <constant> | <variable> | <constr> | <abstr> | `(' <term> `)'
 
-\end{lstlisting}
+    <constant> ::= <identifier>
 
+    <variable> ::= <identifier>
 
+    <constr> ::= <type> `[' <term> `]'
+
+    <abstr> ::= <lambda> <declaration> `=>' <term>
+
+    <lambda> ::= `\\' | `lambda'
+
+    <declaration> ::= <variable> | <variable> `:' <type>
+
+    <filepath> ::= <quoted-string>
+\end{grammar}
+
+Note that Minipass is characterised by its predefined constants and basic
+types. Because of the modular architecture of the implementation, they can be
+replaced by something else, allowing to target a different intermediate language.
+
+\subsubsection{Builtins and base types}
+Since Minipass is built on top of $\lambda$-calculus syntax, all built-in
+"functions" are actually \emph{constants} in the context of $\lambda$-terms.
+
+The base types are:
+\begin{center}
+    \begin{tabular}{r p{0.7\textwidth}}
+        \code{Num} & represents a floating point number. \cendrow
+        \code{String} & represents a string of unicode characters. \cendrow
+        \code{List} & represents a linked list of \code{Num}s, \code{String}s and
+            nested \code{List}s. \cendrow
+        \code{Set} & refers to a set of geographical objects. It is not represented
+            internally in any way: the only way to touch \code{Set} objects is
+            via builtin operations that work on \code{Set}s. \cendrow
+    \end{tabular}
+\end{center}
+
+The builtin identifiers (which act as constants in $\lambda$-terms) are the
+following:
+\begin{center}
+    \begin{tabular}{r l p{0.5\textwidth}}
+        Identifier  & Type & \\
+        \hline
+        \code{and}  & $Set \tot Set \tot Set$ & set intersection \cendrow
+        \code{or}   & $Set \tot Set \tot Set$ & set union \cendrow
+        \code{not}  & $Set \tot Set$ & set negation \cendrow
+        \hline
+        \code{get}  & $List \tot Set$ & get geographical elements by vertex
+            label \cendrow
+        \code{next} & $List \tot Set \tot Set$ & traverse edges by label,
+            obtaining a new \code{Set} \cendrow
+        \hline
+        \code{empty} & $List$ & empty list \cendrow
+        \code{consNum} & $Num \tot List \tot List$ & prepend a \code{Num} to
+            a list \cendrow
+        \code{consString} & $String \tot List \tot List$ & prepend a \code{String} to
+            a list \cendrow
+        \code{consList} & $List \tot List \tot List$ & prepend a \code{List} to
+            a list (prepends the list itself, not its elements)\cendrow
+    \end{tabular}
+\end{center}
+
+\subsubsection{Defining types}
+\fixme{write this}
+
+\subsubsection{Defining terms}
+\fixme{write this}
+
+\subsubsection{A "standard" library}
+\fixme{remove junk, reformat}
 
 Let our world be a directed graph whose vertices we call \emph{elements}.
 Each \emph{edge} carries a \emph{label}. Each \emph{label} is a heterogenous

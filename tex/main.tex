@@ -50,6 +50,9 @@
     -jobname "\image" "\texsource"}}
 % \tikzexternalize
 
+\renewcommand\descriptionlabel[1]{\qquad $\bullet$ \textbf{#1}}
+\newcommand\code[1]{\texttt{#1}}
+\newcommand\cendrow{\vspace{0.4em} \\}
 
 \usepackage{color}
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
@@ -221,8 +224,8 @@
 \usepackage{tabularx}
 
 
-\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
-\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+\setlength{\grammarparsep}{0.2em}
+\setlength{\grammarindent}{12em}
 
 \theoremstyle{definition} \newtheorem{defn}{Definition}
                           \numberwithin{defn}{section}

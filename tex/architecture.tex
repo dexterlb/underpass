@@ -11,7 +11,7 @@ The system consists of several parts:
 \end{figure}
 
 \begin{itemize}
-    \item Generic CCG definition language: a language for defining CCGs and
+    \item Generic CCG definition language: a language for defining CCGs,
           their respective type systems and term libraries. Can be used
           standalone (for specifying CCGs which output raw parse trees)
           or by embedding a lambda calculus-based language (for specifying
@@ -37,4 +37,22 @@ The system consists of several parts:
 
 An architecture overview can be seen at Figure \ref{arch}.
 
+It is implemented in Haskell, and apart from the query engine contains
+a demonstration web interface through which the user can enter a text query,
+see the resulting Overpass query, inspect the intermediate steps (derivation
+tree, minipass term before and after reduction) and finally view the results
+on a map via Overpass Turbo (a public web interface for visualising queries
+\cite{overpassturbo}).
+
+An "\emph{expert}" can write grammar definitions which specify rules for matching
+tokens and attaching categories and Minipass terms to them. This is done in
+\code{.ccg} files, which can then be loaded at runtime and used for parsing the
+input queries.
+
+A sample grammar definition is provided, which can parse several sentence
+constructions.
+
+The pipeline can be easily modified to use a natural language other than
+English, since the only language-dependant components are the tokeniser and
+the grammar definition, which are straight-forward to replace.
 \end{document}
