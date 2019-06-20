@@ -51,4 +51,45 @@ token matchers and categories.
 
     <modality> ::= `.' | `d' | `x' | `*' | $\varepsilon$
 \end{grammar}
+
+\fixme{simple matchers need to be included in grammar}
+
+Constructions for defining terms, subtyping, importing files, comments and such
+remain. What the CCG definition language adds is the ability to match natural
+language tokens and assign categories and terms to them, and the ability to
+select a starting category.
+
+The starting category is is specified with the following statement:
+\begin{center}
+    \code{begin SomeCategory.}
+\end{center}
+There can be only one \code{begin} statement in the entire program.
+
+Tokens (words) in the natural language input are represented as sets of
+key-value data (for example, the token \code{cities} may be represented as
+\code{raw=cities,pos=nnp,lemma=city} - for a more detailed explanation
+see \cref{sec:tokenisation}). The CCG definition language allows us to define
+\emph{matchers} which can either match a token or not match a token.
+
+The following matchers have been implemented:
+
+\begin{itemize}
+    \item exact matcher:
+        \begin{center}
+            \code{key='value'}
+        \end{center}
+    \item regex matcher:
+        \begin{center}
+            \code{key~'regex'}
+        \end{center}
+    \item "and" matcher:
+        \begin{center}
+            \syntax{<matcher>}\code{ \& }\syntax{<matcher>}
+        \end{center}
+    \item "or" matcher:
+        \begin{center}
+            \syntax{<matcher>}\code{ | }\syntax{<matcher>}
+        \end{center}
+\end{itemize}
+
 \end{document}

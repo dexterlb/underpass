@@ -9,7 +9,7 @@ AST transofmations.
 
 Minipass addresses this problem: its goal is to be easy to manipulate
 and reason about, and be translatable to Overpass. It is based on the typed
-lambda calculus variant described in \ref{sec:lambda} and speaks about a
+lambda calculus variant described in \cref{sec:lambda} and speaks about a
 world much simpler than the one described by Overpass - a directed graph
 with labeled edges and vertices.
 
@@ -46,6 +46,15 @@ The graph abstraction works as follows:
 \label{minipass:grammar}
 Here is a BNF grammar for the intermediate language.
 \begin{grammar}
+    <program> ::= <tstatement> <tstatement>*
+
+    <tstatement> ::= <statement> `.'
+
+    <statement>  ::= <import-statement>
+           \alt <term-definition>
+           \alt <type-definition>
+
+    <import-statement> ::= `import' <filepath>
     <term-definition>  ::= <identifier> `:=' <term>
 
     <type-definition>  ::= <identifier> `<' <type>
@@ -60,7 +69,7 @@ Here is a BNF grammar for the intermediate language.
 
     <nonapp-term> ::= <constant> | <variable> | <constr> | <abstr> | `(' <term> `)'
 
-    <constant> ::= <identifier>
+    <constant> ::= <identifier> | <literal>
 
     <variable> ::= <identifier>
 
@@ -72,12 +81,26 @@ Here is a BNF grammar for the intermediate language.
 
     <declaration> ::= <variable> | <variable> `:' <type>
 
-    <filepath> ::= <quoted-string>
+    <literal> ::= <string-literal> | <num-literal>
+
+    <filepath> ::= <string-literal>
 \end{grammar}
+
+The definitions for \syntax{<string-literal>} and \syntax{<number-literal>}
+have been omitted: one is a plain single-quoted string with backslash escaping,
+while the other is a standard floating point number.
 
 Note that Minipass is characterised by its predefined constants and basic
 types. Because of the modular architecture of the implementation, they can be
 replaced by something else, allowing to target a different intermediate language.
+
+Applications are left-associative while types are right-associative. Comments
+can be entered by using the \code{--} syntax (everything on the same line after
+the two dashes is ignored by the parser.
+
+Import statements are used to split a program into multiple files, and are
+resolved relative to the current program's path (or the current working
+directory when not applicable).
 
 \subsubsection{Builtins and base types}
 Since Minipass is built on top of $\lambda$-calculus syntax, all built-in
@@ -95,6 +118,11 @@ The base types are:
             via builtin operations that work on \code{Set}s. \cendrow
     \end{tabular}
 \end{center}
+
+The implementation also allows for the special type \code{*} which
+acts as a wildcard. Typeless declarations are assumed to bear the wildcard type,
+which is removed from all terms by performing type inference (see \cref{sec:typeinf})
+before translation.
 
 The builtin identifiers (which act as constants in $\lambda$-terms) are the
 following:
@@ -121,41 +149,192 @@ following:
     \end{tabular}
 \end{center}
 
+Should the need arise, the addition of extra operations (for example arithmetic)
+is trivial.
+
+\subsubsection{Labels and graph queries}
+
+The main use for \code{List}s is as \emph{labels}: all vertices and edges can be thought
+to be labelled with a (possibly infinite) set of such labels. Another way
+to think about labels is as \emph{queries} that retrieve data (either new
+data in the case of vertice labels, or relational data in the case of edge
+labels).
+
+Although for the sake of simplicity the implemented parser doesn't support
+a list literal shorthand, for the sake of examples we will adopt the syntax
+such that
+\begin{lstlisting}
+    [[42, 'bar'], 'foo']
+\end{lstlisting}
+means
+\begin{lstlisting}
+    consList
+        (consNum 42 (consString 'bar' empty))
+        (consString 'foo' empty)
+\end{lstlisting}
+
+Here are the two edge label templates that are currently implemented in the
+translator:
+
+\begin{center}
+    \begin{tabular}{ p{0.45\textwidth} p{0.45\textwidth} }
+        Label & Semantics \\
+        \hline
+        \code{['around', [<dist>]]} & Items that are within \code{<dist>} metres
+        from given items \cendrow
+        \code{['in']} & Items that are \emph{inside} the given items \cendrow
+    \end{tabular}
+\end{center}
+
+And the three vertex label templates:
+
+\begin{center}
+    \begin{tabular}{ p{0.45\textwidth} p{0.45\textwidth} }
+        Label & Semantics \\
+        \hline
+        \code{['tagFilter', ['=', <key>, <value>]]} & Items which contain a
+            tag that has the given key and value \cendrow
+        \code{['tagFilter', ['~', <key>, <regex>]]} & Items which contain a
+            tag that has the given key and whose value matches the given
+            regular expression \cendrow
+        \code{['all', [<type>]]} & All items in the universe that are of
+            the given Overpass type (way, relation, area, node) \cendrow
+    \end{tabular}
+\end{center}
+
+\begin{exampleenv}
+\label{example:schools}
+    Here is a query which retrieves all schools in Bristol:
+    \begin{lstlisting}
+and
+    (get (consString 'tagFilter'
+            (consList (consString '='
+                (consString 'amenity'
+                    (consString 'school' empty)))
+        empty)))
+    (next (consString 'in' empty)
+        (get (consString 'tagFilter' (consList
+            (consString '='
+                (consString 'name'
+                    (consString 'Bristol' empty)))
+        empty))))
+    \end{lstlisting}
+\end{exampleenv}
+
+Since Minipass queries can get too long for humans to read/write very quickly,
+a mechanism for modularisation has been implemented: Just like in most
+programming languages, the expert can define
+named terms and types that can later be composed into other terms and types.
+
 \subsubsection{Defining types}
-\fixme{write this}
+New types are defined by subtyping an existing type via a "type definition"
+(subtype assertion) which has the following syntax:
+\begin{center}
+    \code{NewType < OldType.}
+\end{center}
+where \code{NewType} is not a supertype of \code{OldType} and has not been
+already defined.
+
+The subtyping semantics
+are the same as the ones described in \cref{sec:lambda}: all subtype assertions
+provided by the expert
+make up a subtype library, which is checked for validity and used for resolving
+the types contained in all terms.
 
 \subsubsection{Defining terms}
-\fixme{write this}
+New terms are defined by using the "term definition" syntax:
+\begin{center}
+    \code{term_name := some term.}
+\end{center}
+
+Named terms are resolved after parsing by performing free variable substitution
+in the source code and are bundled in a "term library". The resolver also
+handles possible type errors and loops.
+
+Note that this language is not turing complete (not even primitively recursive)
+since recursion is not handled\footnote{
+    Actually, recursion is easy to implement (and was implemented at some point)
+    by adding a recursion combinator
+    and resolving term definition loops to constructions which use that combinator.
+    However, so far I haven't found any use for recursion in such a language
+    apart from abuse.
+}.
 
 \subsubsection{A "standard" library}
-\fixme{remove junk, reformat}
 
-Let our world be a directed graph whose vertices we call \emph{elements}.
-Each \emph{edge} carries a \emph{label}. Each \emph{label} is a heterogenous
-\emph{List} of \emph{Numbers}, \emph{Strings} and other \emph{Lists}.
-
-For ease of writing, let us consider that types are right-associative,
-applications are left-associative and that we can write list literals
-within square brackets:
+This is a small library of term definitions that makes some basic queries
+easier to write:
 \begin{lstlisting}
-[42, "foo"] := consNum 42 (consString "foo" empty)
+-- identity
+id        := \y => y.
+
+-- the set of all cities
+city      := or (or
+        (kv 'admin_level' '8')
+        (kv 'admin_level' '6'))
+    (kv 'capital' '4').
+
+-- within 100 metres
+near      :=  within 100.
+
+-- find items by name
+name      :=  \x => or (or
+        (kv 'name' x)
+        (kv 'int_name' x))
+    (kv 'name:en' x).
+
+-- find items by name infix
+nameLike  :=  \x => or (or
+        (contains 'name' x)
+        (contains 'int_name' x))
+    (contains 'name:en' x).
+
+-- find items by amenity key (fountain, school...)
+amenity   :=  kv 'amenity'.
+
+-- find items by tag key and value
+kv        :=  \k: String, n: String => get
+    (consString 'tagFilter'
+        (consList (consString '='
+            (consString k (consString n empty)))
+    empty)).
+
+-- find items by tag key and value infix
+contains  :=  \k: String, n: String => get
+    (consString 'tagFilter'
+        (consList (consString '~'
+            (consString k (consString n empty)))
+        empty)).
+
+-- find items within distance of given items
+within    :=  \dist : Num => next
+    (consString 'around' (consNum dist empty)) .
+
+-- find items inside of given items
+in        :=  next (consString 'in' empty).
+
+-- get all items of given type
+nodes     :=  get (consString 'all'
+    (consString 'nodes' empty)).
+ways      :=  get (consString 'all'
+    (consString 'ways' empty)).
+relations :=  get (consString 'all'
+    (consString 'relations' empty)).
+areas     :=  get (consString 'all'
+    (consString 'areas' empty)).
 \end{lstlisting}
 
-And here are the types for all constants:
+\begin{exampleenv}
+    With the aid of this term library, the query in \cref{example:schools}
+    becomes more concise:
 
+    \begin{lstlisting}
+        and (amenity 'school') (in (name 'Bristol'))
+    \end{lstlisting}
+\end{exampleenv}
 
-With this abstraction, we can represent most of the Overpass queries for
-constructing sets (filters, recurse, in/is_in, set operations, conditions)
-by encoding them as labels. Here are some examples:
-
-\begin{lstlisting}
-within : Num -> Set -> Set
-    := lambda dist { next ["around", dist] }
-
-onStreet : String -> Set
-    := lambda str  { next [
-        "tagFilter", ["==", "addr:street", str]] }
-\end{lstlisting}
+When regarding a standalone minipass program, the term \code{main} is used
+as a query.
 
 \end{document}
 

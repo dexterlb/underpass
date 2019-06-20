@@ -160,6 +160,22 @@
     \end{mdframed}
 }
 
+\newenvironment{exampleenv}
+    {
+        \begin{mdframed}[%
+            backgroundcolor=red!5,
+            rightline=false,
+            topline=false,
+            bottomline=false,
+            leftline=false,
+        ]
+            \begin{examplethm}
+    }
+    {
+            \end{examplethm}
+        \end{mdframed}
+    }
+
 \lstset{
 	backgroundcolor = \color{light-gray},
     language = C,

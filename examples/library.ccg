@@ -1,16 +1,16 @@
-city        := or (or (kv 'admin_level' '8') (kv 'admin_level' '6')) (kv 'capital' '4').
+city      := or (or (kv 'admin_level' '8') (kv 'admin_level' '6')) (kv 'capital' '4').
 
-near        :=  within 100.
-name        :=  \x => or (or (kv 'name' x) (kv 'int_name' x)) (kv 'name:en' x)  .
-nameLike    :=  \x => or (or (contains 'name' x) (contains 'int_name' x)) (contains 'name:en' x)  .
-amenity     :=  kv 'amenity'.
-kv          :=  \k: String, n: String => get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))  .
-contains    :=  \k: String, n: String => get (consString 'tagFilter' (consList (consString '~' (consString k (consString n empty))) empty))  .
-within      :=  \dist : Num => next (consString 'around'   (consNum dist empty)) .
-in          :=  next (consString 'in' empty).
-nodes       :=  get (consString 'all' (consString 'nodes' empty)).
-ways        :=  get (consString 'all' (consString 'ways' empty)).
-relations   :=  get (consString 'all' (consString 'relations' empty)).
-areas       :=  get (consString 'all' (consString 'areas' empty)).
+near      :=  within 100.
+name      :=  \x => or (or (kv 'name' x) (kv 'int_name' x)) (kv 'name:en' x)  .
+nameLike  :=  \x => or (or (contains 'name' x) (contains 'int_name' x)) (contains 'name:en' x)  .
+amenity   :=  kv 'amenity'.
+kv        :=  \k: String, n: String => get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))  .
+contains  :=  \k: String, n: String => get (consString 'tagFilter' (consList (consString '~' (consString k (consString n empty))) empty))  .
+within    :=  \dist : Num => next (consString 'around'   (consNum dist empty)) .
+in        :=  next (consString 'in' empty).
+nodes     :=  get (consString 'all' (consString 'nodes' empty)).
+ways      :=  get (consString 'all' (consString 'ways' empty)).
+relations :=  get (consString 'all' (consString 'relations' empty)).
+areas     :=  get (consString 'all' (consString 'areas' empty)).
 
-id          := \y => y .
+id        := \y => y .
