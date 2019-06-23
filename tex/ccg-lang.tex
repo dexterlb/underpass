@@ -218,4 +218,51 @@ lemma="worship"
     @ Dummy2[\x => x].
 \end{lstlisting}
 \end{exampleenv}
+
+\subsubsection{Term templates}
+Sometimes it is required to insert arbitrary information from tokens into
+the respective generated terms (e.g. decimal numbers, names, etc.).
+
+This is currently implemented by adding a \emph{template} after the
+matcher. Templates have the following syntax:
+\begin{center}
+    \syntax{\code{\textasciigrave}<template-content>\code{\textasciigrave : }<type>}
+\end{center}
+
+They are stored in raw form instead of being
+parsed at the time of parsing the
+CCG definition source. Apart from regular term syntax, templates may also
+contain \emph{template variables}, the syntax for which is a dollar sign
+followed by a valid key that may be found in token data.
+
+Whenever a rule with a template matches a token, template variables are
+substituted by their values, the template is parsed as a term and is fed
+as a first argument to the primary term specified in the rule.
+
+Templates are inherently unsafe - failure to parse the template after substitution
+or having a term with a wrong type produced by the template will cause the
+CCG parsing process to fail. It is the expert's responsibility to ensure that
+templates are correct.
+
+\begin{exampleenv}
+Consider the following rule which contains a template:
+\begin{lstlisting}
+pos="nnp" `'$raw'` : String
+    : Set
+    @ name.
+\end{lstlisting}
+It is valid at compile time because the term \code{name} has type
+$String \tot Set$, which yields a term of type $Set$ after being given
+a $String$ as argument.
+When matching the token data "\code{pos="nnp",raw="Belgium"}", the template
+\code{ \textasciigrave'\$raw'\textasciigrave } will become
+\code{ \textasciigrave'Belgium'\textasciigrave } after substitution. Its type
+(\code{String}) will be verified, and the resulting term
+(\code{name 'Belgium'}) will be constructed.
+\end{exampleenv}
+
+In the case of multiple concatenated matchers with templates, all templates
+are fed to the term from left to right. This is achieved by making the
+generated dummy categories subtypes of the respective template types instead
+of the identity type. The resulting term then forms naturally.
 \end{document}
