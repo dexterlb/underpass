@@ -164,7 +164,7 @@ raw="in"
     : Set / Set \ Set
     @ \things, where => and things (in where).
 
-lemma="city" : Set @ city.
+lemma="school",pos="nnp" : Set @ amenity 'school'.
 \end{lstlisting}
 \end{exampleenv}
 
@@ -191,4 +191,31 @@ in the resulting derivation trees).
 
 For more details about this construction, see \cref{hack:phrases}.
 
+\begin{exampleenv}
+The following statement:
+\begin{lstlisting}
+lemma="place" <> raw="of" <> lemma="worship"
+    : Set
+    @ amenity 'place_of_worship'.
+\end{lstlisting}
+
+Desugars to something like this:
+\begin{lstlisting}
+Dummy1 < * -> *.
+Dummy2 < * -> *.
+
+lemma="place"
+    : Set /s Dummy2 /s Dummy1
+    @ \x: Dummy1, y: Dummy2 =>
+        amenity 'place_of_worship'.
+
+raw="of"
+    : Dummy1
+    @ Dummy1[\x => x].
+
+lemma="worship"
+    : Dummy2
+    @ Dummy2[\x => x].
+\end{lstlisting}
+\end{exampleenv}
 \end{document}
