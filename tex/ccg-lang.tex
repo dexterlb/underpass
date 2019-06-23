@@ -1,11 +1,14 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
-\subsection{The CCG definition language}
-The language for defining CCGs consists of the intermediate language
-(\cref{minipass:grammar}) extended by additional syntax for defining
-token matchers and categories.
-
 \pagebreak
+\subsection{The CCG definition language}
+When paired with Minipass, the language for defining CCGs consists of
+the entire Minipass language
+(\cref{minipass:grammar}) extended by additional syntax for defining
+token matchers and categories. It can also be used standalone as a library
+(in that case, arbitrary payloads can be provided instead of Minipass
+terms and types).
+
 \begin{grammar}
     <program> ::= <tstatement> <tstatement>*
 
@@ -65,7 +68,9 @@ The starting category is is specified with the following statement:
 \end{center}
 There can be only one \code{begin} statement in the entire program.
 
-Tokens (words) in the natural language input are represented as sets of
+\subsubsection{Matching tokens}
+Tokens (words) in the natural language input are emitted by the
+tokeniser as sets of
 key-value data (for example, the token \code{cities} may be represented as
 \code{raw=cities,pos=nnp,lemma=city} - for a more detailed explanation
 see \cref{sec:tokenisation}). The CCG definition language allows us to define
@@ -74,22 +79,116 @@ see \cref{sec:tokenisation}). The CCG definition language allows us to define
 The following matchers have been implemented:
 
 \begin{itemize}
-    \item exact matcher:
+    \item exact matcher (matches tokens which contain a tag with key `key'
+        and value `value'):
         \begin{center}
             \code{key='value'}
         \end{center}
-    \item regex matcher:
+    \item regex matcher (matches tokens which contain a tag with key `key'
+        and a value which matches the regular expression `regex'):
         \begin{center}
             \code{key~'regex'}
         \end{center}
-    \item "and" matcher:
+    \item "and" matcher (matches tokens that are matched by both given matchers):
         \begin{center}
             \syntax{<matcher>}\code{ \& }\syntax{<matcher>}
         \end{center}
-    \item "or" matcher:
+    \item "or" matcher (matches tokens that are matched by any of the given matchers):
         \begin{center}
             \syntax{<matcher>}\code{ | }\syntax{<matcher>}
         \end{center}
 \end{itemize}
+
+\subsubsection{Assigning categories and terms to matched tokens}
+The syntax for assigning categories and terms is analogous to the one described
+in \cref{shorthand}:
+\begin{center}
+    \syntax{<matcher>}\code{:}\syntax{<category>}\code{@}\syntax{<payload>}
+\end{center}
+where \syntax{<payload>} is a Minipass term when the language is used to generate
+Minipass.
+
+Multiple categories and respective terms may be attached to a single
+matcher by separating them with commas:
+\begin{center}
+    \syntax{<matcher>}\code{:}\syntax{<category>}\code{@}\syntax{<payload>},
+    \syntax{<category>}\code{@}\syntax{<payload>}, ...,
+    \syntax{<category>}\code{@}\syntax{<payload>}
+\end{center}
+
+The payload terms can only be closed terms and their type must match the
+respective category's type.
+
+Categories are constructed as follows:
+\begin{itemize}
+    \item Every Minipass type is a valid atomic category (including types defined
+        by the expert via subtyping). Using a complex type for an atomic
+        category is permitted but is seldom useful.
+    \item Complex categories may be constructed by the syntax
+        \begin{center}
+            \syntax{<category> <slash> <category>}
+        \end{center}
+        where \syntax{<slash>} is a modal slash (\code{/.}, \code{/s},
+        \code{/d} or \code{/x} which respectively stand for $\rci{\moddot}$,
+        $\rci{\modstar}$, $\rci{\modr}$, $\rci{\modx}$, and their backslash
+        counterparts). The modality may be omitted, and is then assumed to be
+        the dot modality.
+    \item Categorial variables (\cref{hack:catvars}) are specified with a
+        dollar sign followed by \code{[a-zA-Z][a-zA-Z0-9\_]*}
+\end{itemize}
+
+\begin{exampleenv}
+Here is a grammar defined using the CCG definition language\footnote{
+    Here \code{"library.ccg"} is assumed to contain the code from \cref{stdlib}
+}:
+\begin{lstlisting}
+import "library.ccg"
+
+-- Use Set as the starting category.
+-- This means that all queries parsed
+-- by this CCG will have type Set.
+begin Set.
+
+-- Here Mult is used to handle lists like
+-- "schools, churches and hospitals"
+Mult < Set.
+
+raw="and"
+    : Set / Set \ Set @ or
+    , Mult / Set \ Set @ \r, l => Mult[or l r].
+
+pos="comma" : $X \ $X @ id -- some commas mean nothing
+            , Set \ Set / Mult @ or.
+
+raw="in"
+    : Set / Set \ Set
+    @ \things, where => and things (in where).
+
+lemma="city" : Set @ city.
+\end{lstlisting}
+\end{exampleenv}
+
+\subsubsection{Composing phrases}
+In most cases we would would want our rule to match single tokens. Sometimes,
+however, it is convenient to be able to match an entire phrase (for example
+phrases like `parking lot', `coworking space' or `rubbish bin') to assign
+categories to.
+
+To do this, the CCG definition language supports a syntax for composing phrases
+(one way to think of it is like ``matcher concatenation''):
+\begin{center}
+    \syntax{<matcher>} \code{<>} \syntax{<matcher>} \\
+    or \\
+    \syntax{<matcher>} \code{<DummyCategory>} \syntax{<matcher>} \\
+\end{center}
+This phrase syntax is a shorthand for creating a dummy category
+for each pair and assigning categories such that the entire phrase will
+be assigned the correct category and term specified for it.
+
+The expert can also explicitly specify the name of the dummy category
+(this is mainly useful for debugging purposes: the category will show up
+in the resulting derivation trees).
+
+For more details about this construction, see \cref{hack:phrases}.
 
 \end{document}

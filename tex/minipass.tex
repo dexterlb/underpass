@@ -152,6 +152,28 @@ following:
 Should the need arise, the addition of extra operations (for example arithmetic)
 is trivial.
 
+\subsubsection{Composing terms}
+The syntax for composing terms is analogous to $\lambda$-calculus syntax
+(\cref{sec:lambda}).
+The valid term constructions are the following:
+\begin{itemize}
+    \item Constant: number literal, string literal or builtin identifier
+    \item Variable: any identifier that is not a builtin
+    \item Application: term application is represented by listing terms
+        separated by whitespace. It is by default left-associative and
+        application order may be influenced by using round braces.
+    \item Abstraction:
+        \begin{center}
+            \syntax{\code{\textbackslash}<variable>\code{:}<type>\code{ => }<term>.} \\
+            or\\
+            \syntax{\code{\textbackslash}<variable>\code{ => }<term>.}
+        \end{center}
+    \item Construction:
+        \begin{center}
+            \syntax{<type>\code{[}<term>\code{]}}
+        \end{center}
+\end{itemize}
+
 \subsubsection{Labels and graph queries}
 
 The main use for \code{List}s is as \emph{labels}: all vertices and edges can be thought
@@ -260,7 +282,11 @@ since recursion is not handled\footnote{
     apart from abuse.
 }.
 
+Note that \emph{only closed terms} are permitted in definition statements
+(free variables make little sense).
+
 \subsubsection{A "standard" library}
+\label{stdlib}
 
 This is a small library of term definitions that makes some basic queries
 easier to write:
@@ -329,7 +355,7 @@ areas     :=  get (consString 'all'
     becomes more concise:
 
     \begin{lstlisting}
-        and (amenity 'school') (in (name 'Bristol'))
+and (amenity 'school') (in (name 'Bristol'))
     \end{lstlisting}
 \end{exampleenv}
 
