@@ -82,13 +82,19 @@ Here is a BNF grammar for the intermediate language.
     <declaration> ::= <variable> | <variable> `:' <type>
 
     <literal> ::= <string-literal> | <num-literal>
+    
+    <string-literal> ::= <single-quoted-string>
+    
+    <number-literal> ::= <decimal-number>
 
-    <filepath> ::= <string-literal>
+    <filepath> ::= <double-quoted-string>
 \end{grammar}
 
-The definitions for \syntax{<string-literal>} and \syntax{<number-literal>}
-have been omitted: one is a plain single-quoted string with backslash escaping,
-while the other is a standard floating point number.
+The definitions for \syntax{<single-quoted-string>},
+\syntax{<double-quoted-string>}
+and \syntax{<number-literal>}
+have been omitted: the first two are plain quoted strings with backslash escaping,
+while the third is a standard floating point number.
 
 Note that Minipass is characterised by its predefined constants and basic
 types. Because of the modular architecture of the implementation, they can be

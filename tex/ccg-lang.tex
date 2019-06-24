@@ -41,6 +41,10 @@ terms and types).
     <or-matcher> ::= <not-or-matcher> `|' <matcher>
 
     <and-matcher> ::= <not-and-matcher> `\&' <matcher>
+    
+    <exact-matcher> ::= <identifier> `=' <double-quoted-string>
+    
+    <regex-matcher> ::= <identifier> `~' <double-quoted-string>
 
     <template> ::= <backtick-quoted-string> `:' <type>
 
@@ -55,7 +59,6 @@ terms and types).
     <modality> ::= `.' | `d' | `x' | `*' | $\varepsilon$
 \end{grammar}
 
-\fixme{simple matchers need to be included in grammar}
 
 Constructions for defining terms, subtyping, importing files, comments and such
 remain. What the CCG definition language adds is the ability to match natural

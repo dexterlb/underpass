@@ -162,6 +162,8 @@
 
 \newenvironment{exampleenv}
     {
+        \begin{samepage}
+        \tikzexternaldisable
         \begin{mdframed}[%
             backgroundcolor=red!5,
             rightline=false,
@@ -174,6 +176,8 @@
     {
             \end{examplethm}
         \end{mdframed}
+        \tikzexternalenable
+        \end{samepage}
     }
 
 \lstset{
