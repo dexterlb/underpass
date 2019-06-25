@@ -209,12 +209,43 @@ returned by $\psi$.
             is consistent with $\Gamma$, so $\Gamma \vdash L: \typeof{X}$. Also, since
             $root(T) = X$, $\typeof{root(T)} = \typeof{X}$. Thus,
             $\Gamma \vdash L: \typeof{root(T)}$
-        \item Inductively we have:
-            \[ \Gamma \vdash M : \typeof{X \rc Y} \text{ and }
-               \Gamma \vdash N : \typeof{Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m} \]
-            $L$ was produced by case \ref{sem:case:right}. Then,
-            \[ L = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
-            M ( N z_m z_{m - 1} ... z_1 ) \]
+        \item $L$ was produced by case \ref{sem:case:right}. Then,
+            inductively we have:
+            \begin{equation}
+                \label{eq:semr:lt}
+                \Gamma \vdash M : \typeof{X \rc Y} = \typeof{Y} \tot \typeof{X}
+            \end{equation}
+            and
+            \begin{equation}
+            \label{eq:semr:rt}
+                \Gamma \vdash N : \typeof{Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m}
+                = \typeof{Z_m} \tot ... \tot \typeof{Z_1} \tot \typeof{Y}
+            \end{equation}
+            Aside from that,
+            \begin{equation}
+                L = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
+                \underbrace{M ( N z_m z_{m - 1} ... z_1 )}_{K}
+            \end{equation}
+            Let $\Gamma' = \Gamma \circ z_m : \typeof{Z_m} \circ ... \circ
+                           z_2 : \typeof{Z_2} \circ z_1 : \typeof{Z_1}$.
+            Since $z_1 ... z_m \not\in fv(M) \cup fv(N)$ because we pick them
+            as fresh variables, \cref{eq:semr:lt} holds for $\Gamma'$ in the
+            same way it does for $\Gamma$.
+
+            So, $\Gamma' \vdash N z_m z_{m - 1} ... z_1 : \typeof{Y}$ and then
+            $\Gamma' \vdash \underbrace{M ( N z_m z_{m - 1} ... z_1 )}_{K} : \typeof{X}$.
+
+            By the definition of $\vdash$ for the case of abstraction,
+            \begin{equation}
+                \Gamma \vdash \underbrace{(\lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr K)}_{L} :
+                \typeof{Z_m} \tot ... \tot \typeof{Z_1} \tot \typeof{X}
+            \end{equation}
+            But $\typeof{root(T)} = \typeof{X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m}
+            = \typeof{Z_m} \tot ... \tot \typeof{Z_1} \tot \typeof{X}$,
+            therefore $\Gamma \vdash L : \typeof{root(T)}$ which is exactly what
+            we sought to prove.
+        \item $L$ was produced by case \ref{sem:case:left}. Since it is completely
+            analogous to case \ref{sem:case:right}, the proof will be omitted.
     \end{itemize}
 \end{proof}
 
