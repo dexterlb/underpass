@@ -71,8 +71,8 @@ for the entire tree:
 
     We will inductively define $sem_{\psi}(T) \subset \Lambda_{\Theta}^C$ with
     respect to $T$:
-    \begin{itemize}
-        \item If $T$ is
+    \begin{enumerate}
+        \item \label{sem:case:simple} If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
                     \Tree[
@@ -87,7 +87,7 @@ for the entire tree:
             \end{center}
             and $X \in f(a)$, then
             \[ sem_{\psi}(T) = \psi(a, X) \]
-        \item If $T$ is
+        \item \label{sem:case:right} If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
                     \Tree[
@@ -123,7 +123,7 @@ for the entire tree:
             \]
             for freshly-picked
             $z_1 ... z_m \in \mathbb{V} \setminus fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
-        \item If $T$ is
+        \item \label{sem:case:left} If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
                     \Tree[
@@ -159,7 +159,7 @@ for the entire tree:
             \]
             for freshly-picked
             $z_1 ... z_m \in \mathbb{V} \setminus fv(sem_{\psi}(T_1)) \cup fv(sem_{\psi}(T_2))$
-    \end{itemize}
+    \end{enumerate}
 \end{defn}
 
 Observe that since $\psi$ returns valid $\lambda$-terms and everything
@@ -197,7 +197,26 @@ returned by $\psi$.
         M \in sem_{\psi}(T) \implies \Gamma \vdash M : \typeof{root(T)}
     \]
 \end{prop}
-\fixme{need proof}
+\begin{proof}
+    This can be proven by induction over the definition of $sem_{\psi}$.
+
+    Let $L \in sem_{\psi}(T)$ be a term produced by $sem_{\psi}$ for an
+    arbitrary derivation tree $T$. It has been constructed in one of the
+    following ways:
+    \begin{itemize}
+        \item $L$ was produced by case \ref{sem:case:simple}. Then
+            $L \in \psi(a, X)$ for some $X \in f(a)$. $\psi$
+            is consistent with $\Gamma$, so $\Gamma \vdash L: \typeof{X}$. Also, since
+            $root(T) = X$, $\typeof{root(T)} = \typeof{X}$. Thus,
+            $\Gamma \vdash L: \typeof{root(T)}$
+        \item Inductively we have:
+            \[ \Gamma \vdash M : \typeof{X \rc Y} \text{ and }
+               \Gamma \vdash N : \typeof{Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m} \]
+            $L$ was produced by case \ref{sem:case:right}. Then,
+            \[ L = \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
+            M ( N z_m z_{m - 1} ... z_1 ) \]
+    \end{itemize}
+\end{proof}
 
 Given proposition \autoref{ccg:typeconsistent}, we know that all terms generated
 from CCG derivation trees will be consistent.
