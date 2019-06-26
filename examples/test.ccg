@@ -28,5 +28,5 @@ pos="nnp" `'$raw'` : String
     @ \x => NamedEntity[x].
 
 raw="like"    : Set \ NamedEntity @ nameLike.
-raw="city"    : Set \ Entity    @ and city.
+raw="city"    : Set \ Entity    @ \x : Entity => and city x.
 raw="near"    : Set \ Set / Set @ \b, a => and a (near b).

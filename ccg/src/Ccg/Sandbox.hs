@@ -38,11 +38,19 @@ instance MSemiLattice StupidType where
         | a == b = a
         | otherwise = error "trying to meet incompatible stupid types"
 
+instance MLattice StupidType where
+    a \/ b
+        | a == b = a
+        | otherwise = error "trying to join incompatible stupid types"
+
 instance PartialOrd (T.ApplicativeType StupidType) where
     (<!) = T.defaultLess
 
 instance MSemiLattice (T.ApplicativeType StupidType) where
     (/\) = T.defaultMeet
+
+instance MLattice (T.ApplicativeType StupidType) where
+    (\/) = T.defaultJoin
 
 
 instance MemoTable StupidType where

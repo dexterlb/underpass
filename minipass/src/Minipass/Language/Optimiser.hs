@@ -21,9 +21,9 @@ optimise
     = fixedPoint
         $ evaluateArithmetic
         . generaliseUniversals
-        . fixedPoint (propagateTypes . fixTypes)
+        . fixedPoint (propagateTypes . (fixTypes optimisationUnifier))
         . fixedPoint (betaReduce reducible)
-        . fixedPoint fixTypes
+        . fixedPoint (fixTypes optimisationUnifier)
 
 
 propagateTypes :: TTerm -> TTerm
@@ -53,20 +53,20 @@ propagateTypes = updateTypes updater
 
 refineGetType :: [ListC] -> TTypes -> TTypes
 refineGetType [StringC "tagFilter", ListC [StringC _, StringC "amenity", _]] t
-    = t /\ (T.Basic $ osmSet [OsmNode])
+    = t `optimisationUnifier` (T.Basic $ osmSet [OsmNode])
 refineGetType [StringC "all", StringC "nodes"] t
-    = t /\ (T.Basic $ osmSet [OsmNode])
+    = t `optimisationUnifier` (T.Basic $ osmSet [OsmNode])
 refineGetType [StringC "all", StringC "ways"] t
-    = t /\ (T.Basic $ osmSet [OsmWay])
+    = t `optimisationUnifier` (T.Basic $ osmSet [OsmWay])
 refineGetType [StringC "all", StringC "relations"] t
-    = t /\ (T.Basic $ osmSet [OsmRelation])
+    = t `optimisationUnifier` (T.Basic $ osmSet [OsmRelation])
 refineGetType [StringC "all", StringC "areas"] t
-    = t /\ (T.Basic $ osmSet [OsmArea])
+    = t `optimisationUnifier` (T.Basic $ osmSet [OsmArea])
 refineGetType _ t = t
 
 refineNextType :: [ListC] -> TTypes -> TTypes
 refineNextType [StringC "in"] t
-    = t /\ T.Application (T.Basic $ osmSet [OsmArea]) (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay])
+    = t `optimisationUnifier` T.Application (T.Basic $ osmSet [OsmArea]) (T.Basic $ osmSet [OsmNode, OsmRelation, OsmWay])
 refineNextType _ t = t
 
 generaliseUniversals :: TTerm -> TTerm

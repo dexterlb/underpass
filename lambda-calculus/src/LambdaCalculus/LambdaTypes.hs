@@ -36,10 +36,10 @@ data ApplicativeType b
 
 deriving instance (Hashable b) => Hashable (ApplicativeType b)
 
-class (Show b, Show a, Typeable a, Typeable b, MSemiLattice (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
+class (Show b, Show a, Typeable a, Typeable b, MLattice (ApplicativeType b)) => Typed a b where  -- items of haskell type a have basic types from b
     typeOf :: a -> ApplicativeType b
 
-instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => Typed (ApplicativeType t) t where
+instance (Show t, Typeable t, MLattice (ApplicativeType t)) => Typed (ApplicativeType t) t where
     typeOf = id
 
 instance (Show b) => Show (ApplicativeType b) where
@@ -66,21 +66,47 @@ parseTypeTerm
     <|> (Wildcard   <$  P.operator "*")
     <|> (Basic <$> P.parser)
 
-defaultMeet :: MSemiLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+inferenceUnifier :: (Eq b, Typeable b, Show b, PartialOrd (ApplicativeType b)) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+inferenceUnifier (Application a1 a2) (Application b1 b2) = Application (inferenceUnifier a1 b1) (inferenceUnifier a2 b2)
+inferenceUnifier Wildcard x = x
+inferenceUnifier x Wildcard = x
+inferenceUnifier x y
+    | x <! y = x
+    | x !> y = y
+    | x == y = x
+    | otherwise = throw $ CannotMeet x y
+
+defaultMeet :: MLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
 defaultMeet (Basic x) (Basic y) = Basic $ x /\ y
-defaultMeet (Application a1 a2) (Application b1 b2) = Application (defaultMeet a1 b1) (defaultMeet a2 b2)
+defaultMeet (Application a1 a2) (Application b1 b2) = Application (defaultJoin a1 b1) (defaultMeet a2 b2)
 defaultMeet Wildcard x = x
 defaultMeet x Wildcard = x
 defaultMeet x y = throw $ CannotMeet x y
+
+defaultJoin :: MLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+defaultJoin (Basic x) (Basic y) = Basic $ x \/ y
+defaultJoin (Application a1 a2) (Application b1 b2) = Application (defaultMeet a1 b1) (defaultJoin a2 b2)
+defaultJoin Wildcard _ = Wildcard
+defaultJoin _ Wildcard = Wildcard
+defaultJoin x y = throw $ CannotJoin x y
 
 defaultPartialMeet :: (Eq b, Show b, Typeable b) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
 defaultPartialMeet (Basic x) (Basic y)
   | x == y    = Basic x
   | otherwise = throw $ CannotMeet (Basic x) (Basic y)
-defaultPartialMeet (Application a1 a2) (Application b1 b2) = Application (defaultPartialMeet a1 b1) (defaultPartialMeet a2 b2)
+defaultPartialMeet (Application a1 a2) (Application b1 b2) = Application (defaultPartialJoin a1 b1) (defaultPartialMeet a2 b2)
 defaultPartialMeet Wildcard x = x
 defaultPartialMeet x Wildcard = x
 defaultPartialMeet x y = throw $ CannotMeet x y
+
+defaultPartialJoin :: (Eq b, Show b, Typeable b) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+defaultPartialJoin (Basic x) (Basic y)
+  | x == y    = Basic x
+  | otherwise = throw $ CannotJoin (Basic x) (Basic y)
+defaultPartialJoin (Application a1 a2) (Application b1 b2) = Application (defaultPartialMeet a1 b1) (defaultPartialJoin a2 b2)
+defaultPartialJoin Wildcard x = x
+defaultPartialJoin x Wildcard = x
+defaultPartialJoin x y = throw $ CannotJoin x y
 
 
 -- be wary of the contravariance!
@@ -110,6 +136,7 @@ transform _ Wildcard                 = Wildcard
 
 data TypeException t
     = CannotMeet t t
+    | CannotJoin t t
     | WrongLambdaType t
     | CannotApply t t
     deriving (Typeable)
@@ -183,6 +210,11 @@ instance (PartialOrd (ApplicativeType t)) => PartialOrd (ApplicativeType (Ref t)
 instance (Show t, Typeable t, MSemiLattice (ApplicativeType t)) => MSemiLattice (ApplicativeType (Ref t)) where
     a /\ b
         | refless a, refless b = BasicRef <$> (stripRefs a /\ stripRefs b)
+        | otherwise = error "meet for types with unresolved components not yet implemented"
+
+instance (Show t, Typeable t, MLattice (ApplicativeType t)) => MLattice (ApplicativeType (Ref t)) where
+    a \/ b
+        | refless a, refless b = BasicRef <$> (stripRefs a \/ stripRefs b)
         | otherwise = error "meet for types with unresolved components not yet implemented"
 
 stripRefs :: ApplicativeType (Ref t) -> ApplicativeType t

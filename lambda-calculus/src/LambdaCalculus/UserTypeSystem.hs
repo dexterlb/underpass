@@ -41,7 +41,7 @@ import           Utils.Memoise ()
 
 newtype ConstWrapper a = ConstWrapper a deriving (Generic)
 
-instance (Typed c t, Eq t, PartialOrd t, MSemiLattice (ApplicativeType t)) => Typed (ConstWrapper c) (TypeWrapper t) where
+instance (Typed c t, Eq t, PartialOrd t, MLattice (ApplicativeType t)) => Typed (ConstWrapper c) (TypeWrapper t) where
     typeOf (ConstWrapper x) = Type <$> typeOf x
 
 deriving instance (Eq a) => Eq (ConstWrapper a)
@@ -80,9 +80,9 @@ instance (Eq b, PartialOrd b) => PartialOrd (ApplicativeType (TypeWrapper b)) wh
     (<!) _      _                      = False
 
 
-instance (Show b, Eq b, Typeable b, PartialOrd b, MSemiLattice (ApplicativeType b)) => MSemiLattice (ApplicativeType (TypeWrapper b)) where
+instance (Show b, Eq b, Typeable b, PartialOrd b, MLattice (ApplicativeType b)) => MSemiLattice (ApplicativeType (TypeWrapper b)) where
     (/\) (Basic (Type x)) (Basic (Type y)) = Type <$> (Basic x) /\ (Basic y)
-    (/\) (Application a b) (Application c d) = Application (a /\ c) (b /\ d)
+    (/\) (Application a b) (Application c d) = Application (a \/ c) (b /\ d)
     (/\) Wildcard x = x
     (/\) x Wildcard = x
     (/\) x y
@@ -90,10 +90,20 @@ instance (Show b, Eq b, Typeable b, PartialOrd b, MSemiLattice (ApplicativeType 
         | x !> y = y
         | otherwise    = throw $ CannotMeet x y
 
-wrap :: (Eq t, PartialOrd t, MSemiLattice (ApplicativeType t), Typed c t) => LambdaTerm t c -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
+instance (Show b, Eq b, Typeable b, PartialOrd b, MLattice (ApplicativeType b)) => MLattice (ApplicativeType (TypeWrapper b)) where
+    (\/) (Basic (Type x)) (Basic (Type y)) = Type <$> (Basic x) \/ (Basic y)
+    (\/) (Application a b) (Application c d) = Application (a /\ c) (b \/ d)
+    (\/) Wildcard x = x
+    (\/) x Wildcard = x
+    (\/) x y
+        | x <! y = y
+        | x !> y = x
+        | otherwise    = throw $ CannotJoin x y
+
+wrap :: (Eq t, PartialOrd t, MLattice (ApplicativeType t), Typed c t) => LambdaTerm t c -> LambdaTerm (TypeWrapper t) (ConstWrapper c)
 wrap = L.transformConst wrapConst wrapType
 
-unwrap :: (Eq t, PartialOrd t, MSemiLattice (ApplicativeType t), Typed c t) => LambdaTerm (TypeWrapper t) (ConstWrapper c) -> LambdaTerm t c
+unwrap :: (Eq t, PartialOrd t, MLattice (ApplicativeType t), Typed c t) => LambdaTerm (TypeWrapper t) (ConstWrapper c) -> LambdaTerm t c
 unwrap = L.removeUselessCasts . (L.transformConst unwrapConst unwrapType)
 
 wrapConst :: c -> ConstWrapper c

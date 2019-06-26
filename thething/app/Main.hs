@@ -13,7 +13,7 @@ import Utils.Latex (latexPreview)
 main :: IO ()
 main = do
     sysArgs <- getArgs
-    let (action:arg:[]) = case sysArgs of
+    let (action:arg:rest) = case sysArgs of
                             (foo:bar) -> (foo:bar)
                             []        -> ["serve", "examples/test.ccg"]
 
@@ -25,9 +25,14 @@ main = do
         "serve" -> serve program
 
         _ -> do -- yeah, yeah, this is stupid, I know. Will rewrite some day.
-            putStr "Enter query: "
-            hFlush stdout
-            query <- getLine
+            query <- case rest of
+              [] -> do
+                putStr "Enter query: "
+                hFlush stdout
+                query <- getLine
+                return query
+              q:[] -> pure q
+              _ -> error "unknown number of arguments"
 
             result <- solve program (Text.pack query)
             case action of

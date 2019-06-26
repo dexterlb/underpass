@@ -47,6 +47,9 @@ instance PartialOrd (T.ApplicativeType Types) where
 instance MSemiLattice (T.ApplicativeType Types) where
     (/\) = T.defaultPartialMeet
 
+instance MLattice (T.ApplicativeType Types) where
+    (\/) = T.defaultPartialJoin
+
 instance P.Parseable Types where
     parser = P.word
         $   P.string "Set"      $> Set

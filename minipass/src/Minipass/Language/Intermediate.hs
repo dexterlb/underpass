@@ -96,8 +96,25 @@ instance MSemiLattice Types where
     (Set a) /\ (Set b)  = Set $ meetSetTags a b
     x       /\ y        = throw $ T.CannotMeet x y
 
+optimisationUnifier :: Unifier (T.ApplicativeType Types)
+optimisationUnifier (T.Basic x) (T.Basic y) = T.Basic $ x /\ y
+optimisationUnifier (T.Application a b) (T.Application c d) = T.Application (a `optimisationUnifier` c) (b `optimisationUnifier` d)
+optimisationUnifier T.Wildcard x = x
+optimisationUnifier x T.Wildcard = x
+optimisationUnifier x y = throw $ T.CannotMeet x y
+
+instance MLattice Types where
+    Num     \/ Num      = Num
+    String  \/ String   = String
+    List    \/ List     = List
+    (Set a) \/ (Set b)  = Set $ uniteSetTags a b
+    x       \/ y        = throw $ T.CannotJoin x y
+
 instance MSemiLattice (T.ApplicativeType Types) where
-    (/\) = T.defaultMeet
+    (/\) = error "fu"
+
+instance MLattice (T.ApplicativeType Types) where
+    (\/) = T.defaultJoin
 
 
 type Term = LambdaTerm Types Constants

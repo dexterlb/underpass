@@ -17,11 +17,16 @@ limitedFixedPoint f n x
     where
         y = f x
 
+type Unifier t = t -> t -> t
+
 class PartialOrd t where
     (<!)      :: t -> t -> Bool
 
 class (Show t, Typeable t, PartialOrd t) => MSemiLattice t where
-    (/\)      :: t -> t -> t           -- meet operator
+    (/\)      :: Unifier t           -- meet operator
+
+class (Show t, Typeable t, PartialOrd t, MSemiLattice t) => MLattice t where
+    (\/)      :: Unifier t           -- join operator
 
 class (Show t, Typeable t, PartialOrd t) => PMSemiLattice t where
     (/!\)     :: t -> t -> Maybe t     -- partial meet operator

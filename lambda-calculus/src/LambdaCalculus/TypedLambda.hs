@@ -110,7 +110,7 @@ setType t (Lambda _ x a)      = Lambda t x a
 setType t (Cast _ a)          = Cast t a
 
 inferTypesOnClosedTerm :: (Eq c, Eq t, Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> LambdaTerm t c -> LambdaTerm t c
-inferTypesOnClosedTerm t = L.removeUselessCasts . (unTypify emptyContext) . (fixedPoint fixTypes) . (setType t) . (typify emptyContext)
+inferTypesOnClosedTerm t = L.removeUselessCasts . (unTypify emptyContext) . (fixedPoint (fixTypes T.inferenceUnifier)) . (setType t) . (typify emptyContext)
 
 updateTypes :: Typed c t => (TSLTerm t c -> T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
 updateTypes updater (Constant t x) = Constant t' x
@@ -134,54 +134,54 @@ updateTypes updater (Cast t a) = Cast t' a'
         a' = updateTypes updater a
 
 
-fixTypes :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> TSLTerm t c
-fixTypes x = fixTypesDown (typeOf x') vars x'
+fixTypes :: (Typed c t) => Unifier (T.ApplicativeType t) -> TSLTerm t c -> TSLTerm t c
+fixTypes u x = fixTypesDown u (typeOf x') vars x'
     where
-        (x', vars) = fixTypesUp x
+        (x', vars) = fixTypesUp u x
 
 
-fixTypesDown :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
-fixTypesDown targetType _      (Constant t x) = Constant (targetType /\ t) x
-fixTypesDown targetType upVars (Variable t i)
-    | Just (_, t') <- at i upVars = Variable (targetType /\ t /\ t') i
+fixTypesDown :: (Typed c t) => Unifier (T.ApplicativeType t) -> T.ApplicativeType t -> VarContext t -> TSLTerm t c -> TSLTerm t c
+fixTypesDown u targetType _      (Constant t x) = Constant (targetType `u` t) x
+fixTypesDown u targetType upVars (Variable t i)
+    | Just (_, t') <- at i upVars = Variable (targetType `u` t `u` t') i
     | otherwise = throw $ L.UnknownVar i
-fixTypesDown tn upVars (Lambda t x a) = Lambda (T.Application tx' ta') x a'
+fixTypesDown u tn upVars (Lambda t x a) = Lambda (T.Application tx' ta') x a'
     where
-        a'   = fixTypesDown ta' (push (x, tx') upVars) a
-        tx'  = tx /\ tnx
-        ta'  = ta /\ tna
+        a'   = fixTypesDown u ta' (push (x, tx') upVars) a
+        tx'  = tx `u` tnx
+        ta'  = ta `u` tna
         (tnx, tna) = T.inferApp tn
         (tx , ta ) = T.inferApp t
-fixTypesDown tnr upVars (Application tor a b)
-    | (p, _) <- T.inferApp ta     = Application tr' a' (fixTypesDown p upVars b)
+fixTypesDown u tnr upVars (Application tor a b)
+    | (p, _) <- T.inferApp ta     = Application tr' a' (fixTypesDown u p upVars b)
     | otherwise                 = throw $ CannotApply a b
     where
         ta  = typeOf a
-        a'  = fixTypesDown (T.Application tb tr') upVars a
-        tr' = tnr /\ tor
+        a'  = fixTypesDown u (T.Application tb tr') upVars a
+        tr' = tnr `u` tor
         tb  = typeOf b
-fixTypesDown _ upVars (Cast t a) = Cast t (fixTypesDown (typeOf a) upVars a)
+fixTypesDown u _ upVars (Cast t a) = Cast t (fixTypesDown u (typeOf a) upVars a)
 
-fixTypesUp :: (Typed c t, MSemiLattice (T.ApplicativeType t)) => TSLTerm t c -> (TSLTerm t c, VarContext t)
-fixTypesUp (Constant t x) = (Constant t x, emptyContext)
-fixTypesUp (Variable t i) = (Variable t i, oneHotContext i ("", t))
-fixTypesUp (Lambda t x a)
-    | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (tnx /\ tx) (ta' /\ ta)) x a', subVars)
-    | otherwise                            = (Lambda (T.Application tx (ta' /\ ta)) x a', vars)
+fixTypesUp :: (Typed c t) => Unifier (T.ApplicativeType t) -> TSLTerm t c -> (TSLTerm t c, VarContext t)
+fixTypesUp _ (Constant t x) = (Constant t x, emptyContext)
+fixTypesUp _ (Variable t i) = (Variable t i, oneHotContext i ("", t))
+fixTypesUp u (Lambda t x a)
+    | Just ((_, tnx), subVars) <- pop vars = (Lambda (T.Application (tnx `u` tx) (ta' `u` ta)) x a', subVars)
+    | otherwise                            = (Lambda (T.Application tx (ta' `u` ta)) x a', vars)
     where
         ta' = typeOf a'
-        (a', vars) = fixTypesUp a
+        (a', vars) = fixTypesUp u a
         (tx, ta)   = T.inferApp t
-fixTypesUp (Application tr a b)
-    | (_, q) <- T.inferApp $ typeOf a'   = (Application (tr /\ q) a' b', vars)
+fixTypesUp u (Application tr a b)
+    | (_, q) <- T.inferApp $ typeOf a'   = (Application (tr `u` q) a' b', vars)
     | otherwise                        = throw $ CannotApply a b
     where
         vars = meetContexts aVars bVars
-        (a', aVars)  = fixTypesUp a
-        (b', bVars)  = fixTypesUp b
-fixTypesUp (Cast t a) = (Cast t a', aVars)
+        (a', aVars)  = fixTypesUp u a
+        (b', bVars)  = fixTypesUp u b
+fixTypesUp u (Cast t a) = (Cast t a', aVars)
     where
-        (a', aVars)  = fixTypesUp a
+        (a', aVars)  = fixTypesUp u a
 
 transformApplications :: Typed c t => ([TSLTerm t c] -> Maybe (TSLTerm t c)) -> TSLTerm t c -> TSLTerm t c
 transformApplications f term = fromMaybe (g term) $ f $ uncurryApplication term
