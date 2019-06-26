@@ -176,7 +176,7 @@ fixTypesUp u (Application tr a b)
     | (_, q) <- T.inferApp $ typeOf a'   = (Application (tr `u` q) a' b', vars)
     | otherwise                        = throw $ CannotApply a b
     where
-        vars = meetContexts aVars bVars
+        vars = meetContexts u aVars bVars
         (a', aVars)  = fixTypesUp u a
         (b', bVars)  = fixTypesUp u b
 fixTypesUp u (Cast t a) = (Cast t a', aVars)

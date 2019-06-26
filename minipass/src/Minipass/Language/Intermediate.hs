@@ -111,7 +111,7 @@ instance MLattice Types where
     x       \/ y        = throw $ T.CannotJoin x y
 
 instance MSemiLattice (T.ApplicativeType Types) where
-    (/\) = error "fu"
+    (/\) = T.defaultMeet
 
 instance MLattice (T.ApplicativeType Types) where
     (\/) = T.defaultJoin

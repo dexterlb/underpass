@@ -27,10 +27,10 @@ pop _                   = Nothing
 oneHotContext :: MSemiLattice (ApplicativeType t) => Index -> (VarName, ApplicativeType t) -> VarContext t
 oneHotContext i x = VarContext $ reverse $ x : replicate i ("", bot)
 
-meetContexts :: MSemiLattice (ApplicativeType t) => VarContext t -> VarContext t -> VarContext t
-meetContexts (VarContext a) (VarContext b) = VarContext $ f a b
+meetContexts :: MSemiLattice (ApplicativeType t) => Unifier (ApplicativeType t) -> VarContext t -> VarContext t -> VarContext t
+meetContexts u(VarContext a) (VarContext b) = VarContext $ f a b
     where
-        f ((na, ta):as) ((_, tb):bs) = (na, ta /\ tb):f as bs
+        f ((na, ta):as) ((_, tb):bs) = (na, ta `u` tb):f as bs
         f [] bs = bs
         f as [] = as
 

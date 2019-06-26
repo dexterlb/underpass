@@ -66,14 +66,13 @@ parseTypeTerm
     <|> (Wildcard   <$  P.operator "*")
     <|> (Basic <$> P.parser)
 
-inferenceUnifier :: (Eq b, Typeable b, Show b, PartialOrd (ApplicativeType b)) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
+inferenceUnifier :: (MSemiLattice (ApplicativeType b)) => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
 inferenceUnifier (Application a1 a2) (Application b1 b2) = Application (inferenceUnifier a1 b1) (inferenceUnifier a2 b2)
 inferenceUnifier Wildcard x = x
 inferenceUnifier x Wildcard = x
 inferenceUnifier x y
     | x <! y = x
     | x !> y = y
-    | x == y = x
     | otherwise = throw $ CannotMeet x y
 
 defaultMeet :: MLattice b => ApplicativeType b -> ApplicativeType b -> ApplicativeType b
@@ -120,7 +119,7 @@ defaultLess _      _            = False
 
 inferApp :: (MSemiLattice (ApplicativeType t)) => ApplicativeType t -> (ApplicativeType t, ApplicativeType t)
 inferApp x
-    | (Application p q) <- x /\ (Application Wildcard Wildcard) = (p, q)
+    | (Application p q) <- x `inferenceUnifier` (Application Wildcard Wildcard) = (p, q)
     | otherwise = error "how did x unify to * -> * but the result is not T -> T ?"
 
 instance HasBot (ApplicativeType b) where
