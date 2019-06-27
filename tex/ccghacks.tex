@@ -214,17 +214,13 @@ of variables during derivation.
 When parsing, we can observe that after processing all leaf nodes,
 there's no way to generate new variables while building the parse tree
 bottom-up. Thus, it is sufficient to eliminate variables by unification.
+For details about unification-based parsing, see \cref{hack:unification}.
 
-In particular, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
-by the following:
-
-\begin{enumerate}
-    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
-    \item If $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
-        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
-    \item If $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
-        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
-\end{enumerate}
+Two categories $X$ and $Y$ with categorial variables \emph{unify} whenever we can
+find two sequences of substitutions $(a_1, X_1), (a_2, X_2), ..., (a_n, X_n)$
+and $(b_1, Y_1), (b_2, Y_2), ..., (b_n, Y_n)$ such that
+\[ \subst{\subst{\subst{X}{a_1}{X_1}}{a_2}{X_2}}{a_n}{X_n}
+ = \subst{\subst{\subst{Y}{b_1}{Y_1}}{b_2}{Y_2}}{b_n}{Y_n} \]
 
 \subsubsection{Coordination}
 \emph{Coordination} refers to a technique which allows conjunctions (such as
@@ -359,6 +355,7 @@ it is usually only considered on categories which appear in leaves.
 \fixme{write this up}
 
 \subsubsection{Unification of categories}
+\label{hack:unification}
 To reduce the size and complexity of grammars, it is convenient to regard
 not only identical categories as equal, but rather use an \emph{unification}
 operation which can judge whether two categories unify and what their common
@@ -366,7 +363,25 @@ unifier should be.
 
 One method is to explicitly state the unification rules in the grammar.
 It is also useful to make categories complex objects and infer unification
-based on their structure, as will be done in the next two sections.
+based on their structure, as will be done in the next two sections. Categorial
+variables (\cref{hack:catvars}) are also a special case of unification.
+
+For bottom-up parsing, the only thing we need is an unification predicate
+$U(X, Y)$ which tells us whether the two categories unify. It can then be
+used instead of an equality check in the parsing algorithm.
+
+In particular, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
+by the following:
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
+        and $U(Y', Y'')$, \\
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
+        and $U(Y', Y'')$, \\
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+\end{enumerate}
 
 \subsubsection{Unification by category features}
 Some models allow each simple category to be extended with a set of \emph{features}
