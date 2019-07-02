@@ -8,8 +8,8 @@ will be used.
 
 \subsubsection{Types}
 \label{purelambda:types}
-Let $\mathbb{T}$ be a magical set of items we call
-    \emph{type symbols}.
+Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a set of symbols we call
+    \emph{type symbols}\footnote{See \cref{sec:magic}}.
 
 \begin{defn}
     For a set of type symbols $T$, its \emph{type closure}
@@ -23,11 +23,11 @@ Let $\mathbb{T}$ be a magical set of items we call
 \end{defn}
 
 \begin{defn}
-    The function $ts : \tclos{\mathbb{T}} \rightarrow 2^\mathbb{T}$, which
+    The function $ts : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
     returns the set of type symbols used in a complex type, is defined inductively:
 
     \begin{itemize}
-        \item if $\sigma \in \mathbb{T}$ then $ts(\sigma) = \sigma$
+        \item if $\sigma \in \tsymbs$ then $ts(\sigma) = \sigma$
         \item if $\sigma = \sigma' \rightarrow \sigma''$ then
             $ts(\sigma) = ts(\sigma') \cup ts(\sigma'')$
     \end{itemize}
@@ -60,22 +60,21 @@ To define $\lambda$ terms with the types introduced above, a system similar
 to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
 extends the original system with constants.
 
-Let $\mathbb{V}$ be an magical set. We shall call its
-elements \emph{variables}.
-Respectively, let $Const$ be a magical set whose elements
-we call \emph{constants}.
+Let $\lvars = \{ \alpha', \alpha'', \alpha''' ... \}$ be a countable set of symbols
+we call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
+set of items we call \emph{constants}.
 
 \begin{defn}
-    Let $C$ be a set of constants, typed in $T$.
+    Let $C \subset \const$ be a set of constants, typed in $T$.
 
     We can define the set of
     \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
-        \item Variable:    \[ v \in \mathbb{V} \implies v \in \Lambda_T^C \]
+        \item Variable:    \[ v \in \lvars \implies v \in \Lambda_T^C \]
         \item Application: \[ A, B \in \Lambda_T^C \implies (AB) \in \Lambda_T^C \]
-        \item Abstraction: \[ v \in \mathbb{V}, A \in \Lambda_T^C, \sigma \in \tclos{T}
+        \item Abstraction: \[ v \in \lvars, A \in \Lambda_T^C, \sigma \in \tclos{T}
                 \implies (\lambda v : \sigma \abstr A) \in \Lambda_T^C \]
     \end{itemize}
 \end{defn}
