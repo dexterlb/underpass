@@ -23,13 +23,13 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a set of symbols we call
 \end{defn}
 
 \begin{defn}
-    The function $ts : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
+    The function $\tss : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
     returns the set of type symbols used in a complex type, is defined inductively:
 
     \begin{itemize}
-        \item if $\sigma \in \tsymbs$ then $ts(\sigma) = \sigma$
+        \item if $\sigma \in \tsymbs$ then $\ts{\sigma} = \sigma$
         \item if $\sigma = \sigma' \rightarrow \sigma''$ then
-            $ts(\sigma) = ts(\sigma') \cup ts(\sigma'')$
+            $\ts{\sigma} = \ts{\sigma'} \cup \ts{\sigma''}$
     \end{itemize}
 \end{defn}
 
@@ -62,7 +62,7 @@ extends the original system with constants.
 
 Let $\lvars = \{ \alpha', \alpha'', \alpha''' ... \}$ be a countable set of symbols
 we call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
-set of items we call \emph{constants}.
+set of symbols we call \emph{constants}.
 
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
@@ -82,6 +82,25 @@ set of items we call \emph{constants}.
 In this text, chained abstractions will be squashed, i.e.
 $\lambda x_1 : T_1, x_2: T_2, ..., y_n: T_n \abstr M$ shall mean
 $\lambda x_1 : T_1 \abstr (\lambda x_2: T_2 \abstr (... (\lambda x_n: T_n \abstr M) ...))$.
+
+We will differentiate between \emph{free variables} and \emph{bound variables}
+in a term. Intuitively, bound variables are "bound" by abstraction, while
+free variables are not.
+
+We will now formally define the function $\fvv$ that gives us all free variables of a
+term.
+\begin{defn}
+    Let $\fvv : \Lambda_T^C \rightarrow 2^{\lvars}$ be defined as:
+    \[
+        \fv{M} =
+        \begin{cases*}
+            \varnothing, & $M = c \in C$ \\
+            \{ v \}, & $M = v \in \lvars$ \\
+            \fv{A} \cup \fv{B}, & $M = (AB)$ \\
+            \fv{A} \setminus \{ v \}, & $M = (\lambda v : \sigma \abstr A)$ \\
+        \end{cases*}
+    \]
+\end{defn}
 
 \begin{defn}
     Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}

@@ -152,13 +152,13 @@ and introduce variable substitution over categories.
 For convenience, we will now define a function which gives us all variables
 used in a category.
 \begin{defn}
-    Let $fv: C(\tau) \rightarrow 2^{\cvars}$ be defined as:
+    Let $\fvv : C(\tau) \rightarrow 2^{\cvars}$ be defined as:
     \[
-        fv(Z) =
+        \fv{Z} =
         \begin{cases*}
             \varnothing, & $Z \in \tau$ \\
-            fv(X) \cup fv(Y), & $Z = \lp X \rc Y \rp$ \\
-            fv(X) \cup fv(Y), & $Z = \lp X \lc Y \rp$ \\
+            \fv{X} \cup \fv{Y}, & $Z = \lp X \rc Y \rp$ \\
+            \fv{X} \cup \fv{Y}, & $Z = \lp X \lc Y \rp$ \\
             \{ \alpha \}, & $Z = \alpha \in \cvars$ \\
         \end{cases*}
     \]
