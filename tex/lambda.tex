@@ -14,9 +14,9 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     The subtyping construction is particularly useful for domains like
     geographical queries - it lets us express relations such as the following:
     \begin{align*}
-        Capital & < City < Set \\
-        Name & < String \\
-        Distance & < Number \\
+        Capital & \less City \less Set \\
+        Name & \less String \\
+        Distance & \less Number \\
     \end{align*}
 }
 
@@ -255,7 +255,7 @@ with their respective clones. One way to deal with contravariance is
     Let $\langle T, \less \rangle$ be a type semilattice, $\tau \in \tclos{T}$
     be a type and $\subtyper{\xi}, \suptyper{\xi}$ be mappings from a
     superset of
-    $ts(\tau)$ into $\tsymbs$ such that
+    $\ts{\tau}$ into $\tsymbs$ such that
     $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$.
 
     $\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ and
@@ -296,7 +296,7 @@ with their respective clones. One way to deal with contravariance is
         \item a mapping $\varphi$ with $range(\varphi) = \tclos{T}$
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
-    $ts(\tau)$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
+    $\ts{\tau}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
     $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$\footnote{
         $\suptyper{\xi}$ and $\subtyper{\xi}$ depend on $\tau$, $T$ and
         $\sigma$. If one wants to make their choice constrictive, they may,
@@ -313,7 +313,7 @@ with their respective clones. One way to deal with contravariance is
         \] where:
     \begin{itemize}
         \item $\rho = \clonesub(\tau)$
-        \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap ts(\rho))$
+        \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap \ts{\rho})$
         \item $\less'$ is the transitive and reflexive closure of
             $\less \cup \{ (\sigma', \tau') \in T' \times T' \mid \subtyper{\xi}(\tau') = \sigma' \}
                    \cup \{ (\sigma', \tau') \in T' \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$

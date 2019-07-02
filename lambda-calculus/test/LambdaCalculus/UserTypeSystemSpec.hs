@@ -23,11 +23,19 @@ instance MSemiLattice Base where
         | a == b    = a
         | otherwise = error "trying to meet unequal base items"
 
+instance MLattice Base where
+    a \/ b
+        | a == b    = a
+        | otherwise = error "trying to join unequal base items"
+
 instance PartialOrd (ApplicativeType Base) where
     (<!) = defaultLess
 
 instance MSemiLattice (ApplicativeType Base) where
     (/\) = defaultMeet
+
+instance MLattice (ApplicativeType Base) where
+    (\/) = defaultJoin
 
 tA :: AppTypeWrapper Base
 tA = Basic $ SubType "A" tB
@@ -98,9 +106,9 @@ spec = do
     it "works on examples with transitive application" $ do
       checkLt tA (Application tE tF)
     it "works on examples with parallel application" $ do
-      checkLt (Application tA tP) (Application (Application tE tF) (Application tR tS))
+      checkLt (Application (Application tE tF) tP) (Application (Application tE tF) (Application tR tS))
     it "works on examples with *" $ do
-      checkLt (Application tA tP) (Application (Application tE tF) (Application tR Wildcard))
+      checkLt (Application (Application tE tF) tP) (Application (Application tE tF) (Application tR Wildcard))
   describe "less-than in unrelated cases" $ do
     it "works on simple example" $ do
       checkUnrelated tA tP
