@@ -35,7 +35,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
 \begin{defn}
     A partial meet-semilattice $\langle T, \less \rangle$ where
-    $T \subseteq \mathbb{T}$ is called a \emph{type semilattice}.
+    $T \subseteq \tsymbs$ is called a \emph{type semilattice}.
 
     Whenever the relation is unambiguous, $T$ and $\langle T, \less \rangle$
     will be used interchangeably: we could say "let $T$ be a
@@ -96,9 +96,9 @@ to work with subtypes.
 
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \fancylambda{T}{C} \]
-        \item Variable:    \[ v \in \mathbb{V} \implies v \in \fancylambda{T}{C} \]
+        \item Variable:    \[ v \in \lvars \implies v \in \fancylambda{T}{C} \]
         \item Application: \[ A, B \in \fancylambda{T}{C} \implies (AB) \in \fancylambda{T}{C} \]
-        \item Abstraction: \[ v \in \mathbb{V}, A \in \fancylambda{T}{C}, \sigma \in \tclos{T}
+        \item Abstraction: \[ v \in \lvars, A \in \fancylambda{T}{C}, \sigma \in \tclos{T}
                 \implies (\lambda v : \sigma \abstr A) \in \fancylambda{T}{C} \]
         \item Construction: \[ \sigma \in T, A \in \fancylambda{T}{C}
                 \implies \sigma[A] \in \fancylambda{T}{C} \]
@@ -200,7 +200,7 @@ From here on $\omega$ will be used freely in place of $\omega_{\lambda}$.
 
 \subsubsection{Subtype libraries}
 \begin{defn}
-    A statement in the form $\sigma \lass \tau (\sigma, \tau \in \mathbb{T})$
+    A statement in the form $\sigma \lass \tau (\sigma, \tau \in \tsymbs)$
     is called a \emph{subtype assertion}.
 \end{defn}
 
@@ -255,7 +255,7 @@ with their respective clones. One way to deal with contravariance is
     Let $\langle T, \less \rangle$ be a type semilattice, $\tau \in \tclos{T}$
     be a type and $\subtyper{\xi}, \suptyper{\xi}$ be mappings from a
     superset of
-    $ts(\tau)$ into $\mathbb{T}$ such that
+    $ts(\tau)$ into $\tsymbs$ such that
     $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$.
 
     $\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ and
@@ -292,15 +292,15 @@ with their respective clones. One way to deal with contravariance is
     \begin{itemize}
         \item a type semilattice $\langle T, \less \rangle$
         \item a type $\tau \in \tclos{T}$
-        \item a type symbol$\sigma \in \mathbb{T} \setminus T$
+        \item a type symbol$\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi$ with $range(\varphi) = \tclos{T}$
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
-    $ts(\tau)$ into $\mathbb{T} \setminus (T \cup \{ \sigma \})$ such that
+    $ts(\tau)$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
     $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$\footnote{
         $\suptyper{\xi}$ and $\subtyper{\xi}$ depend on $\tau$, $T$ and
         $\sigma$. If one wants to make their choice constrictive, they may,
-        for example, assume that $\mathbb{T}$ is ordered, take the minimal
+        for example, assume that $\tsymbs$ is ordered, take the minimal
         elements that aren't in $T \cup \{ \sigma \}$ and map to them in
         order.
     }.

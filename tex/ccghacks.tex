@@ -135,9 +135,8 @@ can combine with any other type of slash).
 \subsubsection{Categorial variables}
 \label{hack:catvars}
 This is a very powerful extension which adds simple unification based on variables
-to categorial derivation. To define it formally, it is convenient to have a
-magical set of variables $\mathbb{V}$ (we could reuse the one from the definition
-of $\lambda$-terms)
+to categorial derivation. To define it formally, let $\cvars = \{ \kappa', \kappa'', \kappa''' ...\}$
+be a set of symbols we call \emph{categorial variables}.
 and introduce variable substitution over categories.
 
 \begin{defn}
@@ -146,21 +145,21 @@ and introduce variable substitution over categories.
         \item \label{cvar:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
         \item \label{cvar:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
         \item \label{cvar:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
-        \item \label{cvar:var}    $\alpha \in \mathbb{V} \Rightarrow \alpha \in C(\tau)$
+        \item \label{cvar:var}    $\alpha \in \cvars \Rightarrow \alpha \in C(\tau)$
     \end{enumerate}
 \end{defn}
 
 For convenience, we will now define a function which gives us all variables
 used in a category.
 \begin{defn}
-    Let $fv: C(\tau) \rightarrow 2^{\mathbb{V}}$ be defined as:
+    Let $fv: C(\tau) \rightarrow 2^{\cvars}$ be defined as:
     \[
         fv(Z) =
         \begin{cases*}
             \varnothing, & $Z \in \tau$ \\
             fv(X) \cup fv(Y), & $Z = \lp X \rc Y \rp$ \\
             fv(X) \cup fv(Y), & $Z = \lp X \lc Y \rp$ \\
-            \{ \alpha \}, & $Z = \alpha \in \mathbb{V}$ \\
+            \{ \alpha \}, & $Z = \alpha \in \cvars$ \\
         \end{cases*}
     \]
 \end{defn}
@@ -172,22 +171,28 @@ used in a category.
             Z, & $Z \in \tau$ \\
             \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \rc Y \rp$ \\
             \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \lc Y \rp$ \\
-            \beta, & $Z = \beta \in \mathbb{V}$ \\
+            \beta, & $Z = \beta \in \cvars$ \\
             W, & $Z = \alpha$ \\
         \end{cases*}
     \]
-    for $Z \in C(\tau), W \in C(\tau), \alpha \in \mathbb{V}$
+    for $Z \in C(\tau), W \in C(\tau), \alpha \in \cvars$
 \end{defn}
 
 Having extended the notion of categorial closure to include categorial variables,
 we also add a family of derivation rules to deal with variables, namely:
 \centree{.{$\subst{X}{\alpha}{Y}$} \edge[very thick]; {$X$} }
-for any $X \in C(\tau), Y \in C(\tau), \alpha \in \mathbb{V}$.
+for any $X \in C(\tau), Y \in C(\tau), \alpha \in \cvars$.
 
 To define semantics for derivations with categorial variables, we need to extend
 our $\lambda$-calculus to include type-variables and type-variable substitution.
 For a more detailed explanation, see \cref{lambda:typevars}.
+Also, $\typeoff$ for categories must be extended to injectively map categorial
+variables ($\cvars$) into type variables ($\tvars$) for variable substitution
+to work (and for category types that contain variables to match the types of
+their assigned terms).
 
+Then, the semantics for the following derivation tree produced by variable
+substitution can be defined:
 \begin{center}
     \begin{tikzpicture}[node distance=1mm]
         \Tree[
@@ -206,7 +211,7 @@ For a more detailed explanation, see \cref{lambda:typevars}.
     \end{tikzpicture}
 \end{center}
 
-\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\alpha}{Y} \]
+\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\typeof{\alpha}}{Y} \]
 
 This essentially allows us to generate any category and substitute it in place
 of variables during derivation.

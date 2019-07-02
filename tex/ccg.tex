@@ -14,7 +14,7 @@ extended to include features such as type-raising,
 arbitrary rule restrictions, slash modalities,
 category features, category variables and feature variables.
 
-Let $Cat$ be a magical set whose elements we call
+Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
 \emph{atomic categories}.
 
 \begin{defn}
@@ -257,13 +257,14 @@ of derivation trees, in correspondence to the concept of
 \emph{primary categories} in the context of derivations. Primary edges
 will be drawn with a thick line.
 
-We will construct the set $ \mathbb{T} $ of all derivation trees, as well
-as the functions $ crown: \mathbb{T} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
-$ root: \mathbb{T} \rightarrow C(N) \cup \Sigma$,
-$ primary : \mathbb{T} \rightarrow \mathbb{T} $ and
-$ prefix : \mathbb{T} \rightarrow C(N) \cup \Sigma $.
+We will construct the set $ \trees{G} $ of all derivation trees, for a
+CCG $G$ as well
+as the functions $ crown: \trees{G} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
+$ root: \trees{G} \rightarrow C(N) \cup \Sigma$,
+$ primary : \trees{G} \rightarrow \trees{G} $ and
+$ prefix : \trees{G} \rightarrow C(N) \cup \Sigma $.
 
-If there exists $\tau \in \mathbb{T}$ such that $root(\tau) = X \in C(N),
+If there exists $\tau \in \trees{G}$ such that $root(\tau) = X \in C(N),
 crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
 
 Derivation trees are constructed as follows:
@@ -273,13 +274,13 @@ Derivation trees are constructed as follows:
     Derivation tree
     \begin{itemize}
         \item If $ a \in \Sigma $, then
-            $ a \in \mathbb{T}, crown(a) = a, root(a) = a, primary(a) = a, prefix(a) = a$.
-        \item If $ X \in C(N) $ then $ X \in \mathbb{T}, crown(X) = X, primary(X) = X, prefix(X) = X$
+            $ a \in \trees{G}, crown(a) = a, root(a) = a, primary(a) = a, prefix(a) = a$.
+        \item If $ X \in C(N) $ then $ X \in \trees{G}, crown(X) = X, primary(X) = X, prefix(X) = X$
         \item If $ a \in \Sigma, X \in f(a) $, then
             \begin{center}
                 \tree{.$X$ \edge[very thick]; $a$ } ( $ \pi $ )
             \end{center}
-            $ \pi \in \mathbb{T}, crown(\pi) = a, root(\pi) = X, primary(\pi) = a, prefix(\pi) = a $
+            $ \pi \in \trees{G}, crown(\pi) = a, root(\pi) = X, primary(\pi) = a, prefix(\pi) = a $
         \item If
             \begin{center}
                 \tree{.{$X \rc Y$} \edge[roof]; $\alpha$} ($\pi'$)
@@ -298,7 +299,7 @@ Derivation trees are constructed as follows:
                     [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
                 } ($\tau$)
             \end{center}
-            $ \tau \in \mathbb{T}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi'$, $prefix(\tau) = X$
         \item If
             \begin{center}
@@ -318,7 +319,7 @@ Derivation trees are constructed as follows:
                     [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
                 } ($\tau$)
             \end{center}
-            $ \tau \in \mathbb{T}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
             $ crown(\tau) = \alpha \beta $, $primary(\tau) = \pi''$, $prefix(\tau) = X$
     \end{itemize}
 \end{defn}
