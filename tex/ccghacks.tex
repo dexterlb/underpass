@@ -156,10 +156,10 @@ used in a category.
     \[
         \fv{Z} =
         \begin{cases*}
-            \varnothing, & $Z \in \tau$ \\
-            \fv{X} \cup \fv{Y}, & $Z = \lp X \rc Y \rp$ \\
-            \fv{X} \cup \fv{Y}, & $Z = \lp X \lc Y \rp$ \\
-            \{ \alpha \}, & $Z = \alpha \in \cvars$ \\
+            \varnothing& , $Z \in \tau$ \\
+            \fv{X} \cup \fv{Y}& , $Z = \lp X \rc Y \rp$ \\
+            \fv{X} \cup \fv{Y}& , $Z = \lp X \lc Y \rp$ \\
+            \{ \alpha \}& , $Z = \alpha \in \cvars$ \\
         \end{cases*}
     \]
 \end{defn}
@@ -168,11 +168,11 @@ used in a category.
     \[
         \subst{Z}{\alpha}{W} =
         \begin{cases*}
-            Z, & $Z \in \tau$ \\
-            \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \rc Y \rp$ \\
-            \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp, & $Z = \lp X \lc Y \rp$ \\
-            \beta, & $Z = \beta \in \cvars$ \\
-            W, & $Z = \alpha$ \\
+            Z& , $Z \in \tau$ \\
+            \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp& , $Z = \lp X \rc Y \rp$ \\
+            \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp& , $Z = \lp X \lc Y \rp$ \\
+            \beta& , $Z = \beta \in \cvars$ \\
+            W& , $Z = \alpha$ \\
         \end{cases*}
     \]
     for $Z \in C(\tau), W \in C(\tau), \alpha \in \cvars$

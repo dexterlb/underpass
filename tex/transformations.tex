@@ -4,7 +4,39 @@
 
 \subsubsection{Type inference}
 \label{sec:typeinf}
-\fixme{write this}
+Minipass allows for the usage of the special type \code{*} which acts as a
+wildcard type. It violates the partial order of the type lattice since it is
+equivalent to all types (i.e. $\forall \sigma \in T: (\text{\code{*}} \less \sigma)
+\& (\sigma \less \text{\code{*}})$).
+
+Thus, all significant\footnote{
+    Since we only work with closed terms, the only case when a type can't be
+    inferred is when a bound variable is unused (for example in terms like
+    \code{(\\x, y => y) 42}, where the type of \code{x} cannot be inferred).
+    This, however, is harmless, because the type is unneeded anyway.
+} occurances of $\code{*}$ are removed by performing the fixed point
+function from
+\cref{sec:propagation} with the following unifier:
+\[
+    \sigma \unify \tau =
+    \begin{cases*}
+        \tau& , $\sigma = \text{\code{*}}$ \\
+        \sigma& , $\tau = \text{\code{*}}$ \\
+        \sigma& , $\sigma = \tau$ \\
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'')& ,
+            $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$ \\
+        \lnot !& , $\mathsf{otherwise}$ \\
+    \end{cases*}
+\]
+Whenever the algorithm encounters a case where the unifier is not defined,
+a type error is produced.
+
+\fixme{sync this with \cref{sec:propagation}. Also, motivate correctness.}
+
+\begin{enumerate}
+    \item Tag every subterm with its current type
+    \item For every subterm, bla
+\end{enumerate}
 
 \subsubsection{Minipass query optimisation}
 \fixme{write this}

@@ -22,7 +22,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
 \subsubsection{Type semilattices}
 \fixme{This section is fundamentally flawed (contravariance doesn't preserve
-    semilattices, so we need \emph{lattices}. Rework it to talk about lattices
+    semilattices, so we need \emph{lattices}). Rework it to talk about lattices
     or ditch it altogether.}
 \begin{defn}
     A \emph{partial meet-semilattice} is a pair $\langle X, \less \rangle$ where:
@@ -268,10 +268,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \subtyper{\xi}(\tau), &
+            \subtyper{\xi}(\tau)& ,
                 $\tau \in T$ \\
             \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2), &
+                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2)& ,
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]
@@ -279,10 +279,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \suptyper{\xi}(\tau), &
+            \suptyper{\xi}(\tau)& ,
                 $\tau \in T$ \\
             \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2), &
+                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2)& ,
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]
@@ -360,4 +360,19 @@ with their respective clones. One way to deal with contravariance is
     $\omega_{\Theta} : T' \rightarrow T$.
 \end{prop}
 \fixme{need proof!}
+
+
+\subsubsection{Type propagation}
+\label{sec:propagation}
+\fixme{define type-tagged terms here}
+\fixme{incomplete}
+\begin{equation}
+    \mcf{up}(A) =
+    \begin{cases*}
+        (typeof(c), \{ \})& , $M = c \in C$ \\
+        \{ v \}& , $M = v \in \lvars$ \\
+        \fv{A} \cup \fv{B}& , $M = (AB)$ \\
+        \fv{A} \setminus \{ v \}& , $M = (\lambda v : \sigma \abstr A)$ \\
+    \end{cases*}
+\end{equation}
 \end{document}
