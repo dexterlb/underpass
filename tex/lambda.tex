@@ -399,10 +399,34 @@ a type to every subterm.
             \ttt{v}{\tau} &, $A = v \in \lvars, \Gamma \vdash v : \tau$ \\
             \ttt{(\mcf{tag}_{\Gamma}(M) \app \mcf{tag}_{\Gamma}(N))}{\tau}
                 &, $A = (MN), \Gamma \vdash A : \tau$ \\
-            \ttt{\lambda v \abstr M}{\sigma \tot \tau}
+            \ttt{\lambda v \abstr \mcf{tag}_{\Gamma'}(M)}{\sigma \tot \tau}
                 &, $A = (\lambda v: \sigma \abstr M)
-                 , (\Gamma \circ v : \sigma) \vdash M : \tau $\\
+                 , \Gamma' \vdash M : \tau
+                 , \Gamma' = \Gamma \circ v : \sigma$\\
             \ttt{M}{\tau} &, $A = \tau[M]$ \\
+        \end{cases*}
+    \]
+\end{defn}
+
+\begin{defn}
+    \[
+        \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            c &, $A = c \in C$ \\
+            v &, $A = v \in \lvars$ \\
+            \mcf{untag}_{\Gamma}(P) \app \mcf{untag}_{\Gamma}(Q)
+                &, $A = (PQ)$ \\
+            \lambda v : \tau' \abstr \mcf{untag}_{\Gamma'}(P)
+                &, $A = (\lambda v \abstr P), \tau = (\tau' \tot \tau'')
+                 , \Gamma' = \Gamma \circ v : \tau'$ \\
+        \end{cases*}
+    \]
+    
+    \[
+        \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            M &, $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$ \\
+            \tau[M] &, $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$ \\
         \end{cases*}
     \]
 \end{defn}
