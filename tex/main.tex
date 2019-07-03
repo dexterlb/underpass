@@ -24,7 +24,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage{cleveref}
+\usepackage[nameinlink]{cleveref}
 \usepackage{mathabx}
 \usepackage{graphicx}
 \usepackage{ebproof}
@@ -59,6 +59,7 @@
 \definecolor{light-gray}{gray}{0.9}
 \definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
 \definecolor{asparagus}{rgb}{0.53, 0.66, 0.42}
+\definecolor{linkness}{rgb}{0.12, 0.43, 0.41}
 
 \newcommand\fixme[1]{
     \greenbox{
@@ -237,10 +238,10 @@
 \hypersetup{
     colorlinks=true,
     linktoc=all,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black
+    citecolor=linkness,
+    filecolor=linkness,
+    linkcolor=linkness,
+    urlcolor=linkness
 }
 
 \usepackage{tabularx}
