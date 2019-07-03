@@ -95,7 +95,7 @@ For a of type semilattice $T$, we can define the set of
 
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
-    
+
     $\fancylambda{T}{C}$ is defined inductively:
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \fancylambda{T}{C} \]
@@ -373,25 +373,42 @@ In order to manipulate subterm types easily, we will introduce a construction
 called \emph{type-tagged $\lambda$-terms}, which essentially means attaching
 a type to every subterm.
 
+This construction doesn't need to include casts, since we are storing
+a type for every subterm anyway, which can replace the use of casts for all
+practical\footnote{
+    There is no way to preserve multiple consecutive casts. Note that if the
+    type system doesn't allow cross-branch casts, extra measures need to be taken
+    to preserve the validity of terms in $\mcf{untag}$: e.g. if we have a
+    term $M$ with a type tag $\sigma$ and an actual type $\tau$ where for some $\eta$,
+    $\eta \less \sigma, \eta \less \tau$ but $\sigma$ and $\tau$ aren't comparable,
+    we must yield $\sigma[\eta[M]]$ instead of $\sigma[M]$.
+} cases. There is also no need for storing the types of bound variables, since
+they can be easily extracted from the types of the respective abstraction terms.
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
-    
+
     $\ttlambda{T}{C}$ is defined inductively:
     \begin{itemize}
-        \item Constant:    
+        \item Constant:
             \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
-        \item Variable:    
+        \item Variable:
             \[ v \in \lvars, \tau \in \tclos{T} \implies \ttt{v}{\tau} \in \ttlambda{T}{C} \]
-        \item Application: 
+        \item Application:
             \[ A, B \in \ttlambda{T}{C}, \tau \in \tclos{T} \implies \ttt{(AB)}{\tau} \in \ttlambda{T}{C} \]
-        \item Abstraction: 
+        \item Abstraction:
             \[ v \in \lvars, A \in \ttlambda{T}{C}
-                \tau = (\tau' \tot \tau'') \in \tclos{T}
+                \tau = (\tau' \tot \tau'') \in \tclos{T},
                 \implies \ttt{(\lambda v \abstr A)}{\tau} \in \ttlambda{T}{C} \]
     \end{itemize}
 \end{defn}
 
+Converting regular $\lambda$-terms into type-tagged $\lambda$-terms is
+relatively straightforward: simply examine the type of every subterm according
+to its local context and then store it into the tag.
 \begin{defn}
+    For a context $\Gamma$,
+    $\mcf{tag}_{\Gamma} : \fancylambda{T}{C} \rightarrow \ttlambda{T}{C}$
+    is defined inductively:
     \[
         \mcf{tag}_{\Gamma}(A) =
         \begin{cases*}
@@ -408,7 +425,14 @@ a type to every subterm.
     \]
 \end{defn}
 
+Since the type tags of (sub)terms may not match their inferred type,
+we need a wrapping function that inserts casts when needed.
 \begin{defn}
+    For a context $\Gamma$,
+    $\mcf{untag}_{\Gamma} : \ttlambda{T}{C} \rightarrow \fancylambda{T}{C}$
+    and
+    $\mcf{untag'}_{\Gamma} : \ttlambda{T}{C} \rightarrow \fancylambda{T}{C}$
+    are defined inductively:
     \[
         \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
@@ -421,7 +445,7 @@ a type to every subterm.
                  , \Gamma' = \Gamma \circ v : \tau'$ \\
         \end{cases*}
     \]
-    
+
     \[
         \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
@@ -431,15 +455,72 @@ a type to every subterm.
     \]
 \end{defn}
 
-\fixme{define type-tagged terms here}
+Now that we have the construction for attaching types to subterms, we can
+describe a universal way to propagate information through those types.
+
+We will use a basic operation $\unify : \tclos{T} \times \tclos{T} \rightarrow \tclos{T}$
+which unifies two types.
+
+It can also be extended for contexts in the following way:
+\[
+    \begin{split}
+        \Gamma' \unify \Gamma'' \defeq
+        &\{ (x : \sigma \unify \tau) \mid (x : \sigma) \in \Gamma', (x : \tau) \in \Gamma''\} \\
+        \cup &
+        \{ (x : \sigma) \mid (x : \sigma) \in (\Gamma' \cup \Gamma''),
+            (x : \cdot) \not\in \Gamma',
+            (x : \cdot) \not\in \Gamma'' \} \\
+    \end{split}
+\]
+
 \fixme{incomplete}
-\begin{equation}
-    \mcf{up}(A) =
-    \begin{cases*}
-        (typeof(c), \{ \})& , $M = c \in C$ \\
-        \{ v \}& , $M = v \in \lvars$ \\
-        \fv{A} \cup \fv{B}& , $M = (AB)$ \\
-        \fv{A} \setminus \{ v \}& , $M = (\lambda v : \sigma \abstr A)$ \\
-    \end{cases*}
-\end{equation}
+
+Now, type propagation will be done in two steps: upward (propagating
+information up the term tree and into the context) and downward (propagating
+information down the term tree towards the leaves).
+
+\begin{defn}
+    \[
+        \mcf{up}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
+            (\ttt{v}{\tau}, \{ v : \tau \} &, $M = v \in \lvars$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
+                &, $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}(P)
+                , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
+                \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
+                &, $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}(P)$ \\
+                \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
+            (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
+                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}(P),$ \\
+                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
+        \end{cases*}
+    \]
+    \[
+        \mcf{down}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
+            (\ttt{v}{\tau}, \{ v : \tau \} &, $M = v \in \lvars$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
+                &, $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{down}(P)
+                , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
+                \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
+                &, $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{down}(P)$ \\
+                \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
+            (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
+                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}(P),$ \\
+                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
+        \end{cases*}
+    \]
+\end{defn}
 \end{document}
