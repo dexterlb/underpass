@@ -484,7 +484,7 @@ information down the term tree towards the leaves).
         \mcf{up}(\ttt{A}{\tau}) =
         \begin{cases*}
             (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
-            (\ttt{v}{\tau}, \{ v : \tau \} &, $M = v \in \lvars$ \\
+            (\ttt{v}{\tau}, \{ v : \tau \}) &, $A = v \in \lvars$ \\
             (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
                 &, $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
@@ -502,24 +502,22 @@ information down the term tree towards the leaves).
         \end{cases*}
     \]
     \[
-        \mcf{down}(\ttt{A}{\tau}) =
+        \mcf{down}(\ttt{A}{\tau}, \tau', \Gamma) =
         \begin{cases*}
-            (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
-            (\ttt{v}{\tau}, \{ v : \tau \} &, $M = v \in \lvars$ \\
-            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
-                &, $A = (\lambda x \abstr P)
-                , \tau = (\eta \tot \sigma),$ \\
-                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{down}(P)
-                , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
-                \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
-            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
-                &, $A = (\lambda x \abstr P)
-                , \tau = (\eta \tot \sigma),$ \\
-                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{down}(P)$ \\
-                \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
-            (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
-                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}(P),$ \\
-                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
+            \ttt{c}{\tau \unify \tau'} &, $A = c \in C$ \\
+            \ttt{v}{\tau \unify \tau' \unify \tau''}
+                &, $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
+            \ttt{\lambda x \abstr P'}{\eta'' \tot \sigma''}
+                &, $A = \ttt{P}{\sigma}, P' = \mcf{down}(P, \sigma'', \Gamma \circ (x : \eta'')),$ \\
+                \phantom{} &\phantom{, }$\tau = (\eta \tot \sigma),
+                \tau' = (\eta' \tot \sigma'),$ \\
+                \phantom{} &\phantom{, }$\sigma'' = (\sigma \unify \sigma'),
+                \eta'' = (\eta \unify \eta')$ \\
+            \ttt{P' Q'}{\tau''}
+                &, $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
+                \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
+                \phantom{} &\phantom{, }$P' = \mcf{down}(P, (\sigma' \tot \tau''), \Gamma),
+                Q' = \mcf{down}(Q, \sigma'', \Gamma)$ \\
         \end{cases*}
     \]
 \end{defn}
