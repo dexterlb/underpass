@@ -166,7 +166,7 @@ string.
     \end{itemize}
 \end{prop}
 \begin{proof}
-    We can use Proposition \ref{prop:cfg}:
+    We can use \cref{prop:cfg}:
 
     \begin{itemize}
         \item if $\alpha \Rightarrow^* \alpha'$ and $\beta \Rightarrow^* \beta'$,
@@ -413,7 +413,7 @@ Derivation trees are constructed as follows:
             is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\beta = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
-            According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
+            According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
                 \item $\lb W \rc Y \rb \Rightarrow^* \eta$
@@ -435,7 +435,7 @@ Derivation trees are constructed as follows:
             for $\lb X \rb \Rrightarrow \alpha$.
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\beta = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$.
-            According to Proposition \ref{prop:concat}, there exist $\eta, \xi$ such that:
+            According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
                 \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \eta$
@@ -586,7 +586,7 @@ To reason about the algorithm, we will use the following invariant:
             which means $(X, i, i) = (X, i, j) \in P$.
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\alpha = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
-            According to Proposition \ref{prop:concat}, there exists $p$ such that
+            According to \cref{prop:concat}, there exists $p$ such that
             \begin{itemize}
                 \item $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
                 \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
@@ -599,7 +599,7 @@ To reason about the algorithm, we will use the following invariant:
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\alpha = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$
             (analogous to \ref{eq:right}).
-            According to Proposition \ref{prop:concat}, there exists $p$ such that
+            According to \cref{prop:concat}, there exists $p$ such that
             \begin{itemize}
                 \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$
                 \item $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$

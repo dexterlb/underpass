@@ -87,16 +87,16 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \fixme{need proof}
 
 \subsubsection{Terms}
-We will now extend the definition of $\lambda$-term given in \autoref{purelambda:types}
+We will now extend the definition of $\lambda$-term given in \cref{purelambda:types}
 to work with subtypes.
 
+For a of type semilattice $T$, we can define the set of
+\emph{pre-typed $\lambda$-terms with subtypes} ($\fancylambda{T}{C}$).
+
 \begin{defn}
-    Let $C$ be a countable set, typed in $T$,
-    whose elements we call \emph{constants}.
-
-    For a of type semilattice $T$, we can define the set of
-    \emph{pre-typed $\lambda$-terms with subtypes} ($\fancylambda{T}{C}$).
-
+    Let $C \subset \const$ be a set of constants, typed in $T$.
+    
+    $\fancylambda{T}{C}$ is defined inductively:
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \fancylambda{T}{C} \]
         \item Variable:    \[ v \in \lvars \implies v \in \fancylambda{T}{C} \]
@@ -331,7 +331,7 @@ with their respective clones. One way to deal with contravariance is
     is defined\footnote{
         When trying to redefine a previously defined type, the sequence is not
         a subtype library because of the restriction for $\sigma$
-        in definition \ref{def:subadd}.
+        in \cref{def:subadd}.
     }.
 
     Also, we can define the function which gives us all the new type names
@@ -364,6 +364,49 @@ with their respective clones. One way to deal with contravariance is
 
 \subsubsection{Type propagation}
 \label{sec:propagation}
+For the sake of performing optimisations, it is convenient to store extra
+information within types. For example, we can extend our $Num$ type to include
+a tag which says whether the value this type is attached to is a constant. This
+information can then be used to prune entire subterms whose value is constant.
+
+In order to manipulate subterm types easily, we will introduce a construction
+called \emph{type-tagged $\lambda$-terms}, which essentially means attaching
+a type to every subterm.
+
+\begin{defn}
+    Let $C \subset \const$ be a set of constants, typed in $T$.
+    
+    $\ttlambda{T}{C}$ is defined inductively:
+    \begin{itemize}
+        \item Constant:    
+            \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
+        \item Variable:    
+            \[ v \in \lvars, \tau \in \tclos{T} \implies \ttt{v}{\tau} \in \ttlambda{T}{C} \]
+        \item Application: 
+            \[ A, B \in \ttlambda{T}{C}, \tau \in \tclos{T} \implies \ttt{(AB)}{\tau} \in \ttlambda{T}{C} \]
+        \item Abstraction: 
+            \[ v \in \lvars, A \in \ttlambda{T}{C}
+                \tau = (\tau' \tot \tau'') \in \tclos{T}
+                \implies \ttt{(\lambda v \abstr A)}{\tau} \in \ttlambda{T}{C} \]
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    \[
+        \mcf{tag}_{\Gamma}(A) =
+        \begin{cases*}
+            \ttt{c}{\typeof{C}} &,  $A = c \in C$ \\
+            \ttt{v}{\tau} &, $A = v \in \lvars, \Gamma \vdash v : \tau$ \\
+            \ttt{(\mcf{tag}_{\Gamma}(M) \app \mcf{tag}_{\Gamma}(N))}{\tau}
+                &, $A = (MN), \Gamma \vdash A : \tau$ \\
+            \ttt{\lambda v \abstr M}{\sigma \tot \tau}
+                &, $A = (\lambda v: \sigma \abstr M)
+                 , (\Gamma \circ v : \sigma) \vdash M : \tau $\\
+            \ttt{M}{\tau} &, $A = \tau[M]$ \\
+        \end{cases*}
+    \]
+\end{defn}
+
 \fixme{define type-tagged terms here}
 \fixme{incomplete}
 \begin{equation}

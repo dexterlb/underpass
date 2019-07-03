@@ -64,12 +64,13 @@ Let $\lvars = \{ \alpha', \alpha'', \alpha''' ... \}$ be a countable set of symb
 we call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
 set of symbols we call \emph{constants}.
 
+We can now define the set of
+\emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
+
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
-    We can define the set of
-    \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
-
+    $\Lambda_T^C$ is defined inductively:
     \begin{itemize}
         \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
         \item Variable:    \[ v \in \lvars \implies v \in \Lambda_T^C \]
