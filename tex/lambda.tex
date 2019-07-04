@@ -109,6 +109,7 @@ For a of type semilattice $T$, we can define the set of
 \end{defn}
 
 \begin{defn}
+    \label{def:subtypederiv}
     Derivation rules for $\lambda$-calculus with subtypes:
 
     \begin{itemize}
@@ -181,25 +182,115 @@ however, involves discarding information.
 }
 
 \begin{defn}
-    $\omega: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if
-    for each $\tau$, $\omega(\tau)$ is a minimal element in $S$ such that
-    $\tau \less \omega(\tau)$.
+    $\squash: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if
+    for each $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
+    $\tau \less \squash(\tau)$.
 \end{defn}
 
+\begin{property}
+    \label{prop:squash:preserve}
+    Squash functions preserve the subtyping relation:
+    \[ \forall \sigma, \tau \in \tclos{T} (\sigma \less \tau \implies
+        \tsquash(\sigma) \less \tsquash(\tau) \]
+\end{property}
+\begin{proof}
+    \fixme{need proof. is it really true with contravariance?}
+\end{proof}
+
+We can now naturally extend squash functions to work over $\lambda$-terms
+and contexts:
 \begin{defn}
-    If $\omega: T \rightarrow S$ is a squash function for $T \less S$, we can define
-    $\omega_{\lambda}: \fancylambda{T}{C} \rightarrow \fancylambda{S}{C}$ inductively:
-    \fixme{fill this}
+    If $\squash: T \rightarrow S$ is a squash function for $T \less S$ and
+    $C$ is typed in $S$,
+    $\lsquash: \fancylambda{T}{C} \rightarrow \fancylambda{S}{C}$
+    is defined inductively:
+    
+    \[
+        \lsquash(A) =
+        \begin{cases*}
+            c &, $A = c \in C$ \\
+            v &, $A = v \in \lvars$ \\
+            \lsquash(M) \lsquash(N) &, $A = (MN)$ \\
+            \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
+                &, $A = \lambda x : \sigma \abstr M$ \\
+                \tsquash(\sigma)[M] &, $A = \sigma[M]$ \\
+        \end{cases*}
+    \]
+
+    Also,
+    $\consquash$ which operates on contexts
+    is defined as follows:
+    
+    \[ 
+        \consquash(\Gamma)
+            = \{ x : \tsquash(\sigma) \mid (x : \sigma) \in \Gamma \}
+    \]
 \end{defn}
 
-From here on $\omega$ will be used freely in place of $\omega_{\lambda}$.
+From here on $\squash$ will may used freely in place of $\lsquash$
+and $\consquash$.
 
 \begin{prop}
-    For a squash function $\omega: T \rightarrow S$, $\omega_{\lambda}$ is
+    For a squash function $\squash: T \rightarrow S$, $\lsquash$ is
     well-defined, namely
-    \[ \Gamma \vdash M : \sigma \iff \omega(\Gamma) \vdash \omega(M) : \omega(\sigma) \]
+    \[ \Gamma \vdash A : \sigma \implies 
+        \consquash(\Gamma) \vdash \lsquash(A) : \tsquash(\sigma) \]
 \end{prop}
-\fixme{need proof}
+\begin{proof}
+    Let $\Gamma \vdash A : \sigma$. We will now prove the right-hand side
+    by induction over the construction of $A$:
+    \begin{itemize}
+        \item $A = c \in C$. This means that $typeof(c) = \sigma$ and thus
+            $\sigma \in \tclos{S}$ because $C$ is typed in S: therefore
+            $\tsquash(\sigma) = \sigma$. Also, we have that $\lsquash(c) = c$,
+            and so \[ \Gamma \vdash c : \sigma \implies
+                \consquash(\Gamma) \vdash c : \sigma \implies
+                \consquash(\Gamma) \vdash \lsquash(c) : \tsquash(\sigma) \]
+            
+        \item $A = v \in \lvars$. We have that $(v : \sigma) \in \Gamma$, thus
+            $(v : \tsquash(\sigma)) \in \consquash(\Gamma)$. But $\lsquash(v) = v$,
+            so $\consquash(\Gamma) \vdash \lsquash(v) : \tsquash(\sigma)$.
+            
+        \item $A = (MN)$, where $\Gamma \vdash M : (\eta' \tot \sigma)$
+            and $\Gamma \vdash N : \eta$ where $\eta \less \eta'$. 
+            
+            Inductively, we know that
+            \begin{equation}
+                \consquash(\Gamma) \vdash \lsquash(M) : (\tsquash(\eta')
+                    \tot \tsquash(\sigma))
+            \end{equation}
+            \begin{equation}
+                \consquash(\Gamma) \vdash \lsquash(N) : \tsquash(\eta)
+            \end{equation}
+            
+            And by \cref{prop:squash:preserve} we have that $\tsquash(\eta)
+                \less \tsquash(\eta')$.
+            
+            Finally, by the application rule of \cref{def:subtypederiv},
+            we have that $\consquash(\Gamma) \vdash (\lsquash(M) \lsquash(N))
+            : \tsquash(\sigma) $
+        
+        \item $A = (\lambda x : \tau \abstr M)$, where $\Gamma' = \Gamma \circ
+            (x : \tau) \vdash M : \eta$ and $\sigma = \tau \tot \eta$.
+            
+            Inductively, we have that $\consquash(\Gamma') \vdash \lsquash(M) : \tsquash(\eta)$.
+            However, $\consquash(\Gamma') = \consquash(\Gamma) \circ (x : \tsquash(\tau))$,
+            therefore \[ \consquash(\Gamma) \vdash (\lambda x : \tsquash(\eta) 
+                \abstr \lsquash(M)) : \tsquash(\tau) \tot \tsquash(\eta) = \tsquash(\sigma) \]
+        
+        \item $A = \sigma[M]$, where $\Gamma \vdash M : \tau$.
+            
+            Inductively, we have $\consquash(\Gamma) \vdash \lsquash(M) : \tsquash(\tau)$.
+            
+            Since either $\sigma \less \tau$ (upcast) or $\tau \less \sigma$
+            (downcast), by \cref{prop:squash:preserve} we have that either 
+            $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
+            
+            Thus, \[
+                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
+            \]
+    \end{itemize}
+\end{proof}
 
 \subsubsection{Subtype libraries}
 \begin{defn}
@@ -357,7 +448,7 @@ with their respective clones. One way to deal with contravariance is
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
     then $T' \less T$. Even more, there is a unique squash function
-    $\omega_{\Theta} : T' \rightarrow T$.
+    $\squash_{\Theta} : T' \rightarrow T$.
 \end{prop}
 \fixme{need proof!}
 
