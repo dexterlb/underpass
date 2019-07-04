@@ -248,6 +248,13 @@
     urlcolor=linkness
 }
 
+\newcommand\printtoc{
+    {
+        \hypersetup{linkcolor=black}
+        \tableofcontents
+    }
+}
+
 \usepackage{tabularx}
 
 
@@ -315,10 +322,5 @@
 \date{2019}
 
 \begin{document}
-\maketitle
-\thispagestyle{empty}
-\tableofcontents
-\pagebreak
-
 \input{./scaffold.tex}
 \end{document}
