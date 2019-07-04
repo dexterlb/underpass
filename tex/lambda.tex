@@ -362,7 +362,7 @@ with their respective clones. One way to deal with contravariance is
 \fixme{need proof!}
 
 
-\subsubsection{Type propagation}
+\subsubsection{Type-tagged terms and type propagation}
 \label{sec:propagation}
 For the sake of performing optimisations, it is convenient to store extra
 information within types. For example, we can extend our $Num$ type to include
@@ -411,6 +411,7 @@ valid but inadequately typed terms. In implementations,
 encountering an "undefined" case in any of them is treated as a type error.
 
 \begin{defn}
+    \label{def:ttag}
     For a context $\Gamma$,
     $\mcf{tag}_{\Gamma} : \fancylambda{T}{C} \pfun \ttlambda{T}{C}$
     is defined inductively:

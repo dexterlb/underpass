@@ -1,6 +1,11 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \subsection{AST Transformations}
+Minipass terms are subjected to several transformations before emitting
+an Overpass query. Since type information is used almost everywhere,
+the term is first converted into a type-tagged term (see \cref{def:ttag})
+and all transformations (including translation to Overpass) are applied
+afterwards.
 
 \subsubsection{Type inference}
 \label{sec:typeinf}
@@ -12,7 +17,7 @@ equivalent to all types (i.e. $\forall \sigma \in T: (\text{\code{*}} \less \sig
 Thus, all significant\footnote{
     Since we only work with closed terms, the only case when a type can't be
     inferred is when a bound variable is unused (for example in terms like
-    \code{(\\x, y => y) 42}, where the type of \code{x} cannot be inferred).
+    \code{(\textbackslash x, y => y) 42}, where the type of \code{x} cannot be inferred).
     This, however, is harmless, because the type is unneeded anyway.
 } occurances of $\code{*}$ are removed by finding the fixed point of
 $\mcf{propagate}$ from \cref{def:propagation}
@@ -35,11 +40,6 @@ a type error is produced.
 Since this unifier can only change a subtype from \code{*} to something else,
 and there are a finite number of subtypes within a term, this algorithm
 always terminates.
-
-\begin{enumerate}
-    \item Tag every subterm with its current type
-    \item For every subterm, bla
-\end{enumerate}
 
 \subsubsection{Minipass query optimisation}
 \fixme{write this}
