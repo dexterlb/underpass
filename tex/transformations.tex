@@ -14,9 +14,9 @@ Thus, all significant\footnote{
     inferred is when a bound variable is unused (for example in terms like
     \code{(\\x, y => y) 42}, where the type of \code{x} cannot be inferred).
     This, however, is harmless, because the type is unneeded anyway.
-} occurances of $\code{*}$ are removed by performing the fixed point
-function from
-\cref{sec:propagation} with the following unifier:
+} occurances of $\code{*}$ are removed by finding the fixed point of
+$\mcf{propagate}$ from \cref{def:propagation}
+with the following unifier:
 \[
     \sigma \unify \tau =
     \begin{cases*}
@@ -28,10 +28,13 @@ function from
         \lnot !& , $\mathsf{otherwise}$ \\
     \end{cases*}
 \]
+
 Whenever the algorithm encounters a case where the unifier is not defined,
 a type error is produced.
 
-\fixme{sync this with \cref{sec:propagation}. Also, motivate correctness.}
+Since this unifier can only change a subtype from \code{*} to something else,
+and there are a finite number of subtypes within a term, this algorithm
+always terminates.
 
 \begin{enumerate}
     \item Tag every subterm with its current type

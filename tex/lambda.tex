@@ -405,9 +405,14 @@ they can be easily extracted from the types of the respective abstraction terms.
 Converting regular $\lambda$-terms into type-tagged $\lambda$-terms is
 relatively straightforward: simply examine the type of every subterm according
 to its local context and then store it into the tag.
+
+Note that all functions that follow are partial since they are not defined for
+valid but inadequately typed terms. In implementations,
+encountering an "undefined" case in any of them is treated as a type error.
+
 \begin{defn}
     For a context $\Gamma$,
-    $\mcf{tag}_{\Gamma} : \fancylambda{T}{C} \rightarrow \ttlambda{T}{C}$
+    $\mcf{tag}_{\Gamma} : \fancylambda{T}{C} \pfun \ttlambda{T}{C}$
     is defined inductively:
     \[
         \mcf{tag}_{\Gamma}(A) =
@@ -429,9 +434,9 @@ Since the type tags of (sub)terms may not match their inferred type,
 we need a wrapping function that inserts casts when needed.
 \begin{defn}
     For a context $\Gamma$,
-    $\mcf{untag}_{\Gamma} : \ttlambda{T}{C} \rightarrow \fancylambda{T}{C}$
+    $\mcf{untag}_{\Gamma} : \ttlambda{T}{C} \pfun \fancylambda{T}{C}$
     and
-    $\mcf{untag'}_{\Gamma} : \ttlambda{T}{C} \rightarrow \fancylambda{T}{C}$
+    $\mcf{untag'}_{\Gamma} : \ttlambda{T}{C} \pfun \fancylambda{T}{C}$
     are defined inductively:
     \[
         \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
@@ -458,8 +463,23 @@ we need a wrapping function that inserts casts when needed.
 Now that we have the construction for attaching types to subterms, we can
 describe a universal way to propagate information through those types.
 
-We will use a basic operation $\unify : \tclos{T} \times \tclos{T} \rightarrow \tclos{T}$
-which unifies two types.
+We will use a basic operation $\unify$ which unifies two types.
+
+\begin{defn}
+An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
+called an \emph{unifier} for $T$ if:
+\begin{itemize}
+    \item it is only defined for types with identical syntactic structure and
+        preserves it
+    \item it is symmetric\footnote{
+            Everything in this section may also be done for asymmetric unifiers.
+            Since the need for them hasn't yet arisen, symmetricity has been
+            assumed for simplicity.
+        }
+    \item it is idempotent
+\end{itemize}
+\end{defn}
+
 
 It can also be extended for contexts in the following way:
 \[
@@ -473,13 +493,17 @@ It can also be extended for contexts in the following way:
     \end{split}
 \]
 
-\fixme{incomplete}
-
 Now, type propagation will be done in two steps: upward (propagating
 information up the term tree and into the context) and downward (propagating
 information down the term tree towards the leaves).
 
 \begin{defn}
+    \label{def:propagation}
+    For a set of type symbols $T$ and a unifier for $T$ $\unify$, the functions
+    $\mcf{up}$ which maps a type-tagged term into a new type-tagged term and
+    an inferred context for its free variables, and $\mcf{down}$ which maps
+    a type-tagged term, a desired type and a free variable context into a
+    new type-tagged term, are defined inductively as follows:
     \[
         \mcf{up}(\ttt{A}{\tau}) =
         \begin{cases*}
@@ -507,18 +531,22 @@ information down the term tree towards the leaves).
             \ttt{c}{\tau \unify \tau'} &, $A = c \in C$ \\
             \ttt{v}{\tau \unify \tau' \unify \tau''}
                 &, $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
-            \ttt{\lambda x \abstr P'}{\eta'' \tot \sigma''}
-                &, $A = \ttt{P}{\sigma}, P' = \mcf{down}(P, \sigma'', \Gamma \circ (x : \eta'')),$ \\
-                \phantom{} &\phantom{, }$\tau = (\eta \tot \sigma),
-                \tau' = (\eta' \tot \sigma'),$ \\
-                \phantom{} &\phantom{, }$\sigma'' = (\sigma \unify \sigma'),
-                \eta'' = (\eta \unify \eta')$ \\
+            \ttt{\lambda x \abstr P'}{\tau''}
+                &, $A = (\lambda x \abstr P), \tau'' = \tau \unify \tau'$ \\
+                \phantom{} &\phantom{, } $\tau'' = (\sigma \tot \eta), P' = \mcf{down}(P, \eta, \Gamma \circ (x : \sigma)),$ \\
             \ttt{P' Q'}{\tau''}
                 &, $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
                 \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
                 \phantom{} &\phantom{, }$P' = \mcf{down}(P, (\sigma' \tot \tau''), \Gamma),
                 Q' = \mcf{down}(Q, \sigma'', \Gamma)$ \\
         \end{cases*}
+    \]
+    
+    For convenience, the function $\mcf{propagate}$ is defined as the combination
+    of $\mcf{up}$ and $\mcf{down}$:
+    \[
+        \mcf{propagate}(P) = \mcf{down}(\ttt{M}{\tau}, \tau, \Gamma)
+        \text{ , where } \mcf{up}(P) = (\ttt{M}{\tau}, \Gamma)
     \]
 \end{defn}
 \end{document}
