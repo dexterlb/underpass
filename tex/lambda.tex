@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\subsection{Simply typed $\lambda$-calculus: the sequel}
+\subsection{Simply typed $\lambda$-calculus with subtyping}
 \label{sec:lambda}
 
 In order to be able to represent the notion of generic and specific concepts,
@@ -151,16 +151,31 @@ For a of type semilattice $T$, we can define the set of
 \end{defn}
 
 \subsubsection{Type set subsumption}
+We will now formalise the notion of a type semilattice being more general
+or more concrete than another type semilattice.
+
 \begin{defn}
-    If $T$ and $S$ are type semilattices, we say that $T \less S$ if:
+    If $\langle T, \less' \rangle$ and $\langle S, \less \rangle$
+    are type semilattices, we say that $\langle T, \less' \rangle \less \langle S, \less \rangle$ if:
     \begin{itemize}
         \item $S \subseteq T$
+        \item $\less \subseteq \less'$ and $\restr{\less'}{S \times S} = \less$
         \item $\forall \tau \in T \exists \sigma \in S ( \tau \less \sigma )$
     \end{itemize}
-
-    Essentially, this says that $T$ is a specialisation of $S$: any type in
-    $T$ is a more concrete variant of some type in $S$.
 \end{defn}
+
+\greenbox{
+    Note: from here on,
+    $\langle T, \less' \rangle \less \langle S, \less \rangle$
+    will be written as ``$T \less S$'' and $\less$ will be used in the place
+    of $\less'$ freely.
+    
+    This is unambigous because $\less'$ acts the same way as $\less$ on $S$,
+    so we can assume to use $\less'$ in both cases.
+}
+
+Essentially, this says that $T$ is a specialisation of $S$: any type in
+$T$ is a more concrete variant of some type in $S$.
 
 If we have $T \less S$, it would be convenient to be able to convert between them.
 The conversion from $S$ to $T$ is trivial. The conversion from $T$ to $S$,
@@ -441,7 +456,25 @@ with their respective clones. One way to deal with contravariance is
                    \cup \{ (\sigma', \tau') \in T' \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
         \item $\varphi' = \varphi \cup \{ \rho \}$
     \end{itemize}
+    
+    Note: in the cases where $\varphi$ is irrelevant, it will be omitted as
+    so:
+    \[ \langle T, \less \rangle
+        \tadd (\sigma \lass \tau)
+        \defeq
+        \langle T', \less' \rangle
+    \]
 \end{defn}
+
+\begin{property}
+    Objects constructed by $\tadd$ are correct type semilattices.
+\end{property}
+\begin{proof}
+    We extend $\less$ only by adding single edges (and their transitive and
+    reflective closure) to new vertices, which creates a "tree-like" extension.
+    There is no way to introduce a double join or meet, since this would
+    require adding more than one edge to a new vertex.
+\end{proof}
 
 \begin{defn}
     A finite sequence of subtype assertions
@@ -471,14 +504,72 @@ with their respective clones. One way to deal with contravariance is
 \end{prop}
 \fixme{need proof}
 
+\begin{lemma}
+    \label{lemma:subadd}
+    If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
+    is a subtype assertion satisfying the conditions from \cref{def:subadd}
+    and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
+    \[ T' \less' T \]
+    Moreover, there is a unique squash function $\squash_{\theta} : T' \rightarrow T$.
+\end{lemma}
+\fixme{need proof}
+
 \begin{prop}
-    If $T$ is a type semilattice and
+    If $\langle T, \less \rangle$ is a type semilattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
-    then $T' \less T$. Even more, there is a unique squash function
+    then $T' \less' T$. Even more, there is a unique squash function
     $\squash_{\Theta} : T' \rightarrow T$.
 \end{prop}
-\fixme{need proof!}
+\begin{proof}
+    Let \[
+        \langle T_i, \less_i \rangle = \langle T, \less \rangle
+        \tadd \theta_1 \tadd \theta_2 \tadd ... \tadd \theta_i
+    \]
+    This property shall be proven by induction over the iterative process
+    which constructs $T' = T_n$, while also building a squash function
+    $\squash_i$ for each iteration:
+    \begin{itemize}
+        \item for $T_0$, we trivially know that $T \less T$ with an identity
+            squash function $\squash_0(\sigma) = \sigma$.
+        \item for $T_{i + 1}$, inductively we have that $T_i \less_i T$.
+            Because $\less_{i + 1}$ is an extension of $\less$, it is also true
+            that $T_i \less_{i + 1} T$.
+            
+            Also, by \cref{lemma:subadd} we know that $T_{i + 1} \less_{i + 1} T_i$.
+            Now, by the transitivity\footnote{Which can be trivially
+            proven} of $\less$, we have that $T_{i + 1} \less T$.
+        
+            Moreover, since there is inductively a squash function
+            $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd})
+            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \rightarrow T$.
+            
+            So, we define 
+            $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
+            
+            Now, we need to prove the squash-function and uniqueness
+            properties of $\squash_{i + 1}$:
+            \begin{enumerate}
+                \item For each $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
+                    minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
+                   
+                    Fix an arbitrary $\tau$ and let 
+                    $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
+                    $\tau'' = \squash_{i + 1}(\tau')$.
+                    
+                    This property is inductively true for elements within $T_i$.
+                    Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then 
+                    $\tau'$ is a unique minimal element in
+                    $T_i$ such that $\tau \less \tau'$. Since there are no other
+                    minimal elements in $T_i$ which satisfy this condition,
+                    we have that $\tau''$ also satisfies this condition for
+                    $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
+                    $T$ go through $\tau'$).
+                \item It preserves $\less$ - this is true because $\squash_{i + 1}$
+                    is a composition of two functions which preserve $\less$
+            \end{enumerate}
+    \end{itemize}
+\end{proof}
 
 
 \subsubsection{Type-tagged terms and type propagation}
