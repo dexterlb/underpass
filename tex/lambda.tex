@@ -182,21 +182,47 @@ however, involves discarding information.
 }
 
 \begin{defn}
-    $\squash: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if
-    for each $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
-    $\tau \less \squash(\tau)$.
+    $\squash: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if:
+    \begin{itemize}
+        \item for each $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
+            $\tau \less \squash(\tau)$.
+        \item it preserves the subtyping relation:
+            \[ \forall \sigma, \tau \in T (\sigma \less \tau \implies
+                \squash(\sigma) \less \squash(\tau)) \]
+    \end{itemize}
 \end{defn}
 
 \begin{property}
     \label{prop:squash:preserve}
-    Squash functions preserve the subtyping relation:
+    Squash functions preserve the subtyping relation for complex types:
     \[ \forall \sigma, \tau \in \tclos{T} (\sigma \less \tau \implies
-        \tsquash(\sigma) \less \tsquash(\tau) \]
+        \tsquash(\sigma) \less \tsquash(\tau)) \]
 \end{property}
 \begin{proof}
-    This is proven by induction over the construction of $\sigma$
+    First, assume $\sigma \less \tau$.
+    
+    The property is proven by induction over the construction of $\sigma$
     and $\tau$.
-    \fixme{need proof finishing. is it really true with contravariance?}
+    
+    \begin{itemize}
+        \item $\sigma \in T, \tau \in T$: this is true by definition.
+        \item $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$:
+            since $\sigma \less \tau$, we have that $\tau' \less \sigma'$
+            and $\sigma'' \less \tau''$.
+            
+            Therefore, inductively, $\tsquash(\tau') \less \tsquash(\sigma')$
+            and $\tsquash(\sigma'') \less \tsquash(\tau'')$. Thus,
+            \[
+                \tsquash(\sigma) = (\tsquash(\sigma') \tot \tsquash(\sigma''))
+                \less
+                (\tsquash(\tau') \tot \tsquash(\tau'')) = \tsquash(\tau)
+            \]
+        \item in other cases, $\sigma$ and $\tau$ have different syntactic
+            structure and $\less$ is not defined. Since $\tsquash$ preserves
+            syntactic structure, $\tsquash(\sigma)$ and $\tsquash(\tau)$
+            will also have different syntactic structure, thus $\less$ will
+            be undefined for them as well.
+    \end{itemize}
 \end{proof}
 
 We can now naturally extend squash functions to work over $\lambda$-terms
