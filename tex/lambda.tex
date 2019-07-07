@@ -156,28 +156,24 @@ or more concrete than another type semilattice.
 
 \begin{defn}
     If $\langle T, \less' \rangle$ and $\langle S, \less \rangle$
-    are type semilattices, we say that $\langle T, \less' \rangle \less \langle S, \less \rangle$ if:
+    are type semilattices, we say that $\langle T, \less' \rangle \tless \langle S, \less \rangle$ if:
     \begin{itemize}
         \item $S \subseteq T$
         \item $\less \subseteq \less'$ and $\restr{\less'}{S \times S} = \less$
-        \item $\forall \tau \in T \exists \sigma \in S ( \tau \less \sigma )$
+        \item $\forall \tau \in (T \setminus S) ((\exists \sigma \in S : \tau \less \sigma )
+            \xor (\exists \sigma \in S : \sigma \less \tau)$
     \end{itemize}
 \end{defn}
 
-\greenbox{
-    Note: from here on,
-    $\langle T, \less' \rangle \less \langle S, \less \rangle$
-    will be written as ``$T \less S$'' and $\less$ will be used in the place
-    of $\less'$ freely.
-    
-    This is unambigous because $\less'$ acts the same way as $\less$ on $S$,
-    so we can assume to use $\less'$ in both cases.
-}
-
 Essentially, this says that $T$ is a specialisation of $S$: any type in
-$T$ is a more concrete variant of some type in $S$.
+$T$ is either a more concrete variant or a more general variant of some type in $S$.
 
-If we have $T \less S$, it would be convenient to be able to convert between them.
+If $\tau$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
+say that $\tau$ is \emph{special}. Dually, if $\tau$ is such that
+$(\exists \sigma \in S : \tau \less \sigma)$, we will say that $\tau$ is
+\emph{general}.
+
+If we have $T \tless S$, it would be convenient to be able to convert between them.
 The conversion from $S$ to $T$ is trivial. The conversion from $T$ to $S$,
 however, involves discarding information.
 
@@ -197,12 +193,16 @@ however, involves discarding information.
 }
 
 \begin{defn}
-    $\squash: T \rightarrow S$ is a \emph{squash function} for $T \less S$, if:
+    $\squash: T \rightarrow S$ is a \emph{squash function} for
+    $\langle T, \less \rangle \tless \langle S, \less' \rangle$, if:
     \begin{itemize}
-        \item for each $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
-            $\tau \less \squash(\tau)$.
+        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
+            $\tau \less' \squash(\tau)$.
+        \item for each general $\tau$, $\squash(\tau)$ is a maximal element in $S$ such that
+            $\squash(\tau) \less' \tau$.
+        \item for each $\tau \in S$, $\squash(\tau) = \tau$
         \item it preserves the subtyping relation:
-            \[ \forall \sigma, \tau \in T (\sigma \less \tau \implies
+            \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
                 \squash(\sigma) \less \squash(\tau)) \]
     \end{itemize}
 \end{defn}
@@ -215,16 +215,16 @@ however, involves discarding information.
 \end{property}
 \begin{proof}
     First, assume $\sigma \less \tau$.
-    
+
     The property is proven by induction over the construction of $\sigma$
     and $\tau$.
-    
+
     \begin{itemize}
         \item $\sigma \in T, \tau \in T$: this is true by definition.
         \item $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$:
             since $\sigma \less \tau$, we have that $\tau' \less \sigma'$
             and $\sigma'' \less \tau''$.
-            
+
             Therefore, inductively, $\tsquash(\tau') \less \tsquash(\sigma')$
             and $\tsquash(\sigma'') \less \tsquash(\tau'')$. Thus,
             \[
@@ -243,11 +243,11 @@ however, involves discarding information.
 We can now naturally extend squash functions to work over $\lambda$-terms
 and contexts:
 \begin{defn}
-    If $\squash: T \rightarrow S$ is a squash function for $T \less S$ and
+    If $\squash: T \rightarrow S$ is a squash function for $T \tless S$ and
     $C$ is typed in $S$,
     $\lsquash: \fancylambda{T}{C} \rightarrow \fancylambda{S}{C}$
     is defined inductively:
-    
+
     \[
         \lsquash(A) =
         \begin{cases*}
@@ -263,8 +263,8 @@ and contexts:
     Also,
     $\consquash$ which operates on contexts
     is defined as follows:
-    
-    \[ 
+
+    \[
         \consquash(\Gamma)
             = \{ x : \tsquash(\sigma) \mid (x : \sigma) \in \Gamma \}
     \]
@@ -276,7 +276,7 @@ and $\consquash$.
 \begin{prop}
     For a squash function $\squash: T \rightarrow S$, $\lsquash$ is
     well-defined, namely
-    \[ \Gamma \vdash A : \sigma \implies 
+    \[ \Gamma \vdash A : \sigma \implies
         \consquash(\Gamma) \vdash \lsquash(A) : \tsquash(\sigma) \]
 \end{prop}
 \begin{proof}
@@ -289,14 +289,14 @@ and $\consquash$.
             and so \[ \Gamma \vdash c : \sigma \implies
                 \consquash(\Gamma) \vdash c : \sigma \implies
                 \consquash(\Gamma) \vdash \lsquash(c) : \tsquash(\sigma) \]
-            
+
         \item $A = v \in \lvars$. We have that $(v : \sigma) \in \Gamma$, thus
             $(v : \tsquash(\sigma)) \in \consquash(\Gamma)$. But $\lsquash(v) = v$,
             so $\consquash(\Gamma) \vdash \lsquash(v) : \tsquash(\sigma)$.
-            
+
         \item $A = (MN)$, where $\Gamma \vdash M : (\eta' \tot \sigma)$
-            and $\Gamma \vdash N : \eta$ where $\eta \less \eta'$. 
-            
+            and $\Gamma \vdash N : \eta$ where $\eta \less \eta'$.
+
             Inductively, we know that
             \begin{equation}
                 \consquash(\Gamma) \vdash \lsquash(M) : (\tsquash(\eta')
@@ -305,30 +305,30 @@ and $\consquash$.
             \begin{equation}
                 \consquash(\Gamma) \vdash \lsquash(N) : \tsquash(\eta)
             \end{equation}
-            
+
             And by \cref{prop:squash:preserve} we have that $\tsquash(\eta)
                 \less \tsquash(\eta')$.
-            
+
             Finally, by the application rule of \cref{def:subtypederiv},
             we have that $\consquash(\Gamma) \vdash (\lsquash(M) \lsquash(N))
             : \tsquash(\sigma) $
-        
+
         \item $A = (\lambda x : \tau \abstr M)$, where $\Gamma' = \Gamma \circ
             (x : \tau) \vdash M : \eta$ and $\sigma = \tau \tot \eta$.
-            
+
             Inductively, we have that $\consquash(\Gamma') \vdash \lsquash(M) : \tsquash(\eta)$.
             However, $\consquash(\Gamma') = \consquash(\Gamma) \circ (x : \tsquash(\tau))$,
-            therefore \[ \consquash(\Gamma) \vdash (\lambda x : \tsquash(\eta) 
+            therefore \[ \consquash(\Gamma) \vdash (\lambda x : \tsquash(\eta)
                 \abstr \lsquash(M)) : \tsquash(\tau) \tot \tsquash(\eta) = \tsquash(\sigma) \]
-        
+
         \item $A = \sigma[M]$, where $\Gamma \vdash M : \tau$.
-            
+
             Inductively, we have $\consquash(\Gamma) \vdash \lsquash(M) : \tsquash(\tau)$.
-            
+
             Since either $\sigma \less \tau$ (upcast) or $\tau \less \sigma$
-            (downcast), by \cref{prop:squash:preserve} we have that either 
+            (downcast), by \cref{prop:squash:preserve} we have that either
             $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
-            
+
             Thus, \[
                 \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
             \]
@@ -452,11 +452,11 @@ with their respective clones. One way to deal with contravariance is
         \item $\rho = \clonesub(\tau)$
         \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap \ts{\rho})$
         \item $\less'$ is the transitive and reflexive closure of
-            $\less \cup \{ (\sigma', \tau') \in T' \times T' \mid \subtyper{\xi}(\tau') = \sigma' \}
-                   \cup \{ (\sigma', \tau') \in T' \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
+            $\less \cup \{ (\sigma', \tau') \in T' \times T \mid \subtyper{\xi}(\tau') = \sigma' \}
+                   \cup \{ (\sigma', \tau') \in T \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
         \item $\varphi' = \varphi \cup \{ \rho \}$
     \end{itemize}
-    
+
     Note: in the cases where $\varphi$ is irrelevant, it will be omitted as
     so:
     \[ \langle T, \less \rangle
@@ -509,16 +509,127 @@ with their respective clones. One way to deal with contravariance is
     If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
-    \[ T' \less' T \]
+    \[ T' \tless T \]
     Moreover, there is a unique squash function $\squash_{\theta} : T' \rightarrow T$.
 \end{lemma}
-\fixme{need proof}
+\begin{proof}
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+    Now, check the conditions for $T' \tless T$:
+    \begin{itemize}
+        \item $T \subseteq T'$:
+
+            this is true by definition (
+            $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap \ts{\rho})$
+            ) where $range(\subtyper{\xi})$ and $range(\suptyper{\xi})$ contain
+            only fresh symbols (not in $T$).
+
+        \item $\less \subseteq \less'$:
+
+            $\less'$ contains $\less$ by definition.
+
+        \item $\restr{\less'}{S \times S} = \less$:
+
+            we only add edges to $\less$ that point to symbols which are not
+            in $T$. Moreover, the transitive and reflexive closures don't
+            affect this condition because $\less$ is already transitive and
+            reflexive.
+
+        \item $\forall \tau \in (T' \setminus T) ((\exists \sigma \in T : \tau \less' \sigma )
+            \xor (\exists \sigma \in T : \sigma \less' \tau)$:
+
+            Fix an arbitrary $\tau \in (T' \setminus T)$.
+
+            Since $T' \setminus T$ is comprised of elements from the ranges
+            of $\subtyper{\xi}$ and $\suptyper{\xi}$, there are two options
+            for $\tau$:
+            \begin{itemize}
+                \item $\tau \in range(\subtyper{\xi})$: this means that
+                    $\subtyper{\xi}(\sigma) = \tau$ for some $\sigma \in T$, but that
+                    also means that we've set $\tau \less' \sigma$.
+                \item $\tau \in range(\suptyper{\xi})$: this means that
+                    $\suptyper{\xi}(\sigma) = \tau$ for some $\sigma \in T$, but that
+                    also means that we've set $\sigma \less' \tau$.
+            \end{itemize}
+
+            The exclusive "or" is satisfied because
+            $range(\subtyper{\xi}) \cap range(\suptyper{\xi}) = \varnothing$.
+    \end{itemize}
+
+    Now, define the squash function $\squash_{\theta}$ as:
+    \[
+        \squash_{\theta}(\tau) \defeq
+        \begin{cases*}
+            \tau &, $\tau \in T$ \\
+            \sigma &, $\tau = \subtyper{\xi}(\sigma)$ \\
+            \sigma &, $\tau = \subtyper{\xi}(\sigma)$ \\
+        \end{cases*}
+    \]
+
+    This is a correctly defined function because $\subtyper{\xi}$ and
+    $\suptyper{\xi}$ are injections.
+
+    The only thing left is to check the conditions for $\squash_{\theta}$
+    being a squash function for $T' \tless T$:
+
+    \begin{itemize}
+        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $T$ such that
+            $\tau \less' \squash(\tau)$:
+
+            Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
+            $\tau \less' \sigma$ for some $\sigma \in T$.
+
+            The only possibility is that $\subtyper{\sigma} = \tau$ and
+            $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
+            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.
+        \item the argument for general elements is dual to the one
+            for special elements.
+
+        \item for each $\tau \in T$, $\squash_{\theta}(\tau) = \tau$:
+
+            This is true by the definition of $\squash_{\theta}$.
+
+        \item it preserves the subtyping relation:
+            \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
+                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
+
+            Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
+            There are ? possibilities:
+            \begin{itemize}
+                \item $\sigma \in T, \tau \in T$:
+
+                    $\squash_{\theta}(\sigma) = \sigma \less \tau = \squash_{\theta}(\tau)$.
+                \item $\sigma \in T, \tau \in (T' \setminus T)$:
+
+                    This means that $\squash_{\theta}(\sigma) = \sigma$
+                    and $\squash_{\theta}(\tau) = \sigma$. Since $\less$ is
+                    reflexive, $\sigma \less \sigma$.
+                \item $\sigma \in (T' \setminus T), \tau \in T$:
+
+                    This means that $\squash_{\theta}(\tau) = \tau$
+                    and $\squash_{\theta}(\sigma) = \tau$. Since $\less$ is
+                    reflexive, $\tau \less \tau$.
+                \item $\sigma \in (T' \setminus T), \tau \in (T' \setminus T)$:
+
+                    Let $\sigma' = \squash_{\theta}(\sigma)$
+                    and $\tau' = \squash_{\theta}(\tau)$.
+
+                    Since an edge ``$\sigma \less' \tau$''
+                    wasn't explicitly added to $\less'$, this means that they
+                    are in relation because of transitivity.
+
+                    Since $\sigma'$ is the only element in $T$ such that
+                    $\sigma \less' \sigma'$ and $\tau'$ is the only element in $T$
+                    such that $\tau' \less' \tau$, we must have
+                    $\sigma \less' \sigma' \less \tau' \less \tau$.
+            \end{itemize}
+    \end{itemize}
+\end{proof}
 
 \begin{prop}
     If $\langle T, \less \rangle$ is a type semilattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
-    then $T' \less' T$. Even more, there is a unique squash function
+    then $T' \tless T$. Even more, there is a unique squash function
     $\squash_{\Theta} : T' \rightarrow T$.
 \end{prop}
 \begin{proof}
@@ -530,41 +641,45 @@ with their respective clones. One way to deal with contravariance is
     which constructs $T' = T_n$, while also building a squash function
     $\squash_i$ for each iteration:
     \begin{itemize}
-        \item for $T_0$, we trivially know that $T \less T$ with an identity
+        \item for $T_0$, we trivially know that $T \tless T$ with an identity
             squash function $\squash_0(\sigma) = \sigma$.
         \item for $T_{i + 1}$, inductively we have that $T_i \less_i T$.
             Because $\less_{i + 1}$ is an extension of $\less$, it is also true
             that $T_i \less_{i + 1} T$.
-            
+
             Also, by \cref{lemma:subadd} we know that $T_{i + 1} \less_{i + 1} T_i$.
             Now, by the transitivity\footnote{Which can be trivially
             proven} of $\less$, we have that $T_{i + 1} \less T$.
-        
+
             Moreover, since there is inductively a squash function
             $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd})
             a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \rightarrow T$.
-            
-            So, we define 
+
+            So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
-            
+
             Now, we need to prove the squash-function and uniqueness
             properties of $\squash_{i + 1}$:
             \begin{enumerate}
-                \item For each $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
+                \item For each special
+                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
                     minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
-                   
-                    Fix an arbitrary $\tau$ and let 
+
+                    Fix an arbitrary special $\tau$ and let
                     $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
                     $\tau'' = \squash_{i + 1}(\tau')$.
-                    
+
                     This property is inductively true for elements within $T_i$.
-                    Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then 
+                    Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
                     $\tau'$ is a unique minimal element in
                     $T_i$ such that $\tau \less \tau'$. Since there are no other
                     minimal elements in $T_i$ which satisfy this condition,
                     we have that $\tau''$ also satisfies this condition for
                     $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
                     $T$ go through $\tau'$).
+
+                \item The argument for general elements is dual to the one
+                    for special elements.
                 \item It preserves $\less$ - this is true because $\squash_{i + 1}$
                     is a composition of two functions which preserve $\less$
             \end{enumerate}
@@ -752,7 +867,7 @@ information down the term tree towards the leaves).
                 Q' = \mcf{down}(Q, \sigma'', \Gamma)$ \\
         \end{cases*}
     \]
-    
+
     For convenience, the function $\mcf{propagate}$ is defined as the combination
     of $\mcf{up}$ and $\mcf{down}$:
     \[
