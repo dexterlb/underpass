@@ -423,6 +423,8 @@ with their respective clones. One way to deal with contravariance is
 
 \end{defn}
 
+\fixme{explain why we need $\varphi$}
+
 \begin{defn}
     \label{def:subadd}
     Suppose we have
@@ -454,7 +456,7 @@ with their respective clones. One way to deal with contravariance is
         \item $\less'$ is the transitive and reflexive closure of
             $\less \cup \{ (\sigma', \tau') \in T' \times T \mid \subtyper{\xi}(\tau') = \sigma' \}
                    \cup \{ (\sigma', \tau') \in T \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
-        \item $\varphi' = \varphi \cup \{ \rho \}$
+        \item $\varphi' = \varphi \cup \{ (\sigma, \rho) \}$
     \end{itemize}
 
     Note: in the cases where $\varphi$ is irrelevant, it will be omitted as
@@ -499,10 +501,22 @@ with their respective clones. One way to deal with contravariance is
     \begin{itemize}
         \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$
         \item $\sigma \less \tau \implies \sigma \less' \tau$
-        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less \hat{\varphi}(\tau)$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
     \end{itemize}
 \end{prop}
-\fixme{need proof}
+\begin{proof}
+    We will check all conditions one by one:
+    \begin{itemize}
+        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$:
+
+            For every $\sigma \lass \tau \in \Theta$, we have added
+            $(\sigma, \rho)$ to $\varphi$ for some $\rho$ in $\tclos{T'}$.
+
+        \item $\sigma \less \tau \implies \sigma \less' \tau$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
+    \end{itemize}
+    \fixme{need proof finishing}
+\end{proof}
 
 \begin{lemma}
     \label{lemma:subadd}
