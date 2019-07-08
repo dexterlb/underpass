@@ -493,38 +493,12 @@ with their respective clones. One way to deal with contravariance is
     $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
 \end{defn}
 
-\begin{prop}
-    If $T$ is a type semilattice and
-    $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
-    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$
-    the following properties hold:
-    \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$
-        \item $\sigma \less \tau \implies \sigma \less' \tau$
-        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
-    \end{itemize}
-\end{prop}
-\begin{proof}
-    We will check all conditions one by one:
-    \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$:
-
-            For every $\sigma \lass \tau \in \Theta$, we have added
-            $(\sigma, \rho)$ to $\varphi$ for some $\rho$ in $\tclos{T'}$.
-
-        \item $\sigma \less \tau \implies \sigma \less' \tau$
-        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
-    \end{itemize}
-    \fixme{need proof finishing}
-\end{proof}
-
 \begin{lemma}
-    \label{lemma:subadd}
+    \label{lemma:subadd:rel}
     If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
     \[ T' \tless T \]
-    Moreover, there is a unique squash function $\squash_{\theta} : T' \rightarrow T$.
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
@@ -568,7 +542,63 @@ with their respective clones. One way to deal with contravariance is
             The exclusive "or" is satisfied because
             $range(\subtyper{\xi}) \cap range(\suptyper{\xi}) = \varnothing$.
     \end{itemize}
+\end{proof}
 
+\begin{lemma}
+    \label{lemma:subadd:phi}
+    If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
+    is a subtype assertion satisfying the conditions from \cref{def:subadd}
+    and $\langle \langle T', \less' \rangle, \varphi' \rangle 
+    = \langle \langle T, \less \rangle, \varphi \rangle \tadd \theta$, then
+    \[ \varphi(\sigma) \less' \tau \]
+\end{lemma}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
+\begin{prop}
+    If $T$ is a type semilattice and
+    $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
+    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$
+    the following properties hold:
+    \begin{itemize}
+        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$
+        \item $\sigma \less \tau \implies \sigma \less' \tau$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
+    \end{itemize}
+\end{prop}
+\begin{proof}
+    We will check all conditions one by one:
+    \begin{itemize}
+        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$:
+
+            For every $\sigma \lass \tau \in \Theta$, we have added
+            $(\sigma, \rho)$ to $\varphi$ for some $\rho$ in $\tclos{T'}$.
+
+        \item $\sigma \less \tau \implies \sigma \less' \tau$
+
+            This is true because
+            at each step we only add elements to the relation.
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
+            
+            Since at each step we only add elements to the domain of
+            $\varphi$ and don't change its effect on previous elements,
+            we can directly say that this is true given \cref{lemma:subadd:phi}
+            \fixme{no!}
+    \end{itemize}
+    \fixme{need proof revision}
+\end{proof}
+
+\begin{lemma}
+    \label{lemma:subadd:squash}
+    If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
+    is a subtype assertion satisfying the conditions from \cref{def:subadd}
+    and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
+    there is a unique squash function $\squash_{\theta} : T' \rightarrow T$.
+\end{lemma}
+\begin{proof}
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+    
     Now, define the squash function $\squash_{\theta}$ as:
     \[
         \squash_{\theta}(\tau) \defeq
@@ -607,7 +637,7 @@ with their respective clones. One way to deal with contravariance is
                 \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
-            There are ? possibilities:
+            There are 4 possibilities:
             \begin{itemize}
                 \item $\sigma \in T, \tau \in T$:
 
@@ -661,12 +691,12 @@ with their respective clones. One way to deal with contravariance is
             Because $\less_{i + 1}$ is an extension of $\less$, it is also true
             that $T_i \less_{i + 1} T$.
 
-            Also, by \cref{lemma:subadd} we know that $T_{i + 1} \less_{i + 1} T_i$.
+            Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \less_{i + 1} T_i$.
             Now, by the transitivity\footnote{Which can be trivially
             proven} of $\less$, we have that $T_{i + 1} \less T$.
 
             Moreover, since there is inductively a squash function
-            $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd})
+            $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd:squash})
             a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \rightarrow T$.
 
             So, we define
