@@ -46,7 +46,8 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \end{defn}
 
 \begin{defn}
-    For a type semilattice $T$, we can extend the relation\footnote{
+    \label{def:subtype}
+    For a type semilattice $T$, we extend the relation\footnote{
         To make this completely rigorous, $\mathcal{T}$ would have to be defined
         over \emph{lattices}, not their carrier sets, so that the notion of
         "extending the relation" makes sense (because we actually create a
@@ -423,19 +424,54 @@ with their respective clones. One way to deal with contravariance is
 
 \end{defn}
 
+\begin{property}
+    \label{prop:clone:rel}
+    If we have $\forall \eta (\subtyper{\xi}(\eta) \less \eta)$ and
+    $\forall \eta (\eta \less \suptyper{\xi}(\eta))$, then for
+    any $\tau$:
+    \begin{itemize}
+        \item $\clonesub(\tau) \less \tau$
+        \item $\tau \less \clonesup(\tau)$
+    \end{itemize}
+\end{property}
+\begin{proof}
+    This property is proven by induction over the structure of $\tau$:
+
+    \begin{itemize}
+        \item $\tau \in T$:
+            \begin{itemize}
+                \item $\clonesub(\tau) = \subtyper{\xi}(\tau) \less \tau$
+                \item $\tau \less \suptyper{\xi}(\tau) = \clonesup(\tau)$
+            \end{itemize}
+        \item $\tau = \tau_1 \tot \tau_2$:
+            \begin{itemize}
+                \item Since inductively $\tau_1 \less \clonesup(\tau_1)$
+                    and $\clonesub(\tau_2) \less \tau_2$, by \cref{def:subtype}
+                    we have that:
+                    \[ \clonesub(\tau) = \clonesup(\tau_1) \tot \clonesub(\tau_2)
+                    \less \tau_1 \tot \tau_2 = \tau \]
+                \item Since inductively $\clonesub(\tau_1) \less \tau_1$
+                    and $\tau_2 \less \clonesup(\tau_2)$, by \cref{def:subtype}
+                    we have that:
+                    \[ \tau = \tau_1 \tot \tau_2 \less
+                    \clonesub(\tau_1) \tot \clonesup(\tau_2) = \clonesup(\tau) \]
+            \end{itemize}
+    \end{itemize}
+\end{proof}
+
 \fixme{explain why we need $\varphi$}
 
 \begin{defn}
     \label{def:subadd}
-    Suppose we have
+    Given
     \begin{itemize}
         \item a type semilattice $\langle T, \less \rangle$
-        \item a type $\tau \in \tclos{T}$
         \item a type symbol$\sigma \in \tsymbs \setminus T$
-        \item a mapping $\varphi$ with $range(\varphi) = \tclos{T}$
+        \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
+        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
-    $\ts{\tau}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
+    $\ts{\hat{\varphi}(\tau)}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
     $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$\footnote{
         $\suptyper{\xi}$ and $\subtyper{\xi}$ depend on $\tau$, $T$ and
         $\sigma$. If one wants to make their choice constrictive, they may,
@@ -451,7 +487,7 @@ with their respective clones. One way to deal with contravariance is
             \langle \langle T', \less' \rangle, \varphi' \rangle
         \] where:
     \begin{itemize}
-        \item $\rho = \clonesub(\tau)$
+        \item $\rho = \clonesub(\hat{\varphi}(\tau))$
         \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap \ts{\rho})$
         \item $\less'$ is the transitive and reflexive closure of
             $\less \cup \{ (\sigma', \tau') \in T' \times T \mid \subtyper{\xi}(\tau') = \sigma' \}
@@ -477,21 +513,6 @@ with their respective clones. One way to deal with contravariance is
     There is no way to introduce a double join or meet, since this would
     require adding more than one edge to a new vertex.
 \end{proof}
-
-\begin{defn}
-    A finite sequence of subtype assertions
-    $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
-    if $\hat{\Theta}_T = \langle \langle T, \less \rangle, \emptyset \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
-    is defined\footnote{
-        When trying to redefine a previously defined type, the sequence is not
-        a subtype library because of the restriction for $\sigma$
-        in \cref{def:subadd}.
-    }.
-
-    Also, we can define the function which gives us all the new type names
-    asserted by the subtype library as
-    $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
-\end{defn}
 
 \begin{lemma}
     \label{lemma:subadd:rel}
@@ -548,13 +569,38 @@ with their respective clones. One way to deal with contravariance is
     \label{lemma:subadd:phi}
     If $\langle T, \less \rangle$ is a type semilattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
-    and $\langle \langle T', \less' \rangle, \varphi' \rangle 
+    and $\langle \langle T', \less' \rangle, \varphi' \rangle
     = \langle \langle T, \less \rangle, \varphi \rangle \tadd \theta$, then
-    \[ \varphi(\sigma) \less' \tau \]
+    \[ \varphi'(\sigma) \less' \hat{\varphi}(\tau) \]
 \end{lemma}
 \begin{proof}
-    \fixme{need proof}
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+
+    We know that $\varphi'(\sigma) = \clonesub(\hat{\varphi}(\tau)$.
+
+    Moreover,
+    $\forall \eta (\subtyper{\xi}(\eta) \less' \eta)$ and
+    $\forall \eta (\eta \less \suptyper{\xi}(\eta))$ by the construction of
+    $\less'$.
+
+    Then, by \cref{prop:clone:rel} we have that $\varphi'(\sigma) \less'
+    \hat{\varphi}(\tau)$.
 \end{proof}
+
+\begin{defn}
+    A finite sequence of subtype assertions
+    $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
+    if $\hat{\Theta}_T = \langle \langle T, \less \rangle, \emptyset \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    is defined\footnote{
+        When trying to redefine a previously defined type, the sequence is not
+        a subtype library because of the restriction for $\sigma$
+        in \cref{def:subadd}.
+    }.
+
+    Also, we can define the function which gives us all the new type names
+    asserted by the subtype library as
+    $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
+\end{defn}
 
 \begin{prop}
     If $T$ is a type semilattice and
@@ -580,13 +626,28 @@ with their respective clones. One way to deal with contravariance is
             This is true because
             at each step we only add elements to the relation.
         \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
-            
-            Since at each step we only add elements to the domain of
-            $\varphi$ and don't change its effect on previous elements,
-            we can directly say that this is true given \cref{lemma:subadd:phi}
-            \fixme{no!}
+
+            Let $\sigma \lass \tau = \theta_i$.
+
+            We have that
+            $\langle \langle T', \less' \rangle, \varphi \rangle
+                = \langle \langle T, \less \rangle, \varnothing \rangle
+                \tadd \theta_1 \tadd ... \tadd \theta_i \tadd ... \tadd \theta_n$
+
+            Let
+            $\langle \langle T^{(i)}, \less^{(i)} \rangle, \varphi^{(i)} \rangle
+                = \langle \langle T, \less \rangle, \varnothing \rangle
+                \tadd \theta_1 \tadd ... \tadd \theta_i$ \quad ($T' = T^{(n)},
+                \less' = \less^{(n)}$).
+
+            Since $\Theta$ is a valid subtype library, we know that
+            $\hat{\varphi}^{(i - 1)}(\tau) \in \tclos{T^{(i - 1)}}$.
+
+            By \cref{lemma:subadd:phi} $\varphi^{(i)}(\sigma) \less^{(i)}
+            \hat{\varphi}^{(i - 1)}(\tau)$. Since $\varphi$ is constructed
+            incrementally, we also have $\varphi^{(n)}(\sigma) \less^{(n)}
+            \hat{\varphi}^{(n)}(\tau)$
     \end{itemize}
-    \fixme{need proof revision}
 \end{proof}
 
 \begin{lemma}
@@ -598,7 +659,7 @@ with their respective clones. One way to deal with contravariance is
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
-    
+
     Now, define the squash function $\squash_{\theta}$ as:
     \[
         \squash_{\theta}(\tau) \defeq
