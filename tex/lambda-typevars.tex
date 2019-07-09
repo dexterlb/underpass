@@ -3,5 +3,122 @@
 \section{Type variables in $\lambda$-terms}
 \label{lambda:typevars}
 
-\fixme{define type variable substitution etc here.}
+This section extends the version of simply-typed $\lambda$-calculus from
+\cref{sec:purelambda} to include \emph{type variables}. The same construction
+can also be applied to simply-typed $\lambda$-calculus with subtypes
+(\cref{sec:lambda}) without modification.
+
+This construction closely resembles the parametric polymorphism construction
+from \cite[chap.~25]{pierce}.
+
+Let $\tvars \defeq \{ \tau', \tau'', \tau''', ... \}$ be a set of symbols we
+call \emph{type variables}.
+
+First, we will extend \cref{def:tclos} to include variables:
+\begin{defn}
+    For a set of type symbols $T$, its \emph{type closure with type variables}
+    $\tvclos{T} \subseteq (T \, \cup \tvars \cup \,\{\, \tot, ), ( \,\})^*$ is defined
+    inductively:
+
+    \begin{itemize}
+        \item $\alpha \in \tvars \implies \alpha \in \tvclos{T}$
+        \item $\sigma \in T \implies \sigma \in \tvclos{T}$
+        \item $\sigma, \tau \in \tvclos{T} \implies (\sigma \tot \tau) \in \tvclos{T}$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    We call a set $X$ \emph{typed with variables in} $T$ $\iff$ there is a function
+    \[ \typeofvv : X \rightarrow \tvclos{T} \]
+\end{defn}
+
+Now we need type variable substitution:
+\begin{defn}
+    For a type $\sigma \in \tvclos{T}$, a type variable $\alpha$ and another
+    type $\tau \in \tvclos{T}$, the type variable substitution 
+    $\subst{\sigma}{\alpha}{\tau}$ is defined recursively as follows:
+    \[
+        \subst{\sigma}{\alpha}{\tau} \defeq
+        \begin{cases*}
+            \sigma &, $\sigma \in T$ \\
+            \sigma &, $\sigma \in \tvars \setminus \{ \alpha \}$ \\
+            \tau &, $\sigma = \alpha$ \\
+            \subst{\sigma'}{\alpha}{\tau} \tot \subst{\sigma''}{\alpha}{\tau}
+                &, $\sigma = \sigma' \tot \sigma''$ \\
+        \end{cases*}
+    \]
+\end{defn}
+
+And now we can define $\lambda$-terms (the definition is completely identical
+to \cref{def:lambdaterm} except for the fact that types may contain variables:
+\begin{defn}
+    Let $C \subset \const$ be a set of constants, typed with variables in $T$.
+
+    $\tvlambda{T}{C}$ is defined inductively:
+    \begin{itemize}
+        \item Constant:    \[ c \in C \implies c \in \tvlambda{T}{C} \]
+        \item Variable:    \[ v \in \lvars \implies v \in \tvlambda{T}{C} \]
+        \item Application: \[ A, B \in \tvlambda{T}{C} \implies (AB) \in \tvlambda{T}{C} \]
+        \item Abstraction: \[ v \in \lvars, A \in \tvlambda{T}{C}, \sigma \in \tvclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \tvlambda{T}{C} \]
+    \end{itemize}
+\end{defn}
+
+The definitions for free variables, declaration, context and judgement shall
+also be reused from \cref{sec:purelambda}.
+
+Now, we will redefine the derivation rules for typed terms (\cref{def:termderiv}),
+extending them with an additional rule that lets type variables act as any type:
+\begin{defn}
+    Derivation rules for typed $\lambda$-terms:
+    \begin{itemize}
+        \item Constant
+            \cenderiv{
+                \hypo{c \in C}
+                \infer1{\Gamma \vdash c : \typeofv{c}}
+            }
+        \item Variable
+            \cenderiv{
+                \hypo{x : \sigma \in \Gamma}
+                \infer1{\Gamma \vdash x : \sigma}
+            }
+        \item Application
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma' \tot \sigma''}
+                \hypo{\Gamma \vdash B : \sigma'}
+                \infer2{\Gamma \vdash (AB) : \sigma''}
+            }
+        \item Abstraction
+            \cenderiv{
+                \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
+                \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
+            }
+        \item Type variable substitution
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\alpha \in \tvars}
+                \hypo{\tau \in \tvclos{T}}
+                \infer3{\Gamma \vdash A : \subst{\sigma}{\alpha}{\tau}}
+            }
+    \end{itemize}
+\end{defn}
+
+Also, for convenience, we will define type variable substitution over all types
+within a term:
+
+\begin{defn}
+    For $\alpha \in \tvars$, $A \in \tvlambda{T}{C}$ and $\tau \in \tvclos{T}$,
+    \[
+        \subst{A}{\alpha}{\tau} \defeq
+        \begin{cases*}
+            c &, $A = c \in C$ \\
+            v &, $A = v \in \lvars$ \\
+            \subst{M}{\alpha}{\tau} \app \subst{N}{\alpha}{\tau}
+                &, $A = MN$ \\
+            \lambda x : \subst{\sigma}{\alpha}{\tau} \abstr \subst{M}{\alpha}{\tau}
+                &, $A = (\lambda x : \sigma \abstr M)$ \\
+        \end{cases*}
+    \]
+\end{defn}
+\fixme{discuss what to do with constants here (should they even allow type variables?)}
 \end{document}

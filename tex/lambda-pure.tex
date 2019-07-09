@@ -12,8 +12,9 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a set of symbols we call
     \emph{type symbols}\footnote{See \cref{sec:magic}}.
 
 \begin{defn}
+    \label{def:tclos}
     For a set of type symbols $T$, its \emph{type closure}
-    $\tclos{T} \subseteq (T \, \dot\cup \,\{\, \tot, ), ( \,\})^*$ is defined
+    $\tclos{T} \subseteq (T \, \cup \,\{\, \tot, ), ( \,\})^*$ is defined
     inductively:
 
     \begin{itemize}
@@ -68,6 +69,7 @@ We can now define the set of
 \emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
 
 \begin{defn}
+    \label{def:lambdaterm}
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
     $\Lambda_T^C$ is defined inductively:
@@ -123,9 +125,11 @@ term.
 The $\circ$ operation shall be regarded as left-associative throughout this
 text.
 
+To define what it means for a term $M \in \Lambda_T^C$ to have a type,
+we will use derivation rules.
 \begin{defn}
-    To define what it means for a term $M \in \Lambda_T^C$ to have a type,
-    we will use derivation rules.
+    \label{def:termderiv}
+    Derivation rules for typed $\lambda$-terms:
     \begin{itemize}
         \item Constant
             \cenderiv{
