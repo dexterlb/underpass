@@ -608,14 +608,28 @@ with their respective clones. One way to deal with contravariance is
     \end{itemize}
 \end{proof}
 
-\fixme{explain why we need $\varphi$}
+Now we will define an iterative process for adding new types into a type lattice
+by subtyping existing types.
 
+Suppose we have the subtype assertion $\sigma \lass \tau$ with the intent of adding
+a new type "$\sigma$" to $T$ such that $\sigma \less \tau$. We can't add $\sigma$
+to $T$ directly, since this would require subtyping a type with a different syntactic
+structure. So, instead we will construct another type $\varphi(\sigma) \in \tclos{T}$
+whose constituent atomic types we add to $T$.
+
+We will now define the operation $\tadd$ which does exactly that.
+
+Afterwards, when we need to refer to $\tau$, we will use $\varphi(\tau)$.
+
+Since we want to be able to define several new types one after the other,
+$\tadd$ will need to use the existing mapping $\varphi$ to interpret
+existing manually-constructed types, and extend it with the new type.
 \begin{defn}
     \label{def:subadd}
     Given
     \begin{itemize}
         \item a type lattice $\langle T, \less \rangle$
-        \item a type symbol$\sigma \in \tsymbs \setminus T$
+        \item a type symbol $\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined
     \end{itemize}
