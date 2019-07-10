@@ -1094,53 +1094,53 @@ information down the term tree towards the leaves).
 \begin{defn}
     \label{def:propagation}
     For a set of type symbols $T$ and a unifier for $T$ $\unify$, the functions
-    $\mcf{up}$ which maps a type-tagged term into a new type-tagged term and
-    an inferred context for its free variables, and $\mcf{down}$ which maps
+    $\mcf{up}_{\unify}$ which maps a type-tagged term into a new type-tagged term and
+    an inferred context for its free variables, and $\mcf{down}_{\unify}$ which maps
     a type-tagged term, a desired type and a free variable context into a
     new type-tagged term, are defined inductively as follows:
     \[
-        \mcf{up}(\ttt{A}{\tau}) =
+        \mcf{up}_{\unify}(\ttt{A}{\tau}) =
         \begin{cases*}
             (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
             (\ttt{v}{\tau}, \{ v : \tau \}) &, $A = v \in \lvars$ \\
             (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
                 &, $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
-                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}(P)
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)
                 , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
                 \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
             (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
                 &, $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
-                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}(P)$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)$ \\
                 \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
             (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
-                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}(P),$ \\
-                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
+                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),$ \\
+                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}_{\unify}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
         \end{cases*}
     \]
     \[
-        \mcf{down}(\ttt{A}{\tau}, \tau', \Gamma) =
+        \mcf{down}_{\unify}(\ttt{A}{\tau}, \tau', \Gamma) =
         \begin{cases*}
             \ttt{c}{\tau \unify \tau'} &, $A = c \in C$ \\
             \ttt{v}{\tau \unify \tau' \unify \tau''}
                 &, $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
             \ttt{\lambda x \abstr P'}{\tau''}
                 &, $A = (\lambda x \abstr P), \tau'' = \tau \unify \tau'$ \\
-                \phantom{} &\phantom{, } $\tau'' = (\sigma \tot \eta), P' = \mcf{down}(P, \eta, \Gamma \circ (x : \sigma)),$ \\
+                \phantom{} &\phantom{, } $\tau'' = (\sigma \tot \eta), P' = \mcf{down}_{\unify}(P, \eta, \Gamma \circ (x : \sigma)),$ \\
             \ttt{P' Q'}{\tau''}
                 &, $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
                 \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
-                \phantom{} &\phantom{, }$P' = \mcf{down}(P, (\sigma' \tot \tau''), \Gamma),
-                Q' = \mcf{down}(Q, \sigma'', \Gamma)$ \\
+                \phantom{} &\phantom{, }$P' = \mcf{down}_{\unify}(P, (\sigma' \tot \tau''), \Gamma),
+                Q' = \mcf{down}_{\unify}(Q, \sigma'', \Gamma)$ \\
         \end{cases*}
     \]
 
-    For convenience, the function $\mcf{propagate}$ is defined as the combination
-    of $\mcf{up}$ and $\mcf{down}$:
+    For convenience, the function $\mcf{propagate}_{\unify}$ is defined as the combination
+    of $\mcf{up}_{\unify}$ and $\mcf{down}_{\unify}$:
     \[
-        \mcf{propagate}(P) = \mcf{down}(\ttt{M}{\tau}, \tau, \Gamma)
-        \text{ , where } \mcf{up}(P) = (\ttt{M}{\tau}, \Gamma)
+        \mcf{propagate}_{\unify}(P) = \mcf{down}_{\unify}(\ttt{M}{\tau}, \tau, \Gamma)
+        \text{ , where } \mcf{up}_{\unify}(P) = (\ttt{M}{\tau}, \Gamma)
     \]
 \end{defn}
 \end{document}
