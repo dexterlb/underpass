@@ -119,9 +119,9 @@ The base types are:
         \code{String} & represents a string of unicode characters. \cendrow
         \code{List} & represents a linked list of \code{Num}s, \code{String}s and
             nested \code{List}s. \cendrow
-        \code{Set} & refers to a set of geographical objects. It is not represented
-            internally in any way: the only way to touch \code{Set} objects is
-            via builtin operations that work on \code{Set}s. \cendrow
+        \code{GSet} & refers to a set of geographical objects. It is not represented
+            internally in any way: the only way to touch \code{GSet} objects is
+            via builtin operations that work on \code{GSet}s. \cendrow
     \end{tabular}
 \end{center}
 
@@ -136,14 +136,14 @@ following:
     \begin{tabular}{r l p{0.5\textwidth}}
         Identifier  & Type & \\
         \hline
-        \code{and}  & $Set \tot Set \tot Set$ & set intersection \cendrow
-        \code{or}   & $Set \tot Set \tot Set$ & set union \cendrow
-        \code{not}  & $Set \tot Set$ & set negation \cendrow
+        \code{and}  & $GSet \tot GSet \tot GSet$ & set intersection \cendrow
+        \code{or}   & $GSet \tot GSet \tot GSet$ & set union \cendrow
+        \code{not}  & $GSet \tot GSet$ & set negation \cendrow
         \hline
-        \code{get}  & $List \tot Set$ & get geographical elements by vertex
+        \code{get}  & $List \tot GSet$ & get geographical elements by vertex
             label \cendrow
-        \code{next} & $List \tot Set \tot Set$ & traverse edges by label,
-            obtaining a new \code{Set} \cendrow
+        \code{next} & $List \tot GSet \tot GSet$ & traverse edges by label,
+            obtaining a new \code{GSet} \cendrow
         \hline
         \code{empty} & $List$ & empty list \cendrow
         \code{consNum} & $Num \tot List \tot List$ & prepend a \code{Num} to

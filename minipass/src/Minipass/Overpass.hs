@@ -123,7 +123,7 @@ translateApp term@[Constant (T.Application _ (T.Application _ t)) And, _, _]  = 
 translateApp term@[Constant (T.Application _ (T.Application _ t))  Or, _, _]  = translateFilters t term
 translateApp term@[Constant (T.Application _ (T.Application _ t)) Next, _, _] = translateFilters t term
 translateApp term@[Constant (T.Application _ t) Get, _] = translateFilters t term
-translateApp [Lambda (T.Application t@(T.Basic (Set _)) _) _ m, n] = do
+translateApp [Lambda (T.Application t@(T.Basic (GSet _)) _) _ m, n] = do
     (SetValue nVar) <- translate n
     translate $ substitute m 0 (Application t (Constant (T.Application (T.Basic List) t) Get) (typify emptyContext $ toIntermediate $ listTerm [StringC "setVariable", StringC nVar]))
 translateApp term = fail $ "I don't know how to translate " <> show term
@@ -141,7 +141,7 @@ walkFilterTree _ [Constant _ Or, left, right] = do
     pure $ leftFilters ++ rightFilters
 walkFilterTree t term = do
     let tag = case t of
-                (T.Basic (Set tag')) -> tag'
+                (T.Basic (GSet tag')) -> tag'
                 other                -> error $ "trying to perform Or on non-set type " <> show other
     (vars, filters) <- walkConjunctiveFilterTree term
     pure $ [Filter (osmTypes tag) vars filters]

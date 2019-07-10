@@ -29,7 +29,7 @@ import Utils.Latex
 import Minipass.Language.Constants
 
 data Types
-    = Set
+    = GSet
     | String
     | Num
     | List
@@ -52,7 +52,7 @@ instance MLattice (T.ApplicativeType Types) where
 
 instance P.Parseable Types where
     parser = P.word
-        $   P.string "Set"      $> Set
+        $   P.string "GSet"      $> GSet
         <|> P.string "String"   $> String
         <|> P.string "Num"      $> Num
 
@@ -65,12 +65,12 @@ instance Typed Constants Types where
     typeOf (StringLiteral _) = T.Basic String
     typeOf (NumLiteral    _) = T.Basic Num
 
-    typeOf Next              = T.Application (T.Basic List) (T.Application (T.Basic Set) (T.Basic Set))
-    typeOf Get               = T.Application (T.Basic List) (T.Basic Set)
+    typeOf Next              = T.Application (T.Basic List) (T.Application (T.Basic GSet) (T.Basic GSet))
+    typeOf Get               = T.Application (T.Basic List) (T.Basic GSet)
 
-    typeOf Or                = T.Application (T.Basic Set) (T.Application (T.Basic Set) (T.Basic Set))
-    typeOf And               = T.Application (T.Basic Set) (T.Application (T.Basic Set) (T.Basic Set))
-    typeOf Not               = T.Application (T.Basic Set) (T.Basic Set)
+    typeOf Or                = T.Application (T.Basic GSet) (T.Application (T.Basic GSet) (T.Basic GSet))
+    typeOf And               = T.Application (T.Basic GSet) (T.Application (T.Basic GSet) (T.Basic GSet))
+    typeOf Not               = T.Application (T.Basic GSet) (T.Basic GSet)
 
     typeOf ConsNum           = T.Application (T.Basic Num) (T.Application (T.Basic List) (T.Basic List))
     typeOf ConsString        = T.Application (T.Basic String) (T.Application (T.Basic List) (T.Basic List))

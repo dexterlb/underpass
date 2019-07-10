@@ -191,13 +191,13 @@ string.
 
     \begin{align*}
         \Sigma \defeq& \{ cities, in, Germany \} \\
-        N \defeq& \{ Set \} \\
-        S \defeq& Set \\
+        N \defeq& \{ GSet \} \\
+        S \defeq& GSet \\
         f(x) \defeq&
             \begin{cases*}
-                \{ Set \},& x = cities \\
-                \{ Set \},& x = Germany \\
-                \{ Set \lc Set \rc Set \},& x = in \\
+                \{ GSet \},& x = cities \\
+                \{ GSet \},& x = Germany \\
+                \{ GSet \lc GSet \rc GSet \},& x = in \\
             \end{cases*} \\
         n \defeq& 1 \\
     \end{align*}
@@ -206,11 +206,11 @@ string.
     derivation rules on the next step are underlined):
     \begin{center}
         \begin{tabular}{c}
-            $\underline{\lb Set \rb}$ \\ $\Rightarrow$ \\
-            $\lb Set \rb \underline{\lb Set \lc Set \rb}$ \\ $\Rightarrow$ \\
-            $\underline{\lb Set \rb} \lb Set \lc Set \rc Set \rb \lb Set \rb$ \\ $\Rightarrow$ \\
-            $cities \sq \underline{\lb Set \lc Set \rc Set \rb} \lb Set \rb$ \\ $\Rightarrow$ \\
-            $cities \sq in \sq \underline{\lb Set \rb}$ \\ $\Rightarrow$ \\
+            $\underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
+            $\lb GSet \rb \underline{\lb GSet \lc GSet \rb}$ \\ $\Rightarrow$ \\
+            $\underline{\lb GSet \rb} \lb GSet \lc GSet \rc GSet \rb \lb GSet \rb$ \\ $\Rightarrow$ \\
+            $cities \sq \underline{\lb GSet \lc GSet \rc GSet \rb} \lb GSet \rb$ \\ $\Rightarrow$ \\
+            $cities \sq in \sq \underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
             $cities \sq in \sq Germany$ \\
         \end{tabular}
     \end{center}
@@ -333,13 +333,13 @@ Derivation trees are constructed as follows:
     \cref{ex:deriv} and \cref{ex:derivsimple}
     respectively:
 
-    \centree{.{$Set$}
-        [ .{$Set$} [ .{$cities$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$} [ .{$cities$} ] ]
         \edge[very thick];
-        [ .{$Set \lc Set$}
+        [ .{$GSet \lc GSet$}
             \edge[very thick];
-            [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
-            [ .{$Set$} [ .{$Germany$} ] ]
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+            [ .{$GSet$} [ .{$Germany$} ] ]
         ]
     }
 

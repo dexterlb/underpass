@@ -147,27 +147,27 @@ Here is a grammar defined using the CCG definition language\footnote{
 \begin{lstlisting}
 import "library.ccg"
 
--- Use Set as the starting category.
+-- Use GSet as the starting category.
 -- This means that all queries parsed
--- by this CCG will have type Set.
-begin Set.
+-- by this CCG will have type GSet.
+begin GSet.
 
 -- Here Mult is used to handle lists like
 -- "schools, churches and hospitals"
-Mult < Set.
+Mult < GSet.
 
 raw="and"
-    : Set / Set \ Set @ or
-    , Mult / Set \ Set @ \r, l => Mult[or l r].
+    : GSet / GSet \ GSet @ or
+    , Mult / GSet \ GSet @ \r, l => Mult[or l r].
 
 pos="comma" : $X \ $X @ id -- some commas mean nothing
-            , Set \ Set / Mult @ or.
+            , GSet \ GSet / Mult @ or.
 
 raw="in"
-    : Set / Set \ Set
+    : GSet / GSet \ GSet
     @ \things, where => and things (in where).
 
-lemma="school",pos="nnp" : Set @ amenity 'school'.
+lemma="school",pos="nnp" : GSet @ amenity 'school'.
 \end{lstlisting}
 \end{example}
 
@@ -198,7 +198,7 @@ For more details about this construction, see \cref{hack:phrases}.
 The following statement:
 \begin{lstlisting}
 lemma="place" <> raw="of" <> lemma="worship"
-    : Set
+    : GSet
     @ amenity 'place_of_worship'.
 \end{lstlisting}
 
@@ -208,7 +208,7 @@ Dummy1 < * -> *.
 Dummy2 < * -> *.
 
 lemma="place"
-    : Set /s Dummy2 /s Dummy1
+    : GSet /s Dummy2 /s Dummy1
     @ \x: Dummy1, y: Dummy2 =>
         amenity 'place_of_worship'.
 
@@ -251,11 +251,11 @@ templates are correct.
 Consider the following rule which contains a template:
 \begin{lstlisting}
 pos="nnp" `'$raw'` : String
-    : Set
+    : GSet
     @ name.
 \end{lstlisting}
 It is valid at compile time because the term \code{name} has type
-$String \tot Set$, which yields a term of type $Set$ after being given
+$String \tot GSet$, which yields a term of type $GSet$ after being given
 a $String$ as argument.
 When matching the token data "\code{pos="nnp",raw="Belgium"}", the template
 \code{ \textasciigrave'\$raw'\textasciigrave } will become

@@ -24,7 +24,7 @@ adjacent terminals but we want to regard as a single terminal.
     \begin{itemize}
         \item Add a new type/category $Dummy$.
         \item Choose a closed term $M$ of type $Dummy$.
-        \item Set
+        \item GSet
             \begin{align*}
                 Amenity \rci{\modstar} Dummy &\in f(parking)\\
                 Dummy &\in f(lot) \\
@@ -116,20 +116,20 @@ round brackets.
 \begin{example}
     This meta-example shows a couple of rules to illustrate the syntax:
     \gramshort{
-        \gramrow{near}{ Set \lc Set \rc Set }{ \lambda from: Set, things: Set \abstr }
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{ \lambda from: GSet, things: GSet \abstr }
             \gramrow{}{}{ and \app things \app (within \app nearDistance \app from) }
-        \gramrow{german \sq city}{ Set }{ and \app inGermany \app city }
-        \gramrow{}{ Set \rc Name }{ \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) }
+        \gramrow{german \sq city}{ GSet }{ and \app inGermany \app city }
+        \gramrow{}{ GSet \rc Name }{ \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) }
     }
     The grammar it specifies is the following:
     \begin{align*}
-        f[german \sq city] &= \{ Set, Set \rc Name \} \\
-        f(near) &= \{ Set \lc Set \rc Set \} \\
+        f[german \sq city] &= \{ GSet, GSet \rc Name \} \\
+        f(near) &= \{ GSet \lc GSet \rc GSet \} \\
         \\
-        \psi(near, Set \lc Set \rc Set) &= \lambda from: Set, things: Set \abstr \\
+        \psi(near, GSet \lc GSet \rc GSet) &= \lambda from: GSet, things: GSet \abstr \\
         & \phantom{=} \qquad and \app things \app (within \app nearDistance \app from) \\
-        \psi[german \sq city, Set] &= and \app inGermany \app city \\
-        \psi[german \sq city, Set \rc Set] &= \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) \\
+        \psi[german \sq city, GSet] &= and \app inGermany \app city \\
+        \psi[german \sq city, GSet \rc GSet] &= \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) \\
      \end{align*}
 
      Here we assign two different categories with their respective semantics
@@ -139,6 +139,6 @@ round brackets.
  \end{example}
 
 Also, most examples from here on will assume that grammars have a starting
-category $Set$, to be as close as possible to the implementation in
+category $GSet$, to be as close as possible to the implementation in
 \cref{sec:minipass}.
 \end{document}

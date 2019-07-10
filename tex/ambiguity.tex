@@ -17,23 +17,23 @@ sentence actually has several meanings.
     With the following simple grammar:
 
     \gramshort{
-        \gramrow{Memorials}{ Set }{}
-        \gramrow{cities}{ Set }{}
-        \gramrow{near}{ Set \lc Set \rc Set }{}
-        \gramrow{in}{ Set \lc Set \rc Set }{}
+        \gramrow{Memorials}{ GSet }{}
+        \gramrow{cities}{ GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
     }
 
     There are two possible derivation trees:
 
-    \centree{.{$Set$}
-        [ .{$Set$} [ .{$Memorials$} ] ]
-        [ .{$Set \lc Set$}
-            [ .{$Set \lc Set \rc Set$} [ .{$near$} ] ]
-            [ .{$Set$}
-                [ .{$Set$} [ .{$cities$} ] ]
-                [ .{$Set \lc Set$}
-                    [ .{$Set \lc Set \rc Set$} [ .{$In$} ] ]
-                    [ .{$Set$} [ .{$Belgium$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$} [ .{$Memorials$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$near$} ] ]
+            [ .{$GSet$}
+                [ .{$GSet$} [ .{$cities$} ] ]
+                [ .{$GSet \lc GSet$}
+                    [ .{$GSet \lc GSet \rc GSet$} [ .{$In$} ] ]
+                    [ .{$GSet$} [ .{$Belgium$} ] ]
                 ]
             ]
         ]
@@ -42,17 +42,17 @@ sentence actually has several meanings.
     This parse means "memorials which are near cities, said \emph{cities} being
     in Belgium"
 
-    \centree{.{$Set$}
-        [ .{$Set$}
-            [ .{$Set$} [ .{$Memorials$} ] ]
-            [ .{$Set \lc Set$}
-                [ .{$Set \lc Set \rc Set$} [ .{$near$} ] ]
-                [ .{$Set$} [ .{$cities$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$}
+            [ .{$GSet$} [ .{$Memorials$} ] ]
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$near$} ] ]
+                [ .{$GSet$} [ .{$cities$} ] ]
             ]
         ]
-        [ .{$Set \lc Set$}
-            [ .{$Set \lc Set \rc Set$} [ .{$In$} ] ]
-            [ .{$Set$} [ .{$Belgium$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$In$} ] ]
+            [ .{$GSet$} [ .{$Belgium$} ] ]
         ]
     }
 
@@ -95,37 +95,37 @@ compositions but in a different order.
 
     With the following simple grammar:
     \gramshort{
-        \gramrow{small}{Set \rc Set}{small}
-        \gramrow{capital}{Set \rc Set}{capital}
-        \gramrow{cities}{Set}{cities}
+        \gramrow{small}{GSet \rc GSet}{small}
+        \gramrow{capital}{GSet \rc GSet}{capital}
+        \gramrow{cities}{GSet}{cities}
     }
-    where $\typeof{small} = Set \tot Set$, $\typeof{capital} = Set \tot Set$
-    and $\typeof{cities} = Set$.
+    where $\typeof{small} = GSet \tot GSet$, $\typeof{capital} = GSet \tot GSet$
+    and $\typeof{cities} = GSet$.
 
     Please take note that $small$ (the token) is different from $small$ (
-    the $\lambda$-constant with type $Set \tot Set$ and so on.
+    the $\lambda$-constant with type $GSet \tot GSet$ and so on.
 
     There are two possible derivation trees:
     \begin{center}
         \begin{tikzpicture}[node distance=1mm,sibling distance=1cm,scale=0.9,every node/.style={transform shape}]
             \Tree[
-                .\node(outtop){$Set$};
-                    [ .{$Set \lc Set$}
-                        [ .{$Set \rc Set$} [ .\node(inb){$small$}; ] ]
-                        [ .{$Set \rc Set$} [ .\node(inc){$capital$}; ] ]
+                .\node(outtop){$GSet$};
+                    [ .{$GSet \lc GSet$}
+                        [ .{$GSet \rc GSet$} [ .\node(inb){$small$}; ] ]
+                        [ .{$GSet \rc GSet$} [ .\node(inc){$capital$}; ] ]
                     ]
-                    [ .{$Set$} [ .\node(ina){$cities$}; ] ]
+                    [ .{$GSet$} [ .\node(ina){$cities$}; ] ]
             ]
             \node[boxcolb,fit=(outtop)(ina)(inb)(inc)](outbox){};
             \node[right=of outbox,text=\boxtextb](outlabel){$T_1$};
         \end{tikzpicture}
         \begin{tikzpicture}[node distance=1mm,sibling distance=1cm,scale=0.9,every node/.style={transform shape}]
             \Tree[
-                .\node(outtop){$Set$};
-                    [ .{$Set \rc Set$} [ .\node(ina){$small$}; ] ]
-                    [ .{$Set$}
-                        [ .{$Set \rc Set$} [ .\node(inb){$capital$}; ] ]
-                        [ .{$Set$} [ .\node(inc){$cities$}; ] ]
+                .\node(outtop){$GSet$};
+                    [ .{$GSet \rc GSet$} [ .\node(ina){$small$}; ] ]
+                    [ .{$GSet$}
+                        [ .{$GSet \rc GSet$} [ .\node(inb){$capital$}; ] ]
+                        [ .{$GSet$} [ .\node(inc){$cities$}; ] ]
                     ]
             ]
             \node[boxcolb,fit=(outtop)(ina)(inb)(inc)](outbox){};
@@ -134,7 +134,7 @@ compositions but in a different order.
     \end{center}
     Where by the definition of $sem_\psi$:
     \begin{align*}
-        (\lambda x {:} Set \abstr capital \app (small \app x))
+        (\lambda x {:} GSet \abstr capital \app (small \app x))
             \app cities & \in sem_{\psi}(T_1) \\
         small \app capital \app cities & \in sem_\psi(T_2) \\
     \end{align*}

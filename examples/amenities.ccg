@@ -1,4 +1,4 @@
-Amenity < Set.
+Amenity < GSet.
 
 lemma="parking"
     : Amenity

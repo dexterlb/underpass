@@ -30,15 +30,15 @@ propagateTypes :: TTerm -> TTerm
 propagateTypes = updateTypes updater
     where
         updater (Constant
-                 (T.Application (T.Basic (Set a)) (T.Application (T.Basic (Set b)) (T.Basic (Set c))))
+                 (T.Application (T.Basic (GSet a)) (T.Application (T.Basic (GSet b)) (T.Basic (GSet c))))
                  And)
-                 = T.Application (T.Basic (Set n)) (T.Application (T.Basic (Set n)) (T.Basic (Set n)))
+                 = T.Application (T.Basic (GSet n)) (T.Application (T.Basic (GSet n)) (T.Basic (GSet n)))
                 where
                     n = intersectSetTags c $ intersectSetTags a b
         updater (Constant
-                 (T.Application (T.Basic (Set a)) (T.Application (T.Basic (Set b)) (T.Basic (Set c))))
+                 (T.Application (T.Basic (GSet a)) (T.Application (T.Basic (GSet b)) (T.Basic (GSet c))))
                  Or)
-                 = T.Application (T.Basic (Set na)) (T.Application (T.Basic (Set nb)) (T.Basic (Set nc)))
+                 = T.Application (T.Basic (GSet na)) (T.Application (T.Basic (GSet nb)) (T.Basic (GSet nc)))
                 where
                     na = intersectSetTags nc a
                     nb = intersectSetTags nc b
@@ -92,7 +92,7 @@ reducible _ = True -- not (isSet $ typeOf x) || trivial x
     -- beta reduce nested redexes with alternating reducibility
 
 isSet :: T.ApplicativeType Types -> Bool
-isSet (T.Basic (Set _)) = True
+isSet (T.Basic (GSet _)) = True
 isSet _                 = False
 
 trivial :: TTerm -> Bool

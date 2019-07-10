@@ -97,38 +97,38 @@ can combine with any other type of slash).
 \begin{example}
     Consider the following simple grammar:
     \gramshort{
-        \gramrow{small}{ Set \rc Set }{}
-        \gramrow{cities}{ Set }{}
-        \gramrow{in}{ Set \lc Set \rc Set }{}
-        \gramrow{Russia}{ Set }{}
+        \gramrow{small}{ GSet \rc GSet }{}
+        \gramrow{cities}{ GSet }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{Russia}{ GSet }{}
     }
 
     It generates the following query, which looks well:
-    \centree{.{$Set$}
-        [ .{$Set$}
-            [ .{$Set \rc Set$} [ .{$small$} ] ]
-            [ .{$Set$} [ .{$cities$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$}
+            [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+            [ .{$GSet$} [ .{$cities$} ] ]
         ]
-        [ .{$Set \lc Set$}
-            [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
-            [ .{$Set$} [ .{$Russia$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+            [ .{$GSet$} [ .{$Russia$} ] ]
         ]
     }
 
     However, it also generates this query, which is undesirable:
-    \centree{.{$Set$}
-        [ .{$Set$} [ .{$cities$} ] ]
-        [ .{$Set \lc Set$}
-            [ .{$Set \rc Set$} [ .{$small$} ] ]
-            [ .{$Set \lc Set$}
-                [ .{$Set \lc Set \rc Set$} [ .{$in$} ] ]
-                [ .{$Set$} [ .{$Russia$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$} [ .{$cities$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+                [ .{$GSet$} [ .{$Russia$} ] ]
             ]
         ]
     }
 
     It appears that adjectives such as $small$ should not be allowed to combine
-    in this way. This can be remedied by setting $small \catdefsep Set \rci{\modr} Set$
+    in this way. This can be remedied by setting $small \catdefsep GSet \rci{\modr} GSet$
     in order to disallow crossing composition.
 \end{example}
 
@@ -291,35 +291,35 @@ it is usually only considered on categories which appear in leaves.
 \begin{example}
     Consider the following simple grammar:
     \gramshort{
-        \gramrow{cities}{ Set }{}
-        \gramrow{villages}{ Set }{}
-        \gramrow{Finland}{ Set }{}
+        \gramrow{cities}{ GSet }{}
+        \gramrow{villages}{ GSet }{}
+        \gramrow{Finland}{ GSet }{}
         \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
-        \gramrow{in}{ Set \lc Set \rc Set }{}
-        \gramrow{near}{ Set \lc Set \rc Set }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
     }
     It permits derivations as such:
     \centree{
-        .{$Set$}
+        .{$GSet$}
             \edge[very thick];
-            [ .{$Set$}
-                [ .{$Set$}
+            [ .{$GSet$}
+                [ .{$GSet$}
                     [ .{$cities$} ]
                 ]
-                [ .{$Set \lc Set$}
-                    [ .{$Set \lc Set \rc Set$}
+                [ .{$GSet \lc GSet$}
+                    [ .{$GSet \lc GSet \rc GSet$}
                         [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
                     ]
-                    [ .{$Set$}
+                    [ .{$GSet$}
                         [ .{$villages$} ]
                     ]
                 ]
             ]
-            [ .{$Set \lc Set$}
-                [ .{$Set \lc Set \rc Set$}
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$}
                     [ .{$in$} ]
                 ]
-                [ .{$Set$}
+                [ .{$GSet$}
                     [ .{$Finland$} ]
                 ]
             ]
@@ -329,29 +329,29 @@ it is usually only considered on categories which appear in leaves.
     near Finland", we could permit type-raising:
 
     \scaledtree{0.7}{
-        .{$Set$}
-        [ .{$Set \rc Set$}
-            [ .{$ Set \rc Set$}
-                [ .{$Set \rc \lp Set \lc Set \rp$}
-                    [ .{$\alpha \rc \lp \alpha \lc Set \rp$} [ .{$Set$} [ .{$cities$} ] ] ]
+        .{$GSet$}
+        [ .{$GSet \rc GSet$}
+            [ .{$ GSet \rc GSet$}
+                [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                    [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$cities$} ] ] ]
                 ]
-                [ .{$Set \lc Set \rc Set$} [ .{$in$} ]
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ]
                 ]
             ]
-            [ .{$ \lp Set \rc Set \rp \lc \lp Set \rc Set \rp$}
-                [ .{$\lp Set \rc Set \rp \lc \lp Set \rc Set \rp \rc \lp Set \rc Set \rp$}
+            [ .{$ \lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp$}
+                [ .{$\lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp \rc \lp GSet \rc GSet \rp$}
                     [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
                 ]
-                    [ .{$Set \rc Set$}
-                    [ .{$Set \rc \lp Set \lc Set \rp$}
-                        [ .{$\alpha \rc \lp \alpha \lc Set \rp$} [ .{$Set$} [ .{$villages$} ] ] ]
+                    [ .{$GSet \rc GSet$}
+                    [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                        [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$villages$} ] ] ]
                     ]
-                    [ .{$Set \lc Set \rc Set$} [ .{$near$} ]
+                    [ .{$GSet \lc GSet \rc GSet$} [ .{$near$} ]
                     ]
                 ]
             ]
         ]
-        [ .{$ Set$} [ .{$Finland$} ] ]
+        [ .{$ GSet$} [ .{$Finland$} ] ]
     }
 \end{example}
 
@@ -434,48 +434,48 @@ only if $Y_2 \less Y_1$.
 
     The grammar uses the following subtype definitions:
     \begin{align*}
-        DistCheck \quad\lass\quad& ((Dist \tot Set \tot Set) \tot Set) \\
-        NorthCheck \quad\lass\quad& ((Dist \tot Set \tot Set) \tot Set) \\
+        DistCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
+        NorthCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
     \end{align*}
     and looks like this:
     \gramshort{
-        \gramrow{german \sq cities}{Set}{germanCity}
-        \gramrow{Cologne}{Set}{cologne}
+        \gramrow{german \sq cities}{GSet}{germanCity}
+        \gramrow{Cologne}{GSet}{cologne}
         \gramrow{20km}{Dist}{twentykm}
-        \gramrow{less \sq than}{Set \lc Set \rc DistCheck}{
-            \lambda b {:} DistCheck, s{:} Set \abstr}
+        \gramrow{less \sq than}{GSet \lc GSet \rc DistCheck}{
+            \lambda b {:} DistCheck, s{:} GSet \abstr}
             \gramrow{}{}{ \quad b \app (
-                \lambda d {:} Dist, c {:} Set \abstr
+                \lambda d {:} Dist, c {:} GSet \abstr
             }
             \gramrow{}{}{ \quad \quad and \app s \app (within \app d \app c)}
             \gramrow{}{}{ \quad )}
-        \gramrow{}{Set \lc Set \rc NorthCheck}{
-            \lambda b {:} NorthCheck, s{:} Set \abstr}
+        \gramrow{}{GSet \lc GSet \rc NorthCheck}{
+            \lambda b {:} NorthCheck, s{:} GSet \abstr}
             \gramrow{}{}{ \quad b \app (
-                \lambda d {:} Dist, c {:} Set \abstr
+                \lambda d {:} Dist, c {:} GSet \abstr
             }
             \gramrow{}{}{ \quad \quad and \app s \app (withinNorth \app d \app c)}
             \gramrow{}{}{ \quad )}
-        \gramrow{from}{DistCheck \lc Dist \rc Set}{
-            \lambda c {:} Set, d {:} Dist \abstr DistCheck [}
-            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
+        \gramrow{from}{DistCheck \lc Dist \rc GSet}{
+            \lambda c {:} GSet, d {:} Dist \abstr DistCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot GSet \tot GSet) \abstr f \app d \app c }
             \gramrow{}{}{]}
-        \gramrow{north \sq of}{NorthCheck \lc Dist \rc Set}{
-            \lambda c {:} Set, d {:} Dist \abstr NorthCheck [}
-            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot Set \tot Set) \abstr f \app d \app c }
+        \gramrow{north \sq of}{NorthCheck \lc Dist \rc GSet}{
+            \lambda c {:} GSet, d {:} Dist \abstr NorthCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot GSet \tot GSet) \abstr f \app d \app c }
             \gramrow{}{}{]}
     }
 
     Here is a derivation tree for one of the forementioned queries:
-    \centree{.{$Set$}
-        [ .{$Set$} \edge[roof]; [ .{$german \sq cities$} ] ]
-        [ .{$Set \lc Set$}
-            [ .{$Set \lc Set \rc DistCheck$} \edge[roof]; [ .{$less \sq than$} ] ]
+    \centree{.{$GSet$}
+        [ .{$GSet$} \edge[roof]; [ .{$german \sq cities$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc DistCheck$} \edge[roof]; [ .{$less \sq than$} ] ]
             [ .{$DistCheck$}
                 [ .{$Dist$} [ .{$20km$} ] ]
                 [ .{$DistCheck \lc Dist$}
-                    [ .{$DistCheck \lc Dist \rc Set$} [ .{$from$} ] ]
-                    [ .{$Set$} [ .{$Cologne$} ] ]
+                    [ .{$DistCheck \lc Dist \rc GSet$} [ .{$from$} ] ]
+                    [ .{$GSet$} [ .{$Cologne$} ] ]
                 ]
             ]
         ]

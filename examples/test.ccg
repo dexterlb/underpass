@@ -3,20 +3,20 @@ import "amenities.ccg".
 
 begin S.
 
-SE < Set.
+SE < GSet.
 
-S < Set.
+S < GSet.
 
-Entity < Set.
+Entity < GSet.
 NamedEntity < String.
 
-mark="begin"  : S / SE        @ \x: SE    => S[Set[x]] .
-mark="end"    : SE \ Set      @ \x: Set   => SE[x] .
+mark="begin"  : S / SE        @ \x: SE    => S[GSet[x]] .
+mark="end"    : SE \ GSet      @ \x: GSet   => SE[x] .
 
 pos="comma"   : $X \ $X       @ id.
 
 raw="in"      
-    : Set / Set \ Set 
+    : GSet / GSet \ GSet 
     @ \things, where => and things (in where).
 
 pos="nnp" `'$raw'` : String
@@ -27,6 +27,6 @@ pos="nnp" `'$raw'` : String
     : NamedEntity       
     @ \x => NamedEntity[x].
 
-raw="like"    : Set \ NamedEntity @ nameLike.
-raw="city"    : Set \ Entity    @ \x : Entity => and city x.
-raw="near"    : Set \ Set / Set @ \b, a => and a (near b).
+raw="like"    : GSet \ NamedEntity @ nameLike.
+raw="city"    : GSet \ Entity    @ \x : Entity => and city x.
+raw="near"    : GSet \ GSet / GSet @ \b, a => and a (near b).

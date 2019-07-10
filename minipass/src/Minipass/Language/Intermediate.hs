@@ -26,7 +26,7 @@ import LambdaCalculus.TypedLambda (TSLTerm)
 import Utils.Exception (throw)
 
 data Types
-    = Set SetTag
+    = GSet SetTag
     | String
     | Num
     | List
@@ -34,7 +34,7 @@ data Types
     deriving (Eq)
 
 instance PartialOrd Types where
-    Set _       <! Set _      = True
+    GSet _       <! GSet _      = True
     String      <! String     = True
     Num         <! Num        = True
     List        <! List       = True
@@ -50,7 +50,7 @@ instance Show Types where
     show String     = "String"
     show List       = "List"
     show Anything   = "Any"
-    show (Set t)    = "[" <> show t <> "]"
+    show (GSet t)    = "[" <> show t <> "]"
 
 newtype SetTag = SetTag
     { osmTypes :: HashSet OsmType }
@@ -72,7 +72,7 @@ data OsmType
     deriving (Show, Eq, Generic)
 
 osmSet :: [OsmType] -> Types
-osmSet types = Set (SetTag { osmTypes = HS.fromList types })
+osmSet types = GSet (SetTag { osmTypes = HS.fromList types })
 
 osmAll :: Types
 osmAll = osmSet [OsmNode, OsmWay, OsmRelation, OsmArea]
@@ -93,7 +93,7 @@ instance MSemiLattice Types where
     Num     /\ Num      = Num
     String  /\ String   = String
     List    /\ List     = List
-    (Set a) /\ (Set b)  = Set $ meetSetTags a b
+    (GSet a) /\ (GSet b)  = GSet $ meetSetTags a b
     x       /\ y        = throw $ T.CannotMeet x y
 
 optimisationUnifier :: Unifier (T.ApplicativeType Types)
@@ -107,7 +107,7 @@ instance MLattice Types where
     Num     \/ Num      = Num
     String  \/ String   = String
     List    \/ List     = List
-    (Set a) \/ (Set b)  = Set $ uniteSetTags a b
+    (GSet a) \/ (GSet b)  = GSet $ uniteSetTags a b
     x       \/ y        = throw $ T.CannotJoin x y
 
 instance MSemiLattice (T.ApplicativeType Types) where
@@ -130,6 +130,6 @@ toIntermediate = transform Constant (T.Basic . typeToIntermediate)
 typeToIntermediate :: L.Types -> Types
 typeToIntermediate L.String = String
 typeToIntermediate L.Num = Num
-typeToIntermediate L.Set = osmAll
+typeToIntermediate L.GSet = osmAll
 typeToIntermediate L.List = List
 typeToIntermediate L.Anything = Anything
