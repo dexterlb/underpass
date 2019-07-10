@@ -2,10 +2,90 @@
 \begin{document}
 
 \subsubsection{Composing phrases}
-\label{hack:phrases}
-\fixme{write this up}
+The CCG formalism we have established allows a fixed set of terminals,
+which is usually chosen to be the set of all \emph{tokens}, or words,
+in the target natural language. This works fairly well, because it is
+convenient to write rules at word level.
 
-\subsubsection{Shorthand for specifying grammars}
+Sometimes, however, we come across fixed phrases, which come as several
+adjacent terminals but we want to regard as a single terminal.
+
+\begin{example}
+    Suppose we have a $\lambda$-term $parkinglot$ with type $Amenity$.
+    
+    For example, we might want to assign the category $Amenity$ with term
+    $parkinglot$
+    to the query \code{parking lot} which is composed of two terminals.
+    
+    One way to do this is to set dummy categories to all but one of the
+    terminals and have the main terminal accept the dummy categories as
+    arguments:
+   
+    \begin{itemize}
+        \item Add a new type/category $Dummy$.
+        \item Choose a closed term $M$ of type $Dummy$.
+        \item Set
+            \begin{align*}
+                Amenity \rci{\modstar} Dummy &\in f(parking)\\
+                Dummy &\in f(lot) \\
+                \\
+                \lambda d: Dummy \abstr parkinglot &\in \varphi(parking, Amenity \rci{\modstar} Dummy)  \\
+                M &\in \varphi(lot, Dummy) \\
+            \end{align*}
+    \end{itemize}
+    
+    This approach yields a derivation subtree for \code{parking lot} which
+    has the correct category and semantics:
+    \centree{.{$Amenity$}
+        [ .{$Amenity \rci{\modstar} Dummy$} [ .{$parking$} ] ]
+        [ .{$Dummy$} [ .{$lot$} ] ]
+    }
+\end{example}
+
+\begin{convention}
+    \label{hack:phrases}
+
+    While defining a CCG $G = \langle \Sigma, N, S, f, n \rangle$ such that
+    $N$ is typed in $T$,
+    the following assertions:
+    \begin{align*}
+        X &\in f[\alpha_1 \alpha_2 ... \alpha_k] \\
+        M &\in \varphi[\alpha_1 \alpha_2 ... \alpha_k, X] \\
+    \end{align*}
+    where $X \in \cclos{N}$ and $M$ is a $\lambda$-term typed in $T$, have
+    the following semantics:
+    \begin{itemize}
+        \item $\sigma_2, \sigma_3 ... \sigma_k \in T$, where $\sigma_i$ is a new type
+            whose choice\footnote{
+                When using $\lambda$-terms which allow subtypes and a wildcard type,
+                such as the type system used in Minipass, it is
+                convenient to create new types by subtyping the identity type
+                $\wildcard \tot \wildcard$ and using
+                $(\lambda x: \wildcard \abstr x)$ as a dummy term.
+            }
+            depends on $\alpha_1, ... \alpha_k$ and $i$.
+        \item $X_2, X_3, ..., X_k \in N$, where $X_i$ is a new category
+            such that $\typeof{X_i} = \sigma_i$ and whose choice
+            depends on $\sigma_i$.
+        \item $M_2, M_3, ..., M_k$ are arbitrary $\lambda$-terms whose types are
+            respectively $\sigma_2, \sigma_3, ..., \sigma_k$
+        \item New added categories to $f$:
+            \begin{itemize}
+                \item $X \rci{\modstar} X_2 \rci{\modstar} X_3
+                    \rci{\modstar} ... \rci{\modstar} X_k \in f(\alpha_1)$
+                \item For each $i \in \{ 2 ... k \}, X_i \in f(\alpha_i)$
+            \end{itemize}
+        \item New added terms to $\varphi$:
+            \begin{itemize}
+                \item $(\lambda x_2: \sigma_2, x_3: \sigma_3, ..., x_k: \sigma_k \abstr
+                    M) \in \varphi(\alpha_1, X \rci{\modstar} X_2 \rci{\modstar} X_3
+                    \rci{\modstar} ... \rci{\modstar} X_k)$
+                \item For each $i \in \{ 2 ... k \}, M_i \in \varphi(\alpha_i, X_i)$
+            \end{itemize}
+    \end{itemize}
+\end{convention}
+
+\subsubsection{Shorthand for grammar specification}
 \label{shorthand}
 When manually defining grammars, it is tedious to write definitions
 for $f$ and $\psi$ using standard mathematical notation.
@@ -33,7 +113,7 @@ Here, the square brackets denote possible phrase matching (\cref{hack:phrases}).
 be ignored or swept under the rug, which makes square brackets behave like
 round brackets.
 
-\example{
+\begin{example}
     This meta-example shows a couple of rules to illustrate the syntax:
     \gramshort{
         \gramrow{near}{ Set \lc Set \rc Set }{ \lambda from: Set, things: Set \abstr }
@@ -56,7 +136,7 @@ round brackets.
      to the phrase \code{german city} - one which can be seen in the query
      \code{"fountains in a german city"} and another in the query
      \code{"the german city Frankfurt"}.
-}
+ \end{example}
 
 Also, most examples from here on will assume that grammars have a starting
 category $Set$, to be as close as possible to the implementation in

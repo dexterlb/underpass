@@ -154,21 +154,7 @@
     \tikzexternalenable
 }
 
-\newcommand\example[1]{
-    \begin{mdframed}[%
-        backgroundcolor=red!5,
-        rightline=false,
-        topline=false,
-        bottomline=false,
-        leftline=false,
-    ]
-        \begin{examplethm}
-            #1
-        \end{examplethm}
-    \end{mdframed}
-}
-
-\newenvironment{exampleenv}
+\newenvironment{example}
     {
         \begin{samepage}
         \tikzexternaldisable
@@ -262,6 +248,8 @@
 \setlength{\grammarparsep}{0.2em}
 \setlength{\grammarindent}{12em}
 
+\theoremstyle{definition} \newtheorem{convention}{Convention}
+                          \numberwithin{convention}{section}
 \theoremstyle{definition} \newtheorem{defn}{Definition}
                           \numberwithin{defn}{section}
 \theoremstyle{definition} \newtheorem{lemma}{Lemma}

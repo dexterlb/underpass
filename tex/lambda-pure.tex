@@ -82,9 +82,11 @@ We can now define the set of
     \end{itemize}
 \end{defn}
 
-In this text, chained abstractions will be squashed, i.e.
-$\lambda x_1 : T_1, x_2: T_2, ..., y_n: T_n \abstr M$ shall mean
-$\lambda x_1 : T_1 \abstr (\lambda x_2: T_2 \abstr (... (\lambda x_n: T_n \abstr M) ...))$.
+\begin{convention}
+    In this text, chained abstractions will be squashed, i.e.
+    $\lambda x_1 : T_1, x_2: T_2, ..., y_n: T_n \abstr M$ shall mean
+    $\lambda x_1 : T_1 \abstr (\lambda x_2: T_2 \abstr (... (\lambda x_n: T_n \abstr M) ...))$.
+\end{convention}
 
 We will differentiate between \emph{free variables} and \emph{bound variables}
 in a term. Intuitively, bound variables are "bound" by abstraction, while
