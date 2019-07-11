@@ -401,12 +401,12 @@ and contexts:
     \[
         \lsquash(A) =
         \begin{cases*}
-            c &, $A = c \in C$ \\
-            v &, $A = v \in \lvars$ \\
-            \lsquash(M) \lsquash(N) &, $A = (MN)$ \\
+            c ,& $A = c \in C$ \\
+            v ,& $A = v \in \lvars$ \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$ \\
             \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
-                &, $A = \lambda x : \sigma \abstr M$ \\
-                \tsquash(\sigma)[M] &, $A = \sigma[M]$ \\
+ ,& $A = \lambda x : \sigma \abstr M$ \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$ \\
         \end{cases*}
     \]
 
@@ -552,10 +552,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \subtyper{\xi}(\tau)& ,
+            \subtyper{\xi}(\tau) ,& 
                 $\tau \in T$ \\
             \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2)& ,
+                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,& 
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]
@@ -563,10 +563,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \suptyper{\xi}(\tau)& ,
+            \suptyper{\xi}(\tau) ,& 
                 $\tau \in T$ \\
             \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2)& ,
+                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,& 
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]
@@ -827,9 +827,9 @@ existing manually-constructed types, and extend it with the new type.
     \[
         \squash_{\theta}(\tau) \defeq
         \begin{cases*}
-            \tau &, $\tau \in T$ \\
-            \sigma &, $\tau = \subtyper{\xi}(\sigma)$ \\
-            \sigma &, $\tau = \subtyper{\xi}(\sigma)$ \\
+            \tau ,& $\tau \in T$ \\
+            \sigma ,& $\tau = \subtyper{\xi}(\sigma)$ \\
+            \sigma ,& $\tau = \subtyper{\xi}(\sigma)$ \\
         \end{cases*}
     \]
 
@@ -1011,15 +1011,15 @@ encountering an "undefined" case in any of them is treated as a type error.
     \[
         \mcf{tag}_{\Gamma}(A) =
         \begin{cases*}
-            \ttt{c}{\typeof{C}} &,  $A = c \in C$ \\
-            \ttt{v}{\tau} &, $A = v \in \lvars, \Gamma \vdash v : \tau$ \\
+            \ttt{c}{\typeof{C}} ,& $A = c \in C$ \\
+            \ttt{v}{\tau} ,& $A = v \in \lvars, \Gamma \vdash v : \tau$ \\
             \ttt{(\mcf{tag}_{\Gamma}(M) \app \mcf{tag}_{\Gamma}(N))}{\tau}
-                &, $A = (MN), \Gamma \vdash A : \tau$ \\
+ ,& $A = (MN), \Gamma \vdash A : \tau$ \\
             \ttt{\lambda v \abstr \mcf{tag}_{\Gamma'}(M)}{\sigma \tot \tau}
-                &, $A = (\lambda v: \sigma \abstr M)
+ ,& $A = (\lambda v: \sigma \abstr M)
                  , \Gamma' \vdash M : \tau
                  , \Gamma' = \Gamma \circ v : \sigma$\\
-            \ttt{M}{\tau} &, $A = \tau[M]$ \\
+            \ttt{M}{\tau} ,& $A = \tau[M]$ \\
         \end{cases*}
     \]
 \end{defn}
@@ -1035,12 +1035,12 @@ we need a wrapping function that inserts casts when needed.
     \[
         \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
-            c &, $A = c \in C$ \\
-            v &, $A = v \in \lvars$ \\
+            c ,& $A = c \in C$ \\
+            v ,& $A = v \in \lvars$ \\
             \mcf{untag}_{\Gamma}(P) \app \mcf{untag}_{\Gamma}(Q)
-                &, $A = (PQ)$ \\
+ ,& $A = (PQ)$ \\
             \lambda v : \tau' \abstr \mcf{untag}_{\Gamma'}(P)
-                &, $A = (\lambda v \abstr P), \tau = (\tau' \tot \tau'')
+ ,& $A = (\lambda v \abstr P), \tau = (\tau' \tot \tau'')
                  , \Gamma' = \Gamma \circ v : \tau'$ \\
         \end{cases*}
     \]
@@ -1048,8 +1048,8 @@ we need a wrapping function that inserts casts when needed.
     \[
         \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
-            M &, $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$ \\
-            \tau[M] &, $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$ \\
+            M ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$ \\
+            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$ \\
         \end{cases*}
     \]
 \end{defn}
@@ -1101,35 +1101,35 @@ information down the term tree towards the leaves).
     \[
         \mcf{up}_{\unify}(\ttt{A}{\tau}) =
         \begin{cases*}
-            (\ttt{c}{\tau}, \{ \}) &, $A = c \in C$ \\
-            (\ttt{v}{\tau}, \{ v : \tau \}) &, $A = v \in \lvars$ \\
+            (\ttt{c}{\tau}, \{ \}) ,& $A = c \in C$ \\
+            (\ttt{v}{\tau}, \{ v : \tau \}) ,& $A = v \in \lvars$ \\
             (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
-                &, $A = (\lambda x \abstr P)
+ ,& $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
                 \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)
                 , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
                 \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
             (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
-                &, $A = (\lambda x \abstr P)
+ ,& $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
                 \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)$ \\
                 \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
             (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
-                &, $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),$ \\
+ ,& $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),$ \\
                 \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}_{\unify}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
         \end{cases*}
     \]
     \[
         \mcf{down}_{\unify}(\ttt{A}{\tau}, \tau', \Gamma) =
         \begin{cases*}
-            \ttt{c}{\tau \unify \tau'} &, $A = c \in C$ \\
+            \ttt{c}{\tau \unify \tau'} ,& $A = c \in C$ \\
             \ttt{v}{\tau \unify \tau' \unify \tau''}
-                &, $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
+ ,& $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
             \ttt{\lambda x \abstr P'}{\tau''}
-                &, $A = (\lambda x \abstr P), \tau'' = \tau \unify \tau'$ \\
+ ,& $A = (\lambda x \abstr P), \tau'' = \tau \unify \tau'$ \\
                 \phantom{} &\phantom{, } $\tau'' = (\sigma \tot \eta), P' = \mcf{down}_{\unify}(P, \eta, \Gamma \circ (x : \sigma)),$ \\
             \ttt{P' Q'}{\tau''}
-                &, $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
+ ,& $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
                 \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
                 \phantom{} &\phantom{, }$P' = \mcf{down}_{\unify}(P, (\sigma' \tot \tau''), \Gamma),
                 Q' = \mcf{down}_{\unify}(Q, \sigma'', \Gamma)$ \\

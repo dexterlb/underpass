@@ -49,8 +49,8 @@ $\typeof{x}$ shall mean "the type of $x$":
     \begin{equation*}
         \hat{\varphi}(\sigma) =
         \begin{cases*}
-            \varphi(\sigma)& , $\sigma \in X$ \\
-            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma'')& ,
+            \varphi(\sigma) ,& $\sigma \in X$ \\
+            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma'') ,& 
                 $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
         \end{cases*}
     \end{equation*}
@@ -99,10 +99,10 @@ term.
     \[
         \fv{M} =
         \begin{cases*}
-            \varnothing& , $M = c \in C$ \\
-            \{ v \}& , $M = v \in \lvars$ \\
-            \fv{A} \cup \fv{B}& , $M = (AB)$ \\
-            \fv{A} \setminus \{ v \}& , $M = (\lambda v : \sigma \abstr A)$ \\
+            \varnothing ,& $M = c \in C$ \\
+            \{ v \} ,& $M = v \in \lvars$ \\
+            \fv{A} \cup \fv{B} ,& $M = (AB)$ \\
+            \fv{A} \setminus \{ v \} ,& $M = (\lambda v : \sigma \abstr A)$ \\
         \end{cases*}
     \]
 \end{defn}

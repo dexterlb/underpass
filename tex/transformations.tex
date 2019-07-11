@@ -25,12 +25,12 @@ with the following unifier:
 \[
     \sigma \unify \tau =
     \begin{cases*}
-        \tau& , $\sigma = \text{\code{*}}$ \\
-        \sigma& , $\tau = \text{\code{*}}$ \\
-        \sigma& , $\sigma = \tau$ \\
-        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'')& ,
+        \tau ,& $\sigma = \text{\code{*}}$ \\
+        \sigma ,& $\tau = \text{\code{*}}$ \\
+        \sigma ,& $\sigma = \tau$ \\
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'') ,& 
             $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$ \\
-        \lnot !& , $\mathsf{otherwise}$ \\
+        \lnot ! ,& $\mathsf{otherwise}$ \\
     \end{cases*}
 \]
 

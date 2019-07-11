@@ -40,11 +40,11 @@ Now we need type variable substitution:
     \[
         \subst{\sigma}{\alpha}{\tau} \defeq
         \begin{cases*}
-            \sigma &, $\sigma \in T$ \\
-            \sigma &, $\sigma \in \tvars \setminus \{ \alpha \}$ \\
-            \tau &, $\sigma = \alpha$ \\
+            \sigma ,& $\sigma \in T$ \\
+            \sigma ,& $\sigma \in \tvars \setminus \{ \alpha \}$ \\
+            \tau ,& $\sigma = \alpha$ \\
             \subst{\sigma'}{\alpha}{\tau} \tot \subst{\sigma''}{\alpha}{\tau}
-                &, $\sigma = \sigma' \tot \sigma''$ \\
+ ,& $\sigma = \sigma' \tot \sigma''$ \\
         \end{cases*}
     \]
 \end{defn}
@@ -111,12 +111,12 @@ within a term:
     \[
         \subst{A}{\alpha}{\tau} \defeq
         \begin{cases*}
-            c &, $A = c \in C$ \\
-            v &, $A = v \in \lvars$ \\
+            c ,& $A = c \in C$ \\
+            v ,& $A = v \in \lvars$ \\
             \subst{M}{\alpha}{\tau} \app \subst{N}{\alpha}{\tau}
-                &, $A = MN$ \\
+ ,& $A = MN$ \\
             \lambda x : \subst{\sigma}{\alpha}{\tau} \abstr \subst{M}{\alpha}{\tau}
-                &, $A = (\lambda x : \sigma \abstr M)$ \\
+ ,& $A = (\lambda x : \sigma \abstr M)$ \\
         \end{cases*}
     \]
 \end{defn}
