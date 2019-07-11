@@ -1,5 +1,3 @@
-make commas cling to the left instead of to the right
-length of category -> breadth of category
 definition 2.8: prove that the type is unique
 remove the definitions of prefix and primary in ccg
 lemma 2.1: say that we're proving both directions at once
