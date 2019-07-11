@@ -300,6 +300,23 @@ For a of type lattice $T$, we can define the set of
     \end{itemize}
 \end{defn}
 
+Now we will show that every well-typed term has a unique type under a fixed context:
+\begin{prop}
+    \label{prop:uniquetypes}
+    \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''
+        \implies \sigma' = \sigma'' \]
+\end{prop}
+\begin{proof}
+    Assume $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
+    and prove this by induction over the construction of $M$:
+    \begin{itemize}
+        \item The proof for Constant, Variable, Application and Abstraction is identical
+            to the one for \cref{prop:uniquetypes}
+
+        \item $M = \sigma[A]$: this directly means that $\sigma' = \sigma = \sigma''$.
+    \end{itemize}
+\end{proof}
+
 \subsubsection{Type set subsumption}
 We will now formalise the notion of a type lattice being more general
 or more concrete than another type lattice.
@@ -552,10 +569,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \subtyper{\xi}(\tau) ,& 
+            \subtyper{\xi}(\tau) ,&
                 $\tau \in T$ \\
             \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,& 
+                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,&
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]
@@ -563,10 +580,10 @@ with their respective clones. One way to deal with contravariance is
     \[
         \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
         \begin{cases*}
-            \suptyper{\xi}(\tau) ,& 
+            \suptyper{\xi}(\tau) ,&
                 $\tau \in T$ \\
             \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
-                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,& 
+                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,&
                 $\tau = \tau_1 \tot \tau_2$ \\
         \end{cases*}
     \]

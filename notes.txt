@@ -1,4 +1,3 @@
-definition 2.8: prove that the type is unique
 remove the definitions of prefix and primary in ccg
 lemma 2.1: say that we're proving both directions at once
 definition 2.3.4: missing bracket, spacing; also, it's not "specialisation"

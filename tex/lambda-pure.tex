@@ -50,7 +50,7 @@ $\typeof{x}$ shall mean "the type of $x$":
         \hat{\varphi}(\sigma) =
         \begin{cases*}
             \varphi(\sigma) ,& $\sigma \in X$ \\
-            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma'') ,& 
+            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma'') ,&
                 $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
         \end{cases*}
     \end{equation*}
@@ -108,6 +108,7 @@ term.
 \end{defn}
 
 \begin{defn}
+    \label{def:context}
     Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
     \begin{itemize}
         \item For $M \in \Lambda_T^C, \sigma \in \tclos{T}$, $M : \sigma$ is called
@@ -155,7 +156,57 @@ we will use derivation rules.
                 \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
             }
     \end{itemize}
+\end{defn}
 
+Now, we will prove that every well-typed term has a unique type:
+\begin{prop}
+    \label{prop:uniquetypespure}
+    \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''
+        \implies \sigma' = \sigma'' \]
+\end{prop}
+\begin{proof}
+    We will assume $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
+    and prove this by induction over the construction of $M$.
+
+    \begin{itemize}
+        \item $M = c \in C$:
+
+            $\sigma' = \typeof{c} = \sigma''$
+
+        \item $M = x$ for some $x : \sigma' \in \Gamma$ and $x : \sigma'' \in \Gamma$:
+
+            Since $\Gamma$ is a context (e.g. each subject appears only once),
+            there is only one declaration with subject $x$, thus $\sigma' = \sigma''$.
+
+        \item $M = (AB)$:
+
+            We have $\Gamma \vdash (AB) : \sigma'$ and $\Gamma \vdash (AB) : \sigma''$.
+            This means that
+            \begin{align*}
+                \Gamma \vdash& A : \eta' \tot \sigma'
+                \Gamma \vdash& B : \eta'
+            \end{align*}
+            and
+            \begin{align*}
+                \Gamma \vdash& A : \eta'' \tot \sigma''
+                \Gamma \vdash& B : \eta''
+            \end{align*}
+            But inductively $A$ has a unique type, thus $\eta' \tot \sigma'
+            = \eta'' \tot \sigma''$, therefore $\sigma' = \sigma''$.
+
+        \item $M = (\lambda x : \tau \abstr A)$, $\sigma' = \tau \tot \eta'$
+            and $\sigma'' = \tau \tot \eta''$.
+
+            This means that $\Gamma \circ x : \tau \vdash A : \eta'$ and
+            $\Gamma \circ x : \tau \vdash A : \eta''$. Inductively, $\eta'
+            = \eta''$: therefore, $\sigma' = \tau \tot \eta' = \tau \tot \eta''
+            = \sigma''$.
+    \end{itemize}
+\end{proof}
+
+Since we proved that types for terms are unique, we can now define a typing
+function (which will work on well-typed closed terms):
+\begin{defn}
     Now, $\typeof{M}$ for $M \in \Lambda_T^C$ is defined as such:
     \[
         \typeof{M} =
@@ -164,7 +215,6 @@ we will use derivation rules.
             \neg ! & otherwise
         \end{cases*}
     \]
-    Of course, the above function is nowhere defined for non-closed terms.
 \end{defn}
 
 \end{document}
