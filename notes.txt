@@ -1,5 +1,15 @@
-fix now:
-    - fix notation for fancy lambda
-
-sections for later:
-    - explain about fixed phrases and templates
+make commas cling to the left instead of to the right
+length of category -> breadth of category
+definition 2.8: prove that the type is unique
+remove the definitions of prefix and primary in ccg
+lemma 2.1: say that we're proving both directions at once
+definition 2.3.4: missing bracket, spacing; also, it's not "specialisation"
+replace commas by ands (when applicable)
+definition 2.35: fix the prims
+say "xor" with words
+say why we need proposition 2.10
+section 2.4.5: properties of U? must be congruent. Extend it over complex categories.
+section 2.4.7: say that U here is assymetric, and also extends in complex categories differently
+fix the sentence after the definition of tag to say that propagate ruins the
+well-typedness
+which -> that (more formal)

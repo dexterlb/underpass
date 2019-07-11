@@ -23,13 +23,13 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \subsubsection{Type lattices}
 \begin{defn}
     Meet and join:
-    
+
     We say that $z$ is a \emph{meet} of $x$ and $y$, if:
     \begin{equation}
         z \less x, z \less y,
             \forall t \in X (t \less x, t \less y \implies t \less z)
     \end{equation}
-        
+
     We say that $z$ is a \emph{join} of $x$ and $y$, if:
     \begin{equation}
         x \less z, y \less z,
@@ -114,7 +114,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
         % proves equivalence
         First, let $\eta'$ be a join of $\sigma'$ and $\tau'$ and
         $\eta''$ be a meet of $\sigma''$ and $\tau''$, e.g:
-    
+
         \[
             \sigma' \less \eta', \tau' \less \eta',
                 \forall \nu \in \tclos{T} (\sigma' \less \nu, \tau' \less \nu \implies \eta' \less \nu)
@@ -123,7 +123,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
             \eta'' \less \sigma'', \eta'' \less \tau'',
                 \forall \nu \in \tclos{T} (\nu \less \sigma'', \nu \less \tau'' \implies \nu \less \eta'')
         \]
-        
+
         \begin{itemize}
             \item since $\sigma' \less \eta'$ and $\eta'' \less \sigma''$, we
                 have that $\eta = (\eta' \tot \eta'') \less (\sigma' \tot \sigma'') = \sigma$.
@@ -133,16 +133,16 @@ One such ordering relation is the \emph{subtype} relation, as presented in
                 and $\tau \less \nu$. This means that $\nu = \nu' \tot \nu''$
                 such that $\nu' \less \sigma', \nu' \less \tau'$ and
                 $\sigma'' \less \nu'', \tau'' \less \nu''$.
-        
+
                 But since $\eta'$ is a join of $\sigma'$ and $\tau'$, we know
-                that $\eta' \less \nu'$. And dually, 
+                that $\eta' \less \nu'$. And dually,
                 since $\eta''$ is a meet of $\sigma''$ and $\tau''$, we know
                 that $\nu'' \less \eta''$.
-                
+
                 Then, we have that $\nu \less \eta$.
         \end{itemize}
     \end{comment}
-    
+
     Let $\eta$ be a meet of $\sigma$ and $\tau$. We will apply equivalent
     transformations to the meet condition:
     \[
@@ -163,8 +163,8 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     \[    (\tau' \less \eta') , (\eta'' \less \tau'')
     \]
     \[
-            \forall (\nu' \tot \nu'') \in \tclos{T} 
-            ((\sigma' \less \nu'), (\nu'' \less \sigma''), 
+            \forall (\nu' \tot \nu'') \in \tclos{T}
+            ((\sigma' \less \nu'), (\nu'' \less \sigma''),
              (\tau' \less \nu'), (\nu'' \less \tau'')
              \implies (\eta' \less \nu'), (\nu'' \less \eta''))
     \]
@@ -178,10 +178,10 @@ One such ordering relation is the \emph{subtype} relation, as presented in
         \eta'' \less \sigma'', \eta'' \less \tau'',
             \forall \nu \in \tclos{T} (\nu \less \sigma'', \nu \less \tau'' \implies \nu \less \eta'')
     \]
-    This is exactly the condition that $\eta'$ is a join of $\sigma'$ 
+    This is exactly the condition that $\eta'$ is a join of $\sigma'$
     and $\tau'$ and
     $\eta''$ is a meet of $\sigma''$ and $\tau''$.
-    
+
     The argument for joins is dual to the one for meets and has been omitted.
 \end{proof}
 
@@ -192,26 +192,26 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \begin{proof}
     Let $\sigma, \tau \in \tclos{T}$. We will inductively (by their syntactic
     structure) prove that they have at most one join or meet.
-    
+
     First, let $\eta_1$ and $\eta_2$ be meets of $\sigma$ and $\tau$.
     Since $\less$ is only defined if operands have the same syntactic structure
     and we have that $\eta_1 \less \sigma, \eta_1 \less \tau, \eta_2 \less \sigma, \eta_2 \less \tau$,
     they are all forced to have the same syntactic structure. Thus, there are
     two possibilities:
-    
+
     \begin{itemize}
-        \item $\sigma, \tau, \eta_1, \eta_2 \in T$: 
-            
+        \item $\sigma, \tau, \eta_1, \eta_2 \in T$:
+
             since $T$ is a partial
             lattice, $\sigma$ and $\tau$ have a unique meet. Thus, $\eta_1 = \eta_2$.
         \item $\sigma = \sigma' \tot \sigma'', \tau = \tau' \tot \tau'',
             \eta_1 = \eta'_1 \tot \eta'_1, \eta_2 = \eta'_2 \tot \eta'_2$:
-           
+
             Since $\eta_1$ and $\eta_2$ are meets of $\sigma$ and $\tau$, we have
             by \cref{lemma:complexmeet} that $\eta'_1$ and $\eta'_2$ are meets
             of $\sigma'$ and $\tau'$, and that $\eta''_1$ and $\eta''_2$ are meets
             of $\sigma''$ and $\tau''$.
-            
+
             Inductively, $\eta'_1 = \eta'_2$ and $\eta''_1 = \eta''_2$. Thus,
             $\eta_1 = \eta'_1 \tot \eta''_1 = \eta'_2 \tot \eta''_2 = \eta_2$.
     \end{itemize}
@@ -433,7 +433,7 @@ and $\consquash$.
     Let $\Gamma \vdash A : \sigma$. We will now prove the right-hand side
     by induction over the construction of $A$:
     \begin{itemize}
-        \item $A = c \in C$. This means that $typeof(c) = \sigma$ and thus
+        \item $A = c \in C$. This means that $\typeof(c) = \sigma$ and thus
             $\sigma \in \tclos{S}$ because $C$ is typed in S: therefore
             $\tsquash(\sigma) = \sigma$. Also, we have that $\lsquash(c) = c$,
             and so \[ \Gamma \vdash c : \sigma \implies
@@ -846,7 +846,7 @@ existing manually-constructed types, and extend it with the new type.
             Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
             $\tau \less' \sigma$ for some $\sigma \in T$.
 
-            The only possibility is that $\subtyper{\sigma} = \tau$ and
+            The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
             $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
             in $T$ such that $\tau \less' \sigma$, therefore it is minimal.
         \item the argument for general elements is dual to the one
