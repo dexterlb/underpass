@@ -218,14 +218,19 @@ of variables during derivation.
 
 When parsing, we can observe that after processing all leaf nodes,
 there's no way to generate new variables while building the parse tree
-bottom-up. Thus, it is sufficient to eliminate variables by unification.
-For details about unification-based parsing, see \cref{hack:unification}.
+bottom-up. Thus, it is sufficient to eliminate variables by unification
+with the following unifier:
 
 Two categories $X$ and $Y$ with categorial variables \emph{unify} whenever we can
 find two sequences of substitutions $(a_1, X_1), (a_2, X_2), ..., (a_n, X_n)$
 and $(b_1, Y_1), (b_2, Y_2), ..., (b_n, Y_n)$ such that
 \[ \subst{\subst{\subst{X}{a_1}{X_1}}{a_2}{X_2}}{a_n}{X_n}
  = \subst{\subst{\subst{Y}{b_1}{Y_1}}{b_2}{Y_2}}{b_n}{Y_n} \]
+
+Note that this requires a slightly more sophisticated variant of unification
+than the one presented in \cref{hack:unification}: namely, variable substitutions
+need to be applied to whole categories while parsing, not only to their constituent
+subcategories that are being tested for unification.
 
 \subsubsection{Coordination}
 \emph{Coordination} refers to a technique which allows conjunctions (such as
@@ -328,7 +333,7 @@ it is usually only considered on categories which appear in leaves.
     If we would like to be able to accept queries like "cities in and villages
     near Finland", we could permit type-raising:
 
-    \scaledtree{0.7}{
+    \scaledtree{0.6}{
         .{$GSet$}
         [ .{$GSet \rc GSet$}
             [ .{$ GSet \rc GSet$}
@@ -368,8 +373,36 @@ based on their structure, as will be done in the next two sections. Categorial
 variables (\cref{hack:catvars}) are also a special case of unification.
 
 For bottom-up parsing, the only thing we need is an unification predicate
-$U(X, Y)$ which tells us whether the two categories unify. It can then be
+$U(X, Y)$ which tells us whether the two atomic categories unify. It can then be
 used instead of an equality check in the parsing algorithm.
+
+\begin{defn}
+    A predicate $U : N \times N \rightarrow \boolset$ is called a
+    \emph{unifier} for the set $N$ if it is transitive
+    and reflexive.
+\end{defn}
+
+Now, to use the unifier for parsing we must extend it over complex categories:
+\begin{defn}
+    If $U : N \times N \rightarrow \boolset$ is a unifier for the set of
+    atomic categories $N$, its extension over complex categories
+    $\hat{U} : \cclos{N} \times \cclos{N} \rightarrow \boolset$ is defined
+    as follows:
+    \begin{align*}
+        \hat{U}(X, Y) \iff & \\
+        & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
+        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \hat{U}(W', Z')
+        \land \hat{U}(W'', Z'')) \\
+    \end{align*}
+\end{defn}
+
+\begin{property}
+    If $U : N \times N \rightarrow \boolset$ is a unifier for the set of
+    $N$, its extension $\hat{U}$ is a unifier for $\cclos{U}$
+\end{property}
+\begin{proof}
+    The arguments for transitivity and reflexivity are both trivial.
+\end{proof}
 
 In particular, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
 by the following:
@@ -377,12 +410,15 @@ by the following:
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
     \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
-        and $U(Y', Y'')$, \\
+        and $\hat{U}(Y', Y'')$, \\
         then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
     \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
-        and $U(Y', Y'')$, \\
+        and $\hat{U}(Y', Y'')$, \\
         then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
 \end{enumerate}
+
+Note that the unifier may be asymmetric and take advantage of the fact
+that its first argument is the tail of the primary category.
 
 \subsubsection{Unification by category features}
 Some models allow each simple category to be extended with a set of \emph{features}
@@ -407,16 +443,19 @@ If the grammar will be used for generating typed $\lambda$-terms which use
 a subtyping system like the one described in \cref{sec:lambda}, the subtyping
 relation can be used to unify categories.
 
-One approach is to make any two categories which are comparable by the subtyping
-relation unify to the lower of the two: essentially using the $\meet$-operator
-as a unification operator. This, however, can result in terms with downcasts,
-which might not be the desired result.
-
 If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
-only if $Y_2 \less Y_1$.
+only if $\typeof{Y_2} \less \typeof{Y_1}$.
+
+This can be achieved by using the parsing rules specified in \cref{hack:unification}
+by using \[ \hat{U}(X, Y) \iff \typeof{Y} \less \typeof{X} \]
+
+Note that we must directly specify $\hat{U}$ instead of defining $U$ to act
+as $\less$ and then extending it over $\cclos{N}$ as describen in \cref{hack:unification},
+since the latter would result in covariant argument semantics, while we
+want contravariant argument semantics (for more details see \cref{sec:lambda}).
 
 \begin{example}
     Imagine we want to be able to parse the following queries:
