@@ -1,8 +1,5 @@
-remove the definitions of prefix and primary in ccg
-lemma 2.1: say that we're proving both directions at once
-definition 2.3.4: missing bracket, spacing; also, it's not "specialisation"
-replace commas by ands (when applicable)
 definition 2.35: fix the prims
+fix property 2.2
 say "xor" with words
 say why we need proposition 2.10
 section 2.4.5: properties of U? must be congruent. Extend it over complex categories.
@@ -10,3 +7,4 @@ section 2.4.7: say that U here is assymetric, and also extends in complex catego
 fix the sentence after the definition of tag to say that propagate ruins the
 well-typedness
 which -> that (more formal)
+replace commas by ands (when applicable)

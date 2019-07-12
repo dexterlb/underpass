@@ -99,14 +99,14 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     If $T$ is a type lattice and $\sigma = \sigma' \tot \sigma'' \in \tclos{T},
     \tau = \tau' \tot \tau'' \in \tclos{T}$,
     then:
-    \begin{itemize}
-        \item $\eta'$ is a join of $\sigma'$ and $\tau'$ and
+    \begin{enumerate}
+        \item \label{loc:fdir} $\eta'$ is a join of $\sigma'$ and $\tau'$ and
             $\eta''$ is a meet of $\sigma''$ and $\tau''$ if and only if
             $\eta' \tot \eta'' = \eta$ is a meet of $\sigma$ and $\tau$.
         \item $\eta'$ is a meet of $\sigma'$ and $\tau'$ and
             $\eta''$ is a join of $\sigma''$ and $\tau''$ if and only if
             $\eta' \tot \eta'' = \eta$ is a join of $\sigma$ and $\tau$.
-    \end{itemize}
+    \end{enumerate}
 \end{lemma}
 \begin{proof}
     \begin{comment}
@@ -125,7 +125,8 @@ One such ordering relation is the \emph{subtype} relation, as presented in
         \]
 
         \begin{itemize}
-            \item since $\sigma' \less \eta'$ and $\eta'' \less \sigma''$, we
+            \item
+                since $\sigma' \less \eta'$ and $\eta'' \less \sigma''$, we
                 have that $\eta = (\eta' \tot \eta'') \less (\sigma' \tot \sigma'') = \sigma$.
             \item since $\tau' \less \eta'$ and $\eta'' \less \tau''$, we
                 have that $\eta = (\eta' \tot \eta'') \less (\tau' \tot \tau'') = \tau$.
@@ -143,8 +144,10 @@ One such ordering relation is the \emph{subtype} relation, as presented in
         \end{itemize}
     \end{comment}
 
-    Let $\eta$ be a meet of $\sigma$ and $\tau$. We will apply equivalent
-    transformations to the meet condition:
+    We will prove both directions of (\ref{loc:fdir}) by applying equivalent
+    transformations:
+    
+    Let $\eta$ be a meet of $\sigma$ and $\tau$.
     \[
         \eta \less \sigma, \eta \less \tau,
             \forall \nu \in \tclos{T} (\nu \less \sigma, \nu \less \tau \implies \nu \less \eta)
@@ -240,7 +243,10 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 We will now extend the definition of $\lambda$-term given in \cref{purelambda:types}
 to work with subtypes.
 
-For a of type lattice $T$, we can define the set of
+We need this in order to extend type systems with additional information,
+and to be able to dispose of the extra information when it is no longer needed.
+
+So, for a of type lattice $T$, we will define the set of
 \emph{pre-typed $\lambda$-terms with subtypes} ($\fancylambda{T}{C}$).
 
 \begin{defn}
@@ -332,7 +338,7 @@ or more concrete than another type lattice.
     \end{itemize}
 \end{defn}
 
-Essentially, this says that $T$ is a specialisation of $S$: any type in
+Essentially, this says that $T$ subsumes, or encompasses, $S$: any type in
 $T$ is either a more concrete variant or a more general variant of some type in $S$.
 
 If $\tau$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
@@ -361,12 +367,8 @@ however, involves discarding information.
 
 \begin{defn}
     $\squash: T \rightarrow S$ is a \emph{squash function} for
-    $\langle T, \less \rangle \tless \langle S, \less' \rangle$, if:
+    $\langle T, \less' \rangle \tless \langle S, \less \rangle$, if:
     \begin{itemize}
-        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $S$ such that
-            $\tau \less' \squash(\tau)$.
-        \item for each general $\tau$, $\squash(\tau)$ is a maximal element in $S$ such that
-            $\squash(\tau) \less' \tau$.
         \item for each $\tau \in S$, $\squash(\tau) = \tau$
         \item it preserves the subtyping relation:
             \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
@@ -377,11 +379,11 @@ however, involves discarding information.
 \begin{property}
     \label{prop:squash:preserve}
     Squash functions preserve the subtyping relation for complex types:
-    \[ \forall \sigma, \tau \in \tclos{T} (\sigma \less \tau \implies
+    \[ \forall \sigma, \tau \in \tclos{T} (\sigma \less' \tau \implies
         \tsquash(\sigma) \less \tsquash(\tau)) \]
 \end{property}
 \begin{proof}
-    First, assume $\sigma \less \tau$.
+    First, assume $\sigma \less' \tau$.
 
     The property is proven by induction over the construction of $\sigma$
     and $\tau$.
@@ -389,8 +391,8 @@ however, involves discarding information.
     \begin{itemize}
         \item $\sigma \in T, \tau \in T$: this is true by definition.
         \item $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$:
-            since $\sigma \less \tau$, we have that $\tau' \less \sigma'$
-            and $\sigma'' \less \tau''$.
+            since $\sigma \less' \tau$, we have that $\tau' \less' \sigma'$
+            and $\sigma'' \less' \tau''$.
 
             Therefore, inductively, $\tsquash(\tau') \less \tsquash(\sigma')$
             and $\tsquash(\sigma'') \less \tsquash(\tau'')$. Thus,
@@ -400,7 +402,7 @@ however, involves discarding information.
                 (\tsquash(\tau') \tot \tsquash(\tau'')) = \tsquash(\tau)
             \]
         \item in other cases, $\sigma$ and $\tau$ have different syntactic
-            structure and $\less$ is not defined. Since $\tsquash$ preserves
+            structure and $\less'$ is not defined. Since $\tsquash$ preserves
             syntactic structure, $\tsquash(\sigma)$ and $\tsquash(\tau)$
             will also have different syntactic structure, thus $\less$ will
             be undefined for them as well.
@@ -437,9 +439,12 @@ and contexts:
     \]
 \end{defn}
 
-From here on $\squash$ will may used freely in place of $\lsquash$
+From here on $\squash$ may be used freely in place of $\lsquash$
 and $\consquash$.
 
+And now, the main proposition of this section, which tells us that when
+dropping a well-typed $\lambda$-term from an extended type system into
+a basic type system, it remains well-typed and has a useful type.
 \begin{prop}
     For a squash function $\squash: T \rightarrow S$, $\lsquash$ is
     well-defined, namely
@@ -835,7 +840,10 @@ existing manually-constructed types, and extend it with the new type.
     If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
-    there is a unique squash function $\squash_{\theta} : T' \rightarrow T$.
+    there is a unique squash function $\squash_{\theta} : T' \rightarrow T$
+    that maps general elements in $T'$ into
+    maximal elements in $T$ and maps special elements in $T'$ into minimal elements
+    in $T$.
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
@@ -853,22 +861,10 @@ existing manually-constructed types, and extend it with the new type.
     This is a correctly defined function because $\subtyper{\xi}$ and
     $\suptyper{\xi}$ are injections.
 
-    The only thing left is to check the conditions for $\squash_{\theta}$
+    Now to check the conditions for $\squash_{\theta}$
     being a squash function for $T' \tless T$:
 
     \begin{itemize}
-        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $T$ such that
-            $\tau \less' \squash(\tau)$:
-
-            Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
-            $\tau \less' \sigma$ for some $\sigma \in T$.
-
-            The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
-            $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
-            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.
-        \item the argument for general elements is dual to the one
-            for special elements.
-
         \item for each $\tau \in T$, $\squash_{\theta}(\tau) = \tau$:
 
             This is true by the definition of $\squash_{\theta}$.
@@ -908,14 +904,40 @@ existing manually-constructed types, and extend it with the new type.
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
     \end{itemize}
+    
+    The only thing left is to check tht $\squash_{\theta}$ returns maximal
+    elements in $T$ for general elements in $T'$ and returns minimal elements
+    in $T$ for special elements in $T'$:
+   
+    \begin{itemize}
+        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $T$ such that
+            $\tau \less' \squash(\tau)$:
+
+            Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
+            $\tau \less' \sigma$ for some $\sigma \in T$.
+
+            The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
+            $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
+            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.
+        \item the argument for general elements is dual to the one
+            for special elements.
+    \end{itemize}
 \end{proof}
+
+The following proposition tells us that we can drop from an extended type
+system into a basic type system and constructs a mapping which does this in a
+sensible way (for each general type in the extended type system we take the
+most general possible basic type, and for each special type we take the most
+special possible basic type).
 
 \begin{prop}
     If $\langle T, \less \rangle$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
     then $T' \tless T$. Even more, there is a unique squash function
-    $\squash_{\Theta} : T' \rightarrow T$.
+    $\squash_{\Theta} : T' \rightarrow T$ that maps general elements in $T'$ into
+    maximal elements in $T$ and maps special elements in $T'$ into minimal elements
+    in $T$.
 \end{prop}
 \begin{proof}
     Let \[
@@ -943,7 +965,7 @@ existing manually-constructed types, and extend it with the new type.
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
 
-            Now, we need to prove the squash-function and uniqueness
+            Now, we need to prove the squash-function and minimal/maximal element
             properties of $\squash_{i + 1}$:
             \begin{enumerate}
                 \item For each special
