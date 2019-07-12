@@ -15,7 +15,7 @@ adjacent terminals but we want to regard as a single terminal.
     
     For example, we might want to assign the category $Amenity$ with term
     $parkinglot$
-    to the query \code{parking lot} which is composed of two terminals.
+    to the query \code{parking lot} that is composed of two terminals.
     
     One way to do this is to set dummy categories to all but one of the
     terminals and have the main terminal accept the dummy categories as
@@ -34,7 +34,7 @@ adjacent terminals but we want to regard as a single terminal.
             \end{align*}
     \end{itemize}
     
-    This approach yields a derivation subtree for \code{parking lot} which
+    This approach yields a derivation subtree for \code{parking lot} that
     has the correct category and semantics:
     \centree{.{$Amenity$}
         [ .{$Amenity \rci{\modstar} Dummy$} [ .{$parking$} ] ]
@@ -57,7 +57,7 @@ adjacent terminals but we want to regard as a single terminal.
     \begin{itemize}
         \item $\sigma_2, \sigma_3 ... \sigma_k \in T$, where $\sigma_i$ is a new type
             whose choice\footnote{
-                When using $\lambda$-terms which allow subtypes and a wildcard type,
+                When using $\lambda$-terms that allow subtypes and a wildcard type,
                 such as the type system used in Minipass, it is
                 convenient to create new types by subtyping the identity type
                 $\wildcard \tot \wildcard$ and using
@@ -133,8 +133,8 @@ round brackets.
      \end{align*}
 
      Here we assign two different categories with their respective semantics
-     to the phrase \code{german city} - one which can be seen in the query
-     \code{"fountains in a german city"} and another in the query
+     to the phrase \code{german city} - one that can be seen in the query
+     \code{"fountains in a german city"}, and another in the query
      \code{"the german city Frankfurt"}.
  \end{example}
 

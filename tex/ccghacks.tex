@@ -134,7 +134,7 @@ can combine with any other type of slash).
 
 \subsubsection{Categorial variables}
 \label{hack:catvars}
-This is a very powerful extension which adds simple unification based on variables
+This is a very powerful extension that adds simple unification based on variables
 to categorial derivation. To define it formally, let $\cvars = \{ \kappa', \kappa'', \kappa''' ...\}$
 be a set of symbols we call \emph{categorial variables}.
 and introduce variable substitution over categories.
@@ -149,7 +149,7 @@ and introduce variable substitution over categories.
     \end{enumerate}
 \end{defn}
 
-For convenience, we will now define a function which gives us all variables
+For convenience, we will now define a function that gives us all variables
 used in a category.
 \begin{defn}
     Let $\fvv : C(\tau) \rightarrow 2^{\cvars}$ be defined as:
@@ -233,7 +233,7 @@ need to be applied to whole categories while parsing, not only to their constitu
 subcategories that are being tested for unification.
 
 \subsubsection{Coordination}
-\emph{Coordination} refers to a technique which allows conjunctions (such as
+\emph{Coordination} refers to a technique that allows conjunctions (such as
 $and$, $or$ etc.) to combine identical categories on both sides.
 
 This can be emulated completely by using categorial variables and setting
@@ -291,7 +291,7 @@ The semantics are defined as follows:
 \[ sem_{\psi}(T) = \{ \lambda f {:} ( X \tot \alpha ) \abstr f M \mid M \in sem_{\psi}(T') \} \]
 
 Since considering type-raising at any level would make parsing much slower,
-it is usually only considered on categories which appear in leaves.
+it is usually only considered on categories that appear in leaves.
 
 \begin{example}
     Consider the following simple grammar:
@@ -364,7 +364,7 @@ it is usually only considered on categories which appear in leaves.
 \label{hack:unification}
 To reduce the size and complexity of grammars, it is convenient to regard
 not only identical categories as equal, but rather use an \emph{unification}
-operation which can judge whether two categories unify and what their common
+operation that can judge whether two categories unify and what their common
 unifier should be.
 
 One method is to explicitly state the unification rules in the grammar.
@@ -373,7 +373,7 @@ based on their structure, as will be done in the next two sections. Categorial
 variables (\cref{hack:catvars}) are also a special case of unification.
 
 For bottom-up parsing, the only thing we need is an unification predicate
-$U(X, Y)$ which tells us whether the two atomic categories unify. It can then be
+$U(X, Y)$ that tells us whether the two atomic categories unify. It can then be
 used instead of an equality check in the parsing algorithm.
 
 \begin{defn}
@@ -422,7 +422,7 @@ that its first argument is the tail of the primary category.
 
 \subsubsection{Unification by category features}
 Some models allow each simple category to be extended with a set of \emph{features}
-which refine its scope, and then define rules for unification of said features.
+that refine its scope, and then define rules for unification of said features.
 
 For example, we could assume a global set of features $Feat$ to be the
 set of finite functions $f: [a-zA-Z\_]^* \rightarrow [a-zA-Z\_]^*$
@@ -439,7 +439,7 @@ This can be further extended by concepts such as \emph{feature variables}
 performs variable substitution during unification) and embedding regular expressions.
 
 \subsubsection{Unification by subtyping}
-If the grammar will be used for generating typed $\lambda$-terms which use
+If the grammar will be used for generating typed $\lambda$-terms that use
 a subtyping system like the one described in \cref{sec:lambda}, the subtyping
 relation can be used to unify categories.
 
@@ -520,7 +520,7 @@ want contravariant argument semantics (for more details see \cref{sec:lambda}).
         ]
     }
 
-    Which results in the $\lambda$-term we wanted (after reduction):
+    That results in the $\lambda$-term we wanted (after reduction):
     \[ and \app germanCity \app (within \app twentykm \app cologne) \]
     And for the other query respectively:
     \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]

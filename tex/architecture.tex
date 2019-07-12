@@ -13,11 +13,11 @@ The system consists of several parts:
 \begin{itemize}
     \item Generic CCG definition language: a language for defining CCGs,
           their respective type systems and term libraries. Can be used
-          standalone (for specifying CCGs which output raw parse trees)
+          standalone (for specifying CCGs that output raw parse trees)
           or by embedding a lambda calculus-based language (for specifying
-          CCGs which output lambda terms)
+          CCGs that output lambda terms)
 
-    \item CCG Rule Matcher: a module which tags tokens from the input stream
+    \item CCG Rule Matcher: a module that tags tokens from the input stream
           with Categories based on the CCG rules (defined in the CCG definition
           language)
 
@@ -28,11 +28,11 @@ The system consists of several parts:
           (largely consists of external components)
 
     \item The Minipass language: a small, lambda calculus-based language
-          which translates to Overpass, designed to be easily generated and
+          that translates to Overpass, designed to be easily generated and
           to represent Overpass operators as operations on a graph.
 
     \item Minipass to Overpass translator: a translator from Minipass terms
-          to Overpass queries which does some basic optimisations
+          to Overpass queries that does some basic optimisations
 \end{itemize}
 
 An architecture overview can be seen at \cref{arch}.
@@ -44,7 +44,7 @@ tree, minipass term before and after reduction) and finally view the results
 on a map via Overpass Turbo (a public web interface for visualising queries
 \cite{overpassturbo}).
 
-An "\emph{expert}" can write grammar definitions which specify rules for matching
+An "\emph{expert}" can write grammar definitions that specify rules for matching
 tokens and attaching categories and Minipass terms to them. This is done in
 \code{.ccg} files, which can then be loaded at runtime and used for parsing the
 input queries.

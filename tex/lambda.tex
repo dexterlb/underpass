@@ -8,7 +8,7 @@ In order to be able to represent the notion of generic and specific concepts,
 it is well-suited to use some sort of ordering relation over our types.
 
 One such ordering relation is the \emph{subtype} relation, as presented in
-\cite[chap.~15]{pierce}, which will be used here.
+\cite[chap.~15]{pierce}, and will be used here.
 
 \begin{example}
     The subtyping construction is particularly useful for domains like
@@ -77,7 +77,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     In essence, the semantics of $f \less g$ is ``wherever we can use $g$,
     we can also use $f$''. Now, imagine that $f : \alpha' \tot \beta'$,
     $g : \alpha'' \tot \beta''$, and we have a function
-    $h : (\alpha'' \tot \beta'') \tot \gamma $ which takes $g$ as
+    $h : (\alpha'' \tot \beta'') \tot \gamma $ that takes $g$ as
     argument and produces something of type $\gamma$. Supposedly,
     $h$ uses $g$ somewhere in its body and supplies it with something
     of type $\alpha''$.
@@ -90,7 +90,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
     Nevertheless, there exist systems (for example the Dart programming
     language \cite{darttypes}) where covariant arguments are allowed and the
-    inconsistencies which
+    inconsistencies that
     arise from this decision are left to the user to look out for.
 }
 
@@ -433,7 +433,7 @@ and contexts:
     \]
 
     Also,
-    $\consquash$ which operates on contexts
+    $\consquash$, which operates on contexts
     is defined as follows:
 
     \[
@@ -552,15 +552,15 @@ that is its clone
 (has the same syntactic structure), and is a subtype of $\tau$.
 
 To deal with contravariance, we will differentiate between a ``subtype clone''
-($\subtyper{clone}$),
-which clones a type into a new one which will be its subtype, and a
+($\subtyper{clone}$)
+that clones a type into a new one that will be its subtype, and a
 ``supertype clone'', ($\suptyper{clone}$)
-which does the opposite - this way we will be able to
+that does the opposite - this way we will be able to
 use the $\suptyper{clone}$ in arguments and $\subtyper{clone}$ in return
 values.
 
 To do this, we will use the mappings $\subtyper{\xi}$ and $\suptyper{\xi}$
-which rename the basic types used in $\tau$ into new type symbols. To clone
+that rename the basic types used in $\tau$ into new type symbols. To clone
 $\tau$, we will recursively replace argument types and return value types
 with their respective clones. One way to deal with contravariance is
 
@@ -646,7 +646,7 @@ to $T$ directly, since this would require subtyping a type with a different synt
 structure. So, instead we will construct another type $\varphi(\sigma) \in \tclos{T}$
 whose constituent atomic types we add to $T$.
 
-We will now define the operation $\tadd$ which does exactly that.
+We will now define the operation $\tadd$ that does exactly that.
 
 Afterwards, when we need to refer to $\tau$, we will use $\varphi(\tau)$.
 
@@ -730,7 +730,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item $\restr{\less'}{S \times S} = \less$:
 
-            we only add edges to $\less$ that point to symbols which are not
+            we only add edges to $\less$ that point to symbols that are not
             in $T$. Moreover, the transitive and reflexive closures don't
             affect this condition because $\less$ is already transitive and
             reflexive.
@@ -789,7 +789,7 @@ existing manually-constructed types, and extend it with the new type.
         in \cref{def:subadd}.
     }.
 
-    Also, we can define the function which gives us all the new type names
+    Also, we can define the function that gives us all the new type names
     asserted by the subtype library as
     $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
 \end{defn}
@@ -932,7 +932,7 @@ existing manually-constructed types, and extend it with the new type.
 \end{proof}
 
 The following proposition tells us that we can drop from an extended type
-system into a basic type system and constructs a mapping which does this in a
+system into a basic type system and constructs a mapping that does this in a
 sensible way (for each general type in the extended type system we take the
 most general possible basic type, and for each special type we take the most
 special possible basic type).
@@ -952,7 +952,7 @@ special possible basic type).
         \tadd \theta_1 \tadd \theta_2 \tadd ... \tadd \theta_i
     \]
     This property shall be proven by induction over the iterative process
-    which constructs $T' = T_n$, while also building a squash function
+    that constructs $T' = T_n$, while also building a squash function
     $\squash_i$ for each iteration:
     \begin{itemize}
         \item for $T_0$, we trivially know that $T \tless T$ with an identity
@@ -987,7 +987,7 @@ special possible basic type).
                     Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
                     $\tau'$ is a unique minimal element in
                     $T_i$ such that $\tau \less \tau'$. Since there are no other
-                    minimal elements in $T_i$ which satisfy this condition,
+                    minimal elements in $T_i$ that satisfy this condition,
                     we have that $\tau''$ also satisfies this condition for
                     $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
                     $T$ go through $\tau'$).
@@ -995,7 +995,7 @@ special possible basic type).
                 \item The argument for general elements is dual to the one
                     for special elements.
                 \item It preserves $\less$ - this is true because $\squash_{i + 1}$
-                    is a composition of two functions which preserve $\less$
+                    is a composition of two functions that preserve $\less$
             \end{enumerate}
     \end{itemize}
 \end{proof}
@@ -1005,18 +1005,18 @@ special possible basic type).
 \label{sec:propagation}
 For the sake of performing optimisations, it is convenient to store extra
 information within types. For example, we can extend our $Num$ type to include
-a tag which says whether the value this type is attached to is a constant. This
+a tag that says whether the value this type is attached to is a constant. This
 information can then be used to prune entire subterms whose value is constant.
 
 In order to manipulate subterm types easily, we will introduce a construction
 called \emph{type-tagged $\lambda$-terms}, which essentially means attaching
 a type to every subterm.
 
-We will then define the functions $\mcf{tag}$ and $\mcf{untag}$ which allow us
+We will then define the functions $\mcf{tag}$ and $\mcf{untag}$ that allow us
 to convert typed $\lambda$-terms into type-tagged $\lambda$-terms and vice
-versa, and the function $\mcf{propagate}$ which propagates type information
+versa, and the function $\mcf{propagate}$ that propagates type information
 throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
-perform rewriting passes which depend on type information, then $\mcf{propagate}$
+perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
 process until it no longer produces a different term, and then $\mcf{untag}$ging
 back into a regular $\lambda$-term. This process is illustrated in 
@@ -1130,7 +1130,7 @@ will take extra care and insert casts where needed:
 Now that we have the construction for attaching types to subterms, we can
 describe a universal way to propagate information through those types.
 
-We will use a basic operation $\unify$ which unifies two types.
+We will use a basic operation $\unify$ that unifies two types.
 
 \begin{defn}
 An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
@@ -1167,8 +1167,8 @@ information down the term tree towards the leaves).
 \begin{defn}
     \label{def:propagation}
     For a set of type symbols $T$ and a unifier for $T$ $\unify$, the functions
-    $\mcf{up}_{\unify}$ which maps a type-tagged term into a new type-tagged term and
-    an inferred context for its free variables, and $\mcf{down}_{\unify}$ which maps
+    $\mcf{up}_{\unify}$ that maps a type-tagged term into a new type-tagged term and
+    an inferred context for its free variables, and $\mcf{down}_{\unify}$ that maps
     a type-tagged term, a desired type and a free variable context into a
     new type-tagged term, are defined inductively as follows:
     \[

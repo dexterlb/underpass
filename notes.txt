@@ -1,3 +1,1 @@
-fix the sentence after the definition of tag to say that propagate ruins the well-typedness
-which -> that (more formal)
 replace commas by ands (when applicable)

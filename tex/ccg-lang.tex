@@ -77,18 +77,18 @@ tokeniser as sets of
 key-value data (for example, the token \code{cities} may be represented as
 \code{raw=cities,pos=nnp,lemma=city} - for a more detailed explanation
 see \cref{sec:tokenisation}). The CCG definition language allows us to define
-\emph{matchers} which can either match a token or not match a token.
+\emph{matchers} that can either match a token or not match a token.
 
 The following matchers have been implemented:
 
 \begin{itemize}
-    \item exact matcher (matches tokens which contain a tag with key `key'
+    \item exact matcher (matches tokens that contain a tag with key `key'
         and value `value'):
         \begin{center}
             \code{key='value'}
         \end{center}
-    \item regex matcher (matches tokens which contain a tag with key `key'
-        and a value which matches the regular expression `regex'):
+    \item regex matcher (matches tokens that contain a tag with key `key'
+        and a value that matches the regular expression `regex'):
         \begin{center}
             \code{key\textasciitilde'regex'}
         \end{center}
@@ -132,7 +132,7 @@ Categories are constructed as follows:
             \syntax{<category> <slash> <category>}
         \end{center}
         where \syntax{<slash>} is a modal slash (\code{/.}, \code{/s},
-        \code{/d} or \code{/x} which respectively stand for $\rci{\moddot}$,
+        \code{/d} or \code{/x} that respectively stand for $\rci{\moddot}$,
         $\rci{\modstar}$, $\rci{\modr}$, $\rci{\modx}$, and their backslash
         counterparts). The modality may be omitted, and is then assumed to be
         the dot modality.
@@ -248,7 +248,7 @@ CCG parsing process to fail. It is the expert's responsibility to ensure that
 templates are correct.
 
 \begin{example}
-Consider the following rule which contains a template:
+Consider the following rule that contains a template:
 \begin{lstlisting}
 pos="nnp" `'$raw'` : String
     : GSet
