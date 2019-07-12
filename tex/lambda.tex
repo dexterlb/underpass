@@ -1012,6 +1012,24 @@ In order to manipulate subterm types easily, we will introduce a construction
 called \emph{type-tagged $\lambda$-terms}, which essentially means attaching
 a type to every subterm.
 
+We will then define the functions $\mcf{tag}$ and $\mcf{untag}$ which allow us
+to convert typed $\lambda$-terms into type-tagged $\lambda$-terms and vice
+versa, and the function $\mcf{propagate}$ which propagates type information
+throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
+perform rewriting passes which depend on type information, then $\mcf{propagate}$
+any new type information that has arisen after rewriting, repeating the
+process until it no longer produces a different term, and then $\mcf{untag}$ging
+back into a regular $\lambda$-term. This process is illustrated in 
+\cref{fig:propagation}.
+
+\begin{figure}[htbp!]
+    \includegraphics[width=0.6\textwidth]{propagation.eps}
+    \caption{Illustration of a term manipulation process. Orange nodes
+        represent typed $\lambda$-terms, while green nodes represent
+        type-tagged $\lambda$-terms.}
+    \label{fig:propagation}
+\end{figure}
+
 This construction doesn't need to include casts, since we are storing
 a type for every subterm anyway, which can replace the use of casts for all
 practical\footnote{
@@ -1040,6 +1058,11 @@ they can be easily extracted from the types of the respective abstraction terms.
                 \implies \ttt{(\lambda v \abstr A)}{\tau} \in \ttlambda{T}{C} \]
     \end{itemize}
 \end{defn}
+
+This construction is completely equivalent to the regular typed $\lambda$-term
+construction (type-tags may be emulated by inserting casts at all subterms), 
+and is used only for convenience: this way we can manipulate types directly
+instead of having to deal with casts and bound variable types.
 
 Converting regular $\lambda$-terms into type-tagged $\lambda$-terms is
 relatively straightforward: simply examine the type of every subterm according
@@ -1070,8 +1093,11 @@ encountering an ``undefined'' case in any of them is treated as a type error.
     \]
 \end{defn}
 
-Since the type tags of (sub)terms may not match their inferred type,
-we need a wrapping function that inserts casts when needed.
+Although terms returned by $\mcf{tag}_{\Gamma}$ are well-typed (the type of
+each subterm according to $\Gamma$ matches its tag), we want to manipulate
+those terms before untagging them, and such manipulations may induce discrepancies
+between actual types and type tags. Thus, our $\mcf{untag}_{\Gamma}$ function
+will take extra care and insert casts where needed:
 \begin{defn}
     For a context $\Gamma$,
     $\mcf{untag}_{\Gamma} : \ttlambda{T}{C} \pfun \fancylambda{T}{C}$
