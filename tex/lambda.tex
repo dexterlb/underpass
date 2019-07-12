@@ -1020,15 +1020,16 @@ perform rewriting passes which depend on type information, then $\mcf{propagate}
 any new type information that has arisen after rewriting, repeating the
 process until it no longer produces a different term, and then $\mcf{untag}$ging
 back into a regular $\lambda$-term. This process is illustrated in 
-\cref{fig:propagation}.
+\cref{fig:propagation} and is utilised within \cref{sec:typeinf} and
+\cref{sec:optimisation}.
 
-\begin{figure}[htbp!]
-    \includegraphics[width=0.6\textwidth]{propagation.eps}
+\cfigure{
+    \includegraphics[width=0.8\textwidth]{propagation.eps}
     \caption{Illustration of a term manipulation process. Orange nodes
         represent typed $\lambda$-terms, while green nodes represent
         type-tagged $\lambda$-terms.}
     \label{fig:propagation}
-\end{figure}
+}
 
 This construction doesn't need to include casts, since we are storing
 a type for every subterm anyway, which can replace the use of casts for all

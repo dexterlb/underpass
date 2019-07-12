@@ -175,6 +175,14 @@
         \end{samepage}
     }
 
+\newcommand{\cfigure}[1]{
+    \begin{figure}[htbp!]
+        \centering
+        #1
+    \end{figure}
+}
+\numberwithin{figure}{section}
+
 \lstset{
 	backgroundcolor = \color{light-gray},
     language = C,
