@@ -1,6 +1,3 @@
-definition 2.35: fix the prims
-fix property 2.2
-say "xor" with words
 say why we need proposition 2.10
 section 2.4.5: properties of U? must be congruent. Extend it over complex categories.
 section 2.4.7: say that U here is assymetric, and also extends in complex categories differently

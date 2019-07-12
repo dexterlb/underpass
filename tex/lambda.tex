@@ -53,8 +53,8 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     $T \subseteq \tsymbs$ is called a \emph{type lattice}.
 
     Whenever the relation is unambiguous, $T$ and $\langle T, \less \rangle$
-    will be used interchangeably: we could say "let $T$ be a
-    type lattice", which would refer to $\langle T, \less \rangle$.
+    will be used interchangeably: we could say ``let $T$ be a
+    type lattice'', which would refer to $\langle T, \less \rangle$.
 \end{defn}
 
 \begin{defn}
@@ -62,7 +62,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     For a type lattice $T$, we extend\footnote{
         To make this completely rigorous, $\mathcal{T}$ would have to be defined
         over \emph{lattices}, not their carrier sets, so that the notion of
-        "extending the relation" makes sense (because we actually create a
+        ``extending the relation'' makes sense (because we actually create a
         new relation). These details, however, have been omitted for clarity.
     } the relation
     $\less$ over its type closure:
@@ -74,8 +74,8 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
 \greenbox{
     Note that this definition assumes \emph{contravariant arguments}.
-    In essence, the semantics of $f \less g$ is "wherever we can use $g$,
-    we can also use $f$". Now, imagine that $f : \alpha' \tot \beta'$,
+    In essence, the semantics of $f \less g$ is ``wherever we can use $g$,
+    we can also use $f$''. Now, imagine that $f : \alpha' \tot \beta'$,
     $g : \alpha'' \tot \beta''$, and we have a function
     $h : (\alpha'' \tot \beta'') \tot \gamma $ which takes $g$ as
     argument and produces something of type $\gamma$. Supposedly,
@@ -227,11 +227,13 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     For a type lattice $T$, and arbitrary $\sigma = \sigma' \tot \sigma'' \in \tclos{T}
     , \tau = \tau' \tot \tau'' \in \tclos{T}$, we have:
     \[
-        \sigma \meet \tau = (\sigma' \join \sigma'') \tot (\tau' \meet \tau'')
+        \sigma \meet \tau \condeq (\sigma' \join \sigma'') \tot (\tau' \meet \tau'')
     \]
     \[
-        \sigma \join \tau = (\sigma' \meet \sigma'') \tot (\tau' \join \tau'')
+        \sigma \join \tau \condeq (\sigma' \meet \sigma'') \tot (\tau' \join \tau'')
     \]
+    (where $\condeq$ means ``either both sides are defined and equal or both are
+    undefined'')
 \end{property}
 \begin{proof}
     This follows directly from \cref{lemma:complexmeet} and the proof of
@@ -336,6 +338,7 @@ or more concrete than another type lattice.
         \item $\forall \tau \in (T \setminus S) ((\exists \sigma \in S : \tau \less \sigma )
             \xor (\exists \sigma \in S : \sigma \less \tau)$
     \end{itemize}
+    (where $\xor$ means logical ``exclusive or'')
 \end{defn}
 
 Essentially, this says that $T$ subsumes, or encompasses, $S$: any type in
@@ -445,6 +448,10 @@ and $\consquash$.
 And now, the main proposition of this section, which tells us that when
 dropping a well-typed $\lambda$-term from an extended type system into
 a basic type system, it remains well-typed and has a useful type.
+In the implementation, this is used for dropping from the user-defined
+type system used for CCG parsing into the Minipass type system
+(\cref{sec:termgen}).
+
 \begin{prop}
     For a squash function $\squash: T \rightarrow S$, $\lsquash$ is
     well-defined, namely
@@ -513,7 +520,7 @@ a basic type system, it remains well-typed and has a useful type.
     is called a \emph{subtype assertion}.
 \end{defn}
 
-Since our definition of "subtype" doesn't allow us to subtype a complex type,
+Since our definition of ``subtype'' doesn't allow us to subtype a complex type,
 we have to work around this by making $\sigma$ be a complex type with the same
 syntactic structure as $\tau$ and then subtyping on the level of individual
 basic types it is made of. To do this, we need to be able to create a new term
@@ -544,10 +551,10 @@ First, having a type $\tau$, we need to be able to create a new type
 that is its clone
 (has the same syntactic structure), and is a subtype of $\tau$.
 
-To deal with contravariance, we will differentiate between a "subtype clone"
+To deal with contravariance, we will differentiate between a ``subtype clone''
 ($\subtyper{clone}$),
 which clones a type into a new one which will be its subtype, and a
-"supertype clone", ($\suptyper{clone}$)
+``supertype clone'', ($\suptyper{clone}$)
 which does the opposite - this way we will be able to
 use the $\suptyper{clone}$ in arguments and $\subtyper{clone}$ in return
 values.
@@ -634,7 +641,7 @@ Now we will define an iterative process for adding new types into a type lattice
 by subtyping existing types.
 
 Suppose we have the subtype assertion $\sigma \lass \tau$ with the intent of adding
-a new type "$\sigma$" to $T$ such that $\sigma \less \tau$. We can't add $\sigma$
+a new type ``$\sigma$'' to $T$ such that $\sigma \less \tau$. We can't add $\sigma$
 to $T$ directly, since this would require subtyping a type with a different syntactic
 structure. So, instead we will construct another type $\varphi(\sigma) \in \tclos{T}$
 whose constituent atomic types we add to $T$.
@@ -694,7 +701,7 @@ existing manually-constructed types, and extend it with the new type.
 \end{property}
 \begin{proof}
     We extend $\less$ only by adding single edges (and their transitive and
-    reflective closure) to new vertices, which creates a "tree-like" extension.
+    reflective closure) to new vertices, which creates a ``tree-like'' extension.
     There is no way to introduce a double join or meet, since this would
     require adding more than one edge to a new vertex.
 \end{proof}
@@ -745,7 +752,7 @@ existing manually-constructed types, and extend it with the new type.
                     also means that we've set $\sigma \less' \tau$.
             \end{itemize}
 
-            The exclusive "or" is satisfied because
+            The exclusive ``or'' is satisfied because
             $range(\subtyper{\xi}) \cap range(\suptyper{\xi}) = \varnothing$.
     \end{itemize}
 \end{proof}
@@ -1040,7 +1047,7 @@ to its local context and then store it into the tag.
 
 Note that all functions that follow are partial since they are not defined for
 valid but inadequately typed terms. In implementations,
-encountering an "undefined" case in any of them is treated as a type error.
+encountering an ``undefined'' case in any of them is treated as a type error.
 
 \begin{defn}
     \label{def:ttag}
