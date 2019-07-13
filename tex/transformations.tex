@@ -7,6 +7,12 @@ the term is first converted into a type-tagged term (see \cref{def:ttag})
 and all transformations (including translation to Overpass) are applied
 afterwards.
 
+\cfigure{
+    \includegraphics[width=\textwidth]{optimisation.eps}
+    \caption{Illustration of the transformations a Minipass term undergoes}
+    \label{fig:propagation}
+}
+
 \subsubsection{Type inference}
 \label{sec:typeinf}
 Minipass allows for the usage of the special type \code{*} that acts as a
@@ -28,7 +34,7 @@ with the following unifier:
         \tau ,& $\sigma = \text{\code{*}}$ \\
         \sigma ,& $\tau = \text{\code{*}}$ \\
         \sigma ,& $\sigma = \tau$ \\
-        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'') ,& 
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'') ,&
             $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$ \\
         \lnot ! ,& $\mathsf{otherwise}$ \\
     \end{cases*}
