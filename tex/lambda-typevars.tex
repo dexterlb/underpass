@@ -35,7 +35,7 @@ First, we will extend \cref{def:tclos} to include variables:
 Now we need type variable substitution:
 \begin{defn}
     For a type $\sigma \in \tvclos{T}$, a type variable $\alpha$ and another
-    type $\tau \in \tvclos{T}$, the type variable substitution 
+    type $\tau \in \tvclos{T}$, the type variable substitution
     $\subst{\sigma}{\alpha}{\tau}$ is defined recursively as follows:
     \[
         \subst{\sigma}{\alpha}{\tau} \defeq
@@ -120,5 +120,10 @@ within a term:
         \end{cases*}
     \]
 \end{defn}
-\fixme{discuss what to do with constants here (should they even allow type variables?)}
+
+\greenbox{
+    Note that while for consistency we allow type variables within the types
+    of constants, this rarely arises in practice. In particular, the current
+    implementation doesn't use variables in constant types anywhere.
+}
 \end{document}
