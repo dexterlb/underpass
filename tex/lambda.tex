@@ -146,7 +146,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
     We will prove both directions of (\ref{loc:fdir}) by applying equivalent
     transformations:
-    
+
     Let $\eta$ be a meet of $\sigma$ and $\tau$.
     \[
         \eta \less \sigma, \eta \less \tau,
@@ -911,11 +911,11 @@ existing manually-constructed types, and extend it with the new type.
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
     \end{itemize}
-    
+
     The only thing left is to check tht $\squash_{\theta}$ returns maximal
     elements in $T$ for general elements in $T'$ and returns minimal elements
     in $T$ for special elements in $T'$:
-   
+
     \begin{itemize}
         \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $T$ such that
             $\tau \less' \squash(\tau)$:
@@ -937,7 +937,7 @@ sensible way (for each general type in the extended type system we take the
 most general possible basic type, and for each special type we take the most
 special possible basic type).
 
-\begin{prop}
+\begin{prop}\label{prop:makesquashfun}
     If $\langle T, \less \rangle$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
@@ -1019,7 +1019,7 @@ throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
 process until it no longer produces a different term, and then $\mcf{untag}$ging
-back into a regular $\lambda$-term. This process is illustrated in 
+back into a regular $\lambda$-term. This process is illustrated in
 \cref{fig:propagation} and is utilised within \cref{sec:typeinf} and
 \cref{sec:optimisation}.
 
@@ -1061,7 +1061,7 @@ they can be easily extracted from the types of the respective abstraction terms.
 \end{defn}
 
 This construction is completely equivalent to the regular typed $\lambda$-term
-construction (type-tags may be emulated by inserting casts at all subterms), 
+construction (type-tags may be emulated by inserting casts at all subterms),
 and is used only for convenience: this way we can manipulate types directly
 instead of having to deal with casts and bound variable types.
 

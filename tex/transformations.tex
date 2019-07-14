@@ -7,10 +7,31 @@ the term is first converted into a type-tagged term (see \cref{def:ttag})
 and all transformations (including translation to Overpass) are applied
 afterwards.
 
+There are three type-systems in use:
+\begin{itemize}
+    \item The bare Minipass type system, as described in \cref{sec:minipassbasetypes}
+    \item An expert-defined type system, defined in \code{.ccg} files
+        by subtyping existing Minipass types (as in \cref{sec:definingtypes})
+    \item An Intermediate type system which contains more Overpass-centric
+        information and facilitates translation into Overpass, which
+        also subsumes the bare type system
+\end{itemize}
+
+A Minipass term, after being extracted from a CCG derivation tree, is converted
+to a type-tagged term for easier manipulation and is then subjected to type
+inference. Afterwards, the expert-defined type information is discarded
+by squashing the extra types (see \cref{prop:makesquashfun}), which gives
+a regular Minipass type-tagged term, and then setting the type system to
+the Intermediate type system. This operation doesn't change the term, since
+bare Minipass types are also types within the Intermediate type system.
+Then, several optimisations (some of which take advantage of the extra type
+information) are performed, and the term is finally translated to Overpass.
+An illustration of this process is shown at \cref{fig:typesystems}.
+
 \cfigure{
     \includegraphics[width=\textwidth]{optimisation.eps}
     \caption{Illustration of the transformations a Minipass term undergoes}
-    \label{fig:propagation}
+    \label{fig:typesystems}
 }
 
 \subsubsection{Type inference}

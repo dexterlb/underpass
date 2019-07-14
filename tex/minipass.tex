@@ -82,9 +82,9 @@ Here is a BNF grammar for the intermediate language.
     <declaration> ::= <variable> | <variable> `:' <type>
 
     <literal> ::= <string-literal> | <num-literal>
-    
+
     <string-literal> ::= <single-quoted-string>
-    
+
     <number-literal> ::= <decimal-number>
 
     <filepath> ::= <double-quoted-string>
@@ -108,7 +108,7 @@ Import statements are used to split a program into multiple files, and are
 resolved relative to the current program's path (or the current working
 directory when not applicable).
 
-\subsubsection{Builtins and base types}
+\subsubsection{Builtins and base types}\label{sec:minipassbasetypes}
 Since Minipass is built on top of $\lambda$-calculus syntax, all built-in
 "functions" are actually \emph{constants} in the context of $\lambda$-terms.
 
@@ -254,7 +254,7 @@ a mechanism for modularisation has been implemented: Just like in most
 programming languages, the expert can define
 named terms and types that can later be composed into other terms and types.
 
-\subsubsection{Defining types}
+\subsubsection{Defining types}\label{sec:definingtypes}
 New types are defined by subtyping an existing type via a "type definition"
 (subtype assertion) that has the following syntax:
 \begin{center}
