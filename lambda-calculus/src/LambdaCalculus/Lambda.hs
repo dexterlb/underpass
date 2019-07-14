@@ -65,11 +65,7 @@ typeOfTerm safe context (Lambda x t a) = T.Application t (typeOfTerm safe (push 
 typeOfTerm _ context (Variable i)
     | Just (_, t) <- at i context = t
     | otherwise = throw $ UnknownVar i
-typeOfTerm safe context (Cast t x)
-    | t <!> tx = t
-    | otherwise = throw $ CannotCast (x, tx) t
-    where
-        tx = typeOfTerm safe context x
+typeOfTerm _ _ (Cast t _) = t
 
 transform :: (Typed c1 t1, Typed c2 t2) => (c1 -> LambdaTerm t2 c2) -> (t1 -> T.ApplicativeType t2) -> LambdaTerm t1 c1 -> LambdaTerm t2 c2
 transform f _ (Constant c)      = f c
