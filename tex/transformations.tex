@@ -70,8 +70,153 @@ always terminates.
 
 \subsubsection{Minipass query optimisation}
 \label{sec:optimisation}
-\fixme{write this}
+While Overpass differentiates between 4 types of objects (nodes, ways, relations,
+areas\footnote{
+    The ``area'' type is only present in Overpass (not in OpenStreetMap
+    databases), and \emph{area} objects are constructed by finding \emph{relations}
+    that form a closed polygon \cite{overpass}.
+}), its queries are heterogenous.
 
-\subsubsection{Translating to Overpass}
+\begin{example}
+For example, the following Minipass
+query\footnote{
+    Minipass queries presented here assume the library from \cref{stdlib}
+    for clarity.
+} returns all items with name ``Brussels'':
+\begin{lstlisting}
+    name 'Brussels'
+\end{lstlisting}
+The returned set, among any other objects, contains:
+\begin{itemize}
+    \item the city Brussels (a \emph{node})
+    \item the administrative area of the city Brussels (a \emph{area})
+    \item the Brussels boulevard in Sofia (a \emph{way})
+\end{itemize}
+Since Overpass contains separate keywoards for querying different objects,
+the above Minipass term would have to be translated to a query as such:
+\begin{lstlisting}
+    ( node["name" = "Brussels"];
+      way["name" = "Brussels"];
+      rel["name" = "Brussels"];
+      area["name" = "Brussels"]; ) -> .x1;
+
+    .x1 out;
+\end{lstlisting}
+In fact, since the current implementation of \code{name} looks for the
+name in several fields, the actual emitted Overpass translation is the
+following:
+\begin{lstlisting}
+    ( node["name" = "Brussels"];
+      way["name" = "Brussels"];
+      rel["name" = "Brussels"];
+      area["name" = "Brussels"];
+
+      node["int_name" = "Brussels"];
+      way["int_name" = "Brussels"];
+      rel["int_name" = "Brussels"];
+      area["int_name" = "Brussels"];
+
+      node["name:en" = "Brussels"];
+      way["name:en" = "Brussels"];
+      rel["name:en" = "Brussels"];
+      area["name:en" = "Brussels"]; ) -> .x1;
+
+    .x1 out;
+\end{lstlisting}
+
+Now, regard the following Minipass term:
+\begin{lstlisting}
+    in (name 'Brussels')
+\end{lstlisting}
+In order to translate it, we could take the result from the previous query
+and take all nodes, ways or relations\footnote{In Overpass, an \emph{area} may
+    not be inside another \emph{area}} inside returned items by using the
+\code{area.} filter:
+\begin{lstlisting}
+    ( node["name" = "Brussels"];
+      way["name" = "Brussels"];
+      rel["name" = "Brussels"];
+      area["name" = "Brussels"]; ) -> .x1;
+
+    ( node(area.x1); way(area.x1); rel(area.x1); ) -> .x2;
+    .x2 out;
+\end{lstlisting}
+However, the \code{area.} filter only takes into account areas from the
+input set and discards all other objects. Thus, a less naïve translator should
+only take areas in the first place:
+\begin{lstlisting}
+    ( area["name" = "Brussels"]; ) -> .x1;
+    ( node(area.x1); way(area.x1); rel(area.x1); ) -> .x2;
+    .x2 out;
+\end{lstlisting}
+\end{example}
+
+To make this task of optimisation easier, the Intermediate type system extends the $GSet$
+type with subtypes for each combination of node, way, relation and area
+(shown at \cref{fig:lattice}): essentially, we attach a set of tags (subset
+of $\{ n, w, r, a \}$) to each $GSet$ type.
+\cfigure{
+    \includegraphics[width=\textwidth]{lattice.eps}
+    \caption{The lattice of the $GSet$ type within the Intermediate type system}
+    \label{fig:lattice}
+}
+
+During the optimisation phase, several rules are applied to each subterm\footnote{
+    In this table, ``the type of something'' means its type tag.
+}:
+\begin{center}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \hline
+    Subterm & Action \\
+    \hline
+    ``and'' of type $GSet[X] \tot GSet[Y] \tot GSet[Z]$
+        & set its type to $GSet[X \cap Y \cap Z] \tot GSet[X \cap Y \cap Z] \tot GSet[X \cap Y \cap Z]$ \\
+    \hline
+    ``or'' of type $GSet[X] \tot GSet[Y] \tot GSet[Z]$
+        & set its type to $GSet[X \cap Z] \tot GSet[Y \cap Z] \tot GSet[(X \cup Y) \cap Z]$ \\
+    \hline
+    $\beta$-redex & reduce it \\
+    \hline
+    ``get all nodes'' & change it to ``get everything'' of type $GSet[n]$ \\
+    ``get all ways'' & change it to ``get everything'' of type $GSet[w]$ \\
+    ``get all relations'' & change it to ``get everything'' of type $GSet[r]$ \\
+    ``get all areas'' & change it to ``get everything'' of type $GSet[a]$ \\
+    \hline
+    ``next'' of type $GSet[X] \tot GSet[Y]$ applied to an ``in'' label
+        & set its type to $GSet[X \cap \{ a \}] \tot GSet[Y \cap \{ n, w, r \}]$ \\
+    \hline
+    ``or'' with one of the arguments being of type $GSet[]$
+        & rewrite the term to only the other argument \\
+    \hline
+    ... & ... \\
+    \hline
+\end{tabular}
+\end{center}
+
+After applying these rules, types are propagated through the term
+(see \cref{def:propagation}) with the following unifier:
+\[
+    \sigma \unify \tau \defeq
+    \begin{cases*}
+        GSet[X \cap Y] ,& $\sigma = GSet[X], \tau = GSet[Y]$ \\
+        Num ,& $\sigma = Num, \tau = Num$ \\
+        String ,& $\sigma = String, \tau = String$ \\
+        List ,& $\sigma = List, \tau = List$ \\
+        \text{type error} ,& otherwise \\
+    \end{cases*}
+\]
+
+These two steps are then repeated until they no longer produce a new term\footnote{
+    This terminates because all rules produce a "lesser term" by some criterion:
+    be it less items in the type tag or ``everything'' instead of ``something'', etc.
+}, which is now ready for the translation phase.
+
+\greenbox{
+    While there are many other possible optimisations which can be done here,
+    only these few have been implemented as a proof-of-concept, since this
+    is not the main focus of this work.
+}
+
+\subsubsection{Translating to Overpass}\label{sec:translation}
 \fixme{write this}
 \end{document}

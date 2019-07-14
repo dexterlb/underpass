@@ -1,0 +1,52 @@
+graph {
+     nwra[label="GSet[nwra] = GSet"];
+
+     nwr[label="GSet[nwr]"];
+     nra[label="GSet[nra]"];
+     nwa[label="GSet[nwa]"];
+     rwa[label="GSet[rwa]"];
+
+     nw[label="GSet[nw]"];
+     wr[label="GSet[wr]"];
+     ra[label="GSet[ra]"];
+     nr[label="GSet[nr]"];
+     na[label="GSet[na]"];
+     wa[label="GSet[wa]"];
+
+     n[label="GSet[n]"];
+     w[label="GSet[w]"];
+     r[label="GSet[r]"];
+     a[label="GSet[a]"];
+
+     empty[label="GSet[]"];
+
+     nwra -- nwr;
+     nwra -- nra;
+     nwra -- nwa;
+     nwra -- rwa;
+
+     nwr -- nw;
+     nwr -- wr;
+     nwr -- nr;
+
+     nra -- nr;
+     nra -- na;
+     nra -- ra;
+
+     nwa -- nw;
+     nwa -- na;
+     nwa -- wa;
+
+     rwa -- wr;
+     rwa -- ra;
+     rwa -- wa;
+
+     nw -- n; nw -- w;
+     wr -- w; wr -- r;
+     ra -- r; ra -- a;
+     nr -- n; nr -- r;
+     na -- n; na -- a;
+     wa -- w; wa -- a;
+
+     n -- empty; w -- empty; r -- empty; a -- empty;
+}
