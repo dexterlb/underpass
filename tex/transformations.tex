@@ -369,5 +369,46 @@ At the end of translation, if the result is a \code{SetValue}, an overpass
         out .x2;
     \end{lstlisting}
 \end{example}
-\fixme{finish this}
+
+While this translator is at proof-of-concept level, it can easily be extended
+to cover most of Overpass. An overview of features is presented in
+\cref{table:overpassfeatures}.
+
+\begin{samepage}
+\begin{table}
+    \begin{center}
+        \begin{tabular}{|r|l|}
+            \hline
+            Feature & Status \\
+            \hline
+            Set Union & Implemented \\
+            Set Intersection & Implemented \\
+            Set Difference & Trivial to implement \\
+            Set Negation & Easy to implement\footnote{
+                Negation must be converted to set difference whenever possible
+                because it requires enumerating the entire dataset in most
+                implementations \cite{overpass}
+            }    \\
+            Equality filter & Implemented \\
+            Regex filter & Implemented \\
+            Bounding box & Trivial to implement \\
+            Recurse (get children) & Trivial to implement \\
+            Get item by id & Trivial to implement \\
+            Around (within distance) & Implemented \\
+            Area (within area) & Implemented \\
+            Relation operators (next, previous) & Trivial to implement \\
+            Recurse (get children) & Trivial to implement \\
+            For-each-loop & Difficult to implement \\
+            Complete (fixed point) & Easy to implement \\
+            Retro & Not applicable\footnote{``Retro'' deals with the map's edit
+                history} \\
+            Counting, summing, stats etc & Difficult to implement \\
+            ... & ... \\
+            \hline 
+        \end{tabular}
+    \end{center}
+    \caption{Some Overpass features and their support by the translator}
+    \label{table:overpassfeatures}
+\end{table}
+\end{samepage}
 \end{document}
