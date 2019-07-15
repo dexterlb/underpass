@@ -280,7 +280,7 @@ Here are some of the aforementioned rules:
     \hline
     \RuleCnt & \code{ConsList} \syntax{<arg1>} \syntax{<arg2>} & similar to the above \\
     \hline
-    \RuleCnt \label{rule:filter} & ``and'', ``or'', ``get'' or ``next'', applied to its respective arguments & 
+    \RuleCnt \label{rule:filter} & ``and'', ``or'', ``get'' or ``next'', applied to its respective arguments &
         Walk the syntax tree of ``and''s and ``or''s downwards, stopping at
         leaves (anything that is not ``and'' or ``or''). Create an Overpass
         filter from the resulting tree. Generate a new variable name and emit
@@ -313,13 +313,13 @@ At the end of translation, if the result is a \code{SetValue}, an overpass
                             <name=Sofia>)       -- #9
                         (get                    -- #10
                             <int_name=Sofia>)   -- #11
-                    ) 
+                    )
                     (get                        -- #12
                         <name:en=Sofia>)        -- #13
                 )
             )
     \end{lstlisting}
-    
+
     The translator will first apply rule \ref{rule:filter} on the following
     syntax tree:
     \centree{
@@ -327,14 +327,14 @@ At the end of translation, if the result is a \code{SetValue}, an overpass
             [ .{ \code{get\#2} } ]
             [ .{ \code{next\#4} } ]
     }
-    
+
     For this tree, after recursively translating the \code{amenity\#3},
     \code{in\#5} and \code{or\#6} subterms, the translator
     would emit the following Overpass filter:
     \begin{lstlisting}
         ( node(area.<result from or#6>)["amenity" = "pharmacy"]; ) -> .<newvar>;
     \end{lstlisting}
-    
+
     So, let's see how \code{or\#6} will be evaluated. Again, we apply
     rule \ref{rule:filter} on the following syntax tree:
     \centree{
@@ -345,25 +345,25 @@ At the end of translation, if the result is a \code{SetValue}, an overpass
             ]
             [ .{ \code{get\#12} } ]
     }
-    
+
     After recursively translating \code{name\#9}, \code{int\_name\#11}
     and \code{name:en\#13}, the translator emits this\footnote{
         Only ``area'' nodes are emitted because the type of the ``get''s has
         been inferred as $GSet[a]$ by the optimiser.
     } Overpass filter:
-        
+
     \begin{lstlisting}
-        ( area["name" = "Sofia"]; 
-          area["int_name" = "Sofia"]; 
+        ( area["name" = "Sofia"];
+          area["int_name" = "Sofia"];
           area["name:en" = "Sofia"];   ) -> <newvar>;
     \end{lstlisting}
-    
+
     Finally, after substituting the generated variable names and adding
     an output statement, we get the following query:
-    
+
     \begin{lstlisting}
-        ( area["name" = "Sofia"]; 
-          area["int_name" = "Sofia"]; 
+        ( area["name" = "Sofia"];
+          area["int_name" = "Sofia"];
           area["name:en" = "Sofia"];   ) -> .x1;
         ( node(area.x1)["amenity" = "pharmacy"]; ) -> .x2;
         out .x2;
@@ -375,7 +375,7 @@ to cover most of Overpass. An overview of features is presented in
 \cref{table:overpassfeatures}.
 
 \begin{samepage}
-\begin{table}
+\begin{table}[h]
     \begin{center}
         \begin{tabular}{|r|l|}
             \hline
@@ -404,7 +404,7 @@ to cover most of Overpass. An overview of features is presented in
                 history} \\
             Counting, summing, stats etc & Difficult to implement \\
             ... & ... \\
-            \hline 
+            \hline
         \end{tabular}
     \end{center}
     \caption{Some Overpass features and their support by the translator}

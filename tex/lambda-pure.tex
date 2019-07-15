@@ -66,19 +66,19 @@ we call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
 set of symbols we call \emph{constants}.
 
 We can now define the set of
-\emph{pre-typed $\lambda$-terms} ($\Lambda_T^C$).
+\emph{pre-typed $\lambda$-terms} ($\plambda{T}{C}$).
 
 \begin{defn}
     \label{def:lambdaterm}
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
-    $\Lambda_T^C$ is defined inductively:
+    $\plambda{T}{C}$ is defined inductively:
     \begin{itemize}
-        \item Constant:    \[ c \in C \implies c \in \Lambda_T^C \]
-        \item Variable:    \[ v \in \lvars \implies v \in \Lambda_T^C \]
-        \item Application: \[ A, B \in \Lambda_T^C \implies (AB) \in \Lambda_T^C \]
-        \item Abstraction: \[ v \in \lvars, A \in \Lambda_T^C, \sigma \in \tclos{T}
-                \implies (\lambda v : \sigma \abstr A) \in \Lambda_T^C \]
+        \item Constant:    \[ c \in C \implies c \in \plambda{T}{C} \]
+        \item Variable:    \[ v \in \lvars \implies v \in \plambda{T}{C} \]
+        \item Application: \[ A, B \in \plambda{T}{C} \implies (AB) \in \plambda{T}{C} \]
+        \item Abstraction: \[ v \in \lvars, A \in \plambda{T}{C}, \sigma \in \tclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \plambda{T}{C} \]
     \end{itemize}
 \end{defn}
 
@@ -95,7 +95,7 @@ free variables are not.
 We will now formally define the function $\fvv$ that gives us all free variables of a
 term.
 \begin{defn}
-    Let $\fvv : \Lambda_T^C \rightarrow 2^{\lvars}$ be defined as:
+    Let $\fvv : \plambda{T}{C} \rightarrow 2^{\lvars}$ be defined as:
     \[
         \fv{M} =
         \begin{cases*}
@@ -111,7 +111,7 @@ term.
     \label{def:context}
     Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
     \begin{itemize}
-        \item For $M \in \Lambda_T^C, \sigma \in \tclos{T}$, $M : \sigma$ is called
+        \item For $M \in \plambda{T}{C}, \sigma \in \tclos{T}$, $M : \sigma$ is called
             a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
             is called a \emph{type}.
         \item A statement with a variable as a subject is called a \emph{declaration}.
@@ -128,7 +128,7 @@ term.
 The $\circ$ operation shall be regarded as left-associative throughout this
 text.
 
-To define what it means for a term $M \in \Lambda_T^C$ to have a type,
+To define what it means for a term $M \in \plambda{T}{C}$ to have a type,
 we will use derivation rules.
 \begin{defn}
     \label{def:termderiv}
@@ -207,7 +207,7 @@ Now, we will prove that every well-typed term has a unique type:
 Since we proved that types for terms are unique, we can now define a typing
 function (which will work on well-typed closed terms):
 \begin{defn}
-    Now, $\typeof{M}$ for $M \in \Lambda_T^C$ is defined as such:
+    Now, $\typeof{M}$ for $M \in \plambda{T}{C}$ is defined as such:
     \[
         \typeof{M} =
         \begin{cases*}
