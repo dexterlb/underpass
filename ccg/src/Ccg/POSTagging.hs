@@ -34,7 +34,7 @@ englishMetaTagger = do
 
     where
         mt w posTag
-            = map (\x -> ("lemma", x)) $ toList $ unsafePerformIO $ WN.morph1 w (toWN posTag)
+            = map (\x -> ("lemma", Text.toLower x)) $ toList $ unsafePerformIO $ WN.morph1 w (toWN posTag)
             where
                 toWN :: NC.Tag -> WN.POS
                 toWN NC.JJ         = WN.Adj
