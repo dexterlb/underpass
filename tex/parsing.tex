@@ -2,8 +2,63 @@
 \begin{document}
 \subsection{Natural language parsing}
 At last, we reach the part where things start coming together.
+\fixme{some text}
 \subsubsection{Tokenisation}\label{sec:tokenisation}
-\fixme{write this}
+Tokens are represented as key-value dictionaries. Currently, there is one
+implemented tokeniser wrapper, which will be described in this section. Other
+tokenisers (for different natural languages, for example) may easily be added
+due to the project's modular architecture.
+
+The English tokeniser wrapper uses a simple tokeniser from the \code{NLP.POS} 
+package from the \code{chatter} Haskell library \cite{chatter}.
+After splitting the input text into distinct tokens, a POS tagger from the
+same library is used to assign a part of speech to each token. The POS
+tagger uses the ``averaged perceptron'' model \cite{collins} and is trained
+on the Penn Treebank POS tag corpus \cite{penn}.
+
+The raw token string is included under key \code{raw} in the token object and
+the POS tag is included under key \code{pos}.
+
+After POS tagging, tokens are subjected to lemmatisation. This is done using
+WordNet's \code{morph} library \cite{wordnet}. Since at the time of writing
+this thesis available Haskell bindings to WordNet either included no \code{morph}
+support or couldn't run with the most recent version of GHC, a small binding
+library which wraps the C interface provided with WordNet was written. The
+\code{morph} lemmatiser is given a token and its POS tag and returns the lemma
+for this token. The lemma (if exists\footnote{Tokens like punctuation items have
+    no lemmas}) is then included under key \code{lemma} in the token object.
+
+The tokeniser also emits special tokens for ``begin of sentence'' and ``end of
+sentence''. These are included as special \code{mark=begin} and \code{mark=end}
+tokens objects.
+
+\begin{example}
+    The following text:
+    \begin{center}
+        \code{Suddenly there came a tapping.}
+        \code{As if someone gently rapping.}
+    \end{center}
+    
+    Produces the following token list (one token on each row):
+\begin{lstlisting}
+mark=begin
+            raw=Suddenly    pos=rb      lemma=suddenly
+            raw=there       pos=ex      lemma=there
+            raw=came        pos=vbd     lemma=come
+            raw=a           pos=dt      lemma=a
+            raw=tapping     pos=nn      lemma=tapping
+            raw=.           pos=.       lemma=.
+mark=end
+mark=begin
+            raw=As          pos=in      lemma=as
+            raw=if          pos=in      lemma=if
+            raw=someone     pos=nn      lemma=someone
+            raw=gently      pos=rb      lemma=gently
+            raw=rapping     pos=vbg     lemma=rap
+            raw=.           pos=.       lemma=.
+mark=end   
+\end{lstlisting}
+\end{example}
 \subsubsection{CCG parsing}
 \fixme{write this}
 \subsubsection{Parse forests and generating terms}\label{sec:termgen}
