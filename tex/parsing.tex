@@ -1,8 +1,24 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \subsection{Natural language parsing}
-At last, we reach the part where things start coming together.
-\fixme{some text}
+This section deals with the part of the pipeline which transforms the input
+query (raw text) into a payload (when targeting Minipass, the payload is a
+Minipass term).
+
+The process can be broken down into 3 stages:
+\begin{itemize}
+    \item Tokenisation: Generating a sequence of tokens from the input text.
+        This stage is natural-language dependant at source-code level (targeting
+        a different natural language requires attaching a different tokeniser).
+        The implementation comes with a simple English tokeniser made with the
+        help of external libraries.
+    \item CCG parsing: Applying the rules specified in the input grammar (which
+        comes as a \code{.ccg} file) and finding valid parse trees for the
+        input query (if any).
+    \item Term generation: generating final terms by composing the subterms
+        within parse tree leaves
+\end{itemize}
+
 \subsubsection{Tokenisation}\label{sec:tokenisation}
 Tokens are represented as sets of key-value pairs\footnote{there is no
     restriction on the uniqueness of keys}. Currently, there is one
@@ -10,7 +26,7 @@ implemented tokeniser wrapper, which will be described in this section. Other
 tokenisers (for different natural languages, for example) may easily be added
 due to the project's modular architecture.
 
-The English tokeniser wrapper uses a simple tokeniser from the \code{NLP.POS} 
+The English tokeniser wrapper uses a simple tokeniser from the \code{NLP.POS}
 package from the \code{chatter} Haskell library \cite{chatter}.
 After splitting the input text into distinct tokens, a POS tagger from the
 same library is used to assign a part of speech to each token. The POS
@@ -39,7 +55,7 @@ tokens objects.
         \code{Suddenly there came a tapping.}
         \code{As if someone gently rapping.}
     \end{center}
-    
+
     Produces the following token list (one token on each row):
 \begin{lstlisting}
 mark=begin
@@ -57,11 +73,78 @@ mark=begin
             raw=gently      pos=rb      lemma=gently
             raw=rapping     pos=vbg     lemma=rap
             raw=.           pos=.       lemma=.
-mark=end   
+mark=end
 \end{lstlisting}
 \end{example}
+
 \subsubsection{CCG parsing}
-\fixme{write this}
+After tokenising, all rule matchers (\cref{sec:ccglang}) are evaluated against
+each token one by one\footnote{This naïve quadratic approach may be replaced
+    by a decision tree-based traversal of the set of matchers with little
+    effort.} and a list of (Category, Term) pairs is generated for each token.
+Then, proceeding with the categorial CYK algorithm, a set of items (in the
+sense of \cref{sec:cyk}) is constructed recursively.
+
+The straight-forward recursive implementation of the algorithm relies on a
+memoiser in order to avoid recomputing shared items. Memoisation is used in
+several places throughout the code, and two generic memoisers have been
+implemented:
+\begin{itemize}
+    \item A lazy memoiser, based on an infinite bit trie which stores the return
+        value for each possible argument. Only a the already accessed paths are
+        stored in memory at a given moment, while the rest of the possible
+        subtrees are represented by Haskell thunks, which are computed on
+        demand.
+    \item A pragmatic memoiser which stores computed values in a hashmap which
+        is accessed via \code{unsafePerformIO}.
+\end{itemize}
+
+The lazy memoiser, while elegant, is about twice as slow as the pragmatic
+memoiser, which is used by default.
+
+Another performance consideration is the fact that when combining categories,
+care is taken to share common parts of categories with ones constructed from
+them\footnote{This comes for free because of Haskell's immutability mechanism:
+    the only care that needs to be taken is not obstructing the compiler in
+    that regard.
+}.
+
 \subsubsection{Parse forests and generating terms}\label{sec:termgen}
-\fixme{write this}
+Since there are potentially an exponential number of derivation trees for a
+single query, many of them sharing an identical trunk due to the way
+the categorial CYK algorithm works. Thus, it is beneficial to encode the resulting
+parse forest in such a way as to share the common trunks between trees, and
+also be able to avoid enumerating all of them when performing simple manipulations.
+
+This is a simplified definition of the \code{ParseTree} and \code{ParseForest}
+datatypes used in the implementation. Here, \code{cat} is a category,
+\code{payload} is a payload attached to the matched token (a $\lambda$-term and
+metadata about the token itself), and \code{(CombineRule cat)} is a rule\footnote{
+    The syntax ``\code{(CombineRule cat)}'' relies on the \code{TypeFamilies}
+    Haskell extension. Type family constraints have been omitted for brevity.
+} by which this derivation was produced (used for debugging and visualisation):
+\begin{lstlisting}
+    data ParseTree cat payload where
+        Leaf cat payload
+        Vert cat (CombineRule cat) (ParseTree cat payload) (ParseTree cat payload)
+
+    data ParseForest cat payload
+        = ParseForest cat [MultiNode cat payload]
+
+    data MultiNode cat payload where
+        MultiLeaf payload           (MultiNode cat payload)
+        MultiVert (CombineRule cat) (ParseForest cat payload) (ParseForest cat payload)
+\end{lstlisting}
+
+A \code{ParseForest} is recursively generated from the set of items produced
+by the parsing algorithm, starting from the initial category and the whole query.
+
+From the \code{ParseForest}, all \code{ParseTree}s are enumerated in a lazy
+list: this way most of the encoded trees will never be evaluated individually
+(unless requested by the user).
+
+A $\lambda$-term is generated for each relevant tree, following the procedure
+from \cref{def:semfn}. Afterwards, in the case of Minipass terms, their types are
+squashed\footnote{See \cref{def:squashfn}.} into the bare Minipass type system,
+discarding any type information that was useful only for parsing.
 \end{document}

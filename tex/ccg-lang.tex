@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \pagebreak
-\subsection{The CCG definition language}
+\subsection{The CCG definition language}\label{sec:ccglang}
 When paired with Minipass, the language for defining CCGs consists of
 the entire Minipass language
 (\cref{minipass:grammar}) extended by additional syntax for defining
@@ -41,9 +41,9 @@ terms and types).
     <or-matcher> ::= <not-or-matcher> `|' <matcher>
 
     <and-matcher> ::= <not-and-matcher> `\&' <matcher>
-    
+
     <exact-matcher> ::= <identifier> `=' <double-quoted-string>
-    
+
     <regex-matcher> ::= <identifier> `~' <double-quoted-string>
 
     <template> ::= <backtick-quoted-string> `:' <type>
