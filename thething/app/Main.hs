@@ -15,7 +15,7 @@ main = do
     sysArgs <- getArgs
     let (action:arg:rest) = case sysArgs of
                             (foo:bar) -> (foo:bar)
-                            []        -> ["serve", "examples/test.ccg"]
+                            []        -> ["serve", "examples/sample_grammar.ccg"]
 
     program          <- load arg
 
