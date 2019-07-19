@@ -11,7 +11,7 @@ Entity < GSet.
 NamedEntity < String.
 
 mark="begin"  : S / SE        @ \x: SE    => S[GSet[x]] .
-mark="end"    : SE \ GSet      @ \x: GSet   => SE[x] .
+mark="end"    : SE \ GSet     @ \x: GSet   => SE[x] .
 
 pos="comma"   : $X \ $X       @ id.
 
@@ -28,5 +28,5 @@ pos="nnp" `'$raw'` : String
     @ \x => NamedEntity[x].
 
 raw="like"    : GSet \ NamedEntity @ nameLike.
-raw="city"    : GSet \ Entity    @ \x : Entity => and city x.
+raw="city"    : GSet \ Entity      @ \x : Entity => and city x.
 raw="near"    : GSet \ GSet / GSet @ \b, a => and a (near b).

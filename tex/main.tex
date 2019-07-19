@@ -18,6 +18,8 @@
 \usepackage{url}
 \usepackage{color}
 \usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{minibox} 
 \usepackage{pbox}
 \usepackage{mathtools}
 \usepackage[framemethod=TikZ]{mdframed}
@@ -213,7 +215,8 @@
     xleftmargin=12pt,
     xrightmargin=12pt,
     tabsize=4,
-    captionpos=b
+    captionpos=b,
+    literate={symlambda}{{$\lambda$}}1 {symabstr}{{$\abstr$}}1 {symtot}{{$\tot$}}1
 }
 
 \newcommand\restr[2]{{% we make the whole thing an ordinary symbol
@@ -355,6 +358,8 @@
 \newcommand{\typeofvv}{\typeofv{\cdot}}
 \newcommand{\defeq}{\vcentcolon=}
 \newcommand{\condeq}{\simeq}
+
+\newcommand{\latex}{\LaTeX\xspace}
 
 \title{Fancy title}
 \author{Nobody <nobody@example.com>}
