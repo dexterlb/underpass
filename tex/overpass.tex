@@ -2,7 +2,54 @@
 \begin{document}
 \subsection{Overview of the Overpass language}
 The Overpass language \cite{overpass} has been created by the OpenStreetMap
-in order to be able to make more complex queries to map data.
+community in order to be able to make more complex queries to map data. 
 
-\fixme{need detailed overview}
+Overpass queries can be written in two ways: XML-based queries and OverpassQL-based
+queries. The XML OverpassQL frontend has been better-maintained, has more features
+and is easier to generate programmatically - thus, it has been chosen as a target
+language for this project.
+
+This section will present a subset of Overpass QL that is relevant to this project: for a
+more complete overview, refer to \cite{overpassql}.
+
+\subsubsection{Basic language structure}
+OverpassQL consists of a list of \emph{statements} which retreive, manipulate
+or output OpenStreetMap data.
+
+The map data consists of \emph{objects} where each object has a set of key-value
+tags (keys and values are strings but some values may encode a more complex
+structure within a string).
+
+An object viewed from Overpass may be one of the following types:
+\begin{itemize}
+    \item \emph{node} - a point on the map, identified by latitude, longitude
+        and a node ID. Nodes represent point-like features like trees, fountains,
+        businesses, mountain peaks, etc.
+    \item \emph{relation} - a grouping of multiple objects by some common
+        feature. Examples of relations are:
+        \begin{itemize}
+            \item all stops in a bus route
+            \item all intersections of a highway
+            \item poles of a power grid line
+        \end{itemize}
+        Relations may contain nodes, ways and other relations. Each member of
+        a relation may have an optional \emph{role}, which is a text field
+        that may be used to further group relation elements.
+    \item \emph{way} - an ordered list of Nodes which is used for defining
+        continous features. Ways may be open or closed (closed ways have an
+        identical first and last node). Open ways are used for defining things
+        like roads, rivers and railways, whilc closed ways are used for defining
+        polygons (building boundaries, area borders, closed features).
+    \item \emph{area} - not an actual OpenStreetMap object. Closed ways or relations
+        which contain closed ways may also be classified as an area by some
+        criteria (one of which is the presence of an \code{area=yes} tag).
+        Areas allow additional operations to the ones usable only for ways
+        taking advantage of a cached optimised representation of each polygon.
+\end{itemize}
+
+The abstraction Overpass uses to represent map data is called a \emph{set}, 
+where a set can contain any number of objects. Sets are heterogenous and thus
+there is no limit on the variety of objects that may reside in a single set.
+
+\fixme{finish this}
 \end{document}
