@@ -87,7 +87,9 @@ dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
     \end{lstlisting}
 \end{example}
 
-The most basic group of statements are the \emph{object retrieval statements}:
+\subsubsection{Tag filters}
+The most basic group of statements retrieve objects depending on whether a
+specific filter matches its tags:
 \begin{center}
     \begin{tabular}{r|l}
         \code{node[<filter>]} & retrieve all nodes that match this filter \\
@@ -97,8 +99,37 @@ The most basic group of statements are the \emph{object retrieval statements}:
     \end{tabular}
 \end{center}
 
-\subsubsection{Tag filters}
+These are the possible tag filters\footnote{All double quotes within filters
+    may be replaced by single quotes (in order to escape double quotes within
+    the value) or omitted (when the value contains only letters)}:
+\begin{center}
+    \begin{tabular}{|c|c|p{0.3\textwidth}|}
+        \hline
+        Filter & Negation & Effect \\
+        \hhline{|=|=|=|}
+        \code{"tag"} & \code{!"tag"} & Matches if the object has a tag with key
+            \code{tag} \\
+        \hline
+        \code{"tag"="content"} & \code{tag!="content"}
+            & Matches if the object has a tag with key \code{tag}
+                and value \code{content} \\
+        \hline
+        \code{"tag"\textasciitilde"regex"} & \code{tag!\textasciitilde"regex"}
+            & Matches if the object has a tag with key \code{tag}
+                and value that matches \code{regex} \\
+        \hline
+        \code{"tag"\textasciitilde"regex",i} & \code{tag!\textasciitilde"regex",i}
+            & Matches if the object has a tag with key \code{tag}
+                and value that matches \code{regex}, ignoring case \\
+        \hline
+        \code{\textasciitilde"regex1"\textasciitilde"regex2"} & \code{\textasciitilde"regex1"!\textasciitilde"regex2"}
+            & Matches if the object has a tag with key that matches \code{regex1}
+                and value that matches \code{regex2} \\
+        \hline
+    \end{tabular}
+\end{center}
 
+\subsubsection{Relative filters}
 
 \fixme{finish this}
 \end{document}
