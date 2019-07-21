@@ -2,7 +2,7 @@
 \begin{document}
 \subsection{Overview of the Overpass language}
 The Overpass language \cite{overpass} has been created by the OpenStreetMap
-community in order to be able to make more complex queries to map data. 
+community in order to be able to make more complex queries to map data.
 
 Overpass queries can be written in two ways: XML-based queries and OverpassQL-based
 queries. The XML OverpassQL frontend has been better-maintained, has more features
@@ -12,15 +12,13 @@ language for this project.
 This section will present a subset of Overpass QL that is relevant to this project: for a
 more complete overview, refer to \cite{overpassql}.
 
-\subsubsection{Basic language structure}
-OverpassQL consists of a list of \emph{statements} which retreive, manipulate
-or output OpenStreetMap data.
-
-The map data consists of \emph{objects} where each object has a set of key-value
+\subsubsection{Map data}
+The universe which Overpass lets us examine is OpenStreetMap map data.
+It consists of \emph{objects}, where each object has a set of key-value
 tags (keys and values are strings but some values may encode a more complex
 structure within a string).
 
-An object viewed from Overpass may be one of the following types:
+An object may be one of the following types:
 \begin{itemize}
     \item \emph{node} - a point on the map, identified by latitude, longitude
         and a node ID. Nodes represent point-like features like trees, fountains,
@@ -47,9 +45,60 @@ An object viewed from Overpass may be one of the following types:
         taking advantage of a cached optimised representation of each polygon.
 \end{itemize}
 
-The abstraction Overpass uses to represent map data is called a \emph{set}, 
+\subsubsection{Basic language structure}
+The abstraction Overpass uses to represent map data is called a \emph{set},
 where a set can contain any number of objects. Sets are heterogenous and thus
 there is no limit on the variety of objects that may reside in a single set.
+
+OverpassQL consists of a list of \emph{statements} which retreive, manipulate
+or output such sets. Sets may be stored in variables: the syntax for referring
+to a variable is a dot followed by alphanumeric characters.
+Statements are terminated by semicolons.
+Each statement has an \emph{output set} and may have input sets. When unspecified,
+an input or output set is implicitly set to the \emph{default set} (\code{.\_}).
+
+There is one special statement - the ``\code{out}'' statement, which outputs
+all objects from an input set to the user in some form. The output format may be set
+via specific meta-statements or by API options - this, however, is not within
+scope. In the Overpass Turbo web interface, results may be visualised as
+dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
+\begin{lstlisting}
+    out <input set>;
+\end{lstlisting}
+
+\begin{example}
+    The following statement saves all nodes with name Foo within the set variable
+    \code{.\_}:
+    \begin{lstlisting}
+        node[name="Foo"];
+        out;
+    \end{lstlisting}
+
+    It is equivalent to the following statement:
+    \begin{lstlisting}
+        node[name="Foo"] -> ._;
+        out ._;
+    \end{lstlisting}
+
+    In order to use \code{foo} as an output set, we could do:
+    \begin{lstlisting}
+        node[name="Foo"] -> .foo;
+        out .foo;
+    \end{lstlisting}
+\end{example}
+
+The most basic group of statements are the \emph{object retrieval statements}:
+\begin{center}
+    \begin{tabular}{r|l}
+        \code{node[<filter>]} & retrieve all nodes that match this filter \\
+        \code{way[<filter>]} & retrieve all ways that match this filter \\
+        \code{relation[<filter>]} & retrieve all relations that match this filter \\
+        \code{area[<filter>]} & retrieve all areas that match this filter \\
+    \end{tabular}
+\end{center}
+
+\subsubsection{Tag filters}
+
 
 \fixme{finish this}
 \end{document}
