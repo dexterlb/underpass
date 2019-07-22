@@ -87,17 +87,30 @@ dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
     \end{lstlisting}
 \end{example}
 
-\subsubsection{Tag filters}
-The most basic group of statements retrieve objects depending on whether a
-specific filter matches its tags:
+The most basic group of statements are \emph{retrieval statements}.
+They may retreive specific type of objects depending on what
+\emph{object keyword} was used. Object keywords are the following:
 \begin{center}
     \begin{tabular}{r|l}
-        \code{node[<filter>]} & retrieve all nodes that match this filter \\
-        \code{way[<filter>]} & retrieve all ways that match this filter \\
-        \code{relation[<filter>]} & retrieve all relations that match this filter \\
-        \code{area[<filter>]} & retrieve all areas that match this filter \\
+        \code{node} & retrieves nodes \\
+        \code{way} & retrieves ways \\
+        \code{relation} & retrieves relations \\
+        \code{area} & retrieves areas \\
+        \code{nwr} & retrieves nodes, ways and relations \\
     \end{tabular}
 \end{center}
+
+To form a retrieval statement, an object keyword is followed by one or more
+\emph{filters}:
+\begin{lstlisting}
+    <object keyword><filter><filter>...<filter>
+\end{lstlisting}
+Objects which match \emph{all} filters are stored in the output set.
+
+\subsubsection{Tag filters}
+The most basic group of statements retrieve objects depending on whether a
+specific filter matches its tags. All tag filters are specified within
+square braces.
 
 These are the possible tag filters\footnote{All double quotes within filters
     may be replaced by single quotes (in order to escape double quotes within
@@ -107,29 +120,154 @@ These are the possible tag filters\footnote{All double quotes within filters
         \hline
         Filter & Negation & Effect \\
         \hhline{|=|=|=|}
-        \code{"tag"} & \code{!"tag"} & Matches if the object has a tag with key
+        \code{["tag"]} & \code{[!"tag"]} & Matches if the object has a tag with key
             \code{tag} \\
         \hline
-        \code{"tag"="content"} & \code{tag!="content"}
+        \code{["tag"="content"]} & \code{[tag!="content"]}
             & Matches if the object has a tag with key \code{tag}
                 and value \code{content} \\
         \hline
-        \code{"tag"\textasciitilde"regex"} & \code{tag!\textasciitilde"regex"}
+        \code{["tag"\textasciitilde"regex"]} & \code{[tag!\textasciitilde"regex"]}
             & Matches if the object has a tag with key \code{tag}
                 and value that matches \code{regex} \\
         \hline
-        \code{"tag"\textasciitilde"regex",i} & \code{tag!\textasciitilde"regex",i}
+        \code{["tag"\textasciitilde"regex",i]} & \code{[tag!\textasciitilde"regex",i]}
             & Matches if the object has a tag with key \code{tag}
                 and value that matches \code{regex}, ignoring case \\
         \hline
-        \code{\textasciitilde"regex1"\textasciitilde"regex2"} & \code{\textasciitilde"regex1"!\textasciitilde"regex2"}
+        \code{[\textasciitilde"regex1"\textasciitilde"regex2"]} & \code{[\textasciitilde"regex1"!\textasciitilde"regex2"]}
             & Matches if the object has a tag with key that matches \code{regex1}
                 and value that matches \code{regex2} \\
         \hline
     \end{tabular}
 \end{center}
 
-\subsubsection{Relative filters}
+\begin{example}
+    Get nodes with amenity ``cafe'':
+    \begin{lstlisting}
+        node[amenity="cafe"];
+        out;
+    \end{lstlisting}
+    
+    Get nodes with amenity ``cafe'' and name ``Stardeers'':
+    \begin{lstlisting}
+        node[amenity="cafe"][name="Stardeers"];
+        out;
+    \end{lstlisting}
 
-\fixme{finish this}
+    Get nodes with amenity ``cafe'' and name ``Stardeers'', case insensitive:
+    \begin{lstlisting}
+        node[amenity="cafe"][name~"^Stardeers$",i];
+        out;
+    \end{lstlisting}
+
+    Get areas with an ``administrative'' tag:
+    \begin{lstlisting}
+        area["administrative"];
+        out;
+    \end{lstlisting}
+\end{example}
+
+\subsubsection{Relative filters}
+Some filters can use an input set to influence the retrieval query.
+\begin{itemize}
+    \item Set intersection: this filter only matches objects that are within
+        the input set. The syntax is a dot followed by the input set's name.
+        \begin{example}
+            Get nodes with amenity ``cafe'':
+            \begin{lstlisting}
+                node[amenity="cafe"] -> .cafes;
+                node.cafes;
+            \end{lstlisting}
+
+            Get nodes with amenity ``cafe'' and name ``Stardeers'':
+            \begin{lstlisting}
+                node[amenity="cafe"] -> .cafes;
+                node.cafes[name="Stardeers"];
+            \end{lstlisting}
+        \end{example}
+    \item Objects within an area: get objects that are physically inside
+        of areas in the input set. The syntax uses the \code{area} keyword
+        within round braces:
+        \begin{lstlisting}
+            (area.<input set>)
+        \end{lstlisting}
+        \begin{example}
+            Nodes in Frankfurt:
+            \begin{lstlisting}
+                area[name="Frankfurt"] -> fr;
+                node(area.fr);
+                out;
+            \end{lstlisting}
+        \end{example}
+    \item Physical distance: get objects within said distance from objects in
+        the input set. The syntax involves using the \code{around} keyword
+        within round braces:
+        \begin{lstlisting}
+            (around.<input set>:<radius in metres>)
+        \end{lstlisting}
+        \begin{example}
+            Cafes within 120m of a parking space:
+            \begin{lstlisting}
+                node[amenity="parking_space"] -> pspaces;
+                node[amenity="cafe"](around.pspaces:120) -> x;
+                out x;
+            \end{lstlisting}
+
+            Cinemas within 100m of bus stops in Bonn:
+            \begin{lstlisting}
+                area[name="Bonn"];
+                node(area)[highway=bus_stop];
+                node(around:100)[amenity=cinema];
+                out;
+            \end{lstlisting}
+        \end{example}
+\end{itemize}
+
+\subsubsection{Set union}
+Several statements that produce an output set may be chained within round
+brackets. This is an \emph{union} statement and produces the union of all
+output sets. Bare input sets (preceded by a dot) may also take part in a union.
+
+\begin{example}
+    Nodes and areas with an ``administrative'' tag:
+    \begin{lstlisting}
+        (node["administrative"]; area["administrative"];);
+        out;
+    \end{lstlisting}
+
+    Cafes in Frankfurt and Bonn:
+    \begin{lstlisting}
+        node[amenity="cafe"] -> .cafes;
+        area[name="Bonn"] -> .bonn;
+        area[name="Frankfurt"] -> .frankfurt;
+        node.cafes(area.bonn) -> .cb;
+        node.cafes(area.frankfurt) -> .cf;
+        (.cb; .cb;) -> .cfb;
+        out .cfb;
+    \end{lstlisting}
+
+    Same query, but flattened:
+    \begin{lstlisting}
+        area[name="Bonn"] -> .bonn;
+        area[name="Frankfurt"] -> .frankfurt;
+        ( node[amenity="cafe"](area.bonn); node[amenity="cafe"](area.frankfurt); );
+        out;
+    \end{lstlisting}
+\end{example}
+
+\subsubsection{And everything else}
+There are more available statements within Overpass, including:
+\begin{itemize}
+    \item Recurse up/down relations - get items that are within relations in the
+        current set and get relations the items in the input set are contained
+        in
+    \item ``is in'' - get areas the items in the input set are contained in
+    \item Recurse along ways - get next, previous objects along way
+    \item Fixed point - perform a block on an input set until it returns the
+        same set
+\end{itemize}
+
+Since they haven't been used in this reference implementation, they will not be
+discussed in detail. For extra information, see \cite{overpassql}.
 \end{document}
