@@ -120,19 +120,19 @@ domain within the natural language and generate sentences in a formal language,
 those assumptions might give us acceptible results.
 
 Ideally, we want to generate the following Overpass query:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 ( node["amenity" = "parking_space"]; ) -> .x1;
 ( area["name" = "Berlin"]; area["int_name" = "Berlin"]; area["name:en" = "Berlin"]; ) -> .x2;
 ( node(area.x2)(around.x1:100.0)["amenity" = "pharmacy"]; ) -> .x3;
 .x3 out;
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 Since the compositional nature in Overpass is hidden, instead of generating
 it directly we will generate a query in a custom intermediate language we will
 call Minipass. In Minipass, the same query will look like this:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     and (and (amenity 'pharmacy') (near (amenity 'parking_space'))) (in (name 'Berlin'))
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 We will now assign a Minipass term to each of the words in our example (denoted
 after the \code{@} symbol):

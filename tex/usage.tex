@@ -45,15 +45,15 @@ The CLI can run in 3 modes:
 
 For a build system, Haskell's \code{stack} package manager has been used. The
 CLI can be run by issuing:
-\begin{lstlisting}[language=bash]
+\begin{lstwrap}\begin{lstlisting}[language=bash]
     $ stack run underpass-exe <arguments>
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 When run without arguments, the program loads \code{examples/sample_grammar.ccg}
 and starts in web interface mode.
 
 Other modes can be used as follows:
-\begin{lstlisting}[language=bash]
+\begin{lstwrap}\begin{lstlisting}[language=bash]
     # Start in web-interface mode and load my_grammar.ccg:
     $ stack run underpass-exe serve my_grammar.ccg
     
@@ -62,7 +62,7 @@ Other modes can be used as follows:
     
     # Generate a PDF breakdown for a given query:
     $ stack run underpass-exe latex my_grammar.ccg 'hospitals in China'
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 \greenbox{
     While the actual running time with the sample grammar is negligible,
@@ -73,7 +73,7 @@ Other modes can be used as follows:
 
 \subsection{Sample results}
 This is the content of \code{examples/sample_grammar.ccg}:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 import "library.ccg".
 import "amenities.ccg".
 
@@ -106,7 +106,7 @@ pos="nnp" `'$raw'` : String
 raw="like"    : GSet \ NamedEntity @ nameLike.
 raw="city"    : GSet \ Entity      @ \x : Entity => and city x.
 raw="near"    : GSet \ GSet / GSet @ \b, a => and a (near b).
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 We will now, for a more elaborate example, inspect the following query:
 \begin{center}
@@ -115,11 +115,11 @@ We will now, for a more elaborate example, inspect the following query:
 
 A relevant excerpt from \code{amenities.ccg} (which defines the phrase
 ``parking space'') is the following:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 lemma="parking" <> lemma="space"
     : Amenity
     @ amenity 'parking_space'.
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 So, one\footnote{
     We get two semantic parses for this query: ``pharmacies near parking spaces,
@@ -133,27 +133,27 @@ So, one\footnote{
 \end{center}
 
 This tree yields the following Minipass term:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 symlambda ((symlambda x symabstr S[GSet[x]]) ((symlambda x symabstr SE[x]) ((symlambda b symabstr (symlambda a symabstr ((Amenity  symtot  (GSet  symtot  GSet))[and] a ((symlambda dist symabstr (next (consString 'around' (consNum dist empty)))) 100.0 b)))) ((symlambda things symabstr (symlambda where symabstr ((Amenity  symtot  (GSet  symtot  GSet))[and] things ((List  symtot  (Entity  symtot  GSet))[next] (consString 'in' empty) where)))) ((symlambda _ symabstr ((symlambda k symabstr (symlambda n symabstr ((List  symtot  Amenity)[get] (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'amenity' 'parking_space')) Phrase:amenities:54:17[(symlambda _ symabstr _)]) ((symlambda x symabstr ((GSet  symtot  (GSet  symtot  Entity))[or] (or ((symlambda k symabstr (symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'name' x) ((symlambda k symabstr (symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'int_name' x)) ((symlambda k symabstr (symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'name:en' x))) 'Berlin')) ((symlambda k symabstr (symlambda n symabstr ((List  symtot  Amenity)[get] (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'amenity' 'pharmacy'))))
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 Whose types are then squashed:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 (( symlambda x symabstr x) (( symlambda x symabstr x) (( symlambda things symabstr ( symlambda where symabstr (and things (next (consString 'in' empty) where)))) (( symlambda b symabstr ( symlambda a symabstr (and a (( symlambda dist symabstr (next (consString 'around' (consNum dist empty)))) 100.0 b)))) (( symlambda _ symabstr (( symlambda k symabstr ( symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'amenity' 'parking_space')) ( symlambda _ symabstr _)) (( symlambda k symabstr ( symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'amenity' 'pharmacy')) (( symlambda x symabstr (or (or (( symlambda k symabstr ( symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'name' x) (( symlambda k symabstr ( symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'int_name' x)) (( symlambda k symabstr ( symlambda n symabstr (get (consString 'tagFilter' (consList (consString '=' (consString k (consString n empty))) empty))))) 'name:en' x))) 'Berlin'))))
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 And is then $\beta$-reduced:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 (and (and (get (consString 'tagFilter' (consList (consString '=' (consString 'amenity' (consString 'pharmacy' empty))) empty))) (next (consString 'around' (consNum 100.0 empty)) (get (consString 'tagFilter' (consList (consString '=' (consString 'amenity' (consString 'parking_space' empty))) empty))))) (next (consString 'in' empty) (or (or (get (consString 'tagFilter' (consList (consString '=' (consString 'name' (consString 'Berlin' empty))) empty))) (get (consString 'tagFilter' (consList (consString '=' (consString 'int_name' (consString 'Berlin' empty))) empty)))) (get (consString 'tagFilter' (consList (consString '=' (consString 'name:en' (consString 'Berlin' empty))) empty))))))
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 Finally, after optimisation and translation, we get an Overpass query:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 ( node["amenity" = "parking_space"]; ) -> .x1;
 ( area["name" = "Berlin"]; area["int_name" = "Berlin"]; area["name:en" = "Berlin"]; ) -> .x2;
 ( node(area.x2)(around.x1:100.0)["amenity" = "pharmacy"]; ) -> .x3;
 .x3 out;
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 When rendering this query with Overpass Turbo, as of the time of writing this
 document, we get exactly the result shown in \cref{fig:circles}.

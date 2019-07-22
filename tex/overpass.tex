@@ -62,29 +62,29 @@ all objects from an input set to the user in some form. The output format may be
 via specific meta-statements or by API options - this, however, is not within
 scope. In the Overpass Turbo web interface, results may be visualised as
 dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     out <input set>;
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 \begin{example}
     The following statement saves all nodes with name Foo within the set variable
     \code{.\_}:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[name="Foo"];
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     It is equivalent to the following statement:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[name="Foo"] -> ._;
         out ._;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     In order to use \code{foo} as an output set, we could do:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[name="Foo"] -> .foo;
         out .foo;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 \end{example}
 
 The most basic group of statements are \emph{retrieval statements}.
@@ -102,9 +102,9 @@ They may retreive specific type of objects depending on what
 
 To form a retrieval statement, an object keyword is followed by one or more
 \emph{filters}:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     <object keyword><filter><filter>...<filter>
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 Objects which match \emph{all} filters are stored in the output set.
 
 \subsubsection{Tag filters}
@@ -144,28 +144,28 @@ These are the possible tag filters\footnote{All double quotes within filters
 
 \begin{example}
     Get nodes with amenity ``cafe'':
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"];
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
     
     Get nodes with amenity ``cafe'' and name ``Stardeers'':
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"][name="Stardeers"];
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     Get nodes with amenity ``cafe'' and name ``Stardeers'', case insensitive:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"][name~"^Stardeers$",i];
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     Get areas with an ``administrative'' tag:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         area["administrative"];
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 \end{example}
 
 \subsubsection{Relative filters}
@@ -175,52 +175,52 @@ Some filters can use an input set to influence the retrieval query.
         the input set. The syntax is a dot followed by the input set's name.
         \begin{example}
             Get nodes with amenity ``cafe'':
-            \begin{lstlisting}
+            \begin{lstwrap}\begin{lstlisting}
                 node[amenity="cafe"] -> .cafes;
                 node.cafes;
-            \end{lstlisting}
+            \end{lstlisting}\end{lstwrap}
 
             Get nodes with amenity ``cafe'' and name ``Stardeers'':
-            \begin{lstlisting}
+            \begin{lstwrap}\begin{lstlisting}
                 node[amenity="cafe"] -> .cafes;
                 node.cafes[name="Stardeers"];
-            \end{lstlisting}
+            \end{lstlisting}\end{lstwrap}
         \end{example}
     \item Objects within an area: get objects that are physically inside
         of areas in the input set. The syntax uses the \code{area} keyword
         within round braces:
-        \begin{lstlisting}
+        \begin{lstwrap}\begin{lstlisting}
             (area.<input set>)
-        \end{lstlisting}
+        \end{lstlisting}\end{lstwrap}
         \begin{example}
             Nodes in Frankfurt:
-            \begin{lstlisting}
+            \begin{lstwrap}\begin{lstlisting}
                 area[name="Frankfurt"] -> fr;
                 node(area.fr);
                 out;
-            \end{lstlisting}
+            \end{lstlisting}\end{lstwrap}
         \end{example}
     \item Physical distance: get objects within said distance from objects in
         the input set. The syntax involves using the \code{around} keyword
         within round braces:
-        \begin{lstlisting}
+        \begin{lstwrap}\begin{lstlisting}
             (around.<input set>:<radius in metres>)
-        \end{lstlisting}
+        \end{lstlisting}\end{lstwrap}
         \begin{example}
             Cafes within 120m of a parking space:
-            \begin{lstlisting}
+            \begin{lstwrap}\begin{lstlisting}
                 node[amenity="parking_space"] -> pspaces;
                 node[amenity="cafe"](around.pspaces:120) -> x;
                 out x;
-            \end{lstlisting}
+            \end{lstlisting}\end{lstwrap}
 
             Cinemas within 100m of bus stops in Bonn:
-            \begin{lstlisting}
+            \begin{lstwrap}\begin{lstlisting}
                 area[name="Bonn"];
                 node(area)[highway=bus_stop];
                 node(around:100)[amenity=cinema];
                 out;
-            \end{lstlisting}
+            \end{lstlisting}\end{lstwrap}
         \end{example}
 \end{itemize}
 
@@ -231,13 +231,13 @@ output sets. Bare input sets (preceded by a dot) may also take part in a union.
 
 \begin{example}
     Nodes and areas with an ``administrative'' tag:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         (node["administrative"]; area["administrative"];);
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     Cafes in Frankfurt and Bonn:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"] -> .cafes;
         area[name="Bonn"] -> .bonn;
         area[name="Frankfurt"] -> .frankfurt;
@@ -245,15 +245,15 @@ output sets. Bare input sets (preceded by a dot) may also take part in a union.
         node.cafes(area.frankfurt) -> .cf;
         (.cb; .cb;) -> .cfb;
         out .cfb;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 
     Same query, but flattened:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
         area[name="Bonn"] -> .bonn;
         area[name="Frankfurt"] -> .frankfurt;
         ( node[amenity="cafe"](area.bonn); node[amenity="cafe"](area.frankfurt); );
         out;
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 \end{example}
 
 \subsubsection{And everything else}

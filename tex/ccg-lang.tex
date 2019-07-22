@@ -144,7 +144,7 @@ Categories are constructed as follows:
 Here is a grammar defined using the CCG definition language\footnote{
     Here \code{"library.ccg"} is assumed to contain the code from \cref{stdlib}
 }:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 import "library.ccg"
 
 -- Use GSet as the starting category.
@@ -168,7 +168,7 @@ raw="in"
     @ \things, where => and things (in where).
 
 lemma="school",pos="nnp" : GSet @ amenity 'school'.
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 \end{example}
 
 \subsubsection{Composing phrases}
@@ -196,14 +196,14 @@ For more details about this construction, see \cref{hack:phrases}.
 
 \begin{example}
 The following statement:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 lemma="place" <> raw="of" <> lemma="worship"
     : GSet
     @ amenity 'place_of_worship'.
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 Desugars to something like this:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 Dummy1 < * -> *.
 Dummy2 < * -> *.
 
@@ -219,7 +219,7 @@ raw="of"
 lemma="worship"
     : Dummy2
     @ Dummy2[\x => x].
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 \end{example}
 
 \subsubsection{Term templates}
@@ -249,11 +249,11 @@ templates are correct.
 
 \begin{example}
 Consider the following rule that contains a template:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 pos="nnp" `'$raw'` : String
     : GSet
     @ name.
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 It is valid at compile time because the term \code{name} has type
 $String \tot GSet$, which yields a term of type $GSet$ after being given
 a $String$ as argument.

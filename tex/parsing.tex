@@ -57,7 +57,7 @@ tokens objects.
     \end{center}
 
     Produces the following token list (one token on each row):
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 mark=begin
             raw=Suddenly    pos=rb      lemma=suddenly
             raw=there       pos=ex      lemma=there
@@ -74,7 +74,7 @@ mark=begin
             raw=rapping     pos=vbg     lemma=rap
             raw=.           pos=.       lemma=.
 mark=end
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 \end{example}
 
 \subsubsection{CCG parsing}
@@ -127,7 +127,7 @@ metadata about the token itself), and \code{(CombineRule cat)} is a rule\footnot
     The syntax ``\code{(CombineRule cat)}'' relies on the \code{TypeFamilies}
     Haskell extension. Type family constraints have been omitted for brevity.
 } by which this derivation was produced (used for debugging and visualisation):
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     data ParseTree cat payload where
         Leaf cat payload
         Vert cat (CombineRule cat) (ParseTree cat payload) (ParseTree cat payload)
@@ -138,7 +138,7 @@ metadata about the token itself), and \code{(CombineRule cat)} is a rule\footnot
     data MultiNode cat payload where
         MultiLeaf payload           (MultiNode cat payload)
         MultiVert (CombineRule cat) (ParseForest cat payload) (ParseForest cat payload)
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 A \code{ParseForest} is recursively generated from the set of items produced
 by the parsing algorithm, starting from the initial category and the whole query.

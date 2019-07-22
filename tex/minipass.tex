@@ -191,15 +191,15 @@ labels).
 Although for the sake of simplicity the implemented parser doesn't support
 a list literal shorthand, for the sake of examples we will adopt the syntax
 such that
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     [[42, 'bar'], 'foo']
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 means
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
     consList
         (consNum 42 (consString 'bar' empty))
         (consString 'foo' empty)
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 Here are the two edge label templates that are currently implemented in the
 translator:
@@ -233,7 +233,7 @@ And the three vertex label templates:
 \begin{example}
 \label{example:schools}
     Here is a query that retrieves all schools in Bristol:
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
 and
     (get (consString 'tagFilter'
             (consList (consString '='
@@ -246,7 +246,7 @@ and
                 (consString 'name'
                     (consString 'Bristol' empty)))
         empty))))
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 \end{example}
 
 Since Minipass queries can get too long for humans to read/write very quickly,
@@ -296,7 +296,7 @@ Note that \emph{only closed terms} are permitted in definition statements
 
 This is a small library of term definitions that makes some basic queries
 easier to write:
-\begin{lstlisting}
+\begin{lstwrap}\begin{lstlisting}
 -- identity
 id        := \y => y.
 
@@ -357,15 +357,15 @@ areas     :=  get (consString 'all'
 
 -- get all items in the universe
 everything := get (consString 'all' empty).
-\end{lstlisting}
+\end{lstlisting}\end{lstwrap}
 
 \begin{example}
     With the aid of this term library, the query in \cref{example:schools}
     becomes more concise:
 
-    \begin{lstlisting}
+    \begin{lstwrap}\begin{lstlisting}
 and (amenity 'school') (in (name 'Bristol'))
-    \end{lstlisting}
+    \end{lstlisting}\end{lstwrap}
 \end{example}
 
 When regarding a standalone minipass program, the term \code{main} is used
