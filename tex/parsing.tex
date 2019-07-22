@@ -85,6 +85,10 @@ each token one by one\footnote{This naïve quadratic approach may be replaced
 Then, proceeding with the categorial CYK algorithm, a set of items (in the
 sense of \cref{sec:cyk}) is constructed recursively.
 
+The maximum composition arity $n$ in the implementation is set to $1$ since no need
+for more arguments has arisen. If the grammar demands a higher arity, this
+is easily remedied.
+
 The straight-forward recursive implementation of the algorithm relies on a
 memoiser in order to avoid recomputing shared items. Memoisation is used in
 several places throughout the code, and two generic memoisers have been

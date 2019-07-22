@@ -121,7 +121,11 @@ lemma="parking" <> lemma="space"
     @ amenity 'parking_space'.
 \end{lstlisting}
 
-So, one of the derivation trees generated for this query is given below:
+So, one\footnote{
+    We get two semantic parses for this query: ``pharmacies near parking spaces,
+    said pharmacies being in Berlin'' and ``pharmacies near parking spaces,
+    said parking spaces being in Berlin''. Both are valid.
+} of the derivation trees generated for this query is given below:
 \begin{center}
 \resizebox{\textwidth}{!}{\begin{tikzpicture}
 \Tree [ .{ $S$ } \edge[very thick]; [ .{$($$S$$/_{}$$SE$$)$ } { \minibox[t,frame]{mark:begin}} ]  [ .{ $SE$ }  [ .{ $GSet$ }  [ .{$Amenity$ } { \minibox[t,frame]{pos:nns\\raw:pharmacies\\lemma:pharmacy}} ] \edge[very thick]; [ .{ $($$GSet$$\backslash_{}$$GSet$$)$ } \edge[very thick]; [ .{$($$($$GSet$$\backslash_{}$$GSet$$)$$/_{}$$GSet$$)$ } { \minibox[t,frame]{pos:in\\raw:near\\lemma:near}} ]  [ .{ $GSet$ } \edge[very thick]; [ .{ $($$GSet$$/_{}$$GSet$$)$ }  [ .{ $Amenity$ } \edge[very thick]; [ .{$($$Amenity$$/_{\star}$$Phrase:amenities:54:17$$)$ } { \minibox[t,frame]{pos:nn\\raw:parking\\lemma:parking}} ]  [ .{$Phrase:amenities:54:17$ } { \minibox[t,frame]{pos:nns\\raw:spaces\\lemma:space}} ]  ] \edge[very thick]; [ .{$($$($$GSet$$/_{}$$GSet$$)$$\backslash_{}$$GSet$$)$ } { \minibox[t,frame]{pos:in\\raw:in\\lemma:in}} ]  ]  [ .{$Entity$ } { \minibox[t,frame]{pos:nnp\\raw:Berlin\\lemma:berlin}} ]  ]  ]  ] \edge[very thick]; [ .{$($$SE$$\backslash_{}$$GSet$$)$ } { \minibox[t,frame]{mark:end}} ]  ]  ]
@@ -150,4 +154,7 @@ Finally, after optimisation and translation, we get an Overpass query:
 ( node(area.x2)(around.x1:100.0)["amenity" = "pharmacy"]; ) -> .x3;
 .x3 out;
 \end{lstlisting}
+
+When rendering this query with Overpass Turbo, as of the time of writing this
+document, we get exactly the result shown in \cref{fig:circles}.
 \end{document}
