@@ -247,6 +247,16 @@
     \end{center}
 }
 
+\newcommand\autoscaledtree[1]{
+    \begin{center}
+    \resizebox{\textwidth}{!}{
+        \begin{tikzpicture}
+        \Tree[ #1 ]
+        \end{tikzpicture}
+    }
+    \end{center}
+}
+
 \newcommand\deriv[1]{
     \begin{prooftree}
         #1
