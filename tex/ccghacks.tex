@@ -44,7 +44,7 @@ be used here.
 
 For clarity, slash indices will be denoted with latin letters ($\mci{i}$
 denotes the $i$'th respective slash, including its direction and modality)
-while slash modalities will be denoted by greek letters
+while slash modalities will be denoted by Greek letters
 ($\lci{\mu}$ and  $\rci{\mu}$ denote the respective
 slash with modality $\mu$).
 
@@ -453,18 +453,18 @@ This can be achieved by using the parsing rules specified in \cref{hack:unificat
 by using \[ \hat{U}(X, Y) \iff \typeof{Y} \less \typeof{X} \]
 
 Note that we must directly specify $\hat{U}$ instead of defining $U$ to act
-as $\less$ and then extending it over $\cclos{N}$ as describen in \cref{hack:unification},
+as $\less$ and then extending it over $\cclos{N}$ as described in \cref{hack:unification},
 since the latter would result in covariant argument semantics, while we
 want contravariant argument semantics (for more details see \cref{sec:lambda}).
 
 \begin{example}
     Imagine we want to be able to parse the following queries:
     \begin{itemize}
-        \item \code{german \sq cities \sq less \sq than \sq 20km \sq from \sq Cologne}
-        \item \code{german \sq cities \sq less \sq than \sq 20km \sq north \sq of \sq Cologne}
+        \item \code{German \sq cities \sq less \sq than \sq 20km \sq from \sq Cologne}
+        \item \code{German \sq cities \sq less \sq than \sq 20km \sq north \sq of \sq Cologne}
     \end{itemize}
 
-    For the sake of the example, subtrees for phrases like $german \sq cities$
+    For the sake of the example, subtrees for phrases like $German \sq cities$
     will be squashed and constants like $germanCity$, $within$ etc will be
     used without implementations\footnote{
         This example uses minipass-like semantics for $\lambda$-terms to
@@ -478,7 +478,7 @@ want contravariant argument semantics (for more details see \cref{sec:lambda}).
     \end{align*}
     and looks like this:
     \gramshort{
-        \gramrow{german \sq cities}{GSet}{germanCity}
+        \gramrow{German \sq cities}{GSet}{germanCity}
         \gramrow{Cologne}{GSet}{cologne}
         \gramrow{20km}{Dist}{twentykm}
         \gramrow{less \sq than}{GSet \lc GSet \rc DistCheck}{
@@ -505,9 +505,9 @@ want contravariant argument semantics (for more details see \cref{sec:lambda}).
             \gramrow{}{}{]}
     }
 
-    Here is a derivation tree for one of the forementioned queries:
+    Here is a derivation tree for one of the aforementioned queries:
     \centree{.{$GSet$}
-        [ .{$GSet$} \edge[roof]; [ .{$german \sq cities$} ] ]
+        [ .{$GSet$} \edge[roof]; [ .{$German \sq cities$} ] ]
         [ .{$GSet \lc GSet$}
             [ .{$GSet \lc GSet \rc DistCheck$} \edge[roof]; [ .{$less \sq than$} ] ]
             [ .{$DistCheck$}

@@ -5,13 +5,13 @@
 \label{sec:minipass}
 Overpass is a relatively complex language with assignment, sequentiality
 and specialised syntax. As such, it is not well-suited for performing
-AST transofmations.
+AST transformations.
 
 Minipass addresses this problem: its goal is to be easy to manipulate
 and reason about, and be translatable to Overpass. It is based on the typed
 lambda calculus variant described in \cref{sec:lambda} and speaks about a
 world much simpler than the one described by Overpass - a directed graph
-with labeled edges and vertices.
+with labelled edges and vertices.
 
 The graph abstraction works as follows:
 \begin{itemize}
@@ -185,7 +185,7 @@ The valid term constructions are the following:
 The main use for \code{List}s is as \emph{labels}: all vertices and edges can be thought
 to be labelled with a (possibly infinite) set of such labels. Another way
 to think about labels is as \emph{queries} that retrieve data (either new
-data in the case of vertice labels, or relational data in the case of edge
+data in the case of vertex labels, or relational data in the case of edge
 labels).
 
 Although for the sake of simplicity the implemented parser doesn't support
@@ -279,7 +279,7 @@ Named terms are resolved after parsing by performing free variable substitution
 in the source code and are bundled in a "term library". The resolver also
 handles possible type errors and loops.
 
-Note that this language is not turing complete (not even primitively recursive)
+Note that this language is not Turing complete (not even primitively recursive)
 since recursion is not handled\footnote{
     Actually, recursion is easy to implement (and was implemented at some point)
     by adding a recursion combinator

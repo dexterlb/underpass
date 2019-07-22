@@ -46,7 +46,7 @@ Thus, all significant\footnote{
     inferred is when a bound variable is unused (for example in terms like
     \code{(\textbackslash x, y => y) 42}, where the type of \code{x} cannot be inferred).
     This, however, is harmless, because the type is unneeded anyway.
-} occurances of $\code{*}$ are removed by finding the fixed point of
+} occurrences of $\code{*}$ are removed by finding the fixed point of
 $\mcf{propagate}$ from \cref{def:propagation}
 with the following unifier:
 \[
@@ -75,7 +75,7 @@ areas\footnote{
     The ``area'' type is only present in Overpass (not in OpenStreetMap
     databases), and \emph{area} objects are constructed by finding \emph{relations}
     that form a closed polygon \cite{overpass}.
-}), its queries are heterogenous.
+}), its queries are heterogeneous.
 
 \begin{example}
 For example, the following Minipass
@@ -92,7 +92,7 @@ The returned set, among any other objects, contains:
     \item the administrative area of the city Brussels (a \emph{area})
     \item the Brussels boulevard in Sofia (a \emph{way})
 \end{itemize}
-Since Overpass contains separate keywoards for querying different objects,
+Since Overpass contains separate keywords for querying different objects,
 the above Minipass term would have to be translated to a query as such:
 \begin{lstwrap}\begin{lstlisting}
     ( node["name" = "Brussels"];
