@@ -178,6 +178,18 @@ used in a category.
     for $Z \in C(\tau), W \in C(\tau), \alpha \in \cvars$
 \end{defn}
 
+\begin{convention}
+    If we have
+    \[ X' = \subst{\subst{\subst{X}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
+    We will use
+    \[ \xi = \subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
+    To mean that ``$\xi$ is the sequence of substitutions
+    $\subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n}$.
+
+    The application of $\xi$ on $X$ will be denoted as
+    \[ X' = \xi(X) \]
+\end{convention}
+
 Having extended the notion of categorial closure to include categorial variables,
 we also add a family of derivation rules to deal with variables, namely:
 \centree{.{$\subst{X}{\alpha}{Y}$} \edge[very thick]; {$X$} }
@@ -218,19 +230,32 @@ of variables during derivation.
 
 When parsing, we can observe that after processing all leaf nodes,
 there's no way to generate new variables while building the parse tree
-bottom-up. Thus, it is sufficient to eliminate variables by unification
-with the following unifier:
+bottom-up. Thus, it is sufficient to eliminate variables by unification:
 
+\begin{defn}\label{def:varunify}
 Two categories $X$ and $Y$ with categorial variables \emph{unify} whenever we can
 find two sequences of substitutions $(a_1, X_1), (a_2, X_2), ..., (a_n, X_n)$
 and $(b_1, Y_1), (b_2, Y_2), ..., (b_n, Y_n)$ such that
 \[ \subst{\subst{\subst{X}{a_1}{X_1}}{a_2}{X_2}}{a_n}{X_n}
  = \subst{\subst{\subst{Y}{b_1}{Y_1}}{b_2}{Y_2}}{b_n}{Y_n} \]
+\end{defn}
 
-Note that this requires a slightly more sophisticated variant of unification
-than the one presented in \cref{hack:unification}: namely, variable substitutions
-need to be applied to whole categories while parsing, not only to their constituent
-subcategories that are being tested for unification.
+In order to implement parsing of CCGs with variables, we will modify the categorial
+CYK algorithm by replacing the rules (\cref{cyk:rules}) by the following:
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
+        and $Y'$ and $Y''$ unify with substitutions
+        $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
+        = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+    \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
+        and $Y'$ and $Y''$ unify with substitutions
+        $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
+        = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+\end{enumerate}
 
 \subsubsection{Coordination}
 \emph{Coordination} refers to a technique that allows conjunctions (such as
@@ -360,52 +385,66 @@ it is usually only considered on categories that appear in leaves.
     }
 \end{example}
 
-\subsubsection{Unification of categories}
-\label{hack:unification}
-To reduce the size and complexity of grammars, it is convenient to regard
-not only identical categories as equal, but rather use an \emph{unification}
-operation that can judge whether two categories unify and what their common
-unifier should be.
+\subsubsection{Equification of categories}
+\label{hack:equification}
+To reduce the size and of grammars and make them less complicated, 
+it is convenient to regard
+not only identical categories as equal, but rather use a \emph{equification
+relation} that can judge whether two categories must be regarded as equal.
 
-One method is to explicitly state the unification rules in the grammar.
-It is also useful to make categories complex objects and infer unification
-based on their structure, as will be done in the next two sections. Categorial
-variables (\cref{hack:catvars}) are also a special case of unification.
-
-For bottom-up parsing, the only thing we need is an unification predicate
-$U(X, Y)$ that tells us whether the two atomic categories unify. It can then be
-used instead of an equality check in the parsing algorithm.
+One method is to explicitly state the equification rules in the grammar.
+It is also useful to make categories complex objects and infer the relation
+based on their structure, as will be done in the next two sections.
 
 \begin{defn}
-    A predicate $U : N \times N \rightarrow \boolset$ is called a
-    \emph{unifier} for the set $N$ if it is transitive
+    A relation $U \subseteq N \times N$ is called a
+    \emph{equification relation} for the set $N$ if it is transitive
     and reflexive.
 \end{defn}
 
-Now, to use the unifier for parsing we must extend it over complex categories:
-\begin{defn}
-    If $U : N \times N \rightarrow \boolset$ is a unifier for the set of
+Now, to use the unifier for parsing we must extend it over complex categories.
+One way to define such an extension is by uniformly propagating membership
+into $U$ over complex categories:
+\begin{defn}\label{def:rel:uniform}
+    If $U \subseteq N \times N$ is a equification relation
+    for the set of
     atomic categories $N$, its extension over complex categories
-    $\hat{U} : \cclos{N} \times \cclos{N} \rightarrow \boolset$ is defined
-    as follows:
+    $\hat{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
+    inductively as follows:
     \begin{align*}
-        \hat{U}(X, Y) \iff & \\
+        \hat{U}(X, Y) \defiff & \\
         & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
-        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \hat{U}(W', Z')
-        \land \hat{U}(W'', Z'')) \\
+        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \hat{U}(W', W'')
+        \land \hat{U}(Z', Z'')) \\
     \end{align*}
 \end{defn}
 
 \begin{property}
-    If $U : N \times N \rightarrow \boolset$ is a unifier for the set of
-    $N$, its extension $\hat{U}$ is a unifier for $\cclos{U}$
+    If $U \subseteq N \times N$ is a equification relation 
+    for the set of
+    $N$, its extension $\hat{U}$ is a equification relation for $\cclos{U}$
 \end{property}
 \begin{proof}
     The arguments for transitivity and reflexivity are both trivial.
 \end{proof}
 
-In particular, in the categorial CYK algorithm we can replace the rules (see \cref{cyk:rules})
-by the following:
+Another way to extend a equification relation is presented in \cref{hack:subtyping}.
+
+Now, we will modify the derivation rules from \cref{def:ccg:rules} to incorporate
+equification:
+    
+\begin{itemize}
+    \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
+    \item If $ X \rc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+        and $\hat{U}(Y', Y'')$, \\
+        then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+    \item If $ X \lc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+        and $\hat{U}(Y', Y'')$, \\
+        then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+\end{itemize}
+
+To implement parsing, we can replace the rules in the categorial CYK algorithm 
+(\cref{cyk:rules}) by the following:
 
 \begin{enumerate}
     \item If $X \in f(w_i)$, then $(X, i, i) \in P$
@@ -420,7 +459,7 @@ by the following:
 Note that the unifier may be asymmetric and take advantage of the fact
 that its first argument is the tail of the primary category.
 
-\subsubsection{Unification by category features}
+\subsubsection{Equification by category features}
 Some models allow each simple category to be extended with a set of \emph{features}
 that refine its scope, and then define rules for unification of said features.
 
@@ -438,24 +477,42 @@ This can be further extended by concepts such as \emph{feature variables}
 (which allows the use of variables within feature expressions and
 performs variable substitution during unification) and embedding regular expressions.
 
-\subsubsection{Unification by subtyping}
+\subsubsection{Equification by subtyping}\label{hack:subtyping}
 If the grammar will be used for generating typed $\lambda$-terms that use
 a subtyping system like the one described in \cref{sec:lambda}, the subtyping
-relation can be used to unify categories.
+relation can be used to as a equification relation.
 
 If the desired semantics is to allow functions to only accept subtypes of
-their argument, some extra care needs to be taken, namely
+their argument, some extra care needs to be taken, namely:
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
-only if $\typeof{Y_2} \less \typeof{Y_1}$.
+if and only if 
+\begin{equation}\label{eq:typeless}
+    \typeof{Y_2} \less \typeof{Y_1}
+\end{equation}
 
-This can be achieved by using the parsing rules specified in \cref{hack:unification}
-by using \[ \hat{U}(X, Y) \iff \typeof{Y} \less \typeof{X} \]
+If we use a equification relation $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$,
+it is not sufficient to use the uniform extension to complex categories
+(\cref{def:rel:uniform}) because that would violate contravariance. Thus,
+we will use the following extension:
+\begin{defn}
+    If $U \subseteq N \times N$ is a equification relation
+    for the set of
+    atomic categories $N$, its contravariant extension over complex categories
+    $\overline{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
+    inductively as follows:
+    \begin{align*}
+        \overline{U}(X, Y) \defiff & \\
+        & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
+        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \overline{U}(W'', W')
+        \land \overline{U}(Z', Z'')) \\
+    \end{align*}
+\end{defn}
 
-Note that we must directly specify $\hat{U}$ instead of defining $U$ to act
-as $\less$ and then extending it over $\cclos{N}$ as described in \cref{hack:unification},
-since the latter would result in covariant argument semantics, while we
-want contravariant argument semantics (for more details see \cref{sec:lambda}).
+It can be easily seen that using 
+$\overline{U}$ is equivalent
+to the condition in \cref{eq:typeless}
+(given that $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$).
 
 \begin{example}
     Imagine we want to be able to parse the following queries:
