@@ -1,0 +1,146 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.loading {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    margin:-100px 0 0 -100px;
+    -webkit-animation:spin 1.1s linear infinite;
+    -moz-animation:spin 1.1s linear infinite;
+    animation:spin 1.1s linear infinite;
+    background-image: url('think_centered.svg');
+    background-size: contain;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+.title {
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    border-bottom: 1px solid #222;
+    display: inline-block;
+}
+
+.history-item {
+    display: table;
+    border-bottom: 1px solid #76a9fc;
+    color: #2770e8;
+    cursor: pointer;
+}
+
+.history-item:hover {
+    color: #003fa8;
+}
+
+.status-no-error .error {
+    display: none;
+}
+.status-no-ok .result {
+    display: none;
+}
+.status-no-loading .loading {
+    display: none;
+}
+.status-loading .input-container {
+    display: none;
+}
+
+.token.fictional::before {
+    content: '⚓';
+}
+
+.meta-container .meta-box {
+    display: none;
+}
+
+.meta-container {
+    position: relative;
+}
+
+.meta-container-active > .meta-box {
+    display: inline-block;
+    margin-left: 1em;
+    margin-right: 1em;
+    border: 1px solid #ccb16e;
+    position: absolute;
+    left: -1em;
+    top: 1em;
+    background-color: #d0f2c6;
+    width: 15em;
+    z-index: 20;
+    padding: 0.6em;
+}
+
+.meta-container-button {
+    display: inline-block;
+    opacity: 0.25;
+    position: absolute;
+    top: -0.3em;
+    left: -0.3em;
+    width: 0.7em;
+    height: 0.7em;
+    background-image: url('think.svg');
+    background-size: contain;
+}
+
+.meta-container:hover > .meta-container-button {
+    opacity: 0.45;
+    width: 1em;
+    height: 1em;
+    top: -0.5em;
+    left: -0.5em;
+}
+
+.meta-container:hover > .meta-container-button:hover {
+    opacity: 1;
+}
+
+
+.meta-container-active {
+    background-color: #d0f2c6;
+}
+
+.meta-container-hovered {
+    border: 1px solid #ccb16e;
+}
+
+.meta-key::after {
+    content: ': ';
+}
+
+.expander-button::before {
+    content: '▶';
+    display: inline-block;
+}
+.expander-active > .expander-button::before {
+    content: '▼';
+    display: inline-block;
+}
+.expander-header {
+    display: inline-block;
+    margin-left: 1em;
+}
+
+.expandable {
+    display: none;
+}
+
+.expander-active > .expandable {
+    display: block;
+    margin-left: 1em;
+}
+
+
+.lambda-term {
+    display: inline-block;
+}
+.lambda-term {
+    margin-left: 2px;
+    margin-right: 2px;
+}

@@ -4,45 +4,45 @@ type String
 type Float
 
 -- complex types
-type Set
+type GSet
 
 -- universals
-everything  : Set
-nodes       : Set
-ways        : Set
-relations   : Set
-areas       : Set
+everything  : GSet
+nodes       : GSet
+ways        : GSet
+relations   : GSet
+areas       : GSet
 
 -- filters
-kv      : String -> String -> Set       -- things that match a key/value tag
-around  : Float  -> Set -> Set          -- things that are within distance of given things
-in      : Set    -> Set                 -- things that are in areas in the set
+kv      : String -> String -> GSet       -- things that match a key/value tag
+around  : Float  -> GSet -> GSet          -- things that are within distance of given things
+in      : GSet    -> GSet                 -- things that are in areas in the set
 
 -- set operations
-or  : Set -> Set -> Set
-and : Set -> Set -> Set
-not : Set -> Set
+or  : GSet -> GSet -> GSet
+and : GSet -> GSet -> GSet
+not : GSet -> GSet
 
 -- graph operations
-up      : Set -> Set     -- all parents of items in set
-down    : Set -> Set     -- all children of items in set
-upp     : Set -> Set     -- transitive parents
-downn   : Set -> Set     -- transitive children
+up      : GSet -> GSet     -- all parents of items in set
+down    : GSet -> GSet     -- all children of items in set
+upp     : GSet -> GSet     -- transitive parents
+downn   : GSet -> GSet     -- transitive children
 
 -- graph operations with a role filter
-up      : String -> Set -> Set     -- all parents of items in set
-down    : String -> Set -> Set     -- all children of items in set
-upp     : String -> Set -> Set     -- transitive parents
-downn   : String -> Set -> Set     -- transitive children
+up      : String -> GSet -> GSet     -- all parents of items in set
+down    : String -> GSet -> GSet     -- all children of items in set
+upp     : String -> GSet -> GSet     -- transitive parents
+downn   : String -> GSet -> GSet     -- transitive children
 
 -- convenience
-name : String -> Set
+name : String -> GSet
 name s = kv 'name' s
 
-amenity : String -> Set
+amenity : String -> GSet
 amenity s = kv 'amenity' s
 
-near : Set -> Set
+near : GSet -> GSet
 near = around 50
 
 

@@ -1,0 +1,602 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{\hsout{Hacks} Extensions of the CCG formalism}
+\label{sec:hacks}
+
+The CCG formalism described in \cref{sec:ccg} is too weak to represent most
+phenomena in natural languages \cite{steedman}. Thus, several extensions have
+been developed to deal with them.
+
+\subsubsection{Rule restrictions or modalities}
+The only restriction on rules within the pure CCG formalism is the limit to
+the number of arguments ($n$). For natural languages, this causes overgeneration.
+
+The simplest method to alleviate this is to allow arbitrary rule restrictions
+depending, essentially creating a new formalism for each new target language.
+Another method is the so called \emph{slash modalities}, which have been shown
+\cite{modal}
+to be equivalent to rule restrictions in terms of expressive power, and will
+be used here.
+
+\begin{defn}
+    The elements of the set
+    $\mathcal{M} = \{ \modstar, \modr, \modx, \moddot \}$ are called
+    \emph{slash modalities}.
+
+    Slash modalities make up the following lattice:
+
+    \begin{center}
+        \begin{tikzpicture}
+            \node[main node] (1) {$\modstar$};
+            \node[main node] (2) [below left = 1cm and 1.5cm of 1]  {$\modr$};
+            \node[main node] (3) [below right = 1cm and 1.5cm of 1] {$\modx$};
+            \node[main node] (4) [below = 2cm of 1] {$\moddot$};
+
+            \path[draw,thick]
+            (1) edge node {} (2)
+            (1) edge node {} (3)
+            (2) edge node {} (4)
+            (3) edge node {} (4);
+        \end{tikzpicture}
+    \end{center}
+\end{defn}
+
+For clarity, slash indices will be denoted with latin letters ($\mci{i}$
+denotes the $i$'th respective slash, including its direction and modality)
+while slash modalities will be denoted by Greek letters
+($\lci{\mu}$ and  $\rci{\mu}$ denote the respective
+slash with modality $\mu$).
+
+\begin{defn}
+    We extend the definition of categorial closure to use modalities:
+    \begin{enumerate}
+        \item \label{cmod:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{cmod:right}  $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \rci{\mu} Y \rp \in C(\tau)$
+        \item \label{cmod:left}   $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \lci{\mu} Y \rp \in C(\tau)$
+    \end{enumerate}
+\end{defn}
+
+Now, we restrict derivations according to modalities (in all cases, $m \leq n$):
+\begin{itemize}
+    \item "Application"
+        \[ \lb X \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rb \]
+        \[ \lb X \rb \rightarrow \lb Y \rb \lb X \lci{\mu} Y \rb \]
+        where $\mu \less \modstar$ (effectively for any $\mu$).
+    \item "Harmonic composition"
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb Y \lci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
+        where $\mu \less \modr, \nu \less \modr, \eta = \mu \meet \nu$.
+    \item "Crossing composition"
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \lci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \rci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
+        where $\mu \less \modx, \nu \less \modx, l = \mu \meet \nu$.
+\end{itemize}
+
+In the above templates, modalities on the right-hand side stand for any
+modality that is less-than or equal (according to the modality lattice)
+to the one specified. The modalities on the left-hand side are produced by
+unifying (lowest common ancestor) the modalities on the right.
+
+\begin{example}
+    For example, here are a few valid derivations:
+    \[ \lb X \rb \rightarrow \lb X \rci{\modr} Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rci{\modx} Y \rb \lb Y \rb \]
+    \[ \lb X \rb \rightarrow \lb X \rci{\moddot} Y \rb \lb Y \rb \]
+    \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\modr} Y \rb \lb Y \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+    \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \rci{\modx} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\moddot} Y \rb \]
+\end{example}
+
+This way, one can restrict the ways in which a category would
+combine by choosing appropriate slash modalities.
+
+When using slash modalities, the bare slashes ($\lc$ and $\rc$) will actually
+mean $\lci{\moddot}$ and $\rci{\moddot}$, being the most generic (they
+can combine with any other type of slash).
+
+\begin{example}
+    Consider the following simple grammar:
+    \gramshort{
+        \gramrow{small}{ GSet \rc GSet }{}
+        \gramrow{cities}{ GSet }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{Russia}{ GSet }{}
+    }
+
+    It generates the following query, which looks well:
+    \centree{.{$GSet$}
+        [ .{$GSet$}
+            [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+            [ .{$GSet$} [ .{$cities$} ] ]
+        ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+            [ .{$GSet$} [ .{$Russia$} ] ]
+        ]
+    }
+
+    However, it also generates this query, which is undesirable:
+    \centree{.{$GSet$}
+        [ .{$GSet$} [ .{$cities$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+                [ .{$GSet$} [ .{$Russia$} ] ]
+            ]
+        ]
+    }
+
+    It appears that adjectives such as $small$ should not be allowed to combine
+    in this way. This can be remedied by setting $small \catdefsep GSet \rci{\modr} GSet$
+    in order to disallow crossing composition.
+\end{example}
+
+\subsubsection{Categorial variables}
+\label{hack:catvars}
+This is a very powerful extension that adds simple unification based on variables
+to categorial derivation. To define it formally, let $\cvars = \{ \kappa', \kappa'', \kappa''' ...\}$
+be a set of symbols we call \emph{categorial variables}.
+and introduce variable substitution over categories.
+
+\begin{defn}
+    We extend the definition of categorial closure to include variables:
+    \begin{enumerate}
+        \item \label{cvar:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{cvar:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
+        \item \label{cvar:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
+        \item \label{cvar:var}    $\alpha \in \cvars \Rightarrow \alpha \in C(\tau)$
+    \end{enumerate}
+\end{defn}
+
+For convenience, we will now define a function that gives us all variables
+used in a category.
+\begin{defn}
+    Let $\fvv : C(\tau) \rightarrow 2^{\cvars}$ be defined as:
+    \[
+        \fv{Z} =
+        \begin{cases*}
+            \varnothing ,& $Z \in \tau$ \\
+            \fv{X} \cup \fv{Y} ,& $Z = \lp X \rc Y \rp$ \\
+            \fv{X} \cup \fv{Y} ,& $Z = \lp X \lc Y \rp$ \\
+            \{ \alpha \} ,& $Z = \alpha \in \cvars$ \\
+        \end{cases*}
+    \]
+\end{defn}
+\begin{defn}
+    Variable substitution over categories is defined as
+    \[
+        \subst{Z}{\alpha}{W} =
+        \begin{cases*}
+            Z ,& $Z \in \tau$ \\
+            \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \rc Y \rp$ \\
+            \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \lc Y \rp$ \\
+            \beta ,& $Z = \beta \in \cvars$ \\
+            W ,& $Z = \alpha$ \\
+        \end{cases*}
+    \]
+    for $Z \in C(\tau), W \in C(\tau), \alpha \in \cvars$
+\end{defn}
+
+\begin{convention}
+    If we have
+    \[ X' = \subst{\subst{\subst{X}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
+    We will use
+    \[ \xi = \subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
+    To mean that ``$\xi$ is the sequence of substitutions
+    $\subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n}$.
+
+    The application of $\xi$ on $X$ will be denoted as
+    \[ X' = \xi(X) \]
+\end{convention}
+
+Having extended the notion of categorial closure to include categorial variables,
+we also add a family of derivation rules to deal with variables, namely:
+\centree{.{$\subst{X}{\alpha}{Y}$} \edge[very thick]; {$X$} }
+for any $X \in C(\tau), Y \in C(\tau), \alpha \in \cvars$.
+
+To define semantics for derivations with categorial variables, we need to extend
+our $\lambda$-calculus to include type-variables and type-variable substitution.
+For a more detailed explanation, see \cref{lambda:typevars}.
+Also, $\typeoff$ for categories must be extended to injectively map categorial
+variables ($\cvars$) into type variables ($\tvars$) for variable substitution
+to work (and for category types that contain variables to match the types of
+their assigned terms).
+
+Then, the semantics for the following derivation tree produced by variable
+substitution can be defined:
+\begin{center}
+    \begin{tikzpicture}[node distance=1mm]
+        \Tree[
+            .\node(outtop){$\subst{X}{\alpha}{Y}$};
+                \edge[very thick];
+                [ .\node(intop){$X$};
+                    \edge[roof];
+                    [ .\node(inbot){$\alpha$}; ]
+                ]
+        ]
+        \node[boxcola,fit=(intop)(inbot)](inbox){};
+        \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+        \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+        \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+    \end{tikzpicture}
+\end{center}
+
+\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\typeof{\alpha}}{Y} \]
+
+This essentially allows us to generate any category and substitute it in place
+of variables during derivation.
+
+When parsing, we can observe that after processing all leaf nodes,
+there's no way to generate new variables while building the parse tree
+bottom-up. Thus, it is sufficient to eliminate variables by unification:
+
+\begin{defn}\label{def:varunify}
+Two categories $X$ and $Y$ with categorial variables \emph{unify} whenever we can
+find two sequences of substitutions $(a_1, X_1), (a_2, X_2), ..., (a_n, X_n)$
+and $(b_1, Y_1), (b_2, Y_2), ..., (b_n, Y_n)$ such that
+\[ \subst{\subst{\subst{X}{a_1}{X_1}}{a_2}{X_2}}{a_n}{X_n}
+ = \subst{\subst{\subst{Y}{b_1}{Y_1}}{b_2}{Y_2}}{b_n}{Y_n} \]
+\end{defn}
+
+In order to implement parsing of CCGs with variables, we will modify the categorial
+CYK algorithm by replacing the rules (\cref{cyk:rules}) by the following:
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
+        and $Y'$ and $Y''$ unify with substitutions
+        $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
+        = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+    \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
+        and $Y'$ and $Y''$ unify with substitutions
+        $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
+        = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+\end{enumerate}
+
+\subsubsection{Coordination}
+\emph{Coordination} refers to a technique that allows conjunctions (such as
+$and$, $or$ etc.) to combine identical categories on both sides.
+
+This can be emulated completely by using categorial variables and setting
+$and \catdefsep \alpha \lc \alpha \rc \alpha $\footnote{
+    In practice, one would need to set
+    $and \catdefsep X \lc X \rc X, \lp X \mc \alpha \rp \lc \lp X \mc \alpha \rp \rc \lp X \mc \alpha \rp, ...$
+    in order to properly define semantics.
+} and similar.
+
+\subsubsection{Type-raising}
+This extension adds a family of unary rules for constructing derivations \cite[sec.~5.3.1]{nts},
+parametrised for any slash modality $i$:
+\begin{center}
+    \tree{.{$\alpha \rci{i} \lp \alpha \lci{i} X \rp$} \edge[very thick]; {$X$} }
+        ( Forward type-raising )
+    \tree{.{$\alpha \lci{i} \lp \alpha \rci{i} X \rp$} \edge[very thick]; {$X$} }
+        ( Backward type-raising )
+\end{center}
+
+The semantics are defined as follows:
+\begin{center}
+    \begin{tikzpicture}[node distance=1mm]
+        \Tree[
+            .\node(outtop){$\alpha \rci{i} \lp \alpha \lci{i} X \rp$};
+                \edge[very thick];
+                [ .\node(intop){$X$};
+                    \edge[roof];
+                    [ .\node(inbot){$\alpha$}; ]
+                ]
+        ]
+        \node[boxcola,fit=(intop)(inbot)](inbox){};
+        \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+        \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+        \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+    \end{tikzpicture}
+    \hspace{2cm}
+    \begin{tikzpicture}[node distance=1mm]
+        \Tree[
+            .\node(outtop){$\alpha \lci{i} \lp \alpha \rci{i} X \rp$};
+                \edge[very thick];
+                [ .\node(intop){$X$};
+                    \edge[roof];
+                    [ .\node(inbot){$\alpha$}; ]
+                ]
+        ]
+        \node[boxcola,fit=(intop)(inbot)](inbox){};
+        \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+        \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+        \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+    \end{tikzpicture}
+\end{center}
+
+\[ sem_{\psi}(T) = \{ \lambda f {:} ( X \tot \alpha ) \abstr f M \mid M \in sem_{\psi}(T') \} \]
+
+Since considering type-raising at any level would make parsing much slower,
+it is usually only considered on categories that appear in leaves.
+
+\begin{example}
+    Consider the following simple grammar:
+    \gramshort{
+        \gramrow{cities}{ GSet }{}
+        \gramrow{villages}{ GSet }{}
+        \gramrow{Finland}{ GSet }{}
+        \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
+    }
+    It permits derivations as such:
+    \centree{
+        .{$GSet$}
+            \edge[very thick];
+            [ .{$GSet$}
+                [ .{$GSet$}
+                    [ .{$cities$} ]
+                ]
+                [ .{$GSet \lc GSet$}
+                    [ .{$GSet \lc GSet \rc GSet$}
+                        [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
+                    ]
+                    [ .{$GSet$}
+                        [ .{$villages$} ]
+                    ]
+                ]
+            ]
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$}
+                    [ .{$in$} ]
+                ]
+                [ .{$GSet$}
+                    [ .{$Finland$} ]
+                ]
+            ]
+    }
+
+    If we would like to be able to accept queries like "cities in and villages
+    near Finland", we could permit type-raising:
+
+    \autoscaledtree{
+        .{$GSet$}
+        [ .{$GSet \rc GSet$}
+            [ .{$ GSet \rc GSet$}
+                [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                    [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$cities$} ] ] ]
+                ]
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ]
+                ]
+            ]
+            [ .{$ \lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp$}
+                [ .{$\lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp \rc \lp GSet \rc GSet \rp$}
+                    [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
+                ]
+                    [ .{$GSet \rc GSet$}
+                    [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                        [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$villages$} ] ] ]
+                    ]
+                    [ .{$GSet \lc GSet \rc GSet$} [ .{$near$} ]
+                    ]
+                ]
+            ]
+        ]
+        [ .{$ GSet$} [ .{$Finland$} ] ]
+    }
+\end{example}
+
+\subsubsection{Equification of categories}
+\label{hack:equification}
+To reduce the size and of grammars and make them less complicated, 
+it is convenient to regard
+not only identical categories as equal, but rather use a \emph{equification
+relation} that can judge whether two categories must be regarded as equal.
+
+One method is to explicitly state the equification rules in the grammar.
+It is also useful to make categories complex objects and infer the relation
+based on their structure, as will be done in the next two sections.
+
+\begin{defn}
+    A relation $U \subseteq N \times N$ is called a
+    \emph{equification relation} for the set $N$ if it is transitive
+    and reflexive.
+\end{defn}
+
+Now, to use the unifier for parsing we must extend it over complex categories.
+One way to define such an extension is by uniformly propagating membership
+into $U$ over complex categories:
+\begin{defn}\label{def:rel:uniform}
+    If $U \subseteq N \times N$ is a equification relation
+    for the set of
+    atomic categories $N$, its extension over complex categories
+    $\hat{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
+    inductively as follows:
+    \begin{align*}
+        \hat{U}(X, Y) \defiff & \\
+        & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
+        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \hat{U}(W', W'')
+        \land \hat{U}(Z', Z'')) \\
+    \end{align*}
+\end{defn}
+
+\begin{property}
+    If $U \subseteq N \times N$ is a equification relation 
+    for the set of
+    $N$, its extension $\hat{U}$ is a equification relation for $\cclos{U}$
+\end{property}
+\begin{proof}
+    The arguments for transitivity and reflexivity are both trivial.
+\end{proof}
+
+Another way to extend a equification relation is presented in \cref{hack:subtyping}.
+
+Now, we will modify the derivation rules from \cref{def:ccg:rules} to incorporate
+equification:
+    
+\begin{itemize}
+    \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
+    \item If $ X \rc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+        and $\hat{U}(Y', Y'')$, \\
+        then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+    \item If $ X \lc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+        and $\hat{U}(Y', Y'')$, \\
+        then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+\end{itemize}
+
+To implement parsing, we can replace the rules in the categorial CYK algorithm 
+(\cref{cyk:rules}) by the following:
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
+        and $\hat{U}(Y', Y'')$, \\
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
+        and $\hat{U}(Y', Y'')$, \\
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+\end{enumerate}
+
+Note that the unifier may be asymmetric and take advantage of the fact
+that its first argument is the tail of the primary category.
+
+\subsubsection{Equification by category features}
+Some models allow each simple category to be extended with a set of \emph{features}
+that refine its scope, and then define rules for unification of said features.
+
+For example, we could assume a global set of features $Feat$ to be the
+set of finite functions $f: [a-zA-Z\_]^* \rightarrow [a-zA-Z\_]^*$
+and instead of using $C(\tau)$ directly, we use $C(\tau \times Feat)$.
+For brevity, categories like $(V, \{ (tense, past), (person, first) \})$
+are written as $X[tense=past, person=first]$.
+
+A common unification scheme is to do an union of the two feature functions,
+and see if the result is also a function - this determines whether the
+categories actually unify.
+
+This can be further extended by concepts such as \emph{feature variables}
+(which allows the use of variables within feature expressions and
+performs variable substitution during unification) and embedding regular expressions.
+
+\subsubsection{Equification by subtyping}\label{hack:subtyping}
+If the grammar will be used for generating typed $\lambda$-terms that use
+a subtyping system like the one described in \cref{sec:lambda}, the subtyping
+relation can be used to as a equification relation.
+
+If the desired semantics is to allow functions to only accept subtypes of
+their argument, some extra care needs to be taken, namely:
+\[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+\[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
+if and only if 
+\begin{equation}\label{eq:typeless}
+    \typeof{Y_2} \less \typeof{Y_1}
+\end{equation}
+
+If we use a equification relation $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$,
+it is not sufficient to use the uniform extension to complex categories
+(\cref{def:rel:uniform}) because that would violate contravariance. Thus,
+we will use the following extension:
+\begin{defn}
+    If $U \subseteq N \times N$ is a equification relation
+    for the set of
+    atomic categories $N$, its contravariant extension over complex categories
+    $\overline{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
+    inductively as follows:
+    \begin{align*}
+        \overline{U}(X, Y) \defiff & \\
+        & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
+        & \lor (X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \overline{U}(W'', W')
+        \land \overline{U}(Z', Z'')) \\
+    \end{align*}
+\end{defn}
+
+It can be easily seen that using 
+$\overline{U}$ is equivalent
+to the condition in \cref{eq:typeless}
+(given that $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$).
+
+\begin{example}
+    Imagine we want to be able to parse the following queries:
+    \begin{itemize}
+        \item \code{German \sq cities \sq less \sq than \sq 20km \sq from \sq Cologne}
+        \item \code{German \sq cities \sq less \sq than \sq 20km \sq north \sq of \sq Cologne}
+    \end{itemize}
+
+    For the sake of the example, subtrees for phrases like $German \sq cities$
+    will be squashed and constants like $germanCity$, $within$ etc will be
+    used without implementations\footnote{
+        This example uses minipass-like semantics for $\lambda$-terms to
+        better illustrate the application. See \cref{sec:minipass}.
+    }.
+
+    The grammar uses the following subtype definitions:
+    \begin{align*}
+        DistCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
+        NorthCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
+    \end{align*}
+    and looks like this:
+    \gramshort{
+        \gramrow{German \sq cities}{GSet}{germanCity}
+        \gramrow{Cologne}{GSet}{cologne}
+        \gramrow{20km}{Dist}{twentykm}
+        \gramrow{less \sq than}{GSet \lc GSet \rc DistCheck}{
+            \lambda b {:} DistCheck, s{:} GSet \abstr}
+            \gramrow{}{}{ \quad b \app (
+                \lambda d {:} Dist, c {:} GSet \abstr
+            }
+            \gramrow{}{}{ \quad \quad and \app s \app (within \app d \app c)}
+            \gramrow{}{}{ \quad )}
+        \gramrow{}{GSet \lc GSet \rc NorthCheck}{
+            \lambda b {:} NorthCheck, s{:} GSet \abstr}
+            \gramrow{}{}{ \quad b \app (
+                \lambda d {:} Dist, c {:} GSet \abstr
+            }
+            \gramrow{}{}{ \quad \quad and \app s \app (withinNorth \app d \app c)}
+            \gramrow{}{}{ \quad )}
+        \gramrow{from}{DistCheck \lc Dist \rc GSet}{
+            \lambda c {:} GSet, d {:} Dist \abstr DistCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot GSet \tot GSet) \abstr f \app d \app c }
+            \gramrow{}{}{]}
+        \gramrow{north \sq of}{NorthCheck \lc Dist \rc GSet}{
+            \lambda c {:} GSet, d {:} Dist \abstr NorthCheck [}
+            \gramrow{}{}{ \quad \lambda f {:} (Dist \tot GSet \tot GSet) \abstr f \app d \app c }
+            \gramrow{}{}{]}
+    }
+
+    Here is a derivation tree for one of the aforementioned queries:
+    \centree{.{$GSet$}
+        [ .{$GSet$} \edge[roof]; [ .{$German \sq cities$} ] ]
+        [ .{$GSet \lc GSet$}
+            [ .{$GSet \lc GSet \rc DistCheck$} \edge[roof]; [ .{$less \sq than$} ] ]
+            [ .{$DistCheck$}
+                [ .{$Dist$} [ .{$20km$} ] ]
+                [ .{$DistCheck \lc Dist$}
+                    [ .{$DistCheck \lc Dist \rc GSet$} [ .{$from$} ] ]
+                    [ .{$GSet$} [ .{$Cologne$} ] ]
+                ]
+            ]
+        ]
+    }
+
+    That results in the $\lambda$-term we wanted (after reduction):
+    \[ and \app germanCity \app (within \app twentykm \app cologne) \]
+    And for the other query respectively:
+    \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]
+
+    Without subtyping, it would be difficult to discern the two categories
+    NorthCheck and DistCheck without resorting to things like passing a
+    dummy argument whose type encodes whether we're in one case or the other.
+    Note that this cannot be done by simply using a type variable in the place
+    of $DistCheck$ and $NorthCheck$ because of the different semantics
+    (they are paired with different $\lambda$-terms).
+
+    This example may seem strange to some (why would
+    we want $less \sq than$ to know about $within$ and $withinNorth$?
+    wouldn't it be better to pair them with $from$?) but in reality the
+    other way round is also strange - these semantics come from $less \sq than$
+    and $from$ \emph{combined}. This violation of compositionality arises
+    from the natural language itself, and subtyping is a useful "hack" to
+    deal with it: we tag our type with additional information to denote that
+    we're looking for something specific, and when we find it we can unwrap the
+    type.
+\end{example}
+\end{document}

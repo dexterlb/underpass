@@ -1,0 +1,5 @@
+.stack-work/
+.undodir/
+Session.vim
+*.cabal
+log

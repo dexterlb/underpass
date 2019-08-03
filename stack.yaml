@@ -1,0 +1,16 @@
+resolver: lts-13.26
+packages:
+- ccg
+- minipass
+- utils
+- lambda-calculus
+- thething
+
+extra-deps:
+- git: https://github.com/DexterLB/chatter.git
+  commit: 23bc8a21c9b93be1e9db05facb12760df3f89c72
+- git: https://github.com/DexterLB/haskell-wordnet.git
+  commit: efc832deb8267e813f916032470523048b63c1d4
+- cereal-text-0.1.0.2
+- fullstop-0.1.4
+- tokenize-0.3.0

@@ -1,6 +1,6 @@
-name:                minipass
+name:                ccg
 version:             0.1.0.0
-github:              "DexterLB/underpass"
+github:              "DexterLB/ccg"
 license:             MIT
 author:              "dexterlb"
 maintainer:          "dexterlb@qtrp.org"
@@ -9,20 +9,22 @@ copyright:           "2018 Angel Angelov"
 extra-source-files:
 - README.md
 
-description:         Please see the README on GitHub at <https://github.com/DexterLB/minipass#readme>
+description:         Please see the README on GitHub at <https://github.com/githubuser/ccg#readme>
 
 dependencies:
 - base
-- megaparsec
-- text
-- aeson
-- hashable
 - unordered-containers
-- mtl
+- hashable
 - data-memocombinators
-
+- vector
+- aeson
+- text
+- filepath
 - utils
 - lambda-calculus
+- deepseq
+- chatter
+- wordnet
 
 library:
   source-dirs: src
@@ -30,9 +32,10 @@ library:
 ghc-options:
 - -Wall
 - -Werror
+- -Wno-orphans
 
 executables:
-  minipass-exe:
+  ccg-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -40,10 +43,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - ccg
 
 tests:
-  minipass-test:
+  ccg-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -51,4 +54,5 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - ccg
+    - hspec

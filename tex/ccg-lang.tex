@@ -1,0 +1,271 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\pagebreak
+\subsection{The CCG definition language}\label{sec:ccglang}
+When paired with Minipass, the language for defining CCGs consists of
+the entire Minipass language
+(\cref{minipass:grammar}) extended by additional syntax for defining
+token matchers and categories. It can also be used standalone as a library
+(in that case, arbitrary payloads can be provided instead of Minipass
+terms and types).
+
+\begin{grammar}
+    <program> ::= <tstatement> <tstatement>*
+
+    <tstatement> ::= <statement> `.'
+
+    <statement>  ::= <import-statement>
+           \alt <begin-statement>
+           \alt <match-statement>
+           \alt <term-definition>
+           \alt <type-definition>
+
+    <import-statement> ::= `import' <filepath>
+
+    <begin-statement>  ::= `begin' <category>
+
+    <match-statement>  ::= <phrase-rule> `:' <target> (`,' <target>)*
+
+    <phrase-rule> ::= <match-rule> (`<' <phrase-id> `>' <match-rule>)*
+
+    <match-rule> ::= <matcher> (<template> | $\varepsilon$)
+
+    <matcher> ::= <simple-matcher> | <or-matcher> | <and-matcher>
+
+    <not-or-matcher> ::= <simple-matcher> | <and-matcher>
+
+    <not-and-matcher> ::= <simple-matcher> | <or-matcher>
+
+    <simple-matcher> ::= <exact-matcher> | <regex-matcher> | `(' <matcher> `)'
+
+    <or-matcher> ::= <not-or-matcher> `|' <matcher>
+
+    <and-matcher> ::= <not-and-matcher> `\&' <matcher>
+
+    <exact-matcher> ::= <identifier> `=' <double-quoted-string>
+
+    <regex-matcher> ::= <identifier> `~' <double-quoted-string>
+
+    <template> ::= <backtick-quoted-string> `:' <type>
+
+    <target> ::= <category> `@' <term>
+
+    <category> ::= <simple-category> | <simple-category> <slash> <category>
+
+    <simple-category> ::= <type> | `(' <category> `)'
+
+    <slash> ::= `/' <modality> | `\\' <modality>
+
+    <modality> ::= `.' | `d' | `x' | `*' | $\varepsilon$
+\end{grammar}
+
+
+Constructions for defining terms, subtyping, importing files, comments and such
+remain. What the CCG definition language adds is the ability to match natural
+language tokens and assign categories and terms to them, and the ability to
+select a starting category.
+
+The starting category is is specified with the following statement:
+\begin{center}
+    \code{begin SomeCategory.}
+\end{center}
+There can be only one \code{begin} statement in the entire program.
+
+\subsubsection{Matching tokens}
+Tokens (words) in the natural language input are emitted by the
+tokeniser as sets of
+key-value data (for example, the token \code{cities} may be represented as
+\code{raw=cities,pos=nnp,lemma=city} - for a more detailed explanation
+see \cref{sec:tokenisation}). The CCG definition language allows us to define
+\emph{matchers} that can either match a token or not match a token.
+
+The following matchers have been implemented:
+
+\begin{itemize}
+    \item exact matcher (matches tokens that contain a tag with key `key'
+        and value `value'):
+        \begin{center}
+            \code{key='value'}
+        \end{center}
+    \item regex matcher (matches tokens that contain a tag with key `key'
+        and a value that matches the regular expression `regex'):
+        \begin{center}
+            \code{key\textasciitilde'regex'}
+        \end{center}
+    \item "and" matcher (matches tokens that are matched by both given matchers):
+        \begin{center}
+            \syntax{<matcher>}\code{ \& }\syntax{<matcher>}
+        \end{center}
+    \item "or" matcher (matches tokens that are matched by any of the given matchers):
+        \begin{center}
+            \syntax{<matcher>}\code{ | }\syntax{<matcher>}
+        \end{center}
+\end{itemize}
+
+\subsubsection{Assigning categories and terms to matched tokens}
+The syntax for assigning categories and terms is analogous to the one described
+in \cref{shorthand}:
+\begin{center}
+    \syntax{<matcher>}\code{:}\syntax{<category>}\code{@}\syntax{<payload>}
+\end{center}
+where \syntax{<payload>} is a Minipass term when the language is used to generate
+Minipass.
+
+Multiple categories and respective terms may be attached to a single
+matcher by separating them with commas:
+\begin{center}
+    \syntax{<matcher>}\code{:}\syntax{<category>}\code{@}\syntax{<payload>},
+    \syntax{<category>}\code{@}\syntax{<payload>}, ...,
+    \syntax{<category>}\code{@}\syntax{<payload>}
+\end{center}
+
+The payload terms can only be closed terms and their type must match the
+respective category's type.
+
+Categories are constructed as follows:
+\begin{itemize}
+    \item Every Minipass type is a valid atomic category (including types defined
+        by the expert via subtyping). Using a complex type for an atomic
+        category is permitted but is seldom useful.
+    \item Complex categories may be constructed by the syntax
+        \begin{center}
+            \syntax{<category> <slash> <category>}
+        \end{center}
+        where \syntax{<slash>} is a modal slash (\code{/.}, \code{/s},
+        \code{/d} or \code{/x} that respectively stand for $\rci{\moddot}$,
+        $\rci{\modstar}$, $\rci{\modr}$, $\rci{\modx}$, and their backslash
+        counterparts). The modality may be omitted, and is then assumed to be
+        the dot modality.
+    \item Categorial variables (\cref{hack:catvars}) are specified with a
+        dollar sign followed by \code{[a-zA-Z][a-zA-Z0-9\_]*}
+\end{itemize}
+
+\begin{example}
+Here is a grammar defined using the CCG definition language\footnote{
+    Here \code{"library.ccg"} is assumed to contain the code from \cref{stdlib}
+}:
+\begin{lstwrap}\begin{lstlisting}
+import "library.ccg"
+
+-- Use GSet as the starting category.
+-- This means that all queries parsed
+-- by this CCG will have type GSet.
+begin GSet.
+
+-- Here Mult is used to handle lists like
+-- "schools, churches and hospitals"
+Mult < GSet.
+
+raw="and"
+    : GSet / GSet \ GSet @ or
+    , Mult / GSet \ GSet @ \r, l => Mult[or l r].
+
+pos="comma" : $X \ $X @ id -- some commas mean nothing
+            , GSet \ GSet / Mult @ or.
+
+raw="in"
+    : GSet / GSet \ GSet
+    @ \things, where => and things (in where).
+
+lemma="school",pos="nnp" : GSet @ amenity 'school'.
+\end{lstlisting}\end{lstwrap}
+\end{example}
+
+\subsubsection{Composing phrases}
+In most cases we would would want our rule to match single tokens. Sometimes,
+however, it is convenient to be able to match an entire phrase (for example
+phrases like `parking lot', `coworking space' or `rubbish bin') to assign
+categories to.
+
+To do this, the CCG definition language supports a syntax for composing phrases
+(one way to think of it is like ``matcher concatenation''):
+\begin{center}
+    \syntax{<matcher>} \code{<>} \syntax{<matcher>} \\
+    or \\
+    \syntax{<matcher>} \code{<DummyCategory>} \syntax{<matcher>} \\
+\end{center}
+This phrase syntax is a shorthand for creating a dummy category
+for each pair and assigning categories such that the entire phrase will
+be assigned the correct category and term specified for it.
+
+The expert can also explicitly specify the name of the dummy category
+(this is mainly useful for debugging purposes: the category will show up
+in the resulting derivation trees).
+
+For more details about this construction, see \cref{hack:phrases}.
+
+\begin{example}
+The following statement:
+\begin{lstwrap}\begin{lstlisting}
+lemma="place" <> raw="of" <> lemma="worship"
+    : GSet
+    @ amenity 'place_of_worship'.
+\end{lstlisting}\end{lstwrap}
+
+Desugars to something like this:
+\begin{lstwrap}\begin{lstlisting}
+Dummy1 < * -> *.
+Dummy2 < * -> *.
+
+lemma="place"
+    : GSet /s Dummy2 /s Dummy1
+    @ \x: Dummy1, y: Dummy2 =>
+        amenity 'place_of_worship'.
+
+raw="of"
+    : Dummy1
+    @ Dummy1[\x => x].
+
+lemma="worship"
+    : Dummy2
+    @ Dummy2[\x => x].
+\end{lstlisting}\end{lstwrap}
+\end{example}
+
+\subsubsection{Term templates}
+Sometimes it is required to insert arbitrary information from tokens into
+the respective generated terms (e.g. decimal numbers, names, etc.).
+
+This is currently implemented by adding a \emph{template} after the
+matcher. Templates have the following syntax:
+\begin{center}
+    \syntax{\code{\textasciigrave}<template-content>\code{\textasciigrave : }<type>}
+\end{center}
+
+They are stored in raw form instead of being
+parsed at the time of parsing the
+CCG definition source. Apart from regular term syntax, templates may also
+contain \emph{template variables}, the syntax for which is a dollar sign
+followed by a valid key that may be found in token data.
+
+Whenever a rule with a template matches a token, template variables are
+substituted by their values, the template is parsed as a term and is fed
+as a first argument to the primary term specified in the rule.
+
+Templates are inherently unsafe - failure to parse the template after substitution
+or having a term with a wrong type produced by the template will cause the
+CCG parsing process to fail. It is the expert's responsibility to ensure that
+templates are correct.
+
+\begin{example}
+Consider the following rule that contains a template:
+\begin{lstwrap}\begin{lstlisting}
+pos="nnp" `'$raw'` : String
+    : GSet
+    @ name.
+\end{lstlisting}\end{lstwrap}
+It is valid at compile time because the term \code{name} has type
+$String \tot GSet$, which yields a term of type $GSet$ after being given
+a $String$ as argument.
+When matching the token data "\code{pos="nnp",raw="Belgium"}", the template
+\code{ \textasciigrave'\$raw'\textasciigrave } will become
+\code{ \textasciigrave'Belgium'\textasciigrave } after substitution. Its type
+(\code{String}) will be verified, and the resulting term
+(\code{name 'Belgium'}) will be constructed.
+\end{example}
+
+In the case of multiple concatenated matchers with templates, all templates
+are fed to the term from left to right. This is achieved by making the
+generated dummy categories subtypes of the respective template types instead
+of the identity type. The resulting term then forms naturally.
+\end{document}

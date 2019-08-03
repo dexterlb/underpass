@@ -1,4 +1,4 @@
-name:                minipass
+name:                utils
 version:             0.1.0.0
 github:              "DexterLB/underpass"
 license:             MIT
@@ -9,20 +9,25 @@ copyright:           "2018 Angel Angelov"
 extra-source-files:
 - README.md
 
-description:         Please see the README on GitHub at <https://github.com/DexterLB/minipass#readme>
+description:         General utils library
 
 dependencies:
 - base
 - megaparsec
 - text
-- aeson
-- hashable
+- parser-combinators
 - unordered-containers
-- mtl
+- containers
+- hashable
+- process
 - data-memocombinators
+- directory
+- base64-bytestring
+- bytestring
+- filepath
 
-- utils
-- lambda-calculus
+data-files:
+- data/latex_error.svg
 
 library:
   source-dirs: src
@@ -30,20 +35,10 @@ library:
 ghc-options:
 - -Wall
 - -Werror
-
-executables:
-  minipass-exe:
-    main:                Main.hs
-    source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - minipass
+- -Wno-orphans
 
 tests:
-  minipass-test:
+  utils-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -51,4 +46,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - utils

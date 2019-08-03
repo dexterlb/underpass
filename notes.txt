@@ -1,10 +1,1 @@
-- can use prolog to parse categorial grammars with ease (but no probabilities)
-- context-free subset of a categorial grammar? (nonterminals on left side)
-- epsilon rules? (maybe more powerful than the above, allow for example a Filter
-  term to be transformed to Set -> Set) by applying the filter function
-
-- think about refining types - how to propagate information about arguments and
-  return values? maybe use a unification function to input /\ and output
-  types and an update function that takes a type and returns a type. Then
-  call update on all nodes in the tree, types /\ to make it consistent and
-  repeat until convergence.
+replace commas by ands (when applicable)

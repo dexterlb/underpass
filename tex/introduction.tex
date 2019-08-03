@@ -1,0 +1,33 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Introduction}
+This project seeks to provide means for translating from a subset of English
+into Overpass queries using Combinatory Categorial Grammar.
+
+\subsection{Motivation}
+It is often the case that humans need to communicate a concrete question
+or order (a query) to a computer. The most straight-forward way for this to happen is
+to make the human write out their query in a domain-specific language (DSL),
+specially crafted to handle the given type of query. This approach, albeit
+very efficient when done correctly, requires substantial upfront effort:
+the human needs to get familiar with the DSL and must have access to a specific
+medium (usually a keyboard and a screen). Thus, in some cases, it is desirable
+to form an expression in a natural language (or a language very similar to a
+subset of a natural language) and have it translated to a query in the given
+DSL.
+
+The point is not to translate \emph{any} sentence in the source language
+that has semantics applicable to the target DSL, but rather to define a
+subset of the source language, in which a human could express a query
+reasonably easily.
+
+Most DSLs have compositional semantics, which makes them a great candidate
+for generation using Combinatory Category Grammar (CCG) \cite[p.~181]{nts}.
+
+One such DSL is the Overpass language, used by the open source project
+OpenStreetMap for making queries to the map database. It has been chosen as
+a concrete target language for this project, in order to assess the usefulness
+of CCG for translating from a natural language subset to a compositional
+DSL.
+\end{document}

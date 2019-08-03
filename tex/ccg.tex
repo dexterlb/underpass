@@ -1,0 +1,678 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Pure CCG}
+\label{sec:ccg}
+The CCG formalism is used in a multitude of variants. The form presented here
+will be most basic and of little practical use: it will only allow composition
+rules and the only restriction will be a global maximum arity.
+
+It is based on the Vijay-Shanker CCG formalism \cite{shanker}.
+
+This is enough for understanding the parsing algorithms, and can be further
+extended to include features such as type-raising,
+arbitrary rule restrictions, slash modalities,
+category features, category variables and feature variables.
+
+Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
+\emph{atomic categories}.
+
+\begin{defn}
+    For a set of atomic categories $\tau$, its
+    \emph{categorial closure} $C(\tau)$ is defined as follows:
+    \begin{enumerate}
+        \item \label{itm:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
+        \item \label{itm:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
+        \item \label{itm:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
+    \end{enumerate}
+
+    Letters like $A, B, C$ will be used to denote atomic categories,
+    while letters like $X, Y, Z$ will be used to
+    denote complex categories (produced by rules \ref{itm:left} and \ref{itm:right}).
+
+    Such expressions are called \emph{categories}. The $\mc$ symbol will be
+    used to denote any slash (when the distinction between $\lc$ and $\rc$
+    does not matter). Categories will also be considered left-associative.
+    Thus we can write $X_1 \mc X_2 \mc X_3 \mc X_4$ to denote
+    $\lp \lp \lp X_1 \mc X_2 \rp \mc X_3 \rp \mc X_4 \rp$. It's useful to note that $X_1$ may
+    be decomposed into its constituents until it becomes an atomic category:
+    this means that every category can be written in the form
+    $A \mc X_1 \mc X_2 \mc ... \mc X_n$, where $A$ is atomic. We say that
+    $n$ is the category's \emph{arity}. $A$ is called its \emph{target} or
+    return type, while
+    $X_1 ... X_n$ are called its \emph{arguments} or argument types.
+\end{defn}
+
+\begin{defn}
+    Concatenating categories: If $X \in C(\tau)$,
+    $Y = A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \in C(\tau)$, we define
+    \[ X \circ_{\rc} Y = X \rc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
+    \[ X \circ_{\lc} Y = X \lc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
+\end{defn}
+
+\begin{convention}
+    Since using this notation everywhere is tedious, $X \mc Y$ shall mean
+    $X \circ_{\mc} Y$ throughout this text, in contrast to
+    $X \mc \lp Y \rp$.
+\end{convention}
+
+\begin{defn}
+    Breadth of category: for $X = A \mc X_1 \mc X_2 \mc ... \mc X_n \in C(\tau)$,
+    $|X| = n$.
+\end{defn}
+
+\begin{defn}
+    $ G = \langle \Sigma, N, S, f, n \rangle $ is a \emph{Combinatory Categorial Grammar}, where
+    \begin{itemize}
+        \item $ \Sigma $ is the (finite) set of \emph{terminals}
+        \item $ N $ is the (finite) set of \emph{non-terminals} (atomic categories)
+        \item $ S \in N $ is the \emph{target category}
+        \item $ f : \Sigma \rightarrow \hat{N} $, where $\hat{N}$ is the set of
+            \textbf{finite} subsets of $C(N)$, is the function for interpreting
+            terminals
+        \item $ n \in \mathbb{N} $ is the \emph{maximum composition arity}
+    \end{itemize}
+\end{defn}
+
+\subsubsection{Derivations}
+
+We will now formalise the way CCGs generate strings of terminals. There
+are two approaches to do this: iterative derivation and derivation trees. Since
+they are both useful for different things, we will also show equivalence
+between them.
+
+For iterative derivation, we will use strings in $(\lb C(\tau) \rb \cup \Sigma)^*$,
+i.e. strings of terminals intermixed with categories. To make our derivations
+equivalent to context-free grammar derivations, we will use the square
+brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
+
+\begin{defn}
+    For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
+    finite alphabet of terminals, we define $C(\alpha)$ to be the set of all
+    categories that
+    can be found in $\alpha$, namely:
+    \begin{itemize}
+        \item $C(\varepsilon) = \emptyset$
+        \item for $a \in \Sigma$, $C(a\beta) = C(\beta)$
+        \item for $X \in C(\tau)$, $C(\lb X \rb \beta) = X \cup C(\beta)$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}\label{def:ccg:rules}
+    For a CCG $G$, we can construct a set $R \subset (\lb C(N) \rb) \times (\Sigma \cup \lb C(N) \rb)^*$
+    of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$, we will write
+    $\alpha \rightarrow \beta$.
+
+    \begin{itemize}
+        \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
+        \item If $ X \rc Y \in C(N), Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+
+            Furthermore, we call $ X \rc Y $ the \emph{primary category} of the rule
+            instance, while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is its
+            \emph{secondary category}.
+            We also call $ X \rc Y $ the \emph{left category} of the rule instance,
+            and $  Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ its \emph{right category}.
+        \item If $ X \lc Y \in C(N), Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+            Here, $ X \lc Y $ is the \emph{primary} and \emph{right} category,
+            while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is the \emph{secondary}
+            and \emph{left} category.
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    Derivation process
+    \begin{itemize}
+        \item If $\beta \rightarrow \beta'$, then $\alpha \beta \gamma \Rightarrow \alpha \beta' \gamma$
+        \item Let $\Rightarrow^*$ be the reflexive and transitive closure of $\Rightarrow$.
+        \item If $\alpha \Rightarrow^* \beta$, we can write
+            \[ \mu: \alpha \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = \beta \]
+            and call $\mu$ a \emph{derivation} for $G$. Then $C(\mu) = \bigcup\limits_{i=1}^{r} C(\alpha_i)$
+            is the set of all categories used in $\mu$.
+        \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
+    \end{itemize}
+\end{defn}
+
+\begin{prop}\label{prop:cfg}
+    A CCG $G = \langle \Sigma, N, S, f, n \rangle$ is equivalent to an
+    (albeit infinite) context-free grammar
+    $G^C = \langle \Sigma, \lb C(N) \rb, R, \lb S \rb \rangle$.
+
+    Moreover, let $\mu: \alpha_1 \Rightarrow ... \Rightarrow \alpha_r$
+    be a derivation for $G$.
+    We can construct a finite context-free grammar
+    $G_\mu^C = \langle \Sigma, \lb C(\mu) \rb, \restr{R}{\lb C(\mu) \rb}, \lb S \rb \rangle$
+    that produces $\mu$, and whose derivations are also derivations in $G$.
+\end{prop}
+\begin{proof}
+    This follows because our definition of $\Rightarrow$ for $G$ and the context-free
+    definition of $\Rightarrow$ for $G^C$ are the same.
+\end{proof}
+
+As per the given construction, there is no way for a CCG to generate the empty
+string.
+\begin{property}
+    For any CCG $G$, $\varepsilon \notin L(G)$
+\end{property}
+
+\begin{prop}\label{prop:concat}
+    Concatenativity of CCG derivation
+
+    For $\alpha \neq \varepsilon, \beta \neq \varepsilon$, the following two are equivalent:
+    \begin{itemize}
+
+        \item $\exists \alpha' \neq \varepsilon, \beta' \neq \varepsilon$
+            such that $\gamma = \alpha' \beta', \alpha \Rightarrow^* \alpha', \beta \Rightarrow^* \beta'$
+        \item $\alpha \beta \Rightarrow^* \gamma$
+    \end{itemize}
+\end{prop}
+\begin{proof}
+    We can use \cref{prop:cfg}:
+
+    \begin{itemize}
+        \item if $\alpha \Rightarrow^* \alpha'$ and $\beta \Rightarrow^* \beta'$,
+            then $\alpha \beta \Rightarrow^* \alpha' \beta \Rightarrow^* \alpha' \beta' = \gamma$.
+        \item if $\alpha \beta \Rightarrow^* \gamma, \alpha \neq \varepsilon, \beta \neq \varepsilon$,
+            we can fix $\mu: \alpha \beta \Rightarrow \gamma_1 \Rightarrow \gamma_2 ... \Rightarrow \gamma_t = \gamma$.
+            Then $\mu$ is a valid derivation in the context-free grammar $G^C_{\mu}$,
+            which means $\alpha$ and $\beta$ generate separate derivation
+            subtrees, thus $\exists \alpha' \beta' = \gamma$ such that
+            $\alpha \Rightarrow^* \alpha'$ and $\beta \Rightarrow^* \beta'$,
+            which also holds for $G$.
+    \end{itemize}
+\end{proof}
+
+\begin{example}
+    \label{ex:deriv}
+
+    We will construct a simple grammar $G = \langle \Sigma, N, S, f, n \rangle$
+    that can generate the string \code{cities in Germany}.
+
+    \begin{align*}
+        \Sigma \defeq& \{ cities, in, Germany \} \\
+        N \defeq& \{ GSet \} \\
+        S \defeq& GSet \\
+        f(x) \defeq&
+            \begin{cases*}
+                \{ GSet \},& x = cities \\
+                \{ GSet \},& x = Germany \\
+                \{ GSet \lc GSet \rc GSet \},& x = in \\
+            \end{cases*} \\
+        n \defeq& 1 \\
+    \end{align*}
+
+    Here is a possible derivation process (categories to which we apply
+    derivation rules on the next step are underlined):
+    \begin{center}
+        \begin{tabular}{c}
+            $\underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
+            $\lb GSet \rb \underline{\lb GSet \lc GSet \rb}$ \\ $\Rightarrow$ \\
+            $\underline{\lb GSet \rb} \lb GSet \lc GSet \rc GSet \rb \lb GSet \rb$ \\ $\Rightarrow$ \\
+            $cities \sq \underline{\lb GSet \lc GSet \rc GSet \rb} \lb GSet \rb$ \\ $\Rightarrow$ \\
+            $cities \sq in \sq \underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
+            $cities \sq in \sq Germany$ \\
+        \end{tabular}
+    \end{center}
+\end{example}
+
+\begin{example}
+    \label{ex:derivsimple}
+
+    And now an even dumber grammar $G = \langle \Sigma, N, S, f, n \rangle$
+    that can generate strings like
+
+    \code{count to two},
+    \code{count to twice two}, \code{count to twice twice two}
+    and so on.
+
+    \begin{align*}
+        \Sigma \defeq& \{ count, to, twice, two \} \\
+        N \defeq& \{ Action, Num \} \\
+        S \defeq& Action \\
+        f(x) \defeq&
+            \begin{cases*}
+                \{ Num \},& x = two \\
+                \{ Action \},& x = count \\
+                \{ Num \rc Num \},& x = twice \\
+                \{ Action \lc Action \rc Num \},& x = to \\
+            \end{cases*} \\
+        n \defeq& 2 \\
+    \end{align*}
+
+    Here is one possible derivation process:
+    \begin{center}
+        \begin{tabular}{c}
+            $\underline{\lb Action \rb}$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rb}$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rc Num \rb} \lb Num \rb$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \underline{\lb Num \rc Num} \rb \lb Num \rb$ \\ $\Rightarrow$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \lb Num \rc Num \rb \lb Num \rc Num \rb \lb Num \rb$ \\ $\Rightarrow^*$ \\
+            $count \sq to \sq twice \sq twice \sq two$ \\
+        \end{tabular}
+    \end{center}
+\end{example}
+
+Derivation trees for CCG are ordered binary trees with categories labelling
+their internal nodes and terminals labelling their leaves.
+
+We shall also consider the concept of \emph{primary edges} in the context
+of derivation trees, in correspondence to the concept of
+\emph{primary categories} in the context of derivations. Primary edges
+will be drawn with a thick line.
+
+We will construct the set $ \trees{G} $ of all derivation trees, for a
+CCG $G$ as well
+as the functions $ crown: \trees{G} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
+$ root: \trees{G} \rightarrow C(N) \cup \Sigma$
+
+If there exists $\tau \in \trees{G}$ such that $root(\tau) = X \in C(N),
+crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
+
+Derivation trees are constructed as follows:
+
+
+\begin{defn}
+    Derivation tree
+    \begin{itemize}
+        \item If $ a \in \Sigma $, then
+            $ a \in \trees{G}, crown(a) = a, root(a) = a$.
+        \item If $ X \in C(N) $ then $ X \in \trees{G}, crown(X) = X$
+        \item If $ a \in \Sigma, X \in f(a) $, then
+            \begin{center}
+                \tree{.$X$ \edge[very thick]; $a$ } ( $ \pi $ )
+            \end{center}
+            $ \pi \in \trees{G}, crown(\pi) = a, root(\pi) = X$
+        \item If
+            \begin{center}
+                \tree{.{$X \rc Y$} \edge[roof]; $\alpha$} ($\pi'$)
+                \quad and \quad
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$} ($\pi''$)
+            \end{center}
+
+            are derivation trees such that $ root(\pi') = X \rc Y $,
+            $ root(\pi'') = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ crown(\pi') = \alpha, crown(\pi'') = \beta $
+            where $m \leq n$, then
+            \begin{center}
+                \tree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                    \edge[very thick];
+                    [ .{$X \rc Y$} \edge[roof]; $\alpha$ ]
+                    [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
+                } ($\tau$)
+            \end{center}
+            $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ crown(\tau) = \alpha \beta$
+        \item If
+            \begin{center}
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$} ($\pi'$)
+                \quad and \quad
+                \tree{.{$X \lc Y$} \edge[roof]; $\alpha$} ($\pi''$)
+            \end{center}
+            are derivation trees such that
+            $ root(\pi') = Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ root(\pi'') = X \lc Y $,
+            $ crown(\pi') = \alpha, crown(\pi'') = \beta $
+            where $m \leq n$, then
+            \begin{center}
+                \tree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                    [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\alpha$ ]
+                    \edge[very thick];
+                    [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
+                } ($\tau$)
+            \end{center}
+            $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
+            $ crown(\tau) = \alpha \beta $
+    \end{itemize}
+\end{defn}
+
+\begin{example}
+    Here are the derivation trees for the derivations shown in
+    \cref{ex:deriv} and \cref{ex:derivsimple}
+    respectively:
+
+    \centree{.{$GSet$}
+        [ .{$GSet$} [ .{$cities$} ] ]
+        \edge[very thick];
+        [ .{$GSet \lc GSet$}
+            \edge[very thick];
+            [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+            [ .{$GSet$} [ .{$Germany$} ] ]
+        ]
+    }
+
+    \centree{.{$Action$}
+        [ .{$Action$} [ .{$count$} ] ]
+        \edge[very thick];
+        [ .{$Action \lc Action$}
+            \edge[very thick];
+            [ .{$Action \lc Action \rc Num$}
+                \edge[very thick];
+                [ .{$Action \lc Action \rc Num$} [ .{$to$} ] ]
+                [ .{$Num \rc Num$}
+                    \edge[very thick];
+                    [ .{$Num \rc Num$} [ .{$twice$} ] ]
+                    [ .{$Num \rc Num$} [ .{$twice$} ] ]
+                ]
+            ]
+            [ .{$Num$} [ .{$two$} ] ]
+        ]
+    }
+\end{example}
+
+\begin{prop}
+    Equivalence of derivation trees and derivations
+
+    $ \lb X \rb \Rightarrow^* \alpha \iff \lb X \rb \Rrightarrow \alpha $
+
+    Note: this also extends for the case where we have a terminal on the left,
+    but it is not worth mentioning.
+\end{prop}
+\begin{proof}
+    First, let there exist a derivation tree for $ \lb X \rb \Rrightarrow \alpha $.
+    $\lb X \rb \Rightarrow^* \alpha$ can be proven by induction over constructing
+    the tree.
+    \begin{itemize}
+        \item For the trivial cases, the derivation has 0 steps.
+        \item For a tree
+            \centree{.$X$ \edge[very thick]; $a$ }
+            and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$
+        \item For a tree
+            \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                \edge[very thick];
+                [ .{$X \rc Y$} \edge[roof]; $\beta$ ]
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\gamma$ ]
+            }
+            we have $\alpha = \beta \gamma$, and inductively
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
+            $\lb X \rc Y \rb \Rightarrow^* \alpha$. Thus,
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb X \lc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$
+            $ \Rightarrow^* \beta \gamma = \alpha$
+        \item For a tree
+            \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
+                \edge[very thick];
+                [ .{$X \lc Y$} \edge[roof]; $\gamma$ ]
+            }
+            we have $\alpha = \beta \gamma$, and inductively
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
+            $\lb X \lc Y \rb \Rightarrow^* \alpha$. Thus,
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb$
+            $ \Rightarrow^* \beta \gamma = \alpha$
+    \end{itemize}
+
+    Second, we can prove the inverse implication (given a derivation,
+    construct the derivation tree) by induction over derivation
+    length. Let $\mu: \lb X \rb \Rightarrow \beta \Rightarrow^* \alpha$
+    be a derivation for $G$.
+    \begin{itemize}
+        \item $\beta = \lb X \rb$. Then this is the trivial reflexive case
+            and $\lb X \rb$ is a valid derivation tree in itself.
+        \item $\beta = a \in \Sigma, X \in f(a)$. Then $\alpha = \beta$ and
+            \centree{.$X$ \edge[very thick]; $a$ }
+            is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\beta = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
+            According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
+            \begin{itemize}
+                \item $\alpha = \eta \xi$
+                \item $\lb W \rc Y \rb \Rightarrow^* \eta$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \xi$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that we
+            have the derivation trees
+            \begin{center}
+                \tree{.{$W \rc Y$} \edge[roof]; $\eta$}
+                and
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\xi$}
+            \end{center}
+            Thus, by definition, we can construct the derivation tree
+            \centree{.{$X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                \edge[very thick];
+                [ .{$W \rc Y$} \edge[roof]; $\eta$ ]
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\xi$ ]
+            }
+            for $\lb X \rb \Rrightarrow \alpha$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\beta = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$.
+            According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
+            \begin{itemize}
+                \item $\alpha = \eta \xi$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \eta$
+                \item $\lb W \lc Y \rb \Rightarrow^* \xi$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that we
+            have the derivation trees
+            \begin{center}
+                \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\eta$}
+                and
+                \tree{.{$W \lc Y$} \edge[roof]; $\xi$}
+            \end{center}
+            Thus, by definition, we can construct the derivation tree
+            \centree{.{$X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
+                [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\eta$ ]
+                \edge[very thick];
+                [ .{$W \lc Y$} \edge[roof]; $\xi$ ]
+            }
+            for $\lb X \rb \Rrightarrow \alpha$.
+    \end{itemize}
+\end{proof}
+
+\subsubsection{The Categorial CYK algorithm}\label{sec:cyk}
+
+This is the most straight-forward algorithm for parsing a string with the help
+of CCG. It is easy to understand, but has exponential runtime with respect to
+the input word length.
+
+It follows the same logic as the original CYK algorithm for context-free
+grammars, with the difference that it uses the asymmetric combinator rules
+from CCG to produce items.
+
+Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
+be a word.
+
+The algorithm recursively builds a set $P$ of \emph{items} in the form
+$(X, i, j)$, $X \in C(N), 1 \leq i \leq j \leq k$ and aims to produce the item
+$(S, 1, k)$.
+
+\begin{enumerate}
+\label{cyk:rules}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+\end{enumerate}
+
+To reason about the algorithm, we will use the following invariant:
+\begin{equation}
+    \lb X \rb \Rightarrow^* w_i ... w_j \iff (X, i, j) \in P
+\end{equation}
+
+\begin{prop}
+    The algorithm is \textbf{correct}: if $(S, 1, k) \in P$, then $w \in L(G)$.
+\end{prop}
+\begin{proof}
+    We have to prove the right-to-left direction of the invariant:
+    \begin{equation}\label{eq:left}
+        (X, i, j) \in P \implies \lb X \rb \Rightarrow^* w_i ... w_j
+    \end{equation}
+
+    From which would follow $ (S, 1, k) \in P \implies \lb S \rb \Rightarrow^* w_1 ... w_k$,
+    which is what we need to prove.
+
+    So, let $(X, i, j) \in P$ and inductively suppose that (\ref{eq:left}) is true
+    for any shorter substrings of $w$. There are 3 rules by which this item has appeared:
+    \begin{enumerate}
+        \item $i = j, X \in f(w_i)$: This means
+            $\lb X \rb \rightarrow w_i \implies \lb X \rb \Rightarrow^* w_i = w_i ... w_j$
+        \item \label{itm:rightslash} $i < j$ and
+            \begin{itemize}
+                \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$
+                \item $(W \rc Y, i, p) \in P$
+                \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
+            \end{itemize}
+            for some $i \leq p < j, m \leq n$. By inductive hypothesis,
+            $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
+            and
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p + 1} ... w_j$.
+            Then, by the definition of $\rightarrow$ and by concatenativity of
+            $\Rightarrow$, we have:
+            \[
+                \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
+                \rightarrow
+                \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
+                \Rightarrow^*
+                w_i ... w_p w_{p + 1} ... w_j = w
+            \]
+        \item $i < j$ and (analogous to \ref{itm:rightslash})
+            \begin{itemize}
+                \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$
+                \item $(W \lc Y, p + 1, j) \in P$
+                \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
+            \end{itemize}
+            for some $i \leq p < j, m \leq n$. By inductive hypothesis,
+            $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            and
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$.
+            Then, by the definition of $\rightarrow$ and by concatenativity of
+            $\Rightarrow$, we have:
+            \[
+                \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
+                \rightarrow
+                \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb
+                \Rightarrow^*
+                w_i ... w_p w_{p + 1} ... w_j = w
+            \]
+    \end{enumerate}
+\end{proof}
+
+\begin{prop}
+    The algorithm is \textbf{complete}: if $w \in L(G)$, then $(S, 1, k) \in P$.
+\end{prop}
+\begin{proof}
+    We have to prove the left-to-right direction of the invariant:
+    \begin{equation}\label{eq:right}
+        \lb X \rb \Rightarrow^* w_i ... w_j \implies (X, i, j) \in P
+    \end{equation}
+    From which would follow $ \lb S \rb \Rightarrow^* w_1 ... w_k \implies (S, 1, k) \in P$,
+    which is what we need to prove.
+
+    Let $\mu: \lb X \rb \Rightarrow \alpha \Rightarrow^* w_i ... w_j$
+    be a derivation for $G$. We will prove (\ref{eq:right}) by induction over
+    $\mu$ from right to left.
+
+    The only way for $\lb X \rb$ to appear to the left
+    of a production is $\lb X \rb \rightarrow \alpha$ - we can now look at
+    all ways for this to happen.
+    \begin{enumerate}
+        \item $\alpha = a \in \Sigma, X \in f(a)$. Then $w = \alpha, i = j, w_i = a$,
+            which means $(X, i, i) = (X, i, j) \in P$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\alpha = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
+            According to \cref{prop:concat}, there exists $p$ such that
+            \begin{itemize}
+                \item $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that
+            $(W \rc Y, i, p) \in P$ and
+            $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$. Thus,
+            by the algorithm definition,
+            $(X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+        \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
+            $\alpha = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$
+            (analogous to \ref{eq:right}).
+            According to \cref{prop:concat}, there exists $p$ such that
+            \begin{itemize}
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$
+                \item $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            \end{itemize}
+            However, according to the inductive hypothesis, this means that
+            $(W \lc Y, p + 1, j) \in P$ and
+            $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$. Thus,
+            by the algorithm definition,
+            $(X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+    \end{enumerate}
+
+\end{proof}
+
+\subsubsection{The Vijay-Shanker algorithm}
+
+This algorithm behaves like the categorial CYK algorithm for derivations that use only
+short categories. In order to pack longer categories in a way that would not
+result in exponential complexity, it uses some clever tricks.
+
+A detailed explanation and proof can be found in the original paper \cite{shanker}.
+
+Let $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG and $w = w_1 ... w_k$
+be a word.
+
+Let $c' = max \{ |X| \mid X \in f(a), a \in \Sigma \}$ and $c = max \{ c', n \}$.
+
+The algorithm uses two types of items:
+\begin{enumerate}
+    \item $(X, i, j), X \in C(N), 1 \leq i \leq j \leq k$
+    \item $(A, \xi, X, T, i, j, p, q), A \in N, T \in \{ \lc, \rc \} N, \xi \in \{ \lc, \rc \}, X \in C(N), 1 \leq i \leq p \leq q \leq j \leq k$
+\end{enumerate}
+
+As with the categorial CYK algorithm, we build a set ${P}$ of items and aims to produce the item
+$(S, 1, k)$.
+
+\begin{enumerate}
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $(X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $|X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| \leq c$
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+    \item If $(A \mci{*} X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $|A \mci{*} X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| > c$
+        then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \xi, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$.
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
+        $(B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
+        $m > 1$, then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, T, i, j, p, q) \in P$.
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B \mci{*} Z, t + 1, j) \in P$,
+        then $(A, \xi, X \mci{*} Z, T, i, j, p, q) \in P$.
+    \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$,
+        then $(A, \xi, X, T, i, j, p, q) \in P$.
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m T, i, j) \in P$,
+        then $(A \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m, i, j) \in P$.
+    \item If $(A, \rc, B, T, i, t, p, q) \in P$,
+        $(B, t + 1, j) \in P$, $(A, \mci{1} X_1 \mci{2} X_2 ... \mci{m} X_m T, T', i, j, r, s) \in P$,
+        then $(A, \mci{1}, X_1 \mci{2} X_2 ... \mci{m} X_m, T', i, j, r, s) \in P$.
+\end{enumerate}
+
+The other 8 rules regarding backward composition
+($2'$ through $9'$) are analogous to their forward counterparts, but with
+flipped indices.
+
+The invariant here is composed of two parts:
+
+\begin{itemize}
+    \item $(X, i, j) \in P \iff |X| \leq c \land \lb X \rb \Rightarrow^* w_i ... w_j$
+    \item $(A, \xi, X, \mci{*} B, i, j, p, q) \in P$
+        exactly when there exists $\nu \in \{ \lc, \rc \}, Y \in C(N)$ such that
+        \begin{itemize}
+            \item $1 \leq |Y| \leq c'$
+            \item $\lb A \nu Y \xi X \rb \Rightarrow^* w_i ... w_{p - 1} \lb A \nu Y \mci{*} B \rb w_{q + 1} ... w_j$
+            \item $\lb A \nu Y \mci{*} B \rb \Rightarrow^* w_p ... w_q$
+        \end{itemize}
+\end{itemize}
+
+For smaller grammars, which rarely generate very long categories during
+parsing, this algorithm is in fact slower than simple CYK-based alternatives.
+The strength of this algorithm comes when parsing automatically-generated
+grammars from treebanks.
+
+For this reason, this algorithm will not be used. For a more in-depth
+overview, see \cite{shanker}.
+
+
+\end{document}

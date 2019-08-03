@@ -1,4 +1,4 @@
-name:                minipass
+name:                lambda-calculus
 version:             0.1.0.0
 github:              "DexterLB/underpass"
 license:             MIT
@@ -9,7 +9,7 @@ copyright:           "2018 Angel Angelov"
 extra-source-files:
 - README.md
 
-description:         Please see the README on GitHub at <https://github.com/DexterLB/minipass#readme>
+description:         General lambda-calculus library
 
 dependencies:
 - base
@@ -17,12 +17,10 @@ dependencies:
 - text
 - aeson
 - hashable
-- unordered-containers
-- mtl
 - data-memocombinators
+- unordered-containers
 
 - utils
-- lambda-calculus
 
 library:
   source-dirs: src
@@ -30,20 +28,10 @@ library:
 ghc-options:
 - -Wall
 - -Werror
-
-executables:
-  minipass-exe:
-    main:                Main.hs
-    source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - minipass
+- -Wno-orphans
 
 tests:
-  minipass-test:
+  lambda-calculus-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -51,4 +39,5 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - minipass
+    - lambda-calculus
+    - hspec

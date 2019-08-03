@@ -1,0 +1,512 @@
+Amenity < GSet.
+
+lemma="parking"
+    : Amenity
+    @ amenity 'parking'.
+lemma="place" <> lemma="of" <> lemma="worship"
+    : Amenity
+    @ amenity 'place_of_worship'.
+lemma="bench"
+    : Amenity
+    @ amenity 'bench'.
+lemma="school"
+    : Amenity
+    @ amenity 'school'.
+lemma="restaurant"
+    : Amenity
+    @ amenity 'restaurant'.
+lemma="fuel"
+    : Amenity
+    @ amenity 'fuel'.
+lemma="cafe"
+    : Amenity
+    @ amenity 'cafe'.
+lemma="fast" <> lemma="food"
+    : Amenity
+    @ amenity 'fast_food'.
+lemma="bank"
+    : Amenity
+    @ amenity 'bank'.
+lemma="waste" <> lemma="basket"
+    : Amenity
+    @ amenity 'waste_basket'.
+lemma="post" <> lemma="box"
+    : Amenity
+    @ amenity 'post_box'.
+lemma="pharmacy"
+    : Amenity
+    @ amenity 'pharmacy'.
+lemma="bicycle" <> lemma="parking"
+    : Amenity
+    @ amenity 'bicycle_parking'.
+lemma="toilets"
+    : Amenity
+    @ amenity 'toilets'.
+lemma="shelter"
+    : Amenity
+    @ amenity 'shelter'.
+lemma="kindergarten"
+    : Amenity
+    @ amenity 'kindergarten'.
+lemma="recycling"
+    : Amenity
+    @ amenity 'recycling'.
+lemma="parking" <> lemma="space"
+    : Amenity
+    @ amenity 'parking_space'.
+lemma="drinking" <> lemma="water" | lemma="fountain"
+    : Amenity
+    @ amenity 'drinking_water'.
+lemma="grave" <> lemma="yard"
+    : Amenity
+    @ amenity 'grave_yard'.
+lemma="bar"
+    : Amenity
+    @ amenity 'bar'.
+lemma="post" <> lemma="office"
+    : Amenity
+    @ amenity 'post_office'.
+lemma="pub"
+    : Amenity
+    @ amenity 'pub'.
+lemma="atm"
+    : Amenity
+    @ amenity 'atm'.
+lemma="hospital"
+    : Amenity
+    @ amenity 'hospital'.
+lemma="vending" <> lemma="machine"
+    : Amenity
+    @ amenity 'vending_machine'.
+lemma="hunting" <> lemma="stand"
+    : Amenity
+    @ amenity 'hunting_stand'.
+lemma="police"
+    : Amenity
+    @ amenity 'police'.
+lemma="townhall"
+    : Amenity
+    @ amenity 'townhall'.
+lemma="telephone"
+    : Amenity
+    @ amenity 'telephone'.
+lemma="fountain"
+    : Amenity
+    @ amenity 'fountain'.
+lemma="fire" <> lemma="station"
+    : Amenity
+    @ amenity 'fire_station'.
+lemma="doctors"
+    : Amenity
+    @ amenity 'doctors'.
+lemma="community" <> lemma="centre"
+    : Amenity
+    @ amenity 'community_centre'.
+lemma="clinic"
+    : Amenity
+    @ amenity 'clinic'.
+lemma="public" <> lemma="building"
+    : Amenity
+    @ amenity 'public_building'.
+lemma="library"
+    : Amenity
+    @ amenity 'library'.
+lemma="social" <> lemma="facility"
+    : Amenity
+    @ amenity 'social_facility'.
+lemma="waste" <> lemma="disposal"
+    : Amenity
+    @ amenity 'waste_disposal'.
+lemma="dentist"
+    : Amenity
+    @ amenity 'dentist'.
+lemma="car" <> lemma="wash"
+    : Amenity
+    @ amenity 'car_wash'.
+lemma="parking" <> lemma="entrance"
+    : Amenity
+    @ amenity 'parking_entrance'.
+lemma="marketplace"
+    : Amenity
+    @ amenity 'marketplace'.
+lemma="bus" <> lemma="station"
+    : Amenity
+    @ amenity 'bus_station'.
+lemma="university"
+    : Amenity
+    @ amenity 'university'.
+lemma="college"
+    : Amenity
+    @ amenity 'college'.
+lemma="bicycle" <> lemma="rental"
+    : Amenity
+    @ amenity 'bicycle_rental'.
+lemma="theatre"
+    : Amenity
+    @ amenity 'theatre'.
+lemma="taxi"
+    : Amenity
+    @ amenity 'taxi'.
+lemma="veterinary"
+    : Amenity
+    @ amenity 'veterinary'.
+lemma="cinema"
+    : Amenity
+    @ amenity 'cinema'.
+lemma="charging" <> lemma="station"
+    : Amenity
+    @ amenity 'charging_station'.
+lemma="ice" <> lemma="cream"
+    : Amenity
+    @ amenity 'ice_cream'.
+lemma="courthouse"
+    : Amenity
+    @ amenity 'courthouse'.
+lemma="water" <> lemma="point"
+    : Amenity
+    @ amenity 'water_point'.
+lemma="nightclub"
+    : Amenity
+    @ amenity 'nightclub'.
+lemma="swimming" <> lemma="pool"
+    : Amenity
+    @ amenity 'swimming_pool'.
+lemma="car" <> lemma="rental"
+    : Amenity
+    @ amenity 'car_rental'.
+lemma="bbq"
+    : Amenity
+    @ amenity 'bbq'.
+lemma="arts" <> lemma="centre"
+    : Amenity
+    @ amenity 'arts_centre'.
+lemma="ferry" <> lemma="terminal"
+    : Amenity
+    @ amenity 'ferry_terminal'.
+lemma="childcare"
+    : Amenity
+    @ amenity 'childcare'.
+lemma="shower"
+    : Amenity
+    @ amenity 'shower'.
+lemma="driving" <> lemma="school"
+    : Amenity
+    @ amenity 'driving_school'.
+lemma="grit" <> lemma="bin"
+    : Amenity
+    @ amenity 'grit_bin'.
+lemma="nursing" <> lemma="home"
+    : Amenity
+    @ amenity 'nursing_home'.
+lemma="clock"
+    : Amenity
+    @ amenity 'clock'.
+lemma="toilet"
+    : Amenity
+    @ amenity 'toilet'.
+lemma="private" <> lemma="toilet"
+    : Amenity
+    @ amenity 'private_toilet'.
+lemma="embassy"
+    : Amenity
+    @ amenity 'embassy'.
+lemma="motorcycle" <> lemma="parking"
+    : Amenity
+    @ amenity 'motorcycle_parking'.
+lemma="bureau" <> lemma="de" <> lemma="change"
+    : Amenity
+    @ amenity 'bureau_de_change'.
+lemma="mobile" <> lemma="money" <> lemma="agent"
+    : Amenity
+    @ amenity 'mobile_money_agent'.
+lemma="biergarten"
+    : Amenity
+    @ amenity 'biergarten'.
+lemma="prison"
+    : Amenity
+    @ amenity 'prison'.
+lemma="car" <> lemma="sharing"
+    : Amenity
+    @ amenity 'car_sharing'.
+lemma="waste" <> lemma="dump" <> lemma="site"
+    : Amenity
+    @ amenity 'waste_dump_site'.
+lemma="food" <> lemma="court"
+    : Amenity
+    @ amenity 'food_court'.
+lemma="studio"
+    : Amenity
+    @ amenity 'studio'.
+lemma="watering" <> lemma="place"
+    : Amenity
+    @ amenity 'watering_place'.
+lemma="internet" <> lemma="cafe"
+    : Amenity
+    @ amenity 'internet_cafe'.
+lemma="casino"
+    : Amenity
+    @ amenity 'casino'.
+lemma="null"
+    : Amenity
+    @ amenity 'null'.
+lemma="bicycle" <> lemma="repair" <> lemma="station"
+    : Amenity
+    @ amenity 'bicycle_repair_station'.
+lemma="public" <> lemma="bookcase"
+    : Amenity
+    @ amenity 'public_bookcase'.
+lemma="compressed" <> lemma="air"
+    : Amenity
+    @ amenity 'compressed_air'.
+lemma="boat" <> lemma="storage"
+    : Amenity
+    @ amenity 'boat_storage'.
+lemma="public" <> lemma="bath"
+    : Amenity
+    @ amenity 'public_bath'.
+lemma="sanitary" <> lemma="dump" <> lemma="station"
+    : Amenity
+    @ amenity 'sanitary_dump_station'.
+lemma="events" <> lemma="venue"
+    : Amenity
+    @ amenity 'events_venue'.
+lemma="payment" <> lemma="terminal"
+    : Amenity
+    @ amenity 'payment_terminal'.
+lemma="monastery"
+    : Amenity
+    @ amenity 'monastery'.
+lemma="vehicle" <> lemma="inspection"
+    : Amenity
+    @ amenity 'vehicle_inspection'.
+lemma="dojo"
+    : Amenity
+    @ amenity 'dojo'.
+lemma="brothel"
+    : Amenity
+    @ amenity 'brothel'.
+lemma="animal" <> lemma="shelter"
+    : Amenity
+    @ amenity 'animal_shelter'.
+lemma="music" <> lemma="school"
+    : Amenity
+    @ amenity 'music_school'.
+lemma="shop"
+    : Amenity
+    @ amenity 'shop'.
+lemma="loading" <> lemma="dock"
+    : Amenity
+    @ amenity 'loading_dock'.
+lemma="gambling"
+    : Amenity
+    @ amenity 'gambling'.
+lemma="game" <> lemma="feeding"
+    : Amenity
+    @ amenity 'game_feeding'.
+lemma="boat" <> lemma="rental"
+    : Amenity
+    @ amenity 'boat_rental'.
+lemma="animal" <> lemma="breeding"
+    : Amenity
+    @ amenity 'animal_breeding'.
+lemma="social" <> lemma="centre"
+    : Amenity
+    @ amenity 'social_centre'.
+lemma="lavoir"
+    : Amenity
+    @ amenity 'lavoir'.
+lemma="training"
+    : Amenity
+    @ amenity 'training'.
+lemma="ranger" <> lemma="station"
+    : Amenity
+    @ amenity 'ranger_station'.
+lemma="waste" <> lemma="transfer" <> lemma="station"
+    : Amenity
+    @ amenity 'waste_transfer_station'.
+lemma="retirement" <> lemma="home"
+    : Amenity
+    @ amenity 'retirement_home'.
+lemma="ticket" <> lemma="validator"
+    : Amenity
+    @ amenity 'ticket_validator'.
+lemma="animal" <> lemma="boarding"
+    : Amenity
+    @ amenity 'animal_boarding'.
+lemma="love" <> lemma="hotel"
+    : Amenity
+    @ amenity 'love_hotel'.
+lemma="office"
+    : Amenity
+    @ amenity 'office'.
+lemma="feeding" <> lemma="place"
+    : Amenity
+    @ amenity 'feeding_place'.
+lemma="weighbridge"
+    : Amenity
+    @ amenity 'weighbridge'.
+lemma="kneipp" <> lemma="water" <> lemma="cure"
+    : Amenity
+    @ amenity 'kneipp_water_cure'.
+lemma="crematorium"
+    : Amenity
+    @ amenity 'crematorium'.
+lemma="language" <> lemma="school"
+    : Amenity
+    @ amenity 'language_school'.
+lemma="yes"
+    : Amenity
+    @ amenity 'yes'.
+lemma="money" <> lemma="transfer"
+    : Amenity
+    @ amenity 'money_transfer'.
+lemma="coworking" <> lemma="space"
+    : Amenity
+    @ amenity 'coworking_space'.
+lemma="register" <> lemma="office"
+    : Amenity
+    @ amenity 'register_office'.
+lemma="stables"
+    : Amenity
+    @ amenity 'stables'.
+lemma="letter" <> lemma="box"
+    : Amenity
+    @ amenity 'letter_box'.
+lemma="garages"
+    : Amenity
+    @ amenity 'garages'.
+lemma="photo" <> lemma="booth"
+    : Amenity
+    @ amenity 'photo_booth'.
+lemma="smoking" <> lemma="area"
+    : Amenity
+    @ amenity 'smoking_area'.
+lemma="water"
+    : Amenity
+    @ amenity 'water'.
+lemma="stripclub"
+    : Amenity
+    @ amenity 'stripclub'.
+lemma="gym"
+    : Amenity
+    @ amenity 'gym'.
+lemma="mortuary"
+    : Amenity
+    @ amenity 'mortuary'.
+lemma="dive" <> lemma="centre"
+    : Amenity
+    @ amenity 'dive_centre'.
+lemma="emergency" <> lemma="service"
+    : Amenity
+    @ amenity 'emergency_service'.
+lemma="public" <> lemma="hall"
+    : Amenity
+    @ amenity 'public_hall'.
+lemma="conference" <> lemma="centre"
+    : Amenity
+    @ amenity 'conference_centre'.
+lemma="customs"
+    : Amenity
+    @ amenity 'customs'.
+lemma="spa"
+    : Amenity
+    @ amenity 'spa'.
+lemma="refugee" <> lemma="housing"
+    : Amenity
+    @ amenity 'refugee_housing'.
+lemma="trolley" <> lemma="bay"
+    : Amenity
+    @ amenity 'trolley_bay'.
+lemma="club"
+    : Amenity
+    @ amenity 'club'.
+lemma="advertising"
+    : Amenity
+    @ amenity 'advertising'.
+lemma="sanatorium"
+    : Amenity
+    @ amenity 'sanatorium'.
+lemma="dancing" <> lemma="school"
+    : Amenity
+    @ amenity 'dancing_school'.
+lemma="social" <> lemma="club"
+    : Amenity
+    @ amenity 'social_club'.
+lemma="prep" <> lemma="school"
+    : Amenity
+    @ amenity 'prep_school'.
+lemma="payment" <> lemma="centre"
+    : Amenity
+    @ amenity 'payment_centre'.
+lemma="research" <> lemma="institute"
+    : Amenity
+    @ amenity 'research_institute'.
+lemma="table"
+    : Amenity
+    @ amenity 'table'.
+lemma="vacuum" <> lemma="cleaner"
+    : Amenity
+    @ amenity 'vacuum_cleaner'.
+lemma="nameplate"
+    : Amenity
+    @ amenity 'nameplate'.
+lemma="post" <> lemma="depot"
+    : Amenity
+    @ amenity 'post_depot'.
+lemma="waste" <> lemma="basket;recycling"
+    : Amenity
+    @ amenity 'waste_basket;recycling'.
+lemma="rescue" <> lemma="station"
+    : Amenity
+    @ amenity 'rescue_station'.
+lemma="baby" <> lemma="hatch"
+    : Amenity
+    @ amenity 'baby_hatch'.
+lemma="planetarium"
+    : Amenity
+    @ amenity 'planetarium'.
+lemma="life" <> lemma="ring"
+    : Amenity
+    @ amenity 'life_ring'.
+lemma="community" <> lemma="hall"
+    : Amenity
+    @ amenity 'community_hall'.
+lemma="storage"
+    : Amenity
+    @ amenity 'storage'.
+lemma="whirlpool"
+    : Amenity
+    @ amenity 'whirlpool'.
+lemma="vehicle" <> lemma="ramp"
+    : Amenity
+    @ amenity 'vehicle_ramp'.
+lemma="kitchen"
+    : Amenity
+    @ amenity 'kitchen'.
+lemma="hookah" <> lemma="lounge"
+    : Amenity
+    @ amenity 'hookah_lounge'.
+lemma="building"
+    : Amenity
+    @ amenity 'building'.
+lemma="temple"
+    : Amenity
+    @ amenity 'temple'.
+lemma="animal" <> lemma="training"
+    : Amenity
+    @ amenity 'animal_training'.
+lemma="picnic" <> lemma="table"
+    : Amenity
+    @ amenity 'picnic_table'.
+lemma="sauna"
+    : Amenity
+    @ amenity 'sauna'.
+lemma="dog" <> lemma="bin"
+    : Amenity
+    @ amenity 'dog_bin'.
+lemma="public" <> lemma="service"
+    : Amenity
+    @ amenity 'public_service'.
+lemma="stadium" <> lemma="seating"
+    : Amenity
+    @ amenity 'stadium_seating'.

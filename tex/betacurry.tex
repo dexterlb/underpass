@@ -1,0 +1,67 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\section{$\beta$-reduction and (un)currying}
+\label{betacurry}
+
+\subsubsection{$\beta$-reduction}
+This section briefly explains the concept of $\beta$-reduction. For more details,
+see \cite{pierce}.
+
+\begin{defn}
+    For $M, N \in \plambda{T}{C}$, the substitution of the free variable
+    $x$ within $M$ with $N$ is defined inductively as follows:
+    \[
+        \subst{M}{x}{N} \defeq
+        \begin{cases*}
+            N, & $M = x$ \\
+            y, & $M = y \in \lvars \setminus \{ x \}$ \\
+            \lambda x : \sigma \abstr \subst{P}{x}{N},
+                & $M = (\lambda x : \sigma \abstr P), y \ne x \land y \not\in \fv{P}$ \\
+            \subst{A}{x}{N} \subst{B}{x}{N}, & M = (AB) \\
+        \end{cases*}
+    \]
+
+    Note that this function is partial, but this can be swept under the rug
+    by renaming bound variables when needed \cite{pierce}.
+\end{defn}
+
+We will now define the $\beta$-reduction relation $\betared$ between $\lambda$-terms:
+\begin{defn}
+    Two terms are in $\betared$ relation only in the following case:
+    \[ (\lambda x : \sigma \abstr M) N \betared \subst{M}{x}{N} \]
+
+    If $A \betared B$, $A$ is called a \emph{$\beta$-redex}.
+\end{defn}
+
+The relation $\bbetared$ $\beta$-reduces any subterm:
+\begin{defn}
+    The $\bbetared$ relation is defined inductively:
+    \begin{itemize}
+        \item $A \betared B \implies A \bbetared B$
+        \item $A \bbetared B \implies AP \bbetared BP$
+        \item $A \bbetared B \implies PA \bbetared PB$
+        \item $A \bbetared B \implies (\lambda x : \sigma \abstr A)
+            \bbetared (\lambda x : \sigma \abstr B)$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}
+    A term $M \in \plambda{T}{C}$ is called \emph{fully $\beta$-reduced} if:
+    \[ \forall N \in \plambda{T}{C} (\neg (M \betared N)) \]
+\end{defn}
+
+\subsubsection{Uncurrying}
+We can represent every $\lambda$-term as a function (\emph{head}) applied
+to a sequence of arguments:
+\begin{itemize}
+    \item if the given term $M$ is not an application, its head is $M$ itself
+        with no arguments.
+    \item if the given term is $M = (AB)$, its head is the head of $A$ and its
+        arguments are $B$ appended to the arguments of $A$.
+\end{itemize}
+
+\begin{example}
+    The term $P (Q R) (\lambda x: \sigma \abstr S) T$ has head $P$ and
+    arguments $(Q R)$, $(\lambda x: \sigma \abstr S)$ and $T$.
+\end{example}
+\end{document}

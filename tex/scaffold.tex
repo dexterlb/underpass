@@ -1,0 +1,42 @@
+\maketitle
+\thispagestyle{empty}
+\printtoc
+\pagebreak
+
+\subfile{introduction}
+    \subfile{intuition}
+    \subfile{overpass}
+
+\pagebreak
+\section{Ingredients}
+    \subfile{lambda-pure}
+    \subfile{ccg}
+    \subsection{Semantics within CCG}
+        \subfile{ccgterms}
+        \subfile{shorthand}
+        \subfile{ambiguity}
+    \subfile{ccghacks}
+    \subfile{lambda}
+\pagebreak
+\section{Implementation}
+    \subfile{architecture}
+    \subfile{minipass}
+    \subfile{transformations}
+    \subfile{ccg-lang}
+    \subfile{parsing}
+\pagebreak
+\section{Building and usage}
+    \subfile{usage}
+\pagebreak
+\section{Closure}
+    \subfile{closure}
+
+\pagebreak
+\begin{appendices} \appendix
+    \subfile{magic}
+    \subfile{lambda-typevars}
+    \subfile{betacurry}
+\end{appendices}
+
+\pagebreak
+\printbibliography[heading=bibintoc,title={References}]
