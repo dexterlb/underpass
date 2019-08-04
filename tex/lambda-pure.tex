@@ -3,12 +3,12 @@
 \subsection{Simply typed $\lambda$-calculus}
 \label{sec:purelambda}
 
-For representing compositional terms, a version of simply typed lambda calculus
+For representing compositional terms, a version of the simply typed lambda calculus
 will be used.
 
 \subsubsection{Types}
 \label{purelambda:types}
-Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a set of symbols we call
+Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a countable set of symbols that we will call
     \emph{type symbols}\footnote{See \cref{sec:magic}}.
 
 \begin{defn}
@@ -22,23 +22,23 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a set of symbols we call
         \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
     \end{itemize}
 \end{defn}
-
+\marginpar{\scriptsize тук може би е време да кажеш, че ще изпускаш външните скоби, понеже го правиш по-надолу}
 \begin{defn}
     The function $\tss : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
-    returns the set of type symbols used in a complex type, is defined inductively:
+    returns the set of type symbols used in a complex type, is defined inductively:\marginpar{\scriptsize препо\-ръчвам да използваш специален символ за ``равно по дефиниция на''}
 
     \begin{itemize}
-        \item if $\sigma \in \tsymbs$ then $\ts{\sigma} = \sigma$
-        \item if $\sigma = \sigma' \rightarrow \sigma''$ then
+        \item if $\sigma \in \tsymbs$, then $\ts{\sigma} = \sigma$\marginpar{\scriptsize не става ясно защо тук използваш думи, а по-горе стрелката $\implies$}
+        \item if $\sigma = \sigma' \rightarrow \sigma''$, then
             $\ts{\sigma} = \ts{\sigma'} \cup \ts{\sigma''}$
     \end{itemize}
 \end{defn}
 
-We will now introduce a notation for easily getting the types of items -
+We will now introduce a notation for easily obtaining the types of items ---
 $\typeof{x}$ shall mean "the type of $x$":
 
 \begin{defn}
-    We call a set $X$ \emph{typed in} $T$ $\iff$ there is a function
+    We call a set $X$ \emph{typed in} $T$ when there is a function\marginpar{\scriptsize $\rightarrow$ се използва в един и същ контекст с две различни значения}
     \[ \typeoff : X \rightarrow \tclos{T} \]
     that we call a \emph{typing function}.
 \end{defn}
@@ -62,11 +62,11 @@ to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
 extends the original system with constants.
 
 Let $\lvars = \{ \alpha', \alpha'', \alpha''' ... \}$ be a countable set of symbols
-we call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
-set of symbols we call \emph{constants}.
+that we will call \emph{variables} and $\const = \{ c', c'', c''' ... \}$ be a countable
+set of symbols that we will call \emph{constants}.
 
 We can now define the set of
-\emph{pre-typed $\lambda$-terms} ($\plambda{T}{C}$).
+\emph{pre-typed $\lambda$-terms with constants $C$ typed in $T$} ($\plambda{T}{C}$).
 
 \begin{defn}
     \label{def:lambdaterm}
@@ -111,7 +111,7 @@ term.
     \label{def:context}
     Statement, declaration, context, judgement \cite[chap.~2.4]{ttfp}
     \begin{itemize}
-        \item For $M \in \plambda{T}{C}, \sigma \in \tclos{T}$, $M : \sigma$ is called
+        \item If $M \in \plambda{T}{C}, \sigma \in \tclos{T}$, then $M : \sigma$ is called
             a \emph{statement}. $M$ is called a \emph{subject} and $\sigma$
             is called a \emph{type}.
         \item A statement with a variable as a subject is called a \emph{declaration}.
@@ -158,15 +158,15 @@ we will use derivation rules.
     \end{itemize}
 \end{defn}
 
-Now, we will prove that every well-typed term has a unique type:
+Now, we will prove that every well-typed term has a unique type:\marginpar{\scriptsize формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
 \begin{prop}
     \label{prop:uniquetypespure}
     \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''
-        \implies \sigma' = \sigma'' \]
+        \implies \sigma' = \sigma''. \]
 \end{prop}
 \begin{proof}
-    We will assume $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
-    and prove this by induction over the construction of $M$.
+    We will assume that $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
+    and prove $\sigma' = \sigma''$ by induction over the construction of $M$.
 
     \begin{itemize}
         \item $M = c \in C$:
@@ -183,12 +183,12 @@ Now, we will prove that every well-typed term has a unique type:
             We have $\Gamma \vdash (AB) : \sigma'$ and $\Gamma \vdash (AB) : \sigma''$.
             This means that
             \begin{align*}
-                \Gamma \vdash& A : \eta' \tot \sigma'
+                \Gamma \vdash& A : \eta' \tot \sigma'\\
                 \Gamma \vdash& B : \eta'
             \end{align*}
             and
             \begin{align*}
-                \Gamma \vdash& A : \eta'' \tot \sigma''
+                \Gamma \vdash& A : \eta'' \tot \sigma''\\
                 \Gamma \vdash& B : \eta''
             \end{align*}
             But inductively $A$ has a unique type, thus $\eta' \tot \sigma'
@@ -199,7 +199,7 @@ Now, we will prove that every well-typed term has a unique type:
 
             This means that $\Gamma \circ x : \tau \vdash A : \eta'$ and
             $\Gamma \circ x : \tau \vdash A : \eta''$. Inductively, $\eta'
-            = \eta''$: therefore, $\sigma' = \tau \tot \eta' = \tau \tot \eta''
+            = \eta''$: therefore, $\sigma' = (\tau \tot \eta') = (\tau \tot \eta'')
             = \sigma''$.
     \end{itemize}
 \end{proof}
@@ -207,12 +207,12 @@ Now, we will prove that every well-typed term has a unique type:
 Since we proved that types for terms are unique, we can now define a typing
 function (which will work on well-typed closed terms):
 \begin{defn}
-    Now, $\typeof{M}$ for $M \in \plambda{T}{C}$ is defined as such:
+    Now, $\typeof{M}$ for $M \in \plambda{T}{C}$ is defined as follows:
     \[
         \typeof{M} =
         \begin{cases*}
-            \sigma & if $\varnothing \vdash M : \sigma$ \\
-            \neg ! & otherwise
+            \sigma, & if $\varnothing \vdash M : \sigma$, \\
+            \neg !, & otherwise.
         \end{cases*}
     \]
 \end{defn}
