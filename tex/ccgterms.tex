@@ -12,17 +12,10 @@ the elements of $\Sigma$) in the form of $\lambda$-terms, and then define rules
 for composing those terms in accordance with a CCG derivation tree.
 
 \begin{defn}
-    For a set of basic categories $N$ typed in $\Theta$, we can extend the
-    definition of the typing function $\typeoff$ over their closure:
-
-    \[ \typeoff : C(N) \rightarrow \tclos{\Theta} \]
-
-    in the following way:
-
-    \begin{align*}
-        \typeof{\lp X \lc Y \rp} \defeq & \typeof{Y} \tot \typeof{X} \\
-        \typeof{\lp X \rc Y \rp} \defeq & \typeof{Y} \tot \typeof{X} \\
-    \end{align*}
+    For a set of atomic categories $N$ typed in $\Theta$, we can extend the
+    definition of the typing function $\typeoff$ over their categorial closure
+    $\typeoff : C(N) \rightarrow \tclos{\Theta}$ in the following way:
+    $\typeof{\lp X \mc Y \rp} \defeq  \typeof{Y} \tot \typeof{X}$.
 
     This gives meaning to categories in the context of $\lambda$-calculus:
     $\lp X \lc Y \rp$ refers to a function that returns a value of type
@@ -31,8 +24,8 @@ for composing those terms in accordance with a CCG derivation tree.
     $X$ and takes an argument of type $Y$ \emph{on the left side}.
 \end{defn}
 
-Now that we've given types to categories, we can attach $\lambda$-terms
-to each terminal in addition to the categories we've attached via the function
+Now that we have assigned types to categories, we can attach $\lambda$-terms
+to each terminal in addition to the categories we have attached via the function
 $f$. This will give us $\lambda$-terms in the leaves of each derivation tree,
 which can be composed naturally into $\lambda$-terms for all subtrees including
 the whole tree, giving us the semantic information for this parse.
@@ -45,7 +38,7 @@ of the same type as its category.
 \begin{defn}
     Let $\Theta$ be a set of type symbols,
     $ G = \langle \Sigma, N, S, f, n \rangle $ be a CCG, $N$ be
-    a set of categories typed in $\Theta$ and $C$ be a set
+    a set of atomic categories typed in $\Theta$ and $C$ be a set
     of constants typed in $\Theta$.
     A function
     \[ \psi : \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \rightarrow 2^{\plambda{\Theta}{C}} \] is called a
@@ -86,7 +79,7 @@ for the entire tree:
                 \end{tikzpicture}
             \end{center}
             and $X \in f(a)$, then
-            \[ sem_{\psi}(T) = \psi(a, X) \]
+            \[ sem_{\psi}(T) = \psi(a, X). \]
         \item \label{sem:case:right} If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
@@ -122,7 +115,7 @@ for the entire tree:
                 \end{split}
             \]
             for freshly-picked
-            $z_1 ... z_m \in \lvars \setminus \fv{sem_{\psi}(T_1)} \cup \fv{sem_{\psi}(T_2)}$
+            $z_1 ... z_m \in \lvars \setminus \big(\fv{sem_{\psi}(T_1)} \cup \fv{sem_{\psi}(T_2)}\big)$.
         \item \label{sem:case:left} If $T$ is
             \begin{center}
                 \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
@@ -158,7 +151,7 @@ for the entire tree:
                 \end{split}
             \]
             for freshly-picked
-            $z_1 ... z_m \in \lvars \setminus \fv{sem_{\psi}(T_1)} \cup \fv{sem_{\psi}(T_2)}$
+            $z_1 ... z_m \in \lvars \setminus \big(\fv{sem_{\psi}(T_1)} \cup \fv{sem_{\psi}(T_2)}\big).$
     \end{enumerate}
 \end{defn}
 
@@ -171,7 +164,7 @@ variables are useful. We will not restrict ourselves to closed terms and will
 therefore take some extra care to make this construction support free variables.
 
 One way to do this is to have a global context for all terms that are given
-by the semantic function: this way we have an universal way of finding the
+by the semantic function: this way we have a universal way for finding the
 type of each subterm, even if it contains free variables. Then, consistency
 between the terms returned by $\psi$ and their categories can be defined
 cleanly:
@@ -180,13 +173,13 @@ cleanly:
     A semantic function $\psi$ is called \emph{consistent with} a context
     $\Gamma$ when
     \[
-        \forall a, X: M \in \psi(a, X) \implies \Gamma \vdash M : \typeof{X}
+        \forall a, X: M \in \psi(a, X) \implies \Gamma \vdash M : \typeof{X}.
     \]
 \end{defn}
 
 Another observation is that the construction for $sem_{\psi}$ includes no
 additional free variables other than the ones already present in the terms
-returned by $\psi$.
+returned by $\psi$.\marginpar{\scriptsize мисля, че е по-добре да е ``consistent in'', понеже ако $M$ няма свободни променливи звучи странно ``consistent with $\emptyset$'': все едно не трябва да е консистентна със нищо, а условието в никакъв случай не се тривиализира: иска се комбинаторите, произведени от $\psi$ да са от типа на $X$}
 
 \begin{prop}
     \label{ccg:typeconsistent}
