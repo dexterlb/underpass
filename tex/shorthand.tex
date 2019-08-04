@@ -9,6 +9,7 @@ convenient to write rules at word level.
 
 Sometimes, however, we come across fixed phrases, which come as several
 adjacent terminals but we want to regard as a single terminal.
+\marginpar{\scriptsize може би Set вместо GSet? $\modstar$ не е дефинирана още}
 
 \begin{example}
     Suppose we have a $\lambda$-term $parkinglot$ with type $Amenity$.
@@ -20,7 +21,6 @@ adjacent terminals but we want to regard as a single terminal.
     One way to do this is to set dummy categories to all but one of the
     terminals and have the main terminal accept the dummy categories as
     arguments:
-   
     \begin{itemize}
         \item Add a new type/category $Dummy$.
         \item Choose a closed term $M$ of type $Dummy$.
@@ -33,7 +33,6 @@ adjacent terminals but we want to regard as a single terminal.
                 M &\in \varphi(lot, Dummy) \\
             \end{align*}
     \end{itemize}
-    
     This approach yields a derivation subtree for \code{parking lot} that
     has the correct category and semantics:
     \centree{.{$Amenity$}
@@ -41,7 +40,8 @@ adjacent terminals but we want to regard as a single terminal.
         [ .{$Dummy$} [ .{$lot$} ] ]
     }
 \end{example}
-
+\marginpar{$\psi$ вместо $\varphi$?}
+ 
 \begin{convention}
     \label{hack:phrases}
 
@@ -52,10 +52,10 @@ adjacent terminals but we want to regard as a single terminal.
         X &\in f[\alpha_1 \alpha_2 ... \alpha_k] \\
         M &\in \varphi[\alpha_1 \alpha_2 ... \alpha_k, X] \\
     \end{align*}
-    where $X \in \cclos{N}$ and $M$ is a $\lambda$-term typed in $T$, have
+    where $X \in \cclos{N}$ and $M$ is a $\lambda$-term typed in $T$, have\marginpar{\scriptsize $\cclos\cdot$ се появява тук за първи път}
     the following semantics:
     \begin{itemize}
-        \item $\sigma_2, \sigma_3 ... \sigma_k \in T$, where $\sigma_i$ is a new type
+        \item $\sigma_2, \sigma_3 ... \sigma_k \in T$, where $\sigma_i$ is a new ``dummy'' type
             whose choice\footnote{
                 When using $\lambda$-terms that allow subtypes and a wildcard type,
                 such as the type system used in Minipass, it is
@@ -64,10 +64,10 @@ adjacent terminals but we want to regard as a single terminal.
                 $(\lambda x: \wildcard \abstr x)$ as a dummy term.
             }
             depends on $\alpha_1, ... \alpha_k$ and $i$.
-        \item $X_2, X_3, ..., X_k \in N$, where $X_i$ is a new category
+        \item $X_2, X_3, ..., X_k \in N$, where $X_i$ is a new ``dummy'' category
             such that $\typeof{X_i} = \sigma_i$ and whose choice
             depends on $\sigma_i$.
-        \item $M_2, M_3, ..., M_k$ are arbitrary $\lambda$-terms whose types are
+        \item $M_2, M_3, ..., M_k$ are arbitrary ``dummy'' $\lambda$-terms whose types are
             respectively $\sigma_2, \sigma_3, ..., \sigma_k$
         \item New added categories to $f$:
             \begin{itemize}
@@ -133,12 +133,12 @@ round brackets.
      \end{align*}
 
      Here we assign two different categories with their respective semantics
-     to the phrase \code{german city} - one that can be seen in the query
+     to the phrase \code{german city} --- one that can be seen in the query
      \code{"fountains in a german city"}, and another in the query
      \code{"the german city Frankfurt"}.
  \end{example}
 
 Also, most examples from here on will assume that grammars have a starting
-category $GSet$, to be as close as possible to the implementation in
+category $GSet$, to conform as close as possible to the implementation in
 \cref{sec:minipass}.
 \end{document}
