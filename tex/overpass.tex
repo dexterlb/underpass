@@ -1,29 +1,29 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \subsection{Overview of the Overpass language}
-The Overpass language \cite{overpass} has been created by the OpenStreetMap
+The Overpass language \cite{overpass} has been created by the OpenStreetMap\marginpar{Overpass или Overpass QL е езикът? Използвай само едното или уточни, че са имена на едно и също нещо.}
 community in order to be able to make more complex queries to map data.
 
-Overpass queries can be written in two ways: XML-based queries and OverpassQL-based
-queries. The XML OverpassQL frontend has been better-maintained, has more features
-and is easier to generate programmatically - thus, it has been chosen as a target
+Overpass queries can be written in two ways: XML-based queries and Overpass QL-based
+queries. The XML Overpass QL frontend has been better maintained, has more features
+and is easier to generate programmatically --- thus, it was chosen as a target
 language for this project.
 
 This section will present a subset of Overpass QL that is relevant to this project: for a
 more complete overview, refer to \cite{overpassql}.
 
 \subsubsection{Map data}
-The universe which Overpass lets us examine is OpenStreetMap map data.
+Overpass lets us examine the universe of OpenStreetMap map data.
 It consists of \emph{objects}, where each object has a set of key-value
 tags (keys and values are strings but some values may encode a more complex
 structure within a string).
 
-An object may be one of the following types:
+An object may be of one of the following types:
 \begin{itemize}
-    \item \emph{node} - a point on the map, identified by latitude, longitude
+    \item \emph{node} --- a point on the map, identified by latitude, longitude,
         and a node ID. Nodes represent point-like features like trees, fountains,
         businesses, mountain peaks, etc.
-    \item \emph{relation} - a grouping of multiple objects by some common
+    \item \emph{relation} --- a grouping of multiple objects by some common
         feature. Examples of relations are:
         \begin{itemize}
             \item all stops in a bus route
@@ -33,12 +33,12 @@ An object may be one of the following types:
         Relations may contain nodes, ways and other relations. Each member of
         a relation may have an optional \emph{role}, which is a text field
         that may be used to further group relation elements.
-    \item \emph{way} - an ordered list of Nodes which is used for defining
+    \item \emph{way} --- an ordered list of nodes which is used for defining
         continuous features. Ways may be open or closed (closed ways have an
         identical first and last node). Open ways are used for defining things
-        like roads, rivers and railways, while closed ways are used for defining
+        like roads, rivers, and railways, while closed ways are used for defining
         polygons (building boundaries, area borders, closed features).
-    \item \emph{area} - not an actual OpenStreetMap object. Closed ways or relations
+    \item \emph{area} --- not an actual OpenStreetMap object. Closed ways or relations
         which contain closed ways may also be classified as an area by some
         criteria (one of which is the presence of an \code{area=yes} tag).
         Areas allow additional operations to the ones usable only for ways
@@ -50,16 +50,16 @@ The abstraction Overpass uses to represent map data is called a \emph{set},
 where a set can contain any number of objects. Sets are heterogeneous and thus
 there is no limit on the variety of objects that may reside in a single set.
 
-OverpassQL consists of a list of \emph{statements} which retrieve, manipulate
+OverpassQL consists of a list of \emph{statements} which retrieve, manipulate,
 or output such sets. Sets may be stored in variables: the syntax for referring
 to a variable is a dot followed by alphanumeric characters.
 Statements are terminated by semicolons.
 Each statement has an \emph{output set} and may have input sets. When unspecified,
 an input or output set is implicitly set to the \emph{default set} (\code{.\_}).
 
-There is one special statement - the ``\code{out}'' statement, which outputs
+There is one special statement --- the ``\code{out}'' statement, which outputs
 all objects from an input set to the user in some form. The output format may be set
-via specific meta-statements or by API options - this, however, is not within
+via specific meta-statements or by API options --- this, however, is not within
 scope. In the Overpass Turbo web interface, results may be visualised as
 dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
 \begin{lstwrap}\begin{lstlisting}
@@ -96,7 +96,7 @@ They may retrieve specific type of objects depending on what
         \code{way} & retrieves ways \\
         \code{relation} & retrieves relations \\
         \code{area} & retrieves areas \\
-        \code{nwr} & retrieves nodes, ways and relations \\
+        \code{nwr} & retrieves nodes, ways, and relations \\
     \end{tabular}
 \end{center}
 
@@ -105,7 +105,7 @@ To form a retrieval statement, an object keyword is followed by one or more
 \begin{lstwrap}\begin{lstlisting}
     <object keyword><filter><filter>...<filter>
 \end{lstlisting}\end{lstwrap}
-Objects which match \emph{all} filters are stored in the output set.
+Objects matching \emph{all} filters are stored in the output set.
 
 \subsubsection{Tag filters}
 The most basic group of statements retrieve objects depending on whether a
@@ -115,6 +115,7 @@ square braces.
 These are the possible tag filters\footnote{All double quotes within filters
     may be replaced by single quotes (in order to escape double quotes within
     the value) or omitted (when the value contains only letters)}:
+  \marginpar{тук \code{tag} не трябва ли навсякъде да е в кавички?}
 \begin{center}
     \begin{tabular}{|c|c|p{0.3\textwidth}|}
         \hline
@@ -142,6 +143,7 @@ These are the possible tag filters\footnote{All double quotes within filters
     \end{tabular}
 \end{center}
 
+\marginpar{текстът на примера на следващата страница се чете}
 \begin{example}
     Get nodes with amenity ``cafe'':
     \begin{lstwrap}\begin{lstlisting}
@@ -226,7 +228,7 @@ Some filters can use an input set to influence the retrieval query.
 
 \subsubsection{Set union}
 Several statements that produce an output set may be chained within round
-brackets. This is an \emph{union} statement and produces the union of all
+brackets. This is a \emph{union} statement and produces the union of all
 output sets. Bare input sets (preceded by a dot) may also take part in a union.
 
 \begin{example}
@@ -243,7 +245,7 @@ output sets. Bare input sets (preceded by a dot) may also take part in a union.
         area[name="Frankfurt"] -> .frankfurt;
         node.cafes(area.bonn) -> .cb;
         node.cafes(area.frankfurt) -> .cf;
-        (.cb; .cb;) -> .cfb;
+        (.cf; .cb;) -> .cfb;
         out .cfb;
     \end{lstlisting}\end{lstwrap}
 
@@ -257,17 +259,17 @@ output sets. Bare input sets (preceded by a dot) may also take part in a union.
 \end{example}
 
 \subsubsection{And everything else}
-There are more available statements within Overpass, including:
+There are more available statements within Overpass QL, including:
 \begin{itemize}
-    \item Recurse up/down relations - get items that are within relations in the
+    \item Recurse up/down relations --- get items that are within relations in the
         current set and get relations the items in the input set are contained
         in
-    \item ``is in'' - get areas the items in the input set are contained in
+    \item ``is in'' --- get areas the items in the input set are contained in
     \item Recurse along ways - get next, previous objects along way
-    \item Fixed point - perform a block on an input set until it returns the
+    \item Fixed point --- perform a block on an input set until it returns the
         same set
 \end{itemize}
 
-Since they haven't been used in this reference implementation, they will not be
+Since they have not been used in this reference implementation, they will not be
 discussed in detail. For extra information, see \cite{overpassql}.
 \end{document}
