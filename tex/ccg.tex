@@ -5,16 +5,16 @@
 \label{sec:ccg}
 The CCG formalism is used in a multitude of variants. The form presented here
 will be most basic and of little practical use: it will only allow composition
-rules and the only restriction will be a global maximum arity.
+rules and the only restriction will be a global upper bound on the arity.
 
-It is based on the Vijay-Shanker CCG formalism \cite{shanker}.
+The presentation of CCG in this section is based on the Vijay-Shanker CCG formalism \cite{shanker}.
 
-This is enough for understanding the parsing algorithms, and can be further
+This is enough\marginpar{which is enough?} for understanding the parsing algorithms, and can be further
 extended to include features such as type-raising,
 arbitrary rule restrictions, slash modalities,
-category features, category variables and feature variables.
+category features, category variables, and feature variables.
 
-Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
+Let $\csymbs = \{ C', C'', C''', ... \}$ be a countable set of symbols that we will call
 \emph{atomic categories}.
 
 \begin{defn}
@@ -28,13 +28,13 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
 
     Letters like $A, B, C$ will be used to denote atomic categories,
     while letters like $X, Y, Z$ will be used to
-    denote complex categories (produced by rules \ref{itm:left} and \ref{itm:right}).
+    denote complex categories (produced by rules \ref{itm:right} and \ref{itm:left}).
 
-    Such expressions are called \emph{categories}. The $\mc$ symbol will be
-    used to denote any slash (when the distinction between $\lc$ and $\rc$
+    Such expressions are called \emph{categories}. The symbol $\mc$ will be
+    used to denote any slash (i.e., when the distinction between $\lc$ and $\rc$
     does not matter). Categories will also be considered left-associative.
     Thus we can write $X_1 \mc X_2 \mc X_3 \mc X_4$ to denote
-    $\lp \lp \lp X_1 \mc X_2 \rp \mc X_3 \rp \mc X_4 \rp$. It's useful to note that $X_1$ may
+    $\lp \lp \lp X_1 \mc X_2 \rp \mc X_3 \rp \mc X_4 \rp$. It is useful to note that $X_1$ may
     be decomposed into its constituents until it becomes an atomic category:
     this means that every category can be written in the form
     $A \mc X_1 \mc X_2 \mc ... \mc X_n$, where $A$ is atomic. We say that
@@ -44,8 +44,8 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
 \end{defn}
 
 \begin{defn}
-    Concatenating categories: If $X \in C(\tau)$,
-    $Y = A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \in C(\tau)$, we define
+    Concatenating categories: If $X \in C(\tau)$ and
+    $Y = A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \in C(\tau)$, then we define
     \[ X \circ_{\rc} Y = X \rc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
     \[ X \circ_{\lc} Y = X \lc A \mci{1} Y_1 \mci{2} Y_2 ... \mci{m} Y_m \]
 \end{defn}
@@ -53,7 +53,7 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
 \begin{convention}
     Since using this notation everywhere is tedious, $X \mc Y$ shall mean
     $X \circ_{\mc} Y$ throughout this text, in contrast to
-    $X \mc \lp Y \rp$.
+    $X \mc \lp Y \rp$.\marginpar{\scriptsize Тази конвенция е малко объркваща в контекста на горната. Имаш ли наистина нужда от нея?}
 \end{convention}
 
 \begin{defn}
@@ -68,7 +68,7 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
         \item $ N $ is the (finite) set of \emph{non-terminals} (atomic categories)
         \item $ S \in N $ is the \emph{target category}
         \item $ f : \Sigma \rightarrow \hat{N} $, where $\hat{N}$ is the set of
-            \textbf{finite} subsets of $C(N)$, is the function for interpreting
+            \textbf{finite} subsets of $C(N)$, is the function for interpreting the
             terminals
         \item $ n \in \mathbb{N} $ is the \emph{maximum composition arity}
     \end{itemize}
@@ -76,19 +76,19 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a set of symbols we call
 
 \subsubsection{Derivations}
 
-We will now formalise the way CCGs generate strings of terminals. There
+We will now formalise the way in which CCGs generate strings of terminals. There
 are two approaches to do this: iterative derivation and derivation trees. Since
-they are both useful for different things, we will also show equivalence
+they are both useful for different things, we will also show the equivalence
 between them.
 
-For iterative derivation, we will use strings in $(\lb C(\tau) \rb \cup \Sigma)^*$,
-i.e. strings of terminals intermixed with categories. To make our derivations
+For iterative derivation, we will use strings in $(\lb C(\tau) \rb \cup \Sigma)^*$,\marginpar{\scriptsize Какво е $\tau$? Няма ли да е удобно да въведеш нотация за множеството $(\lb C(\tau) \rb \cup \Sigma)^*$? Например $\tau^\star$ или нещо такова.}
+i.e., strings of terminals intermixed with categories. To make our derivations
 equivalent to context-free grammar derivations, we will use the square
 brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 
 \begin{defn}
     For any string $\alpha \in (\lb C(\tau) \rb \cup \Sigma)^*$, where $\Sigma$ is a
-    finite alphabet of terminals, we define $C(\alpha)$ to be the set of all
+    finite alphabet of terminals, we define $C(\alpha)$\marginpar{\scriptsize $C(\cdot)$ е конфликт на нотации} to be the set of all
     categories that
     can be found in $\alpha$, namely:
     \begin{itemize}
@@ -100,8 +100,8 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 
 \begin{defn}\label{def:ccg:rules}
     For a CCG $G$, we can construct a set $R \subset (\lb C(N) \rb) \times (\Sigma \cup \lb C(N) \rb)^*$
-    of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$, we will write
-    $\alpha \rightarrow \beta$.
+    of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$ we will write
+    $\alpha \rightarrow \beta$.\marginpar{\scriptsize трета семантика на $\rightarrow$}
 
     \begin{itemize}
         \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
@@ -122,14 +122,14 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 \end{defn}
 
 \begin{defn}
-    Derivation process
+    Derivation process\marginpar{\scriptsize въвеждаш нова нотация $\Rightarrow$ без да го казваш експлицитно. Освен това $\Rightarrow$ вече се използва за абстракциите.}
     \begin{itemize}
         \item If $\beta \rightarrow \beta'$, then $\alpha \beta \gamma \Rightarrow \alpha \beta' \gamma$
         \item Let $\Rightarrow^*$ be the reflexive and transitive closure of $\Rightarrow$.
         \item If $\alpha \Rightarrow^* \beta$, we can write
             \[ \mu: \alpha \Rightarrow \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = \beta \]
             and call $\mu$ a \emph{derivation} for $G$. Then $C(\mu) = \bigcup\limits_{i=1}^{r} C(\alpha_i)$
-            is the set of all categories used in $\mu$.
+            is the set of all categories used in $\mu$.\marginpar{\scriptsize може би  $\alpha = \alpha_1$ вместо $\alpha \Rightarrow \alpha_1$, за да обхванеш и категориите в $\alpha$?}
         \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
     \end{itemize}
 \end{defn}
@@ -157,7 +157,7 @@ string.
 \end{property}
 
 \begin{prop}\label{prop:concat}
-    Concatenativity of CCG derivation
+    Concatenativity of CCG derivation:
 
     For $\alpha \neq \varepsilon, \beta \neq \varepsilon$, the following two are equivalent:
     \begin{itemize}
@@ -261,23 +261,23 @@ of derivation trees, in correspondence to the concept of
 \emph{primary categories} in the context of derivations. Primary edges
 will be drawn with a thick line.
 
-We will construct the set $ \trees{G} $ of all derivation trees, for a
-CCG $G$ as well
+We will construct the set $ \trees{G} $ of all derivation trees for a
+CCG $G$, as well
 as the functions $ crown: \trees{G} \rightarrow ( \lb C(N) \rb \cup \Sigma )^* $,
-$ root: \trees{G} \rightarrow C(N) \cup \Sigma$
+$ root: \trees{G} \rightarrow C(N) \cup \Sigma$.
 
 If there exists $\tau \in \trees{G}$ such that $root(\tau) = X \in C(N),
-crown(\tau) = \alpha$, we denote $\lb X \rb \Rrightarrow \alpha$.
+crown(\tau) = \alpha$, we will denote $\lb X \rb \Rrightarrow \alpha$.
 
 Derivation trees are constructed as follows:
 
 
 \begin{defn}
-    Derivation tree
+    Derivation tree\marginpar{\scriptsize първият случай от тази дефиниция наистина ли трябва или може да се махне?}
     \begin{itemize}
         \item If $ a \in \Sigma $, then
             $ a \in \trees{G}, crown(a) = a, root(a) = a$.
-        \item If $ X \in C(N) $ then $ X \in \trees{G}, crown(X) = X$
+        \item If $ X \in C(N) $ then $ X \in \trees{G}, crown(X) = \lb X \rb, root(X) = X$
         \item If $ a \in \Sigma, X \in f(a) $, then
             \begin{center}
                 \tree{.$X$ \edge[very thick]; $a$ } ( $ \pi $ )
@@ -302,7 +302,7 @@ Derivation trees are constructed as follows:
                 } ($\tau$)
             \end{center}
             $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
-            $ crown(\tau) = \alpha \beta$
+            $ crown(\tau) = \alpha \beta$.
         \item If
             \begin{center}
                 \tree{.{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$} ($\pi'$)
@@ -322,7 +322,7 @@ Derivation trees are constructed as follows:
                 } ($\tau$)
             \end{center}
             $ \tau \in \trees{G}, root(\tau) = X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $,
-            $ crown(\tau) = \alpha \beta $
+            $ crown(\tau) = \alpha \beta $.
     \end{itemize}
 \end{defn}
 
@@ -366,7 +366,7 @@ Derivation trees are constructed as follows:
     $ \lb X \rb \Rightarrow^* \alpha \iff \lb X \rb \Rrightarrow \alpha $
 
     Note: this also extends for the case where we have a terminal on the left,
-    but it is not worth mentioning.
+    but it is not worth mentioning.\marginpar{Ако махнеш случая, когато терминалът е дърво, дори и тази бележка няма да си струва да се споменава.}
 \end{prop}
 \begin{proof}
     First, let there exist a derivation tree for $ \lb X \rb \Rrightarrow \alpha $.
@@ -376,7 +376,7 @@ Derivation trees are constructed as follows:
         \item For the trivial cases, the derivation has 0 steps.
         \item For a tree
             \centree{.$X$ \edge[very thick]; $a$ }
-            and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$
+            and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$.
         \item For a tree
             \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 \edge[very thick];
@@ -388,7 +388,7 @@ Derivation trees are constructed as follows:
             $\lb X \rc Y \rb \Rightarrow^* \alpha$. Thus,
             $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
             $\lb X \lc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$
-            $ \Rightarrow^* \beta \gamma = \alpha$
+            $ \Rightarrow^* \beta \gamma = \alpha$.
         \item For a tree
             \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
@@ -400,7 +400,7 @@ Derivation trees are constructed as follows:
             $\lb X \lc Y \rb \Rightarrow^* \alpha$. Thus,
             $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
             $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb$
-            $ \Rightarrow^* \beta \gamma = \alpha$
+            $ \Rightarrow^* \beta \gamma = \alpha$.
     \end{itemize}
 
     Second, we can prove the inverse implication (given a derivation,
@@ -409,7 +409,7 @@ Derivation trees are constructed as follows:
     be a derivation for $G$.
     \begin{itemize}
         \item $\beta = \lb X \rb$. Then this is the trivial reflexive case
-            and $\lb X \rb$ is a valid derivation tree in itself.
+            and $X$ is a valid derivation tree in itself.
         \item $\beta = a \in \Sigma, X \in f(a)$. Then $\alpha = \beta$ and
             \centree{.$X$ \edge[very thick]; $a$ }
             is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
@@ -462,7 +462,7 @@ Derivation trees are constructed as follows:
 
 \subsubsection{The Categorial CYK algorithm}\label{sec:cyk}
 
-This is the most straight-forward algorithm for parsing a string with the help
+This is the most straightforward algorithm for parsing a string with the help
 of CCG. It is easy to understand, but has exponential runtime with respect to
 the input word length.
 
@@ -479,11 +479,11 @@ $(S, 1, k)$.
 
 \begin{enumerate}
 \label{cyk:rules}
-    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$.
     \item If $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
-        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
     \item If $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
-        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
 \end{enumerate}
 
 To reason about the algorithm, we will use the following invariant:
@@ -534,7 +534,7 @@ To reason about the algorithm, we will use the following invariant:
                 \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
             \end{itemize}
             for some $i \leq p < j, m \leq n$. By inductive hypothesis,
-            $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            $\lb W \lc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
             and
             $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$.
             Then, by the definition of $\rightarrow$ and by concatenativity of
@@ -565,7 +565,7 @@ To reason about the algorithm, we will use the following invariant:
     $\mu$ from right to left.
 
     The only way for $\lb X \rb$ to appear to the left
-    of a production is $\lb X \rb \rightarrow \alpha$ - we can now look at
+    of a production is $\lb X \rb \rightarrow \alpha$ --- we can now look at
     all ways for this to happen.
     \begin{enumerate}
         \item $\alpha = a \in \Sigma, X \in f(a)$. Then $w = \alpha, i = j, w_i = a$,
@@ -588,7 +588,7 @@ To reason about the algorithm, we will use the following invariant:
             According to \cref{prop:concat}, there exists $p$ such that
             \begin{itemize}
                 \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$
-                \item $\lb W \rc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+                \item $\lb W \lc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
             \end{itemize}
             However, according to the inductive hypothesis, this means that
             $(W \lc Y, p + 1, j) \in P$ and
@@ -622,13 +622,13 @@ As with the categorial CYK algorithm, we build a set ${P}$ of items and aims to 
 $(S, 1, k)$.
 
 \begin{enumerate}
-    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$.
     \item If $(X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
         $|X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| \leq c$
-        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
+        then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
     \item If $(A \mci{*} X \rc B, i, t) \in P, (B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
         $|A \mci{*} X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m| > c$
-        then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$
+        then $(A, \mci{1}, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$.
     \item If $(A, \xi, X \rc B, T, i, t, p, q) \in P$,
         $(B \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, t + 1, j) \in P$,
         $m > 1$, then $(A, \xi, Z_1 \mci{2} Z_2 ... \mci{m} Z_m, \rc B, i, j, i, t) \in P$.
