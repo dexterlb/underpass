@@ -11,9 +11,10 @@ been developed to deal with them.
 \subsubsection{Rule restrictions or modalities}
 The only restriction on rules within the pure CCG formalism is the limit to
 the number of arguments ($n$). For natural languages, this causes overgeneration.
+\marginpar{\scriptsize тук е добре да се сложи едно пояснително изречение или подчинено изречение}
 
 The simplest method to alleviate this is to allow arbitrary rule restrictions
-depending, essentially creating a new formalism for each new target language.
+depending\marginpar{\scriptsize depending on what?}, essentially creating a new formalism for each new target language.
 Another method is the so called \emph{slash modalities}, which have been shown
 \cite{modal}
 to be equivalent to rule restrictions in terms of expressive power, and will
@@ -64,13 +65,13 @@ Now, we restrict derivations according to modalities (in all cases, $m \leq n$):
         \[ \lb X \rb \rightarrow \lb Y \rb \lb X \lci{\mu} Y \rb \]
         where $\mu \less \modstar$ (effectively for any $\mu$).
     \item "Harmonic composition"
-        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
-        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{\mu} Z_m \rb \rightarrow \lb Y \lci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \rci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \lci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
         where $\mu \less \modr, \nu \less \modr, \eta = \mu \meet \nu$.
     \item "Crossing composition"
         \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rci{\mu} Y \rb \lb Y \lci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
         \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \rci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
-        where $\mu \less \modx, \nu \less \modx, l = \mu \meet \nu$.
+        where $\mu \less \modx, \nu \less \modx, \eta = \mu \meet \nu$.
 \end{itemize}
 
 In the above templates, modalities on the right-hand side stand for any
@@ -136,8 +137,8 @@ can combine with any other type of slash).
 \label{hack:catvars}
 This is a very powerful extension that adds simple unification based on variables
 to categorial derivation. To define it formally, let $\cvars = \{ \kappa', \kappa'', \kappa''' ...\}$
-be a set of symbols we call \emph{categorial variables}.
-and introduce variable substitution over categories.
+be a countable set of symbols that we will call \emph{categorial variables}.
+and introduce variable substitution over categories.\marginpar{\scriptsize това изречение е изостанало отнякъде}
 
 \begin{defn}
     We extend the definition of categorial closure to include variables:
@@ -150,15 +151,14 @@ and introduce variable substitution over categories.
 \end{defn}
 
 For convenience, we will now define a function that gives us all variables
-used in a category.
+used in a category.\marginpar{\scriptsize Предложение: For convenience, we will use the same notation as the function returning the free variables of $\lambda$-terms.}
 \begin{defn}
     Let $\fvv : C(\tau) \rightarrow 2^{\cvars}$ be defined as:
     \[
         \fv{Z} =
         \begin{cases*}
             \varnothing ,& $Z \in \tau$ \\
-            \fv{X} \cup \fv{Y} ,& $Z = \lp X \rc Y \rp$ \\
-            \fv{X} \cup \fv{Y} ,& $Z = \lp X \lc Y \rp$ \\
+            \fv{X} \cup \fv{Y} ,& $Z = \lp X \mc Y \rp$ \\
             \{ \alpha \} ,& $Z = \alpha \in \cvars$ \\
         \end{cases*}
     \]
@@ -169,9 +169,8 @@ used in a category.
         \subst{Z}{\alpha}{W} =
         \begin{cases*}
             Z ,& $Z \in \tau$ \\
-            \lp \subst{X}{\alpha}{W} \rc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \rc Y \rp$ \\
-            \lp \subst{X}{\alpha}{W} \lc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \lc Y \rp$ \\
-            \beta ,& $Z = \beta \in \cvars$ \\
+            \lp \subst{X}{\alpha}{W} \mc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \mc Y \rp$ \\
+            \beta ,& $Z = \beta \in \cvars, \beta \neq \alpha$ \\
             W ,& $Z = \alpha$ \\
         \end{cases*}
     \]
@@ -180,14 +179,14 @@ used in a category.
 
 \begin{convention}
     If we have
-    \[ X' = \subst{\subst{\subst{X}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
-    We will use
+    \[ X' = \subst{\subst{\subst{X}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n}, \]
+    then we will use
     \[ \xi = \subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n} \]
-    To mean that ``$\xi$ is the sequence of substitutions
-    $\subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n}$.
+    to denote that ``$\xi$ is the sequence of substitutions
+    $\subst{\subst{\subst{}{\alpha_1}{Y_1}}{\alpha_2}{Y_2}...}{\alpha_n}{Y_n}$''.
 
     The application of $\xi$ on $X$ will be denoted as
-    \[ X' = \xi(X) \]
+    \[ X' = \xi(X). \]
 \end{convention}
 
 Having extended the notion of categorial closure to include categorial variables,
@@ -223,13 +222,13 @@ substitution can be defined:
     \end{tikzpicture}
 \end{center}
 
-\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\typeof{\alpha}}{Y} \]
-
+\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\typeof{\alpha}}{Y}. \]
+\marginpar{\scriptsize Формално погледнато, тук прилагаш субституция върху множество от термове. Също, може би е добре за пълнота да кажеш какво са $root$ и $crown$.}
 This essentially allows us to generate any category and substitute it in place
-of variables during derivation.
+of variables at any time during derivation.
 
 When parsing, we can observe that after processing all leaf nodes,
-there's no way to generate new variables while building the parse tree
+there is no way to generate new variables while building the parse tree
 bottom-up. Thus, it is sufficient to eliminate variables by unification:
 
 \begin{defn}\label{def:varunify}
