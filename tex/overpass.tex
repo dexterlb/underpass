@@ -1,13 +1,16 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 \subsection{Overview of the Overpass language}
-The Overpass language \cite{overpass} has been created by the OpenStreetMap\marginpar{Overpass или Overpass QL е езикът? Използвай само едното или уточни, че са имена на едно и също нещо.}
+The Overpass language \cite{overpass} has been created by the OpenStreetMap
 community in order to be able to make more complex queries to map data.
 
-Overpass queries can be written in two ways: XML-based queries and Overpass QL-based
-queries. The XML Overpass QL frontend has been better maintained, has more features
+Overpass has two different query fronteds, which means that the same AST
+may be built in two different ways: a \emph{XML}-based frontend and an
+\emph{Overpass QL}--based frontend.
+The XML Overpass QL frontend has been better maintained, has more features
 and is easier to generate programmatically --- thus, it was chosen as a target
-language for this project.
+language for this project. Whenever we talk about ``the Overpass language'',
+we shall refer to Overpass QL.
 
 This section will present a subset of Overpass QL that is relevant to this project: for a
 more complete overview, refer to \cite{overpassql}.
@@ -115,7 +118,6 @@ square braces.
 These are the possible tag filters\footnote{All double quotes within filters
     may be replaced by single quotes (in order to escape double quotes within
     the value) or omitted (when the value contains only letters)}:
-  \marginpar{тук \code{tag} не трябва ли навсякъде да е в кавички?}
 \begin{center}
     \begin{tabular}{|c|c|p{0.3\textwidth}|}
         \hline
@@ -124,15 +126,15 @@ These are the possible tag filters\footnote{All double quotes within filters
         \code{["tag"]} & \code{[!"tag"]} & Matches if the object has a tag with key
             \code{tag} \\
         \hline
-        \code{["tag"="content"]} & \code{[tag!="content"]}
+        \code{["tag"="content"]} & \code{["tag"!="content"]}
             & Matches if the object has a tag with key \code{tag}
                 and value \code{content} \\
         \hline
-        \code{["tag"\textasciitilde"regex"]} & \code{[tag!\textasciitilde"regex"]}
+        \code{["tag"\textasciitilde"regex"]} & \code{["tag"!\textasciitilde"regex"]}
             & Matches if the object has a tag with key \code{tag}
                 and value that matches \code{regex} \\
         \hline
-        \code{["tag"\textasciitilde"regex",i]} & \code{[tag!\textasciitilde"regex",i]}
+        \code{["tag"\textasciitilde"regex",i]} & \code{["tag"!\textasciitilde"regex",i]}
             & Matches if the object has a tag with key \code{tag}
                 and value that matches \code{regex}, ignoring case \\
         \hline
@@ -143,14 +145,14 @@ These are the possible tag filters\footnote{All double quotes within filters
     \end{tabular}
 \end{center}
 
-\marginpar{текстът на примера на следващата страница се чете}
+\pagebreak % some bug makes the text in this example white if it spans a page break??
 \begin{example}
     Get nodes with amenity ``cafe'':
     \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"];
         out;
     \end{lstlisting}\end{lstwrap}
-    
+
     Get nodes with amenity ``cafe'' and name ``Stardeers'':
     \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"][name="Stardeers"];

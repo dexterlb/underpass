@@ -47,7 +47,7 @@ $Spaces$ as an argument on the right and return $GSet$. We will denote this
     \gramrow{parking}{ GSet \rc Spaces }{}
     \gramrow{spaces}{Spaces}{}
 }
-Coincidentally\marginpar{може би similarly или symmetrically?} , arguments on the left will be denoted by a backward slash.
+Similarly, arguments on the left will be denoted by a backward slash.
 
 Now, we need to assign a category to the word \code{in}. We want to parse
 the construction ``something in something'', thus we want to take one $GSet$
@@ -63,7 +63,7 @@ An alternative category that would also work is the following:
 \gramshort{
     \gramrow{in}{ (GSet \rc GSet) \lc GSet }{}
 }
-In this case, \code{in Berlin} makes no sense\marginpar{по-скоро ``will not parse correctly'' вместо ``makes no sense''}, but \code{parking spaces in}
+In this case, \code{in Berlin} cannot be parsed while \code{parking spaces in}
 will return something that will gladly take \code{Berlin} on the right and
 produce a $GSet$.
 
@@ -77,7 +77,8 @@ the same category. Finally, we obtain this simple grammar:
     \gramrow{in}{ (GSet \lc GSet) \rc GSet }{}
     \gramrow{near}{ (GSet \lc GSet) \rc GSet }{}
 }
-Which will parse our query.\marginpar{не звучи добре като самостоятелно изречение} The most convenient way to illustrate such parses
+This grammar will produce a valid parse for our query.
+The most convenient way to illustrate such parses
 is by means of a \emph{derivation tree}:
 \centree{.{$GSet$}
     [ .{$GSet$}

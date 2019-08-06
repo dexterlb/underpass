@@ -22,15 +22,23 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a countable set of symbols that 
         \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
     \end{itemize}
 \end{defn}
-\marginpar{\scriptsize тук може би е време да кажеш, че ще изпускаш външните скоби, понеже го правиш по-надолу}
+
+\begin{convention}
+    For clarity, braces shall be omitted in the notation for types by regarding
+    the $\tot$ operation as right-associative:
+    \[ \sigma \tot \tau \tot \eta \]
+    will mean
+    \[ ( \sigma \tot ( \tau \tot \eta ) ) \]
+\end{convention}
+
 \begin{defn}
     The function $\tss : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
-    returns the set of type symbols used in a complex type, is defined inductively:\marginpar{\scriptsize препо\-ръчвам да използваш специален символ за ``равно по дефиниция на''}
+    returns the set of type symbols used in a complex type, is defined inductively:
 
     \begin{itemize}
-        \item if $\sigma \in \tsymbs$, then $\ts{\sigma} = \sigma$\marginpar{\scriptsize не става ясно защо тук използваш думи, а по-горе стрелката $\implies$}
-        \item if $\sigma = \sigma' \rightarrow \sigma''$, then
-            $\ts{\sigma} = \ts{\sigma'} \cup \ts{\sigma''}$
+        \item $\sigma \in \tsymbs \implies \ts{\sigma} \defeq \sigma$
+        \item $\sigma = \sigma' \rightarrow \sigma'' \implies
+            \ts{\sigma} \defeq \ts{\sigma'} \cup \ts{\sigma''}$
     \end{itemize}
 \end{defn}
 

@@ -9,28 +9,33 @@ convenient to write rules at word level.
 
 Sometimes, however, we come across fixed phrases, which come as several
 adjacent terminals but we want to regard as a single terminal.
-\marginpar{\scriptsize може би Set вместо GSet? $\modstar$ не е дефинирана още}
+
+\greenbox{
+    Note: here we will use a modal forward slash ($\rci{\modstar}$) which is defined
+    in \cref{hack:modal}. Its usage is not important for understanding the idea
+    of this construction, so it may be regarded as a regular slash ($\rc$).
+}
 
 \begin{example}
     Suppose we have a $\lambda$-term $parkinglot$ with type $Amenity$.
-    
+
     For example, we might want to assign the category $Amenity$ with term
     $parkinglot$
     to the query \code{parking lot} that is composed of two terminals.
-    
+
     One way to do this is to set dummy categories to all but one of the
     terminals and have the main terminal accept the dummy categories as
     arguments:
     \begin{itemize}
         \item Add a new type/category $Dummy$.
         \item Choose a closed term $M$ of type $Dummy$.
-        \item GSet
+        \item Set
             \begin{align*}
                 Amenity \rci{\modstar} Dummy &\in f(parking)\\
                 Dummy &\in f(lot) \\
                 \\
-                \lambda d: Dummy \abstr parkinglot &\in \varphi(parking, Amenity \rci{\modstar} Dummy)  \\
-                M &\in \varphi(lot, Dummy) \\
+                \lambda d: Dummy \abstr parkinglot &\in \psi(parking, Amenity \rci{\modstar} Dummy)  \\
+                M &\in \psi(lot, Dummy) \\
             \end{align*}
     \end{itemize}
     This approach yields a derivation subtree for \code{parking lot} that
@@ -40,8 +45,7 @@ adjacent terminals but we want to regard as a single terminal.
         [ .{$Dummy$} [ .{$lot$} ] ]
     }
 \end{example}
-\marginpar{$\psi$ вместо $\varphi$?}
- 
+
 \begin{convention}
     \label{hack:phrases}
 
@@ -50,7 +54,7 @@ adjacent terminals but we want to regard as a single terminal.
     the following assertions:
     \begin{align*}
         X &\in f[\alpha_1 \alpha_2 ... \alpha_k] \\
-        M &\in \varphi[\alpha_1 \alpha_2 ... \alpha_k, X] \\
+        M &\in \psi[\alpha_1 \alpha_2 ... \alpha_k, X] \\
     \end{align*}
     where $X \in \cclos{N}$ and $M$ is a $\lambda$-term typed in $T$, have\marginpar{\scriptsize $\cclos\cdot$ се появява тук за първи път}
     the following semantics:
@@ -75,12 +79,12 @@ adjacent terminals but we want to regard as a single terminal.
                     \rci{\modstar} ... \rci{\modstar} X_k \in f(\alpha_1)$
                 \item For each $i \in \{ 2 ... k \}, X_i \in f(\alpha_i)$
             \end{itemize}
-        \item New added terms to $\varphi$:
+        \item New added terms to $\psi$:
             \begin{itemize}
                 \item $(\lambda x_2: \sigma_2, x_3: \sigma_3, ..., x_k: \sigma_k \abstr
-                    M) \in \varphi(\alpha_1, X \rci{\modstar} X_2 \rci{\modstar} X_3
+                    M) \in \psi(\alpha_1, X \rci{\modstar} X_2 \rci{\modstar} X_3
                     \rci{\modstar} ... \rci{\modstar} X_k)$
-                \item For each $i \in \{ 2 ... k \}, M_i \in \varphi(\alpha_i, X_i)$
+                \item For each $i \in \{ 2 ... k \}, M_i \in \psi(\alpha_i, X_i)$
             \end{itemize}
     \end{itemize}
 \end{convention}
