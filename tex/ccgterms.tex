@@ -14,7 +14,7 @@ for composing those terms in accordance with a CCG derivation tree.
 \begin{defn}
     For a set of atomic categories $N$ typed in $\Theta$, we can extend the
     definition of the typing function $\typeoff$ over their categorial closure
-    $\typeoff : C(N) \rightarrow \tclos{\Theta}$ in the following way:
+    $\typeoff : \cclos{N} \rightarrow \tclos{\Theta}$ in the following way:
     $\typeof{\lp X \mc Y \rp} \defeq  \typeof{Y} \tot \typeof{X}$.
 
     This gives meaning to categories in the context of $\lambda$-calculus:
@@ -53,7 +53,6 @@ of the same type as its category.
     For simplicity, in most examples from here onward, the types of atomic
     categories will be the atomic categories themselves.
 }
-\marginpar{\scriptsize някъде може би е смислено да се каже нещо подобно за терминалите и термовите константи: че често (но не винаги) терминалите ще се интерпретират като самите себе си}
 
 Now that we have our semantic function that can yield the possible terms
 for each \emph{leaf} in a derivation tree, we will build the semantic function
@@ -171,7 +170,7 @@ between the terms returned by $\psi$ and their categories can be defined
 cleanly:
 
 \begin{defn}
-    A semantic function $\psi$ is called \emph{consistent with} a context
+    A semantic function $\psi$ is called \emph{consistent in} a context
     $\Gamma$ when
     \[
         \forall a, X: M \in \psi(a, X) \implies \Gamma \vdash M : \typeof{X}.
@@ -180,12 +179,12 @@ cleanly:
 
 Another observation is that the construction for $sem_{\psi}$ includes no
 additional free variables other than the ones already present in the terms
-returned by $\psi$.\marginpar{\scriptsize мисля, че е по-добре да е ``consistent in'', понеже ако $M$ няма свободни променливи звучи странно ``consistent with $\emptyset$'': все едно не трябва да е консистентна със нищо, а условието в никакъв случай не се тривиализира: иска се комбинаторите, произведени от $\psi$ да са от типа на $X$}
+returned by $\psi$.
 
 \begin{prop}
     \label{ccg:typeconsistent}
     If $ G = \langle \Sigma, N, S, f, n \rangle $ is a CCG and $\psi$ is a
-    semantic function for $G$ that is consistent with $\Gamma$, then
+    semantic function for $G$ that is consistent in $\Gamma$, then
     for every valid derivation tree $T$:
     \[
         M \in sem_{\psi}(T) \implies \Gamma \vdash M : \typeof{root(T)}
@@ -200,7 +199,7 @@ returned by $\psi$.\marginpar{\scriptsize мисля, че е по-добре д
     \begin{itemize}
         \item $L$ was produced by case \ref{sem:case:simple}. Then
             $L \in \psi(a, X)$ for some $X \in f(a)$. $\psi$
-            is consistent with $\Gamma$, so $\Gamma \vdash L: \typeof{X}$. Also, since
+            is consistent in $\Gamma$, so $\Gamma \vdash L: \typeof{X}$. Also, since
             $root(T) = X$, $\typeof{root(T)} = \typeof{X}$. Thus,
             $\Gamma \vdash L: \typeof{root(T)}$
         \item $L$ was produced by case \ref{sem:case:right}. Then,

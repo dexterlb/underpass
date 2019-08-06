@@ -10,11 +10,11 @@ been developed to deal with them.
 
 \subsubsection{Rule restrictions or modalities}\label{hack:modal}
 The only restriction on rules within the pure CCG formalism is the limit to
-the number of arguments ($n$). For natural languages, this causes overgeneration.
-\marginpar{\scriptsize тук е добре да се сложи едно пояснително изречение или подчинено изречение}
+the number of arguments ($n$). However, additional rule restrictions are often
+added in practice, which makes the grammar more expressive \cite{restrictions}.
 
-The simplest method to alleviate this is to allow arbitrary rule restrictions
-depending\marginpar{\scriptsize depending on what?}, essentially creating a new formalism for each new target language.
+The simplest method to implement this is to allow arbitrary rule restrictions,
+essentially creating a new formalism for each new target language.
 Another method is the so called \emph{slash modalities}, which have been shown
 \cite{modal}
 to be equivalent to rule restrictions in terms of expressive power, and will
@@ -52,9 +52,9 @@ slash with modality $\mu$).
 \begin{defn}
     We extend the definition of categorial closure to use modalities:
     \begin{enumerate}
-        \item \label{cmod:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
-        \item \label{cmod:right}  $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \rci{\mu} Y \rp \in C(\tau)$
-        \item \label{cmod:left}   $X, Y \in C(\tau), \mu \in \mathcal{M} \Rightarrow \lp X \lci{\mu} Y \rp \in C(\tau)$
+        \item \label{cmod:atomic} $A \in \tau \Rightarrow A \in \cclos{\tau}$
+        \item \label{cmod:right}  $X, Y \in \cclos{\tau}, \mu \in \mathcal{M} \Rightarrow \lp X \rci{\mu} Y \rp \in \cclos{\tau}$
+        \item \label{cmod:left}   $X, Y \in \cclos{\tau}, \mu \in \mathcal{M} \Rightarrow \lp X \lci{\mu} Y \rp \in \cclos{\tau}$
     \end{enumerate}
 \end{defn}
 
@@ -138,22 +138,20 @@ can combine with any other type of slash).
 This is a very powerful extension that adds simple unification based on variables
 to categorial derivation. To define it formally, let $\cvars = \{ \kappa', \kappa'', \kappa''' ...\}$
 be a countable set of symbols that we will call \emph{categorial variables}.
-and introduce variable substitution over categories.\marginpar{\scriptsize това изречение е изостанало отнякъде}
 
 \begin{defn}
     We extend the definition of categorial closure to include variables:
     \begin{enumerate}
-        \item \label{cvar:atomic} $A \in \tau \Rightarrow A \in C(\tau)$
-        \item \label{cvar:right}  $X, Y \in C(\tau) \Rightarrow \lp X \rc Y \rp \in C(\tau)$
-        \item \label{cvar:left}   $X, Y \in C(\tau) \Rightarrow \lp X \lc Y \rp \in C(\tau)$
-        \item \label{cvar:var}    $\alpha \in \cvars \Rightarrow \alpha \in C(\tau)$
+        \item \label{cvar:atomic} $A \in \tau \Rightarrow A \in \cclos{\tau}$
+        \item \label{cvar:right}  $X, Y \in \cclos{\tau} \Rightarrow \lp X \rc Y \rp \in \cclos{\tau}$
+        \item \label{cvar:left}   $X, Y \in \cclos{\tau} \Rightarrow \lp X \lc Y \rp \in \cclos{\tau}$
+        \item \label{cvar:var}    $\alpha \in \cvars \Rightarrow \alpha \in \cclos{\tau}$
     \end{enumerate}
 \end{defn}
 
-For convenience, we will now define a function that gives us all variables
-used in a category.\marginpar{\scriptsize Предложение: For convenience, we will use the same notation as the function returning the free variables of $\lambda$-terms.}
+For convenience, we will use the same notation as the function returning the free variables of $\lambda$-terms, for categories:
 \begin{defn}
-    Let $\fvv : C(\tau) \rightarrow 2^{\cvars}$ be defined as:
+    Let $\fvv : \cclos{\tau} \rightarrow 2^{\cvars}$ be defined as:
     \[
         \fv{Z} =
         \begin{cases*}
@@ -163,6 +161,9 @@ used in a category.\marginpar{\scriptsize Предложение: For convenienc
         \end{cases*}
     \]
 \end{defn}
+
+We now need to define \emph{variable substitution} over categories in order
+to be able to easily manipulate variables.
 \begin{defn}
     Variable substitution over categories is defined as
     \[
@@ -174,7 +175,7 @@ used in a category.\marginpar{\scriptsize Предложение: For convenienc
             W ,& $Z = \alpha$ \\
         \end{cases*}
     \]
-    for $Z \in C(\tau), W \in C(\tau), \alpha \in \cvars$
+    for $Z \in \cclos{\tau}, W \in \cclos{\tau}, \alpha \in \cvars$
 \end{defn}
 
 \begin{convention}
@@ -192,7 +193,7 @@ used in a category.\marginpar{\scriptsize Предложение: For convenienc
 Having extended the notion of categorial closure to include categorial variables,
 we also add a family of derivation rules to deal with variables, namely:
 \centree{.{$\subst{X}{\alpha}{Y}$} \edge[very thick]; {$X$} }
-for any $X \in C(\tau), Y \in C(\tau), \alpha \in \cvars$.
+for any $X \in \cclos{\tau}, Y \in \cclos{\tau}, \alpha \in \cvars$.
 
 To define semantics for derivations with categorial variables, we need to extend
 our $\lambda$-calculus to include type-variables and type-variable substitution.
@@ -207,7 +208,7 @@ substitution can be defined:
 \begin{center}
     \begin{tikzpicture}[node distance=1mm]
         \Tree[
-            .\node(outtop){$\subst{X}{\alpha}{Y}$};
+            .\node(outtop){$\subst{X}{a}{Y}$};
                 \edge[very thick];
                 [ .\node(intop){$X$};
                     \edge[roof];
@@ -222,8 +223,12 @@ substitution can be defined:
     \end{tikzpicture}
 \end{center}
 
-\[ sem_{\psi}(T) = \subst{sem_{\psi}(T')}{\typeof{\alpha}}{Y}. \]
-\marginpar{\scriptsize Формално погледнато, тук прилагаш субституция върху множество от термове. Също, може би е добре за пълнота да кажеш какво са $root$ и $crown$.}
+\begin{align*}
+    sem_{\psi}(T) &= \{ \subst{M}{\typeof{a}}{Y} \mid M \in sem_{\psi}(T') \} \\
+    root(T) &= \subst{X}{a}{Y} \\
+    crown(T) &= crown(T') = \alpha \\
+\end{align*}
+
 This essentially allows us to generate any category and substitute it in place
 of variables at any time during derivation.
 
@@ -434,10 +439,10 @@ equification:
     
 \begin{itemize}
     \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
-    \item If $ X \rc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+    \item If $ X \rc Y' \in \cclos{N}, Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
         and $\hat{U}(Y', Y'')$, \\
         then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
-    \item If $ X \lc Y' \in C(N), Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in C(N), 0 \leq m \leq n $
+    \item If $ X \lc Y' \in \cclos{N}, Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
         and $\hat{U}(Y', Y'')$, \\
         then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
 \end{itemize}
@@ -464,7 +469,7 @@ that refine its scope, and then define rules for unification of said features.
 
 For example, we could assume a global set of features $Feat$ to be the
 set of finite functions $f: [a-zA-Z\_]^* \rightarrow [a-zA-Z\_]^*$
-and instead of using $C(\tau)$ directly, we use $C(\tau \times Feat)$.
+and instead of using $\cclos{\tau}$ directly, we use $\cclos{\tau \times Feat}$.
 For brevity, categories like $(V, \{ (tense, past), (person, first) \})$
 are written as $X[tense=past, person=first]$.
 
