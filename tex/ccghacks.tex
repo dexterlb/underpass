@@ -248,17 +248,18 @@ In order to implement parsing of CCGs with variables, we will modify the categor
 CYK algorithm by replacing the rules (\cref{cyk:rules}) by the following:
 
 \begin{enumerate}
-    \item If $X \in f(w_i)$, then $(X, i, i) \in P$
+    \item If $X \in f(w_i)$, then $(X, i, i) \in P$.
     \item If $(X \rc Y', i, p) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
         and $Y'$ and $Y''$ unify with substitutions
         $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
         = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
-        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$.
+        \marginpar{\scriptsize Тук не трябва ли да е $(\xi'(X) \mci{1} \xi''(Z_1) \mci{2} \xi''(Z_2) ... \mci{m} \xi''(Z_m), i, j)\in P$ заради лявата асоциативност?}
     \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
         and $Y'$ and $Y''$ unify with substitutions
         $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
         = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
-        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$
+        then $(\xi'(X) \mci{1} \xi''(Z_1 \mci{2} Z_2 ... \mci{m} Z_m), i, j) \in P$.
 \end{enumerate}
 
 \subsubsection{Coordination}
@@ -393,7 +394,7 @@ it is usually only considered on categories that appear in leaves.
 \label{hack:equification}
 To reduce the size and of grammars and make them less complicated, 
 it is convenient to regard
-not only identical categories as equal, but rather use a \emph{equification
+not only identical categories as equal, but rather use an \emph{equification
 relation} that can judge whether two categories must be regarded as equal.
 
 One method is to explicitly state the equification rules in the grammar.
@@ -401,20 +402,20 @@ It is also useful to make categories complex objects and infer the relation
 based on their structure, as will be done in the next two sections.
 
 \begin{defn}
-    A relation $U \subseteq N \times N$ is called a
+    A relation $U \subseteq N \times N$ is called an
     \emph{equification relation} for the set $N$ if it is transitive
     and reflexive.
 \end{defn}
 
-Now, to use the unifier for parsing we must extend it over complex categories.
+Now, to use the unifier for parsing we must extend it over complex categories.\marginpar{\scriptsize тук не се разбира какво имаш предвид}
 One way to define such an extension is by uniformly propagating membership
 into $U$ over complex categories:
 \begin{defn}\label{def:rel:uniform}
-    If $U \subseteq N \times N$ is a equification relation
+    If $U \subseteq N \times N$ is an equification relation
     for the set of
     atomic categories $N$, its extension over complex categories
     $\hat{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
-    inductively as follows:
+    inductively as follows:\marginpar{\scriptsize за индуктивни дефиниции досега си използвал стила със клаузи, защо не го ползваш и тук?}
     \begin{align*}
         \hat{U}(X, Y) \defiff & \\
         & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
@@ -424,15 +425,15 @@ into $U$ over complex categories:
 \end{defn}
 
 \begin{property}
-    If $U \subseteq N \times N$ is a equification relation 
+    If $U \subseteq N \times N$ is an equification relation 
     for the set of
-    $N$, its extension $\hat{U}$ is a equification relation for $\cclos{U}$
+    $N$, its extension $\hat{U}$ is an equification relation for $\cclos{U}$
 \end{property}
 \begin{proof}
     The arguments for transitivity and reflexivity are both trivial.
 \end{proof}
 
-Another way to extend a equification relation is presented in \cref{hack:subtyping}.
+Another way to extend an equification relation is presented in \cref{hack:subtyping}.
 
 Now, we will modify the derivation rules from \cref{def:ccg:rules} to incorporate
 equification:
@@ -460,22 +461,21 @@ To implement parsing, we can replace the rules in the categorial CYK algorithm
         then $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$
 \end{enumerate}
 
-Note that the unifier may be asymmetric and take advantage of the fact
+Note that the equification relation may be asymmetric and take advantage of the fact
 that its first argument is the tail of the primary category.
 
 \subsubsection{Equification by category features}
-Some models allow each simple category to be extended with a set of \emph{features}
+Some models allow each atomic category to be extended with a set of \emph{features}
 that refine its scope, and then define rules for unification of said features.
 
 For example, we could assume a global set of features $Feat$ to be the
 set of finite functions $f: [a-zA-Z\_]^* \rightarrow [a-zA-Z\_]^*$
 and instead of using $\cclos{\tau}$ directly, we use $\cclos{\tau \times Feat}$.
 For brevity, categories like $(V, \{ (tense, past), (person, first) \})$
-are written as $X[tense=past, person=first]$.
+are written as $V[tense=past, person=first]$.
 
-A common unification scheme is to do an union of the two feature functions,
-and see if the result is also a function - this determines whether the
-categories actually unify.
+A common equification scheme is to check whether a union of the two feature functions,
+is also a function --- this determines whether the categories actually equify.
 
 This can be further extended by concepts such as \emph{feature variables}
 (which allows the use of variables within feature expressions and
@@ -484,7 +484,7 @@ performs variable substitution during unification) and embedding regular express
 \subsubsection{Equification by subtyping}\label{hack:subtyping}
 If the grammar will be used for generating typed $\lambda$-terms that use
 a subtyping system like the one described in \cref{sec:lambda}, the subtyping
-relation can be used to as a equification relation.
+relation can be used as an equification relation.\marginpar{\scriptsize ако човек не е чел раздел \cref{sec:lambda}, струва ми се, че много трудно ще се ориентира тук...}
 
 If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely:
@@ -495,16 +495,16 @@ if and only if
     \typeof{Y_2} \less \typeof{Y_1}
 \end{equation}
 
-If we use a equification relation $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$,
+If we use an equification relation $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$,
 it is not sufficient to use the uniform extension to complex categories
 (\cref{def:rel:uniform}) because that would violate contravariance. Thus,
 we will use the following extension:
 \begin{defn}
-    If $U \subseteq N \times N$ is a equification relation
+    If $U \subseteq N \times N$ is an equification relation
     for the set of
     atomic categories $N$, its contravariant extension over complex categories
     $\overline{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
-    inductively as follows:
+    inductively as follows:\marginpar{\scriptsize също препоръчвам дефиниция с клаузи}
     \begin{align*}
         \overline{U}(X, Y) \defiff & \\
         & \phantom{{}\lor{}} (X \in N \land Y \in N \land U(X, Y)) \\
@@ -537,7 +537,7 @@ to the condition in \cref{eq:typeless}
         DistCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
         NorthCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
     \end{align*}
-    and looks like this:
+    and looks like this:\marginpar{\scriptsize запетайка в началото на реда изглежда странно}
     \gramshort{
         \gramrow{German \sq cities}{GSet}{germanCity}
         \gramrow{Cologne}{GSet}{cologne}
@@ -581,26 +581,26 @@ to the condition in \cref{eq:typeless}
         ]
     }
 
-    That results in the $\lambda$-term we wanted (after reduction):
+    The semantics of this tree is exactly the desired $\lambda$-term (after reduction):
     \[ and \app germanCity \app (within \app twentykm \app cologne) \]
     And for the other query respectively:
     \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]
 
     Without subtyping, it would be difficult to discern the two categories
     NorthCheck and DistCheck without resorting to things like passing a
-    dummy argument whose type encodes whether we're in one case or the other.
+    dummy argument whose type encodes whether we are in one of the cases or in the other.
     Note that this cannot be done by simply using a type variable in the place
     of $DistCheck$ and $NorthCheck$ because of the different semantics
-    (they are paired with different $\lambda$-terms).
+    (they are paired with different $\lambda$-terms)\marginpar{не става ясно: кои са they и кои са различните $\lambda$-термове?}.
 
     This example may seem strange to some (why would
     we want $less \sq than$ to know about $within$ and $withinNorth$?
-    wouldn't it be better to pair them with $from$?) but in reality the
-    other way round is also strange - these semantics come from $less \sq than$
+    Perhaps it would be better to pair them with $from$?) but in reality the
+    other way round is also strange --- these semantics come from $less \sq than$
     and $from$ \emph{combined}. This violation of compositionality arises
-    from the natural language itself, and subtyping is a useful "hack" to
+    from the natural language itself, and subtyping is a useful ``hack'' to
     deal with it: we tag our type with additional information to denote that
-    we're looking for something specific, and when we find it we can unwrap the
+    we are looking for something specific, and when we find it we can unwrap the
     type.
 \end{example}
 \end{document}
