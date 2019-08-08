@@ -517,7 +517,7 @@ It can be easily seen that using
 $\overline{U}$ is equivalent
 to the condition in \cref{eq:typeless}
 (given that $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$).
-
+\marginpar{\scriptsize запетайка в началото на реда изглежда странно}
 \begin{example}
     Imagine we want to be able to parse the following queries:
     \begin{itemize}
@@ -537,7 +537,7 @@ to the condition in \cref{eq:typeless}
         DistCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
         NorthCheck \quad\lass\quad& ((Dist \tot GSet \tot GSet) \tot GSet) \\
     \end{align*}
-    and looks like this:\marginpar{\scriptsize запетайка в началото на реда изглежда странно}
+    and looks like this:
     \gramshort{
         \gramrow{German \sq cities}{GSet}{germanCity}
         \gramrow{Cologne}{GSet}{cologne}
@@ -591,7 +591,7 @@ to the condition in \cref{eq:typeless}
     dummy argument whose type encodes whether we are in one of the cases or in the other.
     Note that this cannot be done by simply using a type variable in the place
     of $DistCheck$ and $NorthCheck$ because of the different semantics
-    (they are paired with different $\lambda$-terms)\marginpar{не става ясно: кои са they и кои са различните $\lambda$-термове?}.
+    (they are paired with different $\lambda$-terms)
 
     This example may seem strange to some (why would
     we want $less \sq than$ to know about $within$ and $withinNorth$?
@@ -602,5 +602,6 @@ to the condition in \cref{eq:typeless}
     deal with it: we tag our type with additional information to denote that
     we are looking for something specific, and when we find it we can unwrap the
     type.
-\end{example}
+  \end{example}
+  \marginpar{не става ясно: кои са they и кои са различните $\lambda$-термове?}.
 \end{document}

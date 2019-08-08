@@ -12,7 +12,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 
 \begin{example}
     The subtyping construction is particularly useful for domains like
-    geographical queries - it lets us express relations such as the following:
+    geographical queries --- it lets us express relations such as the following:
     \begin{align*}
         Capital & \less City \less GSet \\
         Name & \less String \\
@@ -46,7 +46,6 @@ One such ordering relation is the \emph{subtype} relation, as presented in
             $x \join y$ (the join of $x$ and $y$).
     \end{itemize}
 \end{defn}
-
 
 \begin{defn}
     A partial lattice $\langle T, \less \rangle$ where
@@ -82,7 +81,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     $h$ uses $g$ somewhere in its body and supplies it with something
     of type $\alpha''$.
 
-    Now, we supply $f$ to $h$ instead of $g$ - this $f$ needs to be able
+    Now, we supply $f$ to $h$ instead of $g$ --- this $f$ needs to be able
     to take anything of type $\alpha''$ and its subtypes as argument.
 
     The only way to make this work is to make arguments contravariant,
@@ -147,7 +146,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     We will prove both directions of (\ref{loc:fdir}) by applying equivalent
     transformations:
 
-    Let $\eta$ be a meet of $\sigma$ and $\tau$.
+    $\eta$ being a meet of $\sigma$ and $\tau$ is defined as:
     \[
         \eta \less \sigma, \eta \less \tau,
             \forall \nu \in \tclos{T} (\nu \less \sigma, \nu \less \tau \implies \nu \less \eta)
@@ -185,7 +184,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
     and $\tau'$ and
     $\eta''$ is a meet of $\sigma''$ and $\tau''$.
 
-    The argument for joins is dual to the one for meets and has been omitted.
+    The argument for joins is dual to the one for meets and is, therefore, omitted for brevity.
 \end{proof}
 
 \begin{prop}
@@ -219,7 +218,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
             $\eta_1 = \eta'_1 \tot \eta''_1 = \eta'_2 \tot \eta''_2 = \eta_2$.
     \end{itemize}
 
-    The argument for joins is dual to the argument for joins and has been
+    The argument for joins is dual to the argument for meets and is again
     omitted.
 \end{proof}
 
@@ -299,8 +298,7 @@ So, for a of type lattice $T$, we will define the set of
                 \hypo{\sigma \less \tau}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
             }
-        \item Construction via downcast (dangerous, doesn't need to be included in most cases)
-            \cenderiv{
+        \item Construction via downcast (dangerous, doesn't need to be included in most cases\marginpar{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma}
                 \hypo{\tau \less \sigma}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
@@ -318,7 +316,7 @@ Now we will show that every well-typed term has a unique type under a fixed cont
     Assume $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
     and prove this by induction over the construction of $M$:
     \begin{itemize}
-        \item The proof for Constant, Variable, Application and Abstraction is identical
+        \item The proof for Constant, Variable, Application, and Abstraction is identical
             to the one for \cref{prop:uniquetypes}
 
         \item $M = \sigma[A]$: this directly means that $\sigma' = \sigma = \sigma''$.
@@ -345,8 +343,8 @@ Essentially, this says that $T$ subsumes, or encompasses, $S$: any type in
 $T$ is either a more concrete variant or a more general variant of some type in $S$.
 
 If $\tau$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
-say that $\tau$ is \emph{special}. Dually, if $\tau$ is such that
-$(\exists \sigma \in S : \tau \less \sigma)$, we will say that $\tau$ is
+call $\tau$ \emph{special}. Dually, if $\tau$ is such that
+$(\exists \sigma \in S : \sigma \less \tau)$, we will call $\tau$ 
 \emph{general}.
 
 If we have $T \tless S$, it would be convenient to be able to convert between them.
@@ -355,7 +353,7 @@ however, involves discarding information.
 
 \begin{example}
     For example, let $S = \{ Int, String \}$, supposing the obvious semantics
-    behind those names. This is a nice type system - however, one might want to
+    behind those names. This is a nice type system --- however, one might want to
     be able to encode extra information within types: this comes especially
     handy in the context of CCGs.
 
@@ -448,7 +446,7 @@ and $\consquash$.
 And now, the main proposition of this section, which tells us that when
 dropping a well-typed $\lambda$-term from an extended type system into
 a basic type system, it remains well-typed and has a useful type.
-In the implementation, this is used for dropping from the user-defined
+In the implementation this is used for dropping from the user-defined
 type system used for CCG parsing into the Minipass type system
 (\cref{sec:termgen}).
 
@@ -462,7 +460,7 @@ type system used for CCG parsing into the Minipass type system
     Let $\Gamma \vdash A : \sigma$. We will now prove the right-hand side
     by induction over the construction of $A$:
     \begin{itemize}
-        \item $A = c \in C$. This means that $\typeof(c) = \sigma$ and thus
+        \item $A = c \in C$. This means that $\typeof{c} = \sigma$ and thus
             $\sigma \in \tclos{S}$ because $C$ is typed in S: therefore
             $\tsquash(\sigma) = \sigma$. Also, we have that $\lsquash(c) = c$,
             and so \[ \Gamma \vdash c : \sigma \implies
@@ -555,14 +553,14 @@ To deal with contravariance, we will differentiate between a ``subtype clone''
 ($\subtyper{clone}$)
 that clones a type into a new one that will be its subtype, and a
 ``supertype clone'', ($\suptyper{clone}$)
-that does the opposite - this way we will be able to
+that dually creates a ``supertype'' clone --- in this way we will be able to
 use the $\suptyper{clone}$ in arguments and $\subtyper{clone}$ in return
 values.
 
 To do this, we will use the mappings $\subtyper{\xi}$ and $\suptyper{\xi}$
 that rename the basic types used in $\tau$ into new type symbols. To clone
 $\tau$, we will recursively replace argument types and return value types
-with their respective clones. One way to deal with contravariance is
+with their respective clones. One way to deal with contravariance is the following:
 
 \newcommand\clonesub{\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
 \newcommand\clonesup{\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
@@ -627,12 +625,12 @@ with their respective clones. One way to deal with contravariance is
                     and $\clonesub(\tau_2) \less \tau_2$, by \cref{def:subtype}
                     we have that:
                     \[ \clonesub(\tau) = \clonesup(\tau_1) \tot \clonesub(\tau_2)
-                    \less \tau_1 \tot \tau_2 = \tau \]
+                    \less \tau_1 \tot \tau_2 = \tau. \]
                 \item Since inductively $\clonesub(\tau_1) \less \tau_1$
                     and $\tau_2 \less \clonesup(\tau_2)$, by \cref{def:subtype}
                     we have that:
                     \[ \tau = \tau_1 \tot \tau_2 \less
-                    \clonesub(\tau_1) \tot \clonesup(\tau_2) = \clonesup(\tau) \]
+                    \clonesub(\tau_1) \tot \clonesup(\tau_2) = \clonesup(\tau). \]
             \end{itemize}
     \end{itemize}
 \end{proof}
@@ -641,14 +639,14 @@ Now we will define an iterative process for adding new types into a type lattice
 by subtyping existing types.
 
 Suppose we have the subtype assertion $\sigma \lass \tau$ with the intent of adding
-a new type ``$\sigma$'' to $T$ such that $\sigma \less \tau$. We can't add $\sigma$
+a new type ``$\sigma$'' to $T$ such that $\sigma \less \tau$. We are unable to add $\sigma$
 to $T$ directly, since this would require subtyping a type with a different syntactic
 structure. So, instead we will construct another type $\varphi(\sigma) \in \tclos{T}$
 whose constituent atomic types we add to $T$.
 
 We will now define the operation $\tadd$ that does exactly that.
 
-Afterwards, when we need to refer to $\tau$, we will use $\varphi(\tau)$.
+Afterwards, when we need to refer to $\tau$, we will use $\varphi(\sigma)$.
 
 Since we want to be able to define several new types one after the other,
 $\tadd$ will need to use the existing mapping $\varphi$ to interpret
@@ -660,7 +658,7 @@ existing manually-constructed types, and extend it with the new type.
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
-        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined
+        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\marginpar{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
     $\ts{\hat{\varphi}(\tau)}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
@@ -715,7 +713,7 @@ existing manually-constructed types, and extend it with the new type.
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
-    Now, check the conditions for $T' \tless T$:
+    Now, we check the conditions for $T' \tless T$:
     \begin{itemize}
         \item $T \subseteq T'$:
 
@@ -731,7 +729,7 @@ existing manually-constructed types, and extend it with the new type.
         \item $\restr{\less'}{S \times S} = \less$:
 
             we only add edges to $\less$ that point to symbols that are not
-            in $T$. Moreover, the transitive and reflexive closures don't
+            in $T$. Moreover, the transitive and reflexive closures do not
             affect this condition because $\less$ is already transitive and
             reflexive.
 
@@ -746,10 +744,10 @@ existing manually-constructed types, and extend it with the new type.
             \begin{itemize}
                 \item $\tau \in range(\subtyper{\xi})$: this means that
                     $\subtyper{\xi}(\sigma) = \tau$ for some $\sigma \in T$, but that
-                    also means that we've set $\tau \less' \sigma$.
+                    also means that we have set $\tau \less' \sigma$.
                 \item $\tau \in range(\suptyper{\xi})$: this means that
                     $\suptyper{\xi}(\sigma) = \tau$ for some $\sigma \in T$, but that
-                    also means that we've set $\sigma \less' \tau$.
+                    also means that we have set $\sigma \less' \tau$.
             \end{itemize}
 
             The exclusive ``or'' is satisfied because
@@ -760,19 +758,19 @@ existing manually-constructed types, and extend it with the new type.
 \begin{lemma}
     \label{lemma:subadd:phi}
     If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
-    is a subtype assertion satisfying the conditions from \cref{def:subadd}
+    is a subtype assertion and $\varphi$ is a function, both of which satisfy the conditions from \cref{def:subadd}
     and $\langle \langle T', \less' \rangle, \varphi' \rangle
     = \langle \langle T, \less \rangle, \varphi \rangle \tadd \theta$, then
-    \[ \varphi'(\sigma) \less' \hat{\varphi}(\tau) \]
+    \[ \varphi'(\sigma) \less' \hat{\varphi}(\tau). \]
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
 
-    We know that $\varphi'(\sigma) = \clonesub(\hat{\varphi}(\tau)$.
+    We know that $\varphi'(\sigma) = \clonesub(\hat{\varphi}(\tau))$.
 
     Moreover,
     $\forall \eta (\subtyper{\xi}(\eta) \less' \eta)$ and
-    $\forall \eta (\eta \less \suptyper{\xi}(\eta))$ by the construction of
+    $\forall \eta (\eta \less' \suptyper{\xi}(\eta))$ by the construction of
     $\less'$.
 
     Then, by \cref{prop:clone:rel} we have that $\varphi'(\sigma) \less'
@@ -791,7 +789,7 @@ existing manually-constructed types, and extend it with the new type.
 
     Also, we can define the function that gives us all the new type names
     asserted by the subtype library as
-    $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta \}$
+    $left(\Theta_T) = \{ \sigma \mid \sigma \lass \tau \in \Theta_T \}$
 \end{defn}
 
 \begin{prop}
@@ -838,10 +836,10 @@ existing manually-constructed types, and extend it with the new type.
             By \cref{lemma:subadd:phi} $\varphi^{(i)}(\sigma) \less^{(i)}
             \hat{\varphi}^{(i - 1)}(\tau)$. Since $\varphi$ is constructed
             incrementally, we also have $\varphi^{(n)}(\sigma) \less^{(n)}
-            \hat{\varphi}^{(n)}(\tau)$
+            \hat{\varphi}^{(n)}(\tau)$.
     \end{itemize}
 \end{proof}
-
+% TT: Reviewed to this point
 \begin{lemma}
     \label{lemma:subadd:squash}
     If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
