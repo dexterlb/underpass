@@ -342,8 +342,8 @@ or more concrete than another type lattice.
 Essentially, this says that $T$ subsumes, or encompasses, $S$: any type in
 $T$ is either a more concrete variant or a more general variant of some type in $S$.
 
-If $\tau$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
-call $\tau$ \emph{special}. Dually, if $\tau$ is such that
+If $\tau\in T$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
+call $\tau$ \emph{special}. Dually, if $\tau\in T$ is such that
 $(\exists \sigma \in S : \sigma \less \tau)$, we will call $\tau$ 
 \emph{general}.
 
@@ -658,7 +658,7 @@ existing manually-constructed types, and extend it with the new type.
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
-        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\marginpar{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
+        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\marginpar{\scriptsize ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
     $\ts{\hat{\varphi}(\tau)}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
@@ -712,7 +712,7 @@ existing manually-constructed types, and extend it with the new type.
     \[ T' \tless T \]
 \end{lemma}
 \begin{proof}
-    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the injections from \cref{def:subadd}.
     Now, we check the conditions for $T' \tless T$:
     \begin{itemize}
         \item $T \subseteq T'$:
@@ -764,7 +764,7 @@ existing manually-constructed types, and extend it with the new type.
     \[ \varphi'(\sigma) \less' \hat{\varphi}(\tau). \]
 \end{lemma}
 \begin{proof}
-    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the injections from \cref{def:subadd}.
 
     We know that $\varphi'(\sigma) = \clonesub(\hat{\varphi}(\tau))$.
 
@@ -781,7 +781,7 @@ existing manually-constructed types, and extend it with the new type.
     A finite sequence of subtype assertions
     $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
     if $\hat{\Theta}_T = \langle \langle T, \less \rangle, \emptyset \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
-    is defined\footnote{
+    is defined\marginpar{\scriptsize тук не става ясно, че освен понятието ``subtype library'' дефинираш също и $\hat{\Theta}_T$} \footnote{
         When trying to redefine a previously defined type, the sequence is not
         a subtype library because of the restriction for $\sigma$
         in \cref{def:subadd}.
@@ -839,10 +839,10 @@ existing manually-constructed types, and extend it with the new type.
             \hat{\varphi}^{(n)}(\tau)$.
     \end{itemize}
 \end{proof}
-% TT: Reviewed to this point
+
 \begin{lemma}
     \label{lemma:subadd:squash}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
+    If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$\marginpar{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}.
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
     there is a unique squash function $\squash_{\theta} : T' \rightarrow T$
@@ -851,7 +851,7 @@ existing manually-constructed types, and extend it with the new type.
     in $T$.
 \end{lemma}
 \begin{proof}
-    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the ones from \cref{def:subadd}.
+    Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the injections from \cref{def:subadd}.
 
     Now, define the squash function $\squash_{\theta}$ as:
     \[
@@ -864,9 +864,9 @@ existing manually-constructed types, and extend it with the new type.
     \]
 
     This is a correctly defined function because $\subtyper{\xi}$ and
-    $\suptyper{\xi}$ are injections.
+    $\suptyper{\xi}$ are injections.\marginpar{\scriptsize и защото range-овете им не се пресичат}
 
-    Now to check the conditions for $\squash_{\theta}$
+    Now let us check the conditions for $\squash_{\theta}$
     being a squash function for $T' \tless T$:
 
     \begin{itemize}
@@ -901,10 +901,11 @@ existing manually-constructed types, and extend it with the new type.
 
                     Since an edge ``$\sigma \less' \tau$''
                     wasn't explicitly added to $\less'$, this means that they
-                    are in relation because of transitivity.
+                    are in relation because of transitivity or reflexivity.
+                    The reflexive case is trivial.
 
                     Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ and $\tau'$ is the only element in $T$
+                    $\sigma \less' \sigma'$ \marginpar{\scriptsize че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
                     such that $\tau' \less' \tau$, we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
@@ -915,15 +916,15 @@ existing manually-constructed types, and extend it with the new type.
     in $T$ for special elements in $T'$:
 
     \begin{itemize}
-        \item for each special $\tau$, $\squash(\tau)$ is a minimal element in $T$ such that
-            $\tau \less' \squash(\tau)$:
+        \item for each special $\tau$, $\squash_\theta(\tau)$ is a minimal element in $T$ such that
+            $\tau \less' \squash_\theta(\tau)$:\marginpar{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
 
             Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
             $\tau \less' \sigma$ for some $\sigma \in T$.
 
             The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
             $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
-            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.
+            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.\marginpar{\scriptsize ако тук не напишеш ``\ldots minimal with this property'', не мисля, че ще е вярно}
         \item the argument for general elements is dual to the one
             for special elements.
     \end{itemize}
@@ -939,7 +940,7 @@ special possible basic type).
     If $\langle T, \less \rangle$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
-    then $T' \tless T$. Even more, there is a unique squash function
+    then $T' \tless T$. Moreover, there is a unique squash function
     $\squash_{\Theta} : T' \rightarrow T$ that maps general elements in $T'$ into
     maximal elements in $T$ and maps special elements in $T'$ into minimal elements
     in $T$.
@@ -955,7 +956,7 @@ special possible basic type).
     \begin{itemize}
         \item for $T_0$, we trivially know that $T \tless T$ with an identity
             squash function $\squash_0(\sigma) = \sigma$.
-        \item for $T_{i + 1}$, inductively we have that $T_i \less_i T$.
+        \item for $T_{i + 1}$, inductively we have that $T_i \less_i T$.\marginpar{\scriptsize тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
             Because $\less_{i + 1}$ is an extension of $\less$, it is also true
             that $T_i \less_{i + 1} T$.
 
@@ -998,6 +999,7 @@ special possible basic type).
     \end{itemize}
 \end{proof}
 
+% TT: reviewed until here
 
 \subsubsection{Type-tagged terms and type propagation}
 \label{sec:propagation}
