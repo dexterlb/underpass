@@ -657,7 +657,7 @@ existing manually-constructed types, and extend it with the new type.
     \begin{itemize}
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
-        \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
+        \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$\marginpar{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
@@ -780,14 +780,12 @@ existing manually-constructed types, and extend it with the new type.
 \begin{defn}
     A finite sequence of subtype assertions
     $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
-    if $\mu = \langle \langle T, \less \rangle, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    if the construction $\hat{\Theta}_T \defeq \langle \langle T, \less \rangle, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
     is defined\fixednote{тук не става ясно, че освен понятието ``subtype library'' дефинираш също и $\hat{\Theta}_T$} \footnote{
         When trying to redefine a previously defined type, the sequence is not
         a subtype library because of the restriction for $\sigma$
         in \cref{def:subadd}.
     }.
-
-    Moreover, $\hat{\Theta}_T \defeq \mu$
 
     Also, we can define the function that gives us all the new type names
     asserted by the subtype library as
@@ -995,8 +993,8 @@ special possible basic type).
 
                 \item The argument for general elements is dual to the one
                     for special elements.
-                \item It preserves $\less$ - this is true because $\squash_{i + 1}$
-                    is a composition of two functions that preserve $\less$
+                \item It preserves $\less$ --- this is true because $\squash_{i + 1}$
+                    is a composition of two functions that preserve $\less$.
             \end{enumerate}
     \end{itemize}
 \end{proof}
@@ -1004,7 +1002,7 @@ special possible basic type).
 % TT: reviewed until here
 
 \subsubsection{Type-tagged terms and type propagation}
-\label{sec:propagation}
+\label{sec:propagation}\marginpar{\scriptsize струва ми се, че този раздел има нужда от мотивиращ пример}
 For the sake of performing optimisations, it is convenient to store extra
 information within types. For example, we can extend our $Num$ type to include
 a tag that says whether the value this type is attached to is a constant. This
@@ -1020,7 +1018,7 @@ versa, and the function $\mcf{propagate}$ that propagates type information
 throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
-process until it no longer produces a different term, and then $\mcf{untag}$ging
+process until\marginpar{\scriptsize възможно ли е този процес да зацикли?} it no longer produces a different term, and then $\mcf{untag}$ging
 back into a regular $\lambda$-term. This process is illustrated in
 \cref{fig:propagation} and is utilised within \cref{sec:typeinf} and
 \cref{sec:optimisation}.
@@ -1031,9 +1029,9 @@ back into a regular $\lambda$-term. This process is illustrated in
         represent typed $\lambda$-terms, while green nodes represent
         type-tagged $\lambda$-terms.}
     \label{fig:propagation}
-}
+}\marginpar{\scriptsize Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
-This construction doesn't need to include casts, since we are storing
+This construction\marginpar{\scriptsize моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
 a type for every subterm anyway, which can replace the use of casts for all
 practical\footnote{
     There is no way to preserve multiple consecutive casts. Note that if the
@@ -1047,7 +1045,7 @@ they can be easily extracted from the types of the respective abstraction terms.
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
-    $\ttlambda{T}{C}$ is defined inductively:
+    The set of type-tagged $\lambda$-terms $\ttlambda{T}{C}$ is defined inductively\marginpar{\scriptsize стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
             \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
@@ -1056,7 +1054,7 @@ they can be easily extracted from the types of the respective abstraction terms.
         \item Application:
             \[ A, B \in \ttlambda{T}{C}, \tau \in \tclos{T} \implies \ttt{(AB)}{\tau} \in \ttlambda{T}{C} \]
         \item Abstraction:
-            \[ v \in \lvars, A \in \ttlambda{T}{C}
+            \[ v \in \lvars, A \in \ttlambda{T}{C},
                 \tau = (\tau' \tot \tau'') \in \tclos{T},
                 \implies \ttt{(\lambda v \abstr A)}{\tau} \in \ttlambda{T}{C} \]
     \end{itemize}
@@ -1083,20 +1081,20 @@ encountering an ``undefined'' case in any of them is treated as a type error.
     \[
         \mcf{tag}_{\Gamma}(A) =
         \begin{cases*}
-            \ttt{c}{\typeof{C}} ,& $A = c \in C$ \\
-            \ttt{v}{\tau} ,& $A = v \in \lvars, \Gamma \vdash v : \tau$ \\
+            \ttt{c}{\typeof{C}} ,& $A = c \in C$, \\
+            \ttt{v}{\tau} ,& $A = v \in \lvars, \Gamma \vdash v : \tau$, \\
             \ttt{(\mcf{tag}_{\Gamma}(M) \app \mcf{tag}_{\Gamma}(N))}{\tau}
- ,& $A = (MN), \Gamma \vdash A : \tau$ \\
+ ,& $A = (MN), \Gamma \vdash A : \tau$, \\
             \ttt{\lambda v \abstr \mcf{tag}_{\Gamma'}(M)}{\sigma \tot \tau}
  ,& $A = (\lambda v: \sigma \abstr M)
                  , \Gamma' \vdash M : \tau
-                 , \Gamma' = \Gamma \circ v : \sigma$\\
-            \ttt{M}{\tau} ,& $A = \tau[M]$ \\
+                 , \Gamma' = \Gamma \circ v : \sigma$,\\
+            \ttt{M}{\tau} ,& $A = \tau[M]$. \\
         \end{cases*}
     \]
 \end{defn}
 
-Although terms returned by $\mcf{tag}_{\Gamma}$ are well-typed (the type of
+Although terms returned by $\mcf{tag}_{\Gamma}$ are well-typed (the unique type of
 each subterm according to $\Gamma$ matches its tag), we want to manipulate
 those terms before untagging them, and such manipulations may induce discrepancies
 between actual types and type tags. Thus, our $\mcf{untag}_{\Gamma}$ function
@@ -1110,42 +1108,42 @@ will take extra care and insert casts where needed:
     \[
         \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
-            c ,& $A = c \in C$ \\
-            v ,& $A = v \in \lvars$ \\
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
             \mcf{untag}_{\Gamma}(P) \app \mcf{untag}_{\Gamma}(Q)
- ,& $A = (PQ)$ \\
+ ,& $A = (PQ)$, \\
             \lambda v : \tau' \abstr \mcf{untag}_{\Gamma'}(P)
  ,& $A = (\lambda v \abstr P), \tau = (\tau' \tot \tau'')
-                 , \Gamma' = \Gamma \circ v : \tau'$ \\
+                 , \Gamma' = \Gamma \circ v : \tau'$. \\
         \end{cases*}
     \]
 
     \[
         \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
-            M ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$ \\
-            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$ \\
+            M ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$, \\
+            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$. \\
         \end{cases*}
     \]
 \end{defn}
 
 Now that we have the construction for attaching types to subterms, we can
-describe a universal way to propagate information through those types.
+describe a universal way to propagate information through those types.\marginpar{\scriptsize няма ли да покажеш, че термовете, които се връщат от $\mcf{untag}$ са коректно типизирани?}
 
 We will use a basic operation $\unify$ that unifies two types.
 
 \begin{defn}
 An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
-called an \emph{unifier} for $T$ if:
+called a \emph{unifier} for $T$ if:\marginpar{\scriptsize защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
 \begin{itemize}
     \item it is only defined for types with identical syntactic structure and
         preserves it
     \item it is symmetric\footnote{
             Everything in this section may also be done for asymmetric unifiers.
-            Since the need for them hasn't yet arisen, symmetricity has been
+            Since the need for them has not yet arisen, symmetricity has been
             assumed for simplicity.
         }
-    \item it is idempotent
+    \item it is idempotent\
 \end{itemize}
 \end{defn}
 
@@ -1158,7 +1156,7 @@ It can also be extended for contexts in the following way:
         \cup &
         \{ (x : \sigma) \mid (x : \sigma) \in (\Gamma' \cup \Gamma''),
             (x : \cdot) \not\in \Gamma',
-            (x : \cdot) \not\in \Gamma'' \} \\
+            (x : \cdot) \not\in \Gamma'' \}. \\
     \end{split}
 \]
 
@@ -1215,7 +1213,9 @@ information down the term tree towards the leaves).
     of $\mcf{up}_{\unify}$ and $\mcf{down}_{\unify}$:
     \[
         \mcf{propagate}_{\unify}(P) = \mcf{down}_{\unify}(\ttt{M}{\tau}, \tau, \Gamma)
-        \text{ , where } \mcf{up}_{\unify}(P) = (\ttt{M}{\tau}, \Gamma)
+        \text{ , where } \mcf{up}_{\unify}(P) = (\ttt{M}{\tau}, \Gamma).
     \]
-\end{defn}
+  \end{defn}
+  \newpage
+  \marginpar{\scriptsize липсва стъпката за манипулиране на терм, може би е добре да дадеш поне един пример за такава функция? тук може би е редно да навържеш всички дефинирани функции в една обща функция, която работидиректно над $\lambda$-термове.}
 \end{document}

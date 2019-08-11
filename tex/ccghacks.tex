@@ -490,7 +490,7 @@ If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely:
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
-if and only if
+if and only if\marginpar{\scriptsize след като сменяш дефиницията на правилата за извод, може би трябва да смениш и дефиницията на $sem_\psi$, ако искаш свойство \cref{ccg:typeconsistent} да остане в сила?}
 \begin{equation}\label{eq:typeless}
     \typeof{Y_2} \less \typeof{Y_1}
 \end{equation}
