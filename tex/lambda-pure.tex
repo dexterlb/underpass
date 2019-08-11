@@ -107,7 +107,7 @@ term.
     \[
         \fv{M} =
         \begin{cases*}
-            \varnothing ,& $M = c \in C$ \\
+            \emptyset ,& $M = c \in C$ \\
             \{ v \} ,& $M = v \in \lvars$ \\
             \fv{A} \cup \fv{B} ,& $M = (AB)$ \\
             \fv{A} \setminus \{ v \} ,& $M = (\lambda v : \sigma \abstr A)$ \\
@@ -166,7 +166,7 @@ we will use derivation rules.
     \end{itemize}
 \end{defn}
 
-Now, we will prove that every well-typed term has a unique type:\marginpar{\scriptsize формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
+Now, we will prove that every well-typed term has a unique type:\discuss{\scriptsize формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
 \begin{prop}
     \label{prop:uniquetypespure}
     \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''
@@ -219,7 +219,7 @@ function (which will work on well-typed closed terms):
     \[
         \typeof{M} =
         \begin{cases*}
-            \sigma, & if $\varnothing \vdash M : \sigma$, \\
+            \sigma, & if $\emptyset \vdash M : \sigma$, \\
             \neg !, & otherwise.
         \end{cases*}
     \]

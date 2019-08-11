@@ -298,7 +298,7 @@ So, for a of type lattice $T$, we will define the set of
                 \hypo{\sigma \less \tau}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
             }
-        \item Construction via downcast (dangerous, doesn't need to be included in most cases\marginpar{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
+        \item Construction via downcast (dangerous, doesn't need to be included in most cases\discuss{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma}
                 \hypo{\tau \less \sigma}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
@@ -570,7 +570,7 @@ with their respective clones. One way to deal with contravariance is the followi
     be a type and $\subtyper{\xi}, \suptyper{\xi}$ be mappings from a
     superset of
     $\ts{\tau}$ into $\tsymbs$ such that
-    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$.
+    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \emptyset$.
 
     $\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ and
     $\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ are defined by
@@ -658,11 +658,11 @@ existing manually-constructed types, and extend it with the new type.
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$
-        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\marginpar{\scriptsize ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
+        \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
     $\ts{\hat{\varphi}(\tau)}$ into $\tsymbs \setminus (T \cup \{ \sigma \})$ such that
-    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \varnothing$\footnote{
+    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \emptyset$\footnote{
         $\suptyper{\xi}$ and $\subtyper{\xi}$ depend on $\tau$, $T$ and
         $\sigma$. If one wants to make their choice constrictive, they may,
         for example, assume that $\tsymbs$ is ordered, take the minimal
@@ -751,7 +751,7 @@ existing manually-constructed types, and extend it with the new type.
             \end{itemize}
 
             The exclusive ``or'' is satisfied because
-            $range(\subtyper{\xi}) \cap range(\suptyper{\xi}) = \varnothing$.
+            $range(\subtyper{\xi}) \cap range(\suptyper{\xi}) = \emptyset$.
     \end{itemize}
 \end{proof}
 
@@ -780,12 +780,14 @@ existing manually-constructed types, and extend it with the new type.
 \begin{defn}
     A finite sequence of subtype assertions
     $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
-    if $\hat{\Theta}_T = \langle \langle T, \less \rangle, \emptyset \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
-    is defined\marginpar{\scriptsize тук не става ясно, че освен понятието ``subtype library'' дефинираш също и $\hat{\Theta}_T$} \footnote{
+    if $\mu = \langle \langle T, \less \rangle, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    is defined\fixednote{тук не става ясно, че освен понятието ``subtype library'' дефинираш също и $\hat{\Theta}_T$} \footnote{
         When trying to redefine a previously defined type, the sequence is not
         a subtype library because of the restriction for $\sigma$
         in \cref{def:subadd}.
     }.
+
+    Moreover, $\hat{\Theta}_T \defeq \mu$
 
     Also, we can define the function that gives us all the new type names
     asserted by the subtype library as
@@ -798,7 +800,7 @@ existing manually-constructed types, and extend it with the new type.
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$
     the following properties hold:
     \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$
+        \item $dom(\varphi) = T \cup left(\Theta)$
         \item $\sigma \less \tau \implies \sigma \less' \tau$
         \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
     \end{itemize}
@@ -806,27 +808,28 @@ existing manually-constructed types, and extend it with the new type.
 \begin{proof}
     We will check all conditions one by one:
     \begin{itemize}
-        \item $\varphi : left(\Theta) \rightarrow \tclos{T'}$:
+        \item $dom(\varphi) = T \cup left(\Theta)$:
 
+            Initially, $dom(\varphi) = \identity_T$.
             For every $\sigma \lass \tau \in \Theta$, we have added
             $(\sigma, \rho)$ to $\varphi$ for some $\rho$ in $\tclos{T'}$.
 
-        \item $\sigma \less \tau \implies \sigma \less' \tau$
+        \item $\sigma \less \tau \implies \sigma \less' \tau$:
 
             This is true because
             at each step we only add elements to the relation.
-        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$:
 
             Let $\sigma \lass \tau = \theta_i$.
 
             We have that
             $\langle \langle T', \less' \rangle, \varphi \rangle
-                = \langle \langle T, \less \rangle, \varnothing \rangle
+                = \langle \langle T, \less \rangle, \identity_T \rangle
                 \tadd \theta_1 \tadd ... \tadd \theta_i \tadd ... \tadd \theta_n$
 
             Let
             $\langle \langle T^{(i)}, \less^{(i)} \rangle, \varphi^{(i)} \rangle
-                = \langle \langle T, \less \rangle, \varnothing \rangle
+                = \langle \langle T, \less \rangle, \identity_T \rangle
                 \tadd \theta_1 \tadd ... \tadd \theta_i$ \quad ($T' = T^{(n)},
                 \less' = \less^{(n)}$).
 
@@ -842,7 +845,7 @@ existing manually-constructed types, and extend it with the new type.
 
 \begin{lemma}
     \label{lemma:subadd:squash}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$\marginpar{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}.
+    If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
     there is a unique squash function $\squash_{\theta} : T' \rightarrow T$
@@ -864,7 +867,7 @@ existing manually-constructed types, and extend it with the new type.
     \]
 
     This is a correctly defined function because $\subtyper{\xi}$ and
-    $\suptyper{\xi}$ are injections.\marginpar{\scriptsize и защото range-овете им не се пресичат}
+    $\suptyper{\xi}$ are injections with non-overlapping ranges.\fixednote{\scriptsize и защото range-овете им не се пресичат}
 
     Now let us check the conditions for $\squash_{\theta}$
     being a squash function for $T' \tless T$:
@@ -917,14 +920,15 @@ existing manually-constructed types, and extend it with the new type.
 
     \begin{itemize}
         \item for each special $\tau$, $\squash_\theta(\tau)$ is a minimal element in $T$ such that
-            $\tau \less' \squash_\theta(\tau)$:\marginpar{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
+            $\tau \less' \squash_\theta(\tau)$:\fixednote{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
 
             Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
             $\tau \less' \sigma$ for some $\sigma \in T$.
 
             The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
             $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
-            in $T$ such that $\tau \less' \sigma$, therefore it is minimal.\marginpar{\scriptsize ако тук не напишеш ``\ldots minimal with this property'', не мисля, че ще е вярно}
+            in $T$ such that $\tau \less' \sigma$, therefore it is minimal
+            with this property.\fixednote{\scriptsize ако тук не напишеш ``\ldots minimal with this property'', не мисля, че ще е вярно}
         \item the argument for general elements is dual to the one
             for special elements.
     \end{itemize}
@@ -956,13 +960,11 @@ special possible basic type).
     \begin{itemize}
         \item for $T_0$, we trivially know that $T \tless T$ with an identity
             squash function $\squash_0(\sigma) = \sigma$.
-        \item for $T_{i + 1}$, inductively we have that $T_i \less_i T$.\marginpar{\scriptsize тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
-            Because $\less_{i + 1}$ is an extension of $\less$, it is also true
-            that $T_i \less_{i + 1} T$.
+        \item for $T_{i + 1}$, inductively we have that $T_i \tless T$.\fixednote{\scriptsize тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
 
-            Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \less_{i + 1} T_i$.
+            Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
             Now, by the transitivity\footnote{Which can be trivially
-            proven} of $\less$, we have that $T_{i + 1} \less T$.
+            proven} of $\tless$, we have that $T \tless T_{i + 1}$.
 
             Moreover, since there is inductively a squash function
             $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd:squash})

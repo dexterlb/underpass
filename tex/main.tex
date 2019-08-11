@@ -61,6 +61,10 @@
 \newcommand\code[1]{\mbox{\texttt{#1}}}
 \newcommand\cendrow{\vspace{0.4em} \\}
 
+\newcommand\note[1]{\marginpar{\scriptsize{ #1 }}}
+\newcommand\fixednote[1]{\note{\sout{ #1 }}}
+\newcommand\discuss[1]{\note{ #1 \textcolor{red}{discuss}}}
+
 \usepackage{color}
 \definecolor{Bluish}{rgb}{0.39,0.55,0.78}
 \definecolor{exampleness}{HTML}{ebf9d6}
@@ -87,6 +91,7 @@
 \newcommand\termdefsep{\hspace{0.5em} @ \hspace{0.5em}}
 
 \newcommand\mname[1]{\mathrm{#1}}
+\newcommand\identity{\mname{id}}
 
 \newcommand\gramshort[1]{
     \begin{alignat*}{2}
