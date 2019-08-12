@@ -1,6 +1,8 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
+\marginpar{\scriptsize Добре е тук да се направи кратко въведение в трета глава}
+
 \subsection{Architecture}
 The system consists of several parts:
 
@@ -18,13 +20,13 @@ The system consists of several parts:
           CCGs that output lambda terms)
 
     \item CCG Rule Matcher: a module that tags tokens from the input stream
-          with Categories based on the CCG rules (defined in the CCG definition
+          with categories based on the CCG rules (defined in the CCG definition
           language)
 
     \item CCG Parser: a simple proof-of-concept parser based on the CYK
           algorithm
 
-    \item English Lexer: a tokeniser, POS-tagger and lemmatiser for English
+    \item English Lexer: a tokeniser, POS-tagger, and lemmatiser for English
           (largely consists of external components)
 
     \item The Minipass language: a small, lambda calculus-based language
@@ -37,14 +39,14 @@ The system consists of several parts:
 
 An architecture overview can be seen at \cref{fig:arch}.
 
-It is implemented in Haskell, and apart from the query engine contains
+It is implemented in Haskell, and in addition to the query engine contains also
 a demonstration web interface through which the user can enter a text query,
 see the resulting Overpass query, inspect the intermediate steps (derivation
 tree, minipass term before and after reduction) and finally view the results
 on a map via Overpass Turbo (a public web interface for visualising queries
 \cite{overpassturbo}).
 
-An "\emph{expert}" can write grammar definitions that specify rules for matching
+An ``\emph{expert}'' can write grammar definitions that specify rules for matching
 tokens and attaching categories and Minipass terms to them. This is done in
 \code{.ccg} files, which can then be loaded at runtime and used for parsing the
 input queries.
@@ -53,6 +55,6 @@ A sample grammar definition is provided, which can parse several sentence
 constructions.
 
 The pipeline can be easily modified to use a natural language other than
-English, since the only language-dependant components are the tokeniser and
-the grammar definition, which are straight-forward to replace.
+English, since the only language-dependent components are the tokeniser and
+the grammar definition, which are straightforward to replace.
 \end{document}
