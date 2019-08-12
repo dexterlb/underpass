@@ -586,12 +586,12 @@ to the condition in \cref{eq:typeless}
     \[ and \app germanCity \app (withinNorth \app twentykm \app cologne) \]
 
     Without subtyping, it would be difficult to discern the two categories
-    NorthCheck and DistCheck without resorting to things like passing a
+    $NorthCheck$ and $DistCheck$ without resorting to things like passing a
     dummy argument whose type encodes whether we are in one of the cases or in the other.
     Note that this cannot be done by simply using a type variable in the place
     of $DistCheck$ and $NorthCheck$ because of the different semantics
     (the categories $DistCheck$ and $NorthCheck$
-    combine with different contexts)
+    combine with different contexts).
 
     This example may seem strange to some (why would
     we want $less \sq than$ to know about $within$ and $withinNorth$?
@@ -603,5 +603,5 @@ to the condition in \cref{eq:typeless}
     we are looking for something specific, and when we find it we can unwrap the
     type.
   \end{example}
-  \fixednote{не става ясно: кои са they и кои са различните $\lambda$-термове?}.
+  \fixednote{не става ясно: кои са they и кои са различните $\lambda$-термове?}
 \end{document}

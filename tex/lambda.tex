@@ -858,9 +858,9 @@ existing manually-constructed types, and extend it with the new type.
     \[
         \squash_{\theta}(\tau) \defeq
         \begin{cases*}
-            \tau ,& $\tau \in T$ \\
-            \sigma ,& $\tau = \subtyper{\xi}(\sigma)$ \\
-            \sigma ,& $\tau = \subtyper{\xi}(\sigma)$ \\
+            \tau ,& $\tau \in T$, \\
+            \sigma ,& $\tau = \subtyper{\xi}(\sigma)$, \\
+            \sigma ,& $\tau = \suptyper{\xi}(\sigma)$. \\
         \end{cases*}
     \]
 
@@ -918,7 +918,7 @@ existing manually-constructed types, and extend it with the new type.
 
     \begin{itemize}
         \item for each special $\tau$, $\squash_\theta(\tau)$ is a minimal element in $T$ such that
-            $\tau \less' \squash_\theta(\tau)$:\fixednote{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
+            $\tau \less' \squash_\theta(\tau)$:\discuss{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
 
             Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
             $\tau \less' \sigma$ for some $\sigma \in T$.
