@@ -22,7 +22,7 @@ to a type-tagged term for easier manipulation and is then subjected to type
 inference. Afterwards, the expert-defined type information is discarded
 by squashing the extra types (see \cref{prop:makesquashfun}), which gives
 a regular Minipass type-tagged term, and then setting the type system to
-the Intermediate type system. This operation doesn't change the term, since
+the Intermediate type system. This operation does not change the term, since
 bare Minipass types are also types within the Intermediate type system.
 Then, several optimisations (some of which take advantage of the extra type
 information) are performed, and the term is finally translated to Overpass.
@@ -30,7 +30,7 @@ An illustration of this process is shown at \cref{fig:typesystems}.
 
 \cfigure{
     \includegraphics[width=\textwidth]{optimisation.eps}
-    \caption{Illustration of the transformations a Minipass term undergoes}
+    \caption{Illustration of the transformations undergone by a Minipass term}
     \label{fig:typesystems}
 }
 
@@ -42,7 +42,7 @@ equivalent to all types (i.e. $\forall \sigma \in T: (\text{\code{*}} \less \sig
 \& (\sigma \less \text{\code{*}})$).
 
 Thus, all significant\footnote{
-    Since we only work with closed terms, the only case when a type can't be
+    Since we only work with closed terms, the only case when a type cannot be
     inferred is when a bound variable is unused (for example in terms like
     \code{(\textbackslash x, y => y) 42}, where the type of \code{x} cannot be inferred).
     This, however, is harmless, because the type is unneeded anyway.
@@ -52,12 +52,12 @@ with the following unifier:
 \[
     \sigma \unify \tau =
     \begin{cases*}
-        \tau ,& $\sigma = \text{\code{*}}$ \\
-        \sigma ,& $\tau = \text{\code{*}}$ \\
-        \sigma ,& $\sigma = \tau$ \\
-        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau'') ,&
-            $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$ \\
-        \lnot ! ,& $\mathsf{otherwise}$ \\
+        \tau ,& $\sigma = \text{\code{*}}$, \\
+        \sigma ,& $\tau = \text{\code{*}}$, \\
+        \sigma ,& $\sigma = \tau$, \\
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau''), &
+            $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$, \\
+        \lnot ! ,& $\mathsf{otherwise}$. \\
     \end{cases*}
 \]
 
@@ -66,7 +66,7 @@ a type error is produced.
 
 Since this unifier can only change a subtype from \code{*} to something else,
 and there are a finite number of subtypes within a term, this algorithm
-always terminates.
+always terminates.\marginpar{\scriptsize ако говориш за propagate, е хубаво да се докаже по-формално}
 
 \subsubsection{Minipass query optimisation}
 \label{sec:optimisation}
@@ -89,7 +89,7 @@ query\footnote{
 The returned set, among any other objects, contains:
 \begin{itemize}
     \item the city Brussels (a \emph{node})
-    \item the administrative area of the city Brussels (a \emph{area})
+    \item the administrative area of the city Brussels (an \emph{area})
     \item the Brussels boulevard in Sofia (a \emph{way})
 \end{itemize}
 Since Overpass contains separate keywords for querying different objects,
@@ -161,7 +161,7 @@ of $\{ n, w, r, a \}$) to each $GSet$ type.
     \label{fig:lattice}
 }
 
-During the optimisation phase, several rules are applied to each subterm\footnote{
+During the optimisation phase, several rules are applied to each subterm, some of which are displayed in the table below:\footnote{
     In this table, ``the type of something'' means its type tag.
 }:
 \begin{center}
@@ -198,18 +198,18 @@ After applying these rules, types are propagated through the term
 \[
     \sigma \unify \tau \defeq
     \begin{cases*}
-        GSet[X \cap Y] ,& $\sigma = GSet[X], \tau = GSet[Y]$ \\
-        Num ,& $\sigma = Num, \tau = Num$ \\
-        String ,& $\sigma = String, \tau = String$ \\
-        List ,& $\sigma = List, \tau = List$ \\
-        \text{type error} ,& otherwise \\
+        GSet[X \cap Y] ,& $\sigma = GSet[X], \tau = GSet[Y]$, \\
+        Num ,& $\sigma = Num, \tau = Num$, \\
+        String ,& $\sigma = String, \tau = String$, \\
+        List ,& $\sigma = List, \tau = List$, \\
+        \text{type error} ,& otherwise. \\
     \end{cases*}
 \]
 
 These two steps are then repeated until they no longer produce a new term\footnote{
     This terminates because all rules produce a "lesser term" by some criterion:
     be it less items in the type tag or ``everything'' instead of ``something'', etc.
-}, which is now ready for the translation phase.
+}\marginpar{\scriptsize това е второто такова разсъждение. Може би имаш нужда от някаква лема от вида: ако унификаторът е еди какъв си, то неподвижната точка на propagate изисква краен брой стъпки}, which is now ready for the translation phase.
 
 \greenbox{
     While there are many other possible optimisations which can be done here,
@@ -252,7 +252,7 @@ Here is an outline of the basic translation process:
     \item Recursively evaluate (translate) all arguments
         (since there are no constants of higher-order
         type and the term has been fully $\beta$-reduced, the head
-        is always a constant and the arguments are of non-arrow types)
+        is always a constant and the arguments are of non-arrow types\marginpar{\scriptsize защо аргументите не може да са стрелки?})
     \item Perform pattern matching of the argument list against a set of
         translation rules. Modify state and return value according to matched
         rule (or throw translation error).
@@ -407,7 +407,7 @@ to cover most of Overpass. An overview of features is presented in
             \hline
         \end{tabular}
     \end{center}
-    \caption{Some Overpass features and their support by the translator}
+    \caption{Some Overpass features and their corresponding level of support by the translator}
     \label{table:overpassfeatures}
 \end{table}
 \end{samepage}
