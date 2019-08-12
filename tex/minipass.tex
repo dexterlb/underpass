@@ -3,42 +3,42 @@
 
 \subsection{The Intermediate Language (Minipass)}
 \label{sec:minipass}
-Overpass is a relatively complex language with assignment, sequentiality
-and specialised syntax. As such, it is not well-suited for performing
+Overpass is a relatively complex language with assignment, sequentiality,
+and specialised syntax. Because of this it is not well-suited for performing
 AST transformations.
 
 Minipass addresses this problem: its goal is to be easy to manipulate
 and reason about, and be translatable to Overpass. It is based on the typed
 lambda calculus variant described in \cref{sec:lambda} and speaks about a
-world much simpler than the one described by Overpass - a directed graph
+world much simpler than the one described by Overpass --- a directed graph
 with labelled edges and vertices.
 
 The graph abstraction works as follows:
 \begin{itemize}
     \item Overpass objects (nodes, ways, relations, areas) are regarded as
         vertices
-    \item Object tags are encoded into vertex labels - for example, we
-        may have a label for "named London" or "is a cafe".
+    \item Object tags are encoded into vertex labels: for example, we
+        may have a label for ``named London'' or ``is a cafe''.
     \item Edges labels represent relations between objects: for example,
-        we may have an edge that means "nearby" or an edge "on the same
-        transport route"
+        we may have an edge that means ``nearby'' or an edge ``on the same
+        transport route''
 \end{itemize}
 
 \begin{example}
-    To model a query like "\code{bus stops near schools in Russia}"
+    To model a query like \code{"bus stops near schools in Russia"}
     using the graph abstraction, we could think like this:
     \begin{itemize}
         \item Let $B$ be the set of all vertices whose label unifies with
-            "\code{is a bus stop}"
+            \code{"is a bus stop"}.
         \item Let $S$ be the set of all vertices whose label unifies with
-            "\code{is a school}"
+            \code{"is a school"}.
         \item Let $R$ be the set of all vertices whose label unifies with
-            "\code{is called Russia}"
+            ``\code{is called Russia"}.
         \item Let $N$ be the set of all vertices we can reach from $S$
-            by traversing an edge whose label unifies with "\code{near to}"
+            by traversing an edge whose label unifies with \code{"near to"}.
         \item Let $P$ be the set of all vertices we can reach from $R$
-            by traversing an edge whose label unifies with "\code{is inside of}"
-        \item Our result is $B \cup N \cup P$
+            by traversing an edge whose label unifies with \code{"is inside of"}.
+        \item Our result is $B \cap N \cap P$.
     \end{itemize}
 \end{example}
 
@@ -55,6 +55,7 @@ Here is a BNF grammar for the intermediate language.
            \alt <type-definition>
 
     <import-statement> ::= `import' <filepath>
+
     <term-definition>  ::= <identifier> `:=' <term>
 
     <type-definition>  ::= <identifier> `<' <type>
@@ -90,17 +91,21 @@ Here is a BNF grammar for the intermediate language.
     <filepath> ::= <double-quoted-string>
 \end{grammar}
 
-The definitions for \syntax{<single-quoted-string>},
+\marginpar{\tiny Не е ли по-добре \code{<simple-type>}
+
+  \code{<arrow> <type>}}
+
+  The definitions for \syntax{<single-quoted-string>},
 \syntax{<double-quoted-string>}
 and \syntax{<number-literal>}
 have been omitted: the first two are plain quoted strings with backslash escaping,
 while the third is a standard floating point number.
 
-Note that Minipass is characterised by its predefined constants and basic
+Note that Minipass is characterised by its predefined constants and basic\marginpar{\scriptsize по-долу използваш base, избери си едното}
 types. Because of the modular architecture of the implementation, they can be
 replaced by something else, allowing to target a different intermediate language.
 
-Applications are left-associative while types are right-associative. Comments
+Applications are left-associative while types are right-associative. Single-line comments
 can be entered by using the \code{--} syntax (everything on the same line after
 the two dashes is ignored by the parser.
 
@@ -117,10 +122,10 @@ The base types are:
     \begin{tabular}{r p{0.7\textwidth}}
         \code{Num} & represents a floating point number. \cendrow
         \code{String} & represents a string of unicode characters. \cendrow
-        \code{List} & represents a linked list of \code{Num}s, \code{String}s and
+        \code{List} & represents a polymorphic linked list that may contain \code{Num}s, \code{String}s, and
             nested \code{List}s. \cendrow
         \code{GSet} & refers to a set of geographical objects. It is not represented
-            internally in any way: the only way to touch \code{GSet} objects is
+            internally in any way: the only way to manipulate \code{GSet} objects is
             via builtin operations that work on \code{GSet}s. \cendrow
     \end{tabular}
 \end{center}
@@ -130,7 +135,7 @@ acts as a wildcard. Typeless declarations are assumed to bear the wildcard type,
 which is removed from all terms by performing type inference (see \cref{sec:typeinf})
 before translation.
 
-The builtin identifiers (which act as constants in $\lambda$-terms) are the
+The builtin identifiers (which act as $\lambda$-constants) are the
 following:
 \begin{center}
     \begin{tabular}{r l p{0.5\textwidth}}
@@ -155,19 +160,19 @@ following:
     \end{tabular}
 \end{center}
 
-Should the need arise, the addition of extra operations (for example arithmetic)
+Should the need arise, the addition of extra operations (for example arithmetical)
 is trivial.
 
 \subsubsection{Composing terms}
-The syntax for composing terms is analogous to $\lambda$-calculus syntax
+The syntax for composing terms is analogous to the $\lambda$-calculus syntax
 (\cref{sec:lambda}).
 The valid term constructions are the following:
 \begin{itemize}
-    \item Constant: number literal, string literal or builtin identifier
+    \item Constant: number literal, string literal, or builtin identifier
     \item Variable: any identifier that is not a builtin
     \item Application: term application is represented by listing terms
         separated by whitespace. It is by default left-associative and
-        application order may be influenced by using round braces.
+        application order may be adjusted by using round braces.
     \item Abstraction:
         \begin{center}
             \syntax{\code{\textbackslash}<variable>\code{:}<type>\code{ => }<term>.} \\
@@ -176,7 +181,7 @@ The valid term constructions are the following:
         \end{center}
     \item Construction:
         \begin{center}
-            \syntax{<type>\code{[}<term>\code{]}}
+            \syntax{<type>\code{[}<term>\code{]}.}
         \end{center}
 \end{itemize}
 
@@ -188,8 +193,8 @@ to think about labels is as \emph{queries} that retrieve data (either new
 data in the case of vertex labels, or relational data in the case of edge
 labels).
 
-Although for the sake of simplicity the implemented parser doesn't support
-a list literal shorthand, for the sake of examples we will adopt the syntax
+For the sake of simplicity the implemented parser does not support
+a list literal shorthand, but for the following examples we will adopt a list syntax
 such that
 \begin{lstwrap}\begin{lstlisting}
     [[42, 'bar'], 'foo']
@@ -201,7 +206,7 @@ means
         (consString 'foo' empty)
 \end{lstlisting}\end{lstwrap}
 
-Here are the two edge label templates that are currently implemented in the
+Below are the two edge label templates that are currently implemented in the
 translator:
 
 \begin{center}
@@ -249,8 +254,8 @@ and
     \end{lstlisting}\end{lstwrap}
 \end{example}
 
-Since Minipass queries can get too long for humans to read/write very quickly,
-a mechanism for modularisation has been implemented: Just like in most
+Since Minipass queries can get too long and cumbersome for humans,
+a mechanism for modularisation has been implemented. Similarly to most
 programming languages, the expert can define
 named terms and types that can later be composed into other terms and types.
 
@@ -261,7 +266,7 @@ New types are defined by subtyping an existing type via a "type definition"
     \code{NewType < OldType.}
 \end{center}
 where \code{NewType} is not a supertype of \code{OldType} and has not been
-already defined.
+already defined.\marginpar{\scriptsize необходимо ли е да казваме, че ``\code{NewType} is not a supertype of \code{OldType}'' след като казваме, че ``has not been already defined?''}
 
 The subtyping semantics
 are the same as the ones described in \cref{sec:lambda}: all subtype assertions
@@ -270,13 +275,13 @@ make up a subtype library, which is checked for validity and used for resolving
 the types contained in all terms.
 
 \subsubsection{Defining terms}
-New terms are defined by using the "term definition" syntax:
+New terms are defined by using the ``term definition'' syntax:
 \begin{center}
     \code{term_name := some term.}
 \end{center}
 
 Named terms are resolved after parsing by performing free variable substitution
-in the source code and are bundled in a "term library". The resolver also
+in the source code and are bundled in a ``term library''. The resolver also
 handles possible type errors and loops.
 
 Note that this language is not Turing complete (not even primitively recursive)
@@ -284,7 +289,7 @@ since recursion is not handled\footnote{
     Actually, recursion is easy to implement (and was implemented at some point)
     by adding a recursion combinator
     and resolving term definition loops to constructions that use that combinator.
-    However, so far I haven't found any use for recursion in such a language
+    However, so far the author has not found any use for recursion in such a language
     apart from abuse.
 }.
 
@@ -368,8 +373,8 @@ and (amenity 'school') (in (name 'Bristol'))
     \end{lstlisting}\end{lstwrap}
 \end{example}
 
-When regarding a standalone minipass program, the term \code{main} is used
-as a query.
+When regarding a standalone Minipass program, the term \code{main} is used
+as the query.
 
 \end{document}
 
