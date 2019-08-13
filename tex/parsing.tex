@@ -20,8 +20,8 @@ The process can be broken down into 3 stages:
 \end{itemize}
 
 \subsubsection{Tokenisation}\label{sec:tokenisation}
-Tokens are represented as sets of key-value pairs\footnote{there is no
-    restriction on the uniqueness of keys}. Currently, there is one
+Tokens are represented as sets of key-value pairs\footnote{There is no
+    restriction on the uniqueness of keys.}. Currently, there is one
 implemented tokeniser wrapper, which will be described in this section. Other
 tokenisers (for different natural languages, for example) may easily be added
 due to the project's modular architecture.
@@ -39,11 +39,11 @@ the POS tag is included under key \code{pos}.
 After POS tagging, tokens are subjected to lemmatisation. This is done using
 WordNet's \code{morph} library \cite{wordnet}. Since at the time of writing
 this thesis available Haskell bindings to WordNet either included no \code{morph}
-support or couldn't run with the most recent version of GHC, a small binding
+support or could not run with the most recent version of GHC, a small binding
 library which wraps the C interface provided with WordNet was written. The
 \code{morph} lemmatiser is given a token and its POS tag and returns the lemma
-for this token. The lemma (if exists\footnote{Tokens like punctuation items have
-    no lemmas}) is then included under key \code{lemma} in the token object.
+for this token. The lemma (if it exists\footnote{Tokens like punctuation items have
+    no lemmas.}) is then included under key \code{lemma} in the token object.
 
 The tokeniser also emits special tokens for ``begin of sentence'' and ``end of
 sentence''. These are included as special \code{mark=begin} and \code{mark=end}
@@ -89,13 +89,13 @@ The maximum composition arity $n$ in the implementation is set to $1$ since no n
 for more arguments has arisen. If the grammar demands a higher arity, this
 is easily remedied.
 
-The straight-forward recursive implementation of the algorithm relies on a
+The straightforward recursive implementation of the algorithm relies on a
 memoiser in order to avoid recomputing shared items. Memoisation is used in
 several places throughout the code, and two generic memoisers have been
 implemented:
 \begin{itemize}
     \item A lazy memoiser, based on an infinite bit trie which stores the return
-        value for each possible argument. Only a the already accessed paths are
+        value for each possible argument. Only the already accessed paths are
         stored in memory at a given moment, while the rest of the possible
         subtrees are represented by Haskell thunks, which are computed on
         demand.
@@ -115,12 +115,12 @@ them\footnote{This comes for free because of Haskell's immutability mechanism:
 
 \subsubsection{Parse forests and generating terms}\label{sec:termgen}
 Since there are potentially an exponential number of derivation trees for a
-single query, many of them sharing an identical trunk due to the way
+single query, many of them share an identical trunk due to the way
 the categorial CYK algorithm works. Thus, it is beneficial to encode the resulting
 parse forest in such a way as to share the common trunks between trees, and
 also be able to avoid enumerating all of them when performing simple manipulations.
 
-This is a simplified definition of the \code{ParseTree} and \code{ParseForest}
+The listing below is a simplified definition of the \code{ParseTree} and \code{ParseForest}
 datatypes used in the implementation. Here, \code{cat} is a category,
 \code{payload} is a payload attached to the matched token (a $\lambda$-term and
 metadata about the token itself), and \code{(CombineRule cat)} is a rule\footnote{
@@ -129,14 +129,14 @@ metadata about the token itself), and \code{(CombineRule cat)} is a rule\footnot
 } by which this derivation was produced (used for debugging and visualisation):
 \begin{lstwrap}\begin{lstlisting}
     data ParseTree cat payload where
-        Leaf cat payload
+        Leaf cat payload |
         Vert cat (CombineRule cat) (ParseTree cat payload) (ParseTree cat payload)
 
     data ParseForest cat payload
         = ParseForest cat [MultiNode cat payload]
 
     data MultiNode cat payload where
-        MultiLeaf payload           (MultiNode cat payload)
+        MultiLeaf payload           (MultiNode cat payload) |
         MultiVert (CombineRule cat) (ParseForest cat payload) (ParseForest cat payload)
 \end{lstlisting}\end{lstwrap}
 
