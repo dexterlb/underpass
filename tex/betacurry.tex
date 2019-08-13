@@ -3,7 +3,7 @@
 \section{$\beta$-reduction and (un)currying}
 \label{betacurry}
 
-\subsubsection{$\beta$-reduction}
+\subsection{$\beta$-reduction}
 This section briefly explains the concept of $\beta$-reduction. For more details,
 see \cite{pierce}.
 
@@ -47,16 +47,16 @@ The relation $\bbetared$ $\beta$-reduces any subterm:
 
 \begin{defn}
     A term $M \in \plambda{T}{C}$ is called \emph{fully $\beta$-reduced} if:
-    \[ \forall N \in \plambda{T}{C} (\neg (M \betared N)) \]
+    \[ \forall N \in \plambda{T}{C} (\neg (M \bbetared N)) \]
 \end{defn}
 
-\subsubsection{Uncurrying}
+\subsection{Uncurrying}
 We can represent every $\lambda$-term as a function (\emph{head}) applied
-to a sequence of arguments:
+to a sequence of arguments:\marginpar{\scriptsize съгласно тази дефиниция аргументите може да са от тип със стрелки, противно на това, което е казано в \cref{sec:translation}}
 \begin{itemize}
-    \item if the given term $M$ is not an application, its head is $M$ itself
+    \item If the given term $M$ is not an application, its head is $M$ itself
         with no arguments.
-    \item if the given term is $M = (AB)$, its head is the head of $A$ and its
+    \item If the given term is $M = (AB)$, its head is the head of $A$ and its
         arguments are $B$ appended to the arguments of $A$.
 \end{itemize}
 
