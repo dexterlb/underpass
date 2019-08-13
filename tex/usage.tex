@@ -5,18 +5,18 @@
 
 The project's source code has the following directory structure:
 \begin{itemize}
-    \item \code{ccg} - CCGs and CCG parsing
-    \item \code{lambda-calculus} - $\lambda$-terms, type systems and type-tagging
-    \item \code{utils} - Various utilities
-    \item \code{thething} - Project entry point (CLI interface)
+    \item \code{ccg} --- CCGs and CCG parsing
+    \item \code{lambda-calculus} --- $\lambda$-terms, type systems, and type-tagging
+    \item \code{utils} --- Various utilities
+    \item \code{thething} --- Project entry point (CLI interface)
     \item \code{examples}
         \begin{itemize}
-            \item \code{library.ccg} - A library of useful Minipass terms
+            \item \code{library.ccg} --- A library of useful Minipass terms
                 (see \cref{stdlib})
-            \item \code{amenities.ccg} - CCG matching rules for the 170 most
+            \item \code{amenities.ccg} --- CCG matching rules for the 170 most
                 frequently used OpenStreetMap amenities
-            \item \code{sample_minipass.ccg} - a sample Minipass term
-            \item \code{sample_grammar.ccg} - a sample CCG which can parse several
+            \item \code{sample_minipass.ccg} --- a sample Minipass term
+            \item \code{sample_grammar.ccg} --- a sample CCG which can parse several
                 types of sentences in English
         \end{itemize}
 \end{itemize}
@@ -24,15 +24,15 @@ The project's source code has the following directory structure:
 \subsection{Running}
 The CLI can run in 3 modes:
 \begin{itemize}
-    \item \emph{summary mode} - given an input query, generate at most five
+    \item \emph{summary mode} --- given an input query, generate at most five
         distinct Minipass terms and display them in the terminal along with
         the respective Overpass translations
-    \item \emph{\latex mode} - given an input query, generate a \code{PDF}
+    \item \emph{\latex mode} --- given an input query, generate a \code{PDF}
         file with at most 10 parses, visualisations of their derivation trees,
         respective Minipass terms and Overpass translations
-    \item \emph{web interface mode} - start a local web server, which provides
+    \item \emph{web interface mode} --- start a local web server, which provides
         an user interface for entering queries, inspecting the results including
-        derivation trees, type hierarchies and token data, and visualising
+        derivation trees, type hierarchies, and token data, and visualising
         Overpass results on a map via Overpass Turbo\footnote{
             Overpass Turbo is a publicly-available Overpass frontend \cite{overpassturbo}
         }.
@@ -72,7 +72,7 @@ Other modes can be used as follows:
 }
 
 \subsection{Sample results}
-This is the content of \code{examples/sample_grammar.ccg}:
+These are the contents of \code{examples/sample_grammar.ccg}:
 \begin{lstwrap}\begin{lstlisting}
 import "library.ccg".
 import "amenities.ccg".
