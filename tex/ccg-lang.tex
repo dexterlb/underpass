@@ -65,7 +65,7 @@ remain. What the CCG definition language adds is the ability to match natural
 language tokens and assign categories and terms to them, and the ability to
 select a starting category.
 
-The starting category is is specified with the following statement:
+The starting category is specified with the following statement:
 \begin{center}
     \code{begin SomeCategory.}
 \end{center}
@@ -75,7 +75,7 @@ There can be only one \code{begin} statement in the entire program.
 Tokens (words) in the natural language input are emitted by the
 tokeniser as sets of
 key-value data (for example, the token \code{cities} may be represented as
-\code{raw=cities,pos=nnp,lemma=city} - for a more detailed explanation
+\code{raw=cities,pos=nnp,lemma=city} --- for a more detailed explanation
 see \cref{sec:tokenisation}). The CCG definition language allows us to define
 \emph{matchers} that can either match a token or not match a token.
 
@@ -141,7 +141,7 @@ Categories are constructed as follows:
 \end{itemize}
 
 \begin{example}
-Here is a grammar defined using the CCG definition language\footnote{
+Below is a sample grammar defined using the CCG definition language\footnote{
     Here \code{"library.ccg"} is assumed to contain the code from \cref{stdlib}
 }:
 \begin{lstwrap}\begin{lstlisting}
@@ -153,7 +153,7 @@ import "library.ccg"
 begin GSet.
 
 -- Here Mult is used to handle lists like
--- "schools, churches and hospitals"
+-- "schools, churches, and hospitals"
 Mult < GSet.
 
 raw="and"
@@ -173,12 +173,12 @@ lemma="school",pos="nnp" : GSet @ amenity 'school'.
 
 \subsubsection{Composing phrases}
 In most cases we would would want our rule to match single tokens. Sometimes,
-however, it is convenient to be able to match an entire phrase (for example
-phrases like `parking lot', `coworking space' or `rubbish bin') to assign
-categories to.
+however, it is convenient to be able to match an entire phrase (for example,
+phrases like `parking lot', `coworking space', or `rubbish bin') and assign
+a category to it.
 
-To do this, the CCG definition language supports a syntax for composing phrases
-(one way to think of it is like ``matcher concatenation''):
+To achieve this, the CCG definition language supports a syntax for composing phrases
+(one way to think of it is as ``matcher concatenation''):
 \begin{center}
     \syntax{<matcher>} \code{<>} \syntax{<matcher>} \\
     or \\
@@ -202,7 +202,7 @@ lemma="place" <> raw="of" <> lemma="worship"
     @ amenity 'place_of_worship'.
 \end{lstlisting}\end{lstwrap}
 
-Desugars to something like this:
+desugars to something like this:
 \begin{lstwrap}\begin{lstlisting}
 Dummy1 < * -> *.
 Dummy2 < * -> *.
@@ -242,7 +242,7 @@ Whenever a rule with a template matches a token, template variables are
 substituted by their values, the template is parsed as a term and is fed
 as a first argument to the primary term specified in the rule.
 
-Templates are inherently unsafe - failure to parse the template after substitution
+Templates are inherently unsafe --- failure to parse the template after substitution
 or having a term with a wrong type produced by the template will cause the
 CCG parsing process to fail. It is the expert's responsibility to ensure that
 templates are correct.
