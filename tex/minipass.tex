@@ -60,7 +60,7 @@ Here is a BNF grammar for the intermediate language.
 
     <type-definition>  ::= <identifier> `<' <type>
 
-    <type> ::= <simple-type> | <type> <arrow> <simple-type>
+    <type> ::= <simple-type> | <simple-type> <arrow> <type>
 
     <simple-type> ::= <identifier> | `*' | `(' <type> `)'
 
@@ -91,17 +91,13 @@ Here is a BNF grammar for the intermediate language.
     <filepath> ::= <double-quoted-string>
 \end{grammar}
 
-\marginpar{\tiny Не е ли по-добре \code{<simple-type>}
-
-  \code{<arrow> <type>}}
-
-  The definitions for \syntax{<single-quoted-string>},
+The definitions for \syntax{<single-quoted-string>},
 \syntax{<double-quoted-string>}
 and \syntax{<number-literal>}
 have been omitted: the first two are plain quoted strings with backslash escaping,
 while the third is a standard floating point number.
 
-Note that Minipass is characterised by its predefined constants and basic\marginpar{\scriptsize по-долу използваш base, избери си едното}
+Note that Minipass is characterised by its predefined constants and base\fixednote{\scriptsize по-долу използваш base, избери си едното}
 types. Because of the modular architecture of the implementation, they can be
 replaced by something else, allowing to target a different intermediate language.
 
@@ -266,7 +262,7 @@ New types are defined by subtyping an existing type via a "type definition"
     \code{NewType < OldType.}
 \end{center}
 where \code{NewType} is not a supertype of \code{OldType} and has not been
-already defined.\marginpar{\scriptsize необходимо ли е да казваме, че ``\code{NewType} is not a supertype of \code{OldType}'' след като казваме, че ``has not been already defined?''}
+already defined.\discuss{\scriptsize необходимо ли е да казваме, че ``\code{NewType} is not a supertype of \code{OldType} - A: да: може да е вграден'' след като казваме, че ``has not been already defined?''}
 
 The subtyping semantics
 are the same as the ones described in \cref{sec:lambda}: all subtype assertions

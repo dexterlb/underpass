@@ -674,7 +674,7 @@ existing manually-constructed types, and extend it with the new type.
     \begin{itemize}
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
-        \item a mapping $\varphi : \tsymbs \pfun \tclos{T}$\marginpar{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
+        \item a mapping $\varphi : T \rightarrow \tclos{T}$\fixednote{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
@@ -823,11 +823,13 @@ existing manually-constructed types, and extend it with the new type.
 \begin{proof}
     We will check all conditions one by one:
     \begin{itemize}
-        \item $dom(\varphi) = T \cup left(\Theta)$:
+        \item $dom(\varphi) = T \cup left(\Theta)$ (and $\varphi$ is defined correctly):
 
             Initially, $dom(\varphi) = \identity_T$.
             For every $\sigma \lass \tau \in \Theta$, we have added
             $(\sigma, \rho)$ to $\varphi$ for some $\rho$ in $\tclos{T'}$.
+
+            Thus, we never violate the domain constraint for $\varphi$.
 
         \item $\sigma \less \tau \implies \sigma \less' \tau$:
 
@@ -1049,23 +1051,26 @@ back into a regular $\lambda$-term. This process is illustrated in
         represent typed $\lambda$-terms, while green nodes represent
         type-tagged $\lambda$-terms.}
     \label{fig:propagation}
-}\marginpar{\scriptsize Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
+}\fixednote{\scriptsize Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
-This construction\marginpar{\scriptsize моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
+We will informally assume that term manipulations don't alter semantics\footnote{
+    by much} (in a very broad sense).
+
+This ``type-tagged term'' construction \fixednote{\scriptsize моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
 a type for every subterm anyway, which can replace the use of casts for all
 practical\footnote{
-    There is no way to preserve multiple consecutive casts. Note that if the
-    type system doesn't allow cross-branch casts, extra measures need to be taken
-    to preserve the validity of terms in $\mcf{untag}$: e.g. if we have a
-    term $M$ with a type tag $\sigma$ and an actual type $\tau$ where for some $\eta$,
-    $\eta \less \sigma, \eta \less \tau$ but $\sigma$ and $\tau$ aren't comparable,
-    we must yield $\sigma[\eta[M]]$ instead of $\sigma[M]$.
+    There is no way to preserve multiple consecutive casts.
 } cases. There is also no need for storing the types of bound variables, since
 they can be easily extracted from the types of the respective abstraction terms.
 \begin{defn}
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
-    The set of type-tagged $\lambda$-terms $\ttlambda{T}{C}$ is defined inductively\marginpar{\scriptsize стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
+    The set of type-tagged $\lambda$-terms $\ttlambda{T}{C}$ is defined inductively\footnote{
+        Here we use $\langle M, \tau \rangle$ instead of $M^\tau$
+        to denote type tags in order not to confuse them with Church-style
+        typing, which would imply that types are always correct (which we
+        don't require here).
+    }\fixednote{\scriptsize стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
             \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
@@ -1147,8 +1152,14 @@ will take extra care and insert casts where needed:
     \]
 \end{defn}
 
+It can be easily seen that terms returned by $\mcf{untag}$ are well-typed,
+since we've inserted casts wherever the types don't match. Note that $\mcf{untag}$
+may be undefined in some cases (when its definition produces an invalid cast).
+This means that it was given a term whose type cannot be cast to its type-tag.
+We will assume that manipulations done to the term will not produce such cases.
+
 Now that we have the construction for attaching types to subterms, we can
-describe a universal way to propagate information through those types.\marginpar{\scriptsize няма ли да покажеш, че термовете, които се връщат от $\mcf{untag}$ са коректно типизирани?}
+describe a universal way to propagate information through those types.\fixednote{\scriptsize няма ли да покажеш, че термовете, които се връщат от $\mcf{untag}$ са коректно типизирани?}
 
 We will use a basic operation $\unify$ that unifies two types.
 
@@ -1163,7 +1174,7 @@ called a \emph{unifier} for $T$ if:\marginpar{\scriptsize защо не опиш
             Since the need for them has not yet arisen, symmetricity has been
             assumed for simplicity.
         }
-    \item it is idempotent\
+    \item it is idempotent
 \end{itemize}
 \end{defn}
 
