@@ -344,7 +344,7 @@ $T$ is either a more concrete variant or a more general variant of some type in 
 
 If $\tau\in T$ is such that $(\exists \sigma \in S : \tau \less \sigma)$, we will
 call $\tau$ \emph{special}. Dually, if $\tau\in T$ is such that
-$(\exists \sigma \in S : \sigma \less \tau)$, we will call $\tau$ 
+$(\exists \sigma \in S : \sigma \less \tau)$, we will call $\tau$
 \emph{general}.
 
 If we have $T \tless S$, it would be convenient to be able to convert between them.
@@ -371,8 +371,11 @@ however, involves discarding information.
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$, if:
     \begin{itemize}
         \item for each $\tau \in S$, $\squash(\tau) = \tau$
+        \item it follows the subtyping relation:
+            \[ \forall \sigma \in T
+                (\squash(\sigma) \less' \sigma \lor \sigma \less' \squash(\sigma)) \]
         \item it preserves the subtyping relation:
-            \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
+            \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
                 \squash(\sigma) \less \squash(\tau)) \]
     \end{itemize}
 \end{defn}
@@ -408,6 +411,20 @@ however, involves discarding information.
             will also have different syntactic structure, thus $\less$ will
             be undefined for them as well.
     \end{itemize}
+\end{proof}
+
+\begin{property}\label{prop:squash:unique}
+    If there is a squash function $\squash: T \rightarrow S$ for
+    $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
+    there is no other squash function for
+    $\langle T, \less' \rangle \tless \langle S, \less \rangle$.
+\end{property}
+\begin{proof}
+    Let $\squash' : T \rightarrow S$ be a squash function for
+    $\langle T, \less' \rangle \tless \langle S, \less \rangle$ such that
+    $\squash(\sigma) \not\eq \squash'(\sigma)$ for a fixed $\sigma \in T$.
+
+    \fixme{Now what?}
 \end{proof}
 
 We can now naturally extend squash functions to work over $\lambda$-terms
@@ -846,10 +863,7 @@ existing manually-constructed types, and extend it with the new type.
     If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
-    there is a unique squash function $\squash_{\theta} : T' \rightarrow T$
-    that maps general elements in $T'$ into
-    maximal elements in $T$ and maps special elements in $T'$ into minimal elements
-    in $T$.
+    there is a squash function $\squash_{\theta} : T' \rightarrow T$.
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the injections from \cref{def:subadd}.
@@ -871,12 +885,31 @@ existing manually-constructed types, and extend it with the new type.
     being a squash function for $T' \tless T$:
 
     \begin{itemize}
-        \item for each $\tau \in T$, $\squash_{\theta}(\tau) = \tau$:
+        \item For each $\tau \in T$, $\squash_{\theta}(\tau) = \tau$:
 
             This is true by the definition of $\squash_{\theta}$.
 
-        \item it preserves the subtyping relation:
-            \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
+        \item It follows the subtyping relation:
+            \[ \forall \tau \in T
+                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)) \]
+
+            Let $\tau \in T'$. There are three possibilities for $\tau$:
+            \begin{itemize}
+                \item $\tau \in T$:
+
+                    $\squash_{\theta}(\tau) = \tau \less' \tau$
+
+                \item $\tau = \subtyper{\xi}(\sigma)$ for some $\sigma \in T$:
+
+                    $\tau = \subtyper{\xi}(\sigma) \less \sigma = \squash_{\theta}(\tau)$
+
+                \item $\tau = \suptyper{\xi}(\sigma)$ for some $\sigma \in T$:
+
+                    $\squash_{\theta}(\tau) = \sigma \less \suptyper{\xi}(\sigma) = \tau$
+            \end{itemize}
+
+        \item It preserves the subtyping relation:
+            \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
                 \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
@@ -905,30 +938,17 @@ existing manually-constructed types, and extend it with the new type.
                     are in relation because of transitivity or reflexivity.
                     The reflexive case is trivial.
 
+                    For each of $\sigma$ and $\tau$, we've added a single edge
+                    (plus transitive and reflective closure) in the relation.
+                    Therefore, having $\sigma \less \tau$, there is no
+                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
+                    and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
+
                     Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ \marginpar{\scriptsize че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
+                    $\sigma \less' \sigma'$ \fixednote{\scriptsize че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
                     such that $\tau' \less' \tau$, we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
-    \end{itemize}
-
-    The only thing left is to check that $\squash_{\theta}$ returns maximal
-    elements in $T$ for general elements in $T'$ and returns minimal elements
-    in $T$ for special elements in $T'$:
-
-    \begin{itemize}
-        \item for each special $\tau$, $\squash_\theta(\tau)$ is a minimal element in $T$ such that
-            $\tau \less' \squash_\theta(\tau)$:\discuss{\scriptsize minimal и (minimal \ldots such that \ldots) са различни свойства!}
-
-            Since $\tau$ is special, it means that $\tau \in (T' \setminus T)$ and
-            $\tau \less' \sigma$ for some $\sigma \in T$.
-
-            The only possibility is that $\subtyper{\xi}(\sigma) = \tau$ and
-            $\squash_{\theta}(\tau) = \sigma$. But $\sigma$ is the only element
-            in $T$ such that $\tau \less' \sigma$, therefore it is minimal
-            with this property.\fixednote{\scriptsize ако тук не напишеш ``\ldots minimal with this property'', не мисля, че ще е вярно}
-        \item the argument for general elements is dual to the one
-            for special elements.
     \end{itemize}
 \end{proof}
 
@@ -999,7 +1019,7 @@ special possible basic type).
     \end{itemize}
 \end{proof}
 
-% TT: reviewed until here
+The squash function we constructed here is unique by \cref{prop:squash:unique}.
 
 \subsubsection{Type-tagged terms and type propagation}
 \label{sec:propagation}\marginpar{\scriptsize струва ми се, че този раздел има нужда от мотивиращ пример}

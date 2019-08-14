@@ -1,6 +1,6 @@
+explain why we use angle brackets for type-tagged terms
 replace commas by ands (when applicable)
 fix dashes to be mdash
-cclos is apparently not used everywhere (mathcal(C)?)
 some residual wrong double quotes
 check for nodes in trees that go out of designated squares
 more commas in cases
