@@ -166,7 +166,25 @@ we will use derivation rules.
     \end{itemize}
 \end{defn}
 
-Now, we will prove that every well-typed term has a unique type:\note{формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
+\begin{lemma}\label{lemma:inversion}
+    \emph{Inversion lemma}:
+    \begin{itemize}
+        \item If $\Gamma \vdash c : \sigma$ for $c \in C$, then $\sigma = \typeof{c}$
+        \item If $\Gamma \vdash x : \sigma$ for $x \in \lvars$, then $x : \sigma \in \Gamma$
+        \item If $\Gamma \vdash (AB) : \sigma''$, then for some $\sigma'$:
+            \begin{itemize}
+                \item $\Gamma \vdash A : \sigma' \tot \sigma''$
+                \item $\Gamma \vdash B : \sigma'$
+            \end{itemize}
+        \item If $\Gamma \vdash (\lambda x : \tau \abstr A) : \nu$, then
+            $\nu = \tau \tot \sigma$ and $\Gamma \circ x : \tau \vdash A : \sigma$.
+    \end{itemize}
+\end{lemma}
+\begin{proof}
+    It follows immediately from the \cref{def:termderiv}, since the cases are
+    non-overlapping.
+\end{proof}
+Now, we will prove that every well-typed term has a unique type:\fixednote{формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
 \begin{prop}
     \label{prop:uniquetypespure}
     \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''
@@ -175,6 +193,8 @@ Now, we will prove that every well-typed term has a unique type:\note{форма
 \begin{proof}
     We will assume that $\Gamma \vdash M : \sigma'$ and $\Gamma \vdash M : \sigma''$
     and prove $\sigma' = \sigma''$ by induction over the construction of $M$.
+    In every case, we will make use of \cref{lemma:inversion} to decompose
+    the right-hand side of $\vdash$.
 
     \begin{itemize}
         \item $M = c \in C$:
