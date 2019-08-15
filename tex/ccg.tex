@@ -77,22 +77,35 @@ are two approaches to do this: iterative derivation and derivation trees. Since
 they are both useful for different things, we will also show the equivalence
 between them.
 
-Let $\tau$ be a set of atomic categories.
 
-For iterative derivation, we will use strings in $(\lb \cclos{\tau} \rb \cup \Sigma)^*$,\discuss{\scriptsize Няма ли да е удобно да въведеш нотация за множеството $(\lb \cclos{\tau} \rb \cup \Sigma)^*$? Например $S(\tau)$ или нещо такова.}
+We will now define the set of symbols that participate in the derivation process:
+\begin{defn}
+    For a set of atomic categories $\tau$, $S(\tau)$ is defined as the set of
+    strings which contain:
+    \begin{itemize}
+        \item Complex categories enclosed in $\lb \rb$-brackets
+        \item Terminals
+    \end{itemize}
+
+    It is defined formally as such:
+    \[ S(\tau) \defeq (\lb \cclos{\tau} \rb \cup \Sigma)^* \]
+\end{defn}
+
+Let $\tau$ be a set of atomic categories.
+For iterative derivation, we will use strings in $S(\tau)$,\fixednote{\scriptsize Няма ли да е удобно да въведеш нотация за множеството $(\lb \cclos{\tau} \rb \cup \Sigma)^*$? Например $S(\tau)$ или нещо такова.}
 i.e., strings of terminals intermixed with categories. To make our derivations
-equivalent to context-free grammar derivations, we will use the square
+equivalent to context-free grammar derivations, we use the square
 brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 
 \begin{defn}
-    For any string $\alpha \in (\lb \cclos{\tau} \rb \cup \Sigma)^*$, where $\Sigma$ is a
-    finite alphabet of terminals, we define $\cclos{\alpha}$\discuss{\scriptsize $\cclos{\cdot}$ е конфликт на нотации} to be the set of all
+    For any string $\alpha \in S(\tau)$, where $\Sigma$ is a
+    finite alphabet of terminals, we define $\catsin{\alpha}$\fixednote{\scriptsize $\catsin{\cdot}$ е конфликт на нотации} to be the set of all
     categories that
     can be found in $\alpha$, namely:
     \begin{itemize}
-        \item $\cclos{\varepsilon} = \emptyset$
-        \item for $a \in \Sigma$, $\cclos{a\beta} = \cclos{\beta}$
-        \item for $X \in \cclos{\tau}$, $\cclos{\lb X \rb \beta} = X \cup \cclos{\beta}$
+        \item $\catsin{\varepsilon} = \emptyset$
+        \item for $a \in \Sigma$, $\catsin{a\beta} = \catsin{\beta}$
+        \item for $X \in \catsin{\tau}$, $\catsin{\lb X \rb \beta} = X \cup \catsin{\beta}$
     \end{itemize}
 \end{defn}
 
@@ -128,7 +141,7 @@ and $\gsteps_G$ for multiple derivation steps.
         \item Let $\gsteps_G$ be the reflexive and transitive closure of $\gstep_G$.
         \item If $\alpha \gsteps_G \beta$, we can write
             \[ \mu: \alpha = \alpha_1 \gstep_G ... \gstep_G \alpha_r = \beta \]
-            and call $\mu$ a \emph{derivation} for $G$. Then $\cclos{\mu} = \bigcup\limits_{i=1}^{r} \cclos{\alpha_i}$
+            and call $\mu$ a \emph{derivation} for $G$. Then $\catsin{\mu} = \bigcup\limits_{i=1}^{r} \catsin{\alpha_i}$
             is the set of all categories used in $\mu$.
         \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \gsteps_G \alpha \}$
     \end{itemize}
@@ -148,7 +161,7 @@ and $\gsteps_G$ for multiple derivation steps.
     Moreover, let $\mu: \alpha_1 \gstep ... \gstep \alpha_r$
     be a derivation for $G$.
     We can construct a finite context-free grammar
-    $G_\mu^C = \langle \Sigma, \lb \cclos{\mu} \rb, \restr{R}{\lb \cclos{\mu} \rb}, \lb S \rb \rangle$
+    $G_\mu^C = \langle \Sigma, \lb \catsin{\mu} \rb, \restr{R}{\lb \catsin{\mu} \rb}, \lb S \rb \rangle$
     that produces $\mu$, and whose derivations are also derivations in $G$.
 \end{prop}
 \begin{proof}
@@ -269,8 +282,8 @@ will be drawn with a thick line.
 
 We will construct the set $ \trees{G} $ of all derivation trees for a
 CCG $G$, as well
-as the functions $ crown: \trees{G} \fun ( \lb \cclos{N} \rb \cup \Sigma )^* $,
-$ root: \trees{G} \fun \cclos{N} \cup \Sigma$.
+as the functions $ crown: \trees{G} \fun S(N) $,
+$ root: \trees{G} \fun \cclos{N}$.
 
 If there exists $\tau \in \trees{G}$ such that $root(\tau) = X \in \cclos{N},
 crown(\tau) = \alpha$, we will denote $\lb X \rb \tderiv \alpha$.

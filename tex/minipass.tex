@@ -261,8 +261,9 @@ New types are defined by subtyping an existing type via a ``type definition''
 \begin{center}
     \code{NewType < OldType.}
 \end{center}
-where \code{NewType} is not a supertype of \code{OldType} and has not been
-already defined.\discuss{\scriptsize необходимо ли е да казваме, че ``\code{NewType} is not a supertype of \code{OldType} - A: да: може да е вграден'' след като казваме, че ``has not been already defined?''}
+where \code{NewType} is not a basic type that is a supertype of \code{OldType} 
+and has not been
+already user-defined.\fixednote{\scriptsize необходимо ли е да казваме, че ``\code{NewType} is not a supertype of \code{OldType} - A: да: може да е вграден'' след като казваме, че ``has not been already defined?''}
 
 The subtyping semantics
 are the same as the ones described in \cref{sec:lambda}: all subtype assertions
