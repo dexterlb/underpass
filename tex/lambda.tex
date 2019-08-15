@@ -367,7 +367,7 @@ however, involves discarding information.
 \end{example}
 
 \begin{defn}\label{def:squashfn}
-    $\squash: T \rightarrow S$ is a \emph{squash function} for
+    $\squash: T \fun S$ is a \emph{squash function} for
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$, if:
     \begin{itemize}
         \item for each $\tau \in S$, $\squash(\tau) = \tau$
@@ -414,7 +414,7 @@ however, involves discarding information.
 \end{proof}
 
 \begin{property}
-    If $\squash: T \rightarrow S$ is a squash function for
+    If $\squash: T \fun S$ is a squash function for
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
     then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
     for special elements $\tau \in T \setminus S$, and dually
@@ -440,7 +440,7 @@ however, involves discarding information.
     greater-than $\tau$.
 \end{proof}
 \begin{corollary}\label{prop:squash:unique}
-    If there is a squash function $\squash: T \rightarrow S$ for
+    If there is a squash function $\squash: T \fun S$ for
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
     it is unique in the sense that there is no other squash function for
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$.
@@ -459,9 +459,9 @@ however, involves discarding information.
 We can now naturally extend squash functions to work over $\lambda$-terms
 and contexts:
 \begin{defn}
-    If $\squash: T \rightarrow S$ is a squash function for $T \tless S$ and
+    If $\squash: T \fun S$ is a squash function for $T \tless S$ and
     $C$ is typed in $S$,
-    $\lsquash: \fancylambda{T}{C} \rightarrow \fancylambda{S}{C}$
+    $\lsquash: \fancylambda{T}{C} \fun \fancylambda{S}{C}$
     is defined inductively:
 
     \[
@@ -497,7 +497,7 @@ type system used for CCG parsing into the Minipass type system
 (\cref{sec:termgen}).
 
 \begin{prop}
-    For a squash function $\squash: T \rightarrow S$, $\lsquash$ is
+    For a squash function $\squash: T \fun S$, $\lsquash$ is
     well-defined, namely
     \[ \Gamma \vdash A : \sigma \implies
         \consquash(\Gamma) \vdash \lsquash(A) : \tsquash(\sigma) \]
@@ -703,7 +703,7 @@ existing manually-constructed types, and extend it with the new type.
     \begin{itemize}
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
-        \item a mapping $\varphi : T \rightarrow \tclos{T}$\fixednote{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
+        \item a mapping $\varphi : T \fun \tclos{T}$\fixednote{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
@@ -894,7 +894,7 @@ existing manually-constructed types, and extend it with the new type.
     If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
-    there is a squash function $\squash_{\theta} : T' \rightarrow T$.
+    there is a squash function $\squash_{\theta} : T' \fun T$.
 \end{lemma}
 \begin{proof}
     Let $\subtyper{\xi}$ and $\suptyper{\xi}$ be the injections from \cref{def:subadd}.
@@ -994,7 +994,7 @@ special possible basic type).
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
     then $T' \tless T$. Moreover, there is a unique squash function
-    $\squash_{\Theta} : T' \rightarrow T$ that maps general elements in $T'$ into
+    $\squash_{\Theta} : T' \fun T$ that maps general elements in $T'$ into
     maximal elements in $T$ and maps special elements in $T'$ into minimal elements
     in $T$.
 \end{prop}
@@ -1016,8 +1016,8 @@ special possible basic type).
             proven} of $\tless$, we have that $T \tless T_{i + 1}$.
 
             Moreover, since there is inductively a squash function
-            $\squash_i : T_i \rightarrow T$ and (from \cref{lemma:subadd:squash})
-            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \rightarrow T$.
+            $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
+            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
 
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.

@@ -14,7 +14,7 @@ for composing those terms in accordance with a CCG derivation tree.
 \begin{defn}
     For a set of atomic categories $N$ typed in $\Theta$, we can extend the
     definition of the typing function $\typeoff$ over their categorial closure
-    $\typeoff : \cclos{N} \rightarrow \tclos{\Theta}$ in the following way:
+    $\typeoff : \cclos{N} \fun \tclos{\Theta}$ in the following way:
     $\typeof{\lp X \mc Y \rp} \defeq  \typeof{Y} \tot \typeof{X}$.
 
     This gives meaning to categories in the context of $\lambda$-calculus:
@@ -41,7 +41,7 @@ of the same type as its category.
     a set of atomic categories typed in $\Theta$ and $C$ be a set
     of constants typed in $\Theta$.
     A function
-    \[ \psi : \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \rightarrow 2^{\plambda{\Theta}{C}} \] is called a
+    \[ \psi : \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \fun 2^{\plambda{\Theta}{C}} \] is called a
     \emph{semantic function} for G.
 \end{defn}
 

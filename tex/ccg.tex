@@ -23,9 +23,9 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a countable set of symbols that we w
     For a set of atomic categories $\tau$, its
     \emph{categorial closure} $\cclos{\tau}$ is defined as follows:
     \begin{enumerate}
-        \item \label{itm:atomic} $A \in \tau \Rightarrow A \in \cclos{\tau}$
-        \item \label{itm:right}  $X, Y \in \cclos{\tau} \Rightarrow \lp X \rc Y \rp \in \cclos{\tau}$
-        \item \label{itm:left}   $X, Y \in \cclos{\tau} \Rightarrow \lp X \lc Y \rp \in \cclos{\tau}$
+        \item \label{itm:atomic} $A \in \tau \implies A \in \cclos{\tau}$
+        \item \label{itm:right}  $X, Y \in \cclos{\tau} \implies \lp X \rc Y \rp \in \cclos{\tau}$
+        \item \label{itm:left}   $X, Y \in \cclos{\tau} \implies \lp X \lc Y \rp \in \cclos{\tau}$
     \end{enumerate}
 
     Letters like $A, B, C$ will be used to denote atomic categories,
@@ -63,7 +63,7 @@ Let $\csymbs = \{ C', C'', C''', ... \}$ be a countable set of symbols that we w
         \item $ \Sigma $ is the (finite) set of \emph{terminals}
         \item $ N $ is the (finite) set of \emph{non-terminals} (atomic categories)
         \item $ S \in N $ is the \emph{target category}
-        \item $ f : \Sigma \rightarrow \hat{N} $, where $\hat{N}$ is the set of
+        \item $ f : \Sigma \fun \hat{N} $, where $\hat{N}$ is the set of
             \textbf{finite} subsets of $\cclos{N}$, is the function for interpreting the
             terminals
         \item $ n \in \mathbb{N} $ is the \emph{maximum composition arity}
@@ -99,12 +99,12 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 \begin{defn}\label{def:ccg:rules}
     For a CCG $G$, we can construct a set $R \subset (\lb \cclos{N} \rb) \times (\Sigma \cup \lb \cclos{N} \rb)^*$
     of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$ we will write
-    $\alpha \rightarrow \beta$.\marginpar{\scriptsize трета семантика на $\rightarrow$}
+    $\alpha \gderiv_G \beta$.\fixednote{\scriptsize трета семантика на $\gderiv$}
 
     \begin{itemize}
-        \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \rightarrow a \]
+        \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \gderiv_G a \]
         \item If $ X \rc Y \in \cclos{N}, Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
-            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv_G \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 
             Furthermore, we call $ X \rc Y $ the \emph{primary category} of the rule
             instance, while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is its
@@ -112,42 +112,48 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
             We also call $ X \rc Y $ the \emph{left category} of the rule instance,
             and $  Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ its \emph{right category}.
         \item If $ X \lc Y \in \cclos{N}, Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
-            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \rightarrow \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+            then \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv_G \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
             Here, $ X \lc Y $ is the \emph{primary} and \emph{right} category,
             while $ Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m $ is the \emph{secondary}
             and \emph{left} category.
     \end{itemize}
 \end{defn}
 
-We will now define the notations $\Rightarrow$ for a derivation step
-and $\Rightarrow^*$ for multiple derivation steps.
+We will now define the notations $\gstep_G$ for a derivation step
+and $\gsteps_G$ for multiple derivation steps.
 \begin{defn}
-    Derivation process\marginpar{\scriptsize $\Rightarrow$ вече се използва за абстракциите.}
+    Derivation process\fixednote{\scriptsize $\gstep_G$ вече се използва за абстракциите.}
     \begin{itemize}
-        \item If $\beta \rightarrow \beta'$, then $\alpha \beta \gamma \Rightarrow \alpha \beta' \gamma$
-        \item Let $\Rightarrow^*$ be the reflexive and transitive closure of $\Rightarrow$.
-        \item If $\alpha \Rightarrow^* \beta$, we can write
-            \[ \mu: \alpha = \alpha_1 \Rightarrow ... \Rightarrow \alpha_r = \beta \]
+        \item If $\beta \gderiv \beta'$, then $\alpha \beta \gamma \gstep_G \alpha \beta' \gamma$
+        \item Let $\gsteps_G$ be the reflexive and transitive closure of $\gstep_G$.
+        \item If $\alpha \gsteps_G \beta$, we can write
+            \[ \mu: \alpha = \alpha_1 \gstep_G ... \gstep_G \alpha_r = \beta \]
             and call $\mu$ a \emph{derivation} for $G$. Then $\cclos{\mu} = \bigcup\limits_{i=1}^{r} \cclos{\alpha_i}$
             is the set of all categories used in $\mu$.
-        \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \Rightarrow^* \alpha \}$
+        \item $L(G) := \{ \alpha \in \Sigma^* \mid \lb S \rb \gsteps_G \alpha \}$
     \end{itemize}
 \end{defn}
+
+\begin{convention}
+    Whenever the grammar in use is clear from the context, we will write
+    ``$\gderiv$, $\gstep$, $\gsteps$'' instead of respectively
+    ``$\gderiv_G$, $\gstep_G$, $\gsteps_G$.
+\end{convention}
 
 \begin{prop}\label{prop:cfg}
     A CCG $G = \langle \Sigma, N, S, f, n \rangle$ is equivalent to an
     (albeit infinite) context-free grammar
     $G^C = \langle \Sigma, \lb \cclos{N} \rb, R, \lb S \rb \rangle$.
 
-    Moreover, let $\mu: \alpha_1 \Rightarrow ... \Rightarrow \alpha_r$
+    Moreover, let $\mu: \alpha_1 \gstep ... \gstep \alpha_r$
     be a derivation for $G$.
     We can construct a finite context-free grammar
     $G_\mu^C = \langle \Sigma, \lb \cclos{\mu} \rb, \restr{R}{\lb \cclos{\mu} \rb}, \lb S \rb \rangle$
     that produces $\mu$, and whose derivations are also derivations in $G$.
 \end{prop}
 \begin{proof}
-    This follows because our definition of $\Rightarrow$ for $G$ and the context-free
-    definition of $\Rightarrow$ for $G^C$ are the same.
+    This follows because our definition of $\gstep$ for $G$ and the context-free
+    definition of $\gstep$ for $G^C$ are the same.
 \end{proof}
 
 As per the given construction, there is no way for a CCG to generate the empty
@@ -163,22 +169,22 @@ string.
     \begin{itemize}
 
         \item $\exists \alpha' \neq \varepsilon, \beta' \neq \varepsilon$
-            such that $\gamma = \alpha' \beta', \alpha \Rightarrow^* \alpha', \beta \Rightarrow^* \beta'$
-        \item $\alpha \beta \Rightarrow^* \gamma$
+            such that $\gamma = \alpha' \beta', \alpha \gsteps \alpha', \beta \gsteps \beta'$
+        \item $\alpha \beta \gsteps \gamma$
     \end{itemize}
 \end{prop}
 \begin{proof}
     We can use \cref{prop:cfg}:
 
     \begin{itemize}
-        \item if $\alpha \Rightarrow^* \alpha'$ and $\beta \Rightarrow^* \beta'$,
-            then $\alpha \beta \Rightarrow^* \alpha' \beta \Rightarrow^* \alpha' \beta' = \gamma$.
-        \item if $\alpha \beta \Rightarrow^* \gamma, \alpha \neq \varepsilon, \beta \neq \varepsilon$,
-            we can fix $\mu: \alpha \beta \Rightarrow \gamma_1 \Rightarrow \gamma_2 ... \Rightarrow \gamma_t = \gamma$.
+        \item if $\alpha \gsteps \alpha'$ and $\beta \gsteps \beta'$,
+            then $\alpha \beta \gsteps \alpha' \beta \gsteps \alpha' \beta' = \gamma$.
+        \item if $\alpha \beta \gsteps \gamma, \alpha \neq \varepsilon, \beta \neq \varepsilon$,
+            we can fix $\mu: \alpha \beta \gstep \gamma_1 \gstep \gamma_2 ... \gstep \gamma_t = \gamma$.
             Then $\mu$ is a valid derivation in the context-free grammar $G^C_{\mu}$,
             which means $\alpha$ and $\beta$ generate separate derivation
             subtrees, thus $\exists \alpha' \beta' = \gamma$ such that
-            $\alpha \Rightarrow^* \alpha'$ and $\beta \Rightarrow^* \beta'$,
+            $\alpha \gsteps \alpha'$ and $\beta \gsteps \beta'$,
             which also holds for $G$.
     \end{itemize}
 \end{proof}
@@ -206,11 +212,11 @@ string.
     derivation rules on the next step are underlined):
     \begin{center}
         \begin{tabular}{c}
-            $\underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
-            $\lb GSet \rb \underline{\lb GSet \lc GSet \rb}$ \\ $\Rightarrow$ \\
-            $\underline{\lb GSet \rb} \lb GSet \lc GSet \rc GSet \rb \lb GSet \rb$ \\ $\Rightarrow$ \\
-            $cities \sq \underline{\lb GSet \lc GSet \rc GSet \rb} \lb GSet \rb$ \\ $\Rightarrow$ \\
-            $cities \sq in \sq \underline{\lb GSet \rb}$ \\ $\Rightarrow$ \\
+            $\underline{\lb GSet \rb}$ \\ $\gstep$ \\
+            $\lb GSet \rb \underline{\lb GSet \lc GSet \rb}$ \\ $\gstep$ \\
+            $\underline{\lb GSet \rb} \lb GSet \lc GSet \rc GSet \rb \lb GSet \rb$ \\ $\gstep$ \\
+            $cities \sq \underline{\lb GSet \lc GSet \rc GSet \rb} \lb GSet \rb$ \\ $\gstep$ \\
+            $cities \sq in \sq \underline{\lb GSet \rb}$ \\ $\gstep$ \\
             $cities \sq in \sq Germany$ \\
         \end{tabular}
     \end{center}
@@ -243,11 +249,11 @@ string.
     Here is one possible derivation process:
     \begin{center}
         \begin{tabular}{c}
-            $\underline{\lb Action \rb}$ \\ $\Rightarrow$ \\
-            $\lb Action \rb \underline{\lb Action \lc Action \rb}$ \\ $\Rightarrow$ \\
-            $\lb Action \rb \underline{\lb Action \lc Action \rc Num \rb} \lb Num \rb$ \\ $\Rightarrow$ \\
-            $\lb Action \rb \lb Action \lc Action \rc Num \rb \underline{\lb Num \rc Num} \rb \lb Num \rb$ \\ $\Rightarrow$ \\
-            $\lb Action \rb \lb Action \lc Action \rc Num \rb \lb Num \rc Num \rb \lb Num \rc Num \rb \lb Num \rb$ \\ $\Rightarrow^*$ \\
+            $\underline{\lb Action \rb}$ \\ $\gstep$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rb}$ \\ $\gstep$ \\
+            $\lb Action \rb \underline{\lb Action \lc Action \rc Num \rb} \lb Num \rb$ \\ $\gstep$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \underline{\lb Num \rc Num} \rb \lb Num \rb$ \\ $\gstep$ \\
+            $\lb Action \rb \lb Action \lc Action \rc Num \rb \lb Num \rc Num \rb \lb Num \rc Num \rb \lb Num \rb$ \\ $\gsteps$ \\
             $count \sq to \sq twice \sq twice \sq two$ \\
         \end{tabular}
     \end{center}
@@ -263,11 +269,11 @@ will be drawn with a thick line.
 
 We will construct the set $ \trees{G} $ of all derivation trees for a
 CCG $G$, as well
-as the functions $ crown: \trees{G} \rightarrow ( \lb \cclos{N} \rb \cup \Sigma )^* $,
-$ root: \trees{G} \rightarrow \cclos{N} \cup \Sigma$.
+as the functions $ crown: \trees{G} \fun ( \lb \cclos{N} \rb \cup \Sigma )^* $,
+$ root: \trees{G} \fun \cclos{N} \cup \Sigma$.
 
 If there exists $\tau \in \trees{G}$ such that $root(\tau) = X \in \cclos{N},
-crown(\tau) = \alpha$, we will denote $\lb X \rb \Rrightarrow \alpha$.
+crown(\tau) = \alpha$, we will denote $\lb X \rb \tderiv \alpha$.
 
 Derivation trees are constructed as follows:
 
@@ -361,17 +367,17 @@ Derivation trees are constructed as follows:
 \begin{prop}
     Equivalence of derivation trees and derivations
 
-    $ \lb X \rb \Rightarrow^* \alpha \iff \lb X \rb \Rrightarrow \alpha $
+    $ \lb X \rb \gsteps \alpha \iff \lb X \rb \tderiv \alpha $
 \end{prop}
 \begin{proof}
-    First, let there exist a derivation tree for $ \lb X \rb \Rrightarrow \alpha $.
-    $\lb X \rb \Rightarrow^* \alpha$ can be proven by induction over constructing
+    First, let there exist a derivation tree for $ \lb X \rb \tderiv \alpha $.
+    $\lb X \rb \gsteps \alpha$ can be proven by induction over constructing
     the tree.
     \begin{itemize}
         \item For the trivial cases, the derivation has 0 steps.
         \item For a tree
             \centree{.$X$ \edge[very thick]; $a$ }
-            and $X \in f(a)$, we have $\alpha = a, \lb X \rb \rightarrow a$.
+            and $X \in f(a)$, we have $\alpha = a, \lb X \rb \gderiv a$.
         \item For a tree
             \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 \edge[very thick];
@@ -379,11 +385,11 @@ Derivation trees are constructed as follows:
                 [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\gamma$ ]
             }
             we have $\alpha = \beta \gamma$, and inductively
-            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
-            $\lb X \rc Y \rb \Rightarrow^* \alpha$. Thus,
-            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps \beta$ and
+            $\lb X \rc Y \rb \gsteps \alpha$. Thus,
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps$
             $\lb X \lc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$
-            $ \Rightarrow^* \beta \gamma = \alpha$.
+            $ \gsteps \beta \gamma = \alpha$.
         \item For a tree
             \centree{.{$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$}
                 [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\beta$ ]
@@ -391,30 +397,30 @@ Derivation trees are constructed as follows:
                 [ .{$X \lc Y$} \edge[roof]; $\gamma$ ]
             }
             we have $\alpha = \beta \gamma$, and inductively
-            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \beta$ and
-            $\lb X \lc Y \rb \Rightarrow^* \alpha$. Thus,
-            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^*$
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps \beta$ and
+            $\lb X \lc Y \rb \gsteps \alpha$. Thus,
+            $\lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps$
             $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb$
-            $ \Rightarrow^* \beta \gamma = \alpha$.
+            $ \gsteps \beta \gamma = \alpha$.
     \end{itemize}
 
     Second, we can prove the inverse implication (given a derivation,
     construct the derivation tree) by induction over derivation
-    length. Let $\mu: \lb X \rb \Rightarrow \beta \Rightarrow^* \alpha$
+    length. Let $\mu: \lb X \rb \gstep \beta \gsteps \alpha$
     be a derivation for $G$.
     \begin{itemize}
         \item $\beta = \lb X \rb$. Then this is the trivial reflexive case
             and $X$ is a valid derivation tree in itself.
         \item $\beta = a \in \Sigma, X \in f(a)$. Then $\alpha = \beta$ and
             \centree{.$X$ \edge[very thick]; $a$ }
-            is a derivation tree for $ \lb X \rb \Rrightarrow a = \alpha $
+            is a derivation tree for $ \lb X \rb \tderiv a = \alpha $
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\beta = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
             According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
-                \item $\lb W \rc Y \rb \Rightarrow^* \eta$
-                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \xi$
+                \item $\lb W \rc Y \rb \gsteps \eta$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps \xi$
             \end{itemize}
             However, according to the inductive hypothesis, this means that we
             have the derivation trees
@@ -429,14 +435,14 @@ Derivation trees are constructed as follows:
                 [ .{$W \rc Y$} \edge[roof]; $\eta$ ]
                 [ .{$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$} \edge[roof]; $\xi$ ]
             }
-            for $\lb X \rb \Rrightarrow \alpha$.
+            for $\lb X \rb \tderiv \alpha$.
         \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$ and
             $\beta = \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb$.
             According to \cref{prop:concat}, there exist $\eta, \xi$ such that:
             \begin{itemize}
                 \item $\alpha = \eta \xi$
-                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* \eta$
-                \item $\lb W \lc Y \rb \Rightarrow^* \xi$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps \eta$
+                \item $\lb W \lc Y \rb \gsteps \xi$
             \end{itemize}
             However, according to the inductive hypothesis, this means that we
             have the derivation trees
@@ -451,7 +457,7 @@ Derivation trees are constructed as follows:
                 \edge[very thick];
                 [ .{$W \lc Y$} \edge[roof]; $\xi$ ]
             }
-            for $\lb X \rb \Rrightarrow \alpha$.
+            for $\lb X \rb \tderiv \alpha$.
     \end{itemize}
 \end{proof}
 
@@ -483,7 +489,7 @@ $(S, 1, k)$.
 
 To reason about the algorithm, we will use the following invariant:
 \begin{equation}
-    \lb X \rb \Rightarrow^* w_i ... w_j \iff (X, i, j) \in P
+    \lb X \rb \gsteps w_i ... w_j \iff (X, i, j) \in P
 \end{equation}
 
 \begin{prop}
@@ -492,17 +498,17 @@ To reason about the algorithm, we will use the following invariant:
 \begin{proof}
     We have to prove the right-to-left direction of the invariant:
     \begin{equation}\label{eq:left}
-        (X, i, j) \in P \implies \lb X \rb \Rightarrow^* w_i ... w_j
+        (X, i, j) \in P \implies \lb X \rb \gsteps w_i ... w_j
     \end{equation}
 
-    From which would follow $ (S, 1, k) \in P \implies \lb S \rb \Rightarrow^* w_1 ... w_k$,
+    From which would follow $ (S, 1, k) \in P \implies \lb S \rb \gsteps w_1 ... w_k$,
     which is what we need to prove.
 
     So, let $(X, i, j) \in P$ and inductively suppose that (\ref{eq:left}) is true
     for any shorter substrings of $w$. There are 3 rules by which this item has appeared:
     \begin{enumerate}
         \item $i = j, X \in f(w_i)$: This means
-            $\lb X \rb \rightarrow w_i \implies \lb X \rb \Rightarrow^* w_i = w_i ... w_j$
+            $\lb X \rb \gderiv w_i \implies \lb X \rb \gsteps w_i = w_i ... w_j$
         \item \label{itm:rightslash} $i < j$ and
             \begin{itemize}
                 \item $X = W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$
@@ -510,16 +516,16 @@ To reason about the algorithm, we will use the following invariant:
                 \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$
             \end{itemize}
             for some $i \leq p < j, m \leq n$. By inductive hypothesis,
-            $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
+            $\lb W \rc Y \rb \gsteps w_i ... w_p$
             and
-            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p + 1} ... w_j$.
-            Then, by the definition of $\rightarrow$ and by concatenativity of
-            $\Rightarrow$, we have:
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps w_{p + 1} ... w_j$.
+            Then, by the definition of $\gderiv$ and by concatenativity of
+            $\gstep$, we have:
             \[
                 \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
-                \rightarrow
+                \gderiv
                 \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
-                \Rightarrow^*
+                \gsteps
                 w_i ... w_p w_{p + 1} ... w_j = w
             \]
         \item $i < j$ and (analogous to \ref{itm:rightslash})
@@ -529,16 +535,16 @@ To reason about the algorithm, we will use the following invariant:
                 \item $(Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
             \end{itemize}
             for some $i \leq p < j, m \leq n$. By inductive hypothesis,
-            $\lb W \lc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+            $\lb W \lc Y \rb \gsteps w_{p + 1} ... w_j$
             and
-            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$.
-            Then, by the definition of $\rightarrow$ and by concatenativity of
-            $\Rightarrow$, we have:
+            $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps w_i ... w_p$.
+            Then, by the definition of $\gderiv$ and by concatenativity of
+            $\gstep$, we have:
             \[
                 \lb X \rb = \lb W \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb
-                \rightarrow
+                \gderiv
                 \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb W \lc Y \rb
-                \Rightarrow^*
+                \gsteps
                 w_i ... w_p w_{p + 1} ... w_j = w
             \]
     \end{enumerate}
@@ -550,17 +556,17 @@ To reason about the algorithm, we will use the following invariant:
 \begin{proof}
     We have to prove the left-to-right direction of the invariant:
     \begin{equation}\label{eq:right}
-        \lb X \rb \Rightarrow^* w_i ... w_j \implies (X, i, j) \in P
+        \lb X \rb \gsteps w_i ... w_j \implies (X, i, j) \in P
     \end{equation}
-    From which would follow $ \lb S \rb \Rightarrow^* w_1 ... w_k \implies (S, 1, k) \in P$,
+    From which would follow $ \lb S \rb \gsteps w_1 ... w_k \implies (S, 1, k) \in P$,
     which is what we need to prove.
 
-    Let $\mu: \lb X \rb \Rightarrow \alpha \Rightarrow^* w_i ... w_j$
+    Let $\mu: \lb X \rb \gstep \alpha \gsteps w_i ... w_j$
     be a derivation for $G$. We will prove (\ref{eq:right}) by induction over
     $\mu$ from right to left.
 
     The only way for $\lb X \rb$ to appear to the left
-    of a production is $\lb X \rb \rightarrow \alpha$ --- we can now look at
+    of a production is $\lb X \rb \gderiv \alpha$ --- we can now look at
     all ways for this to happen.
     \begin{enumerate}
         \item $\alpha = a \in \Sigma, X \in f(a)$. Then $w = \alpha, i = j, w_i = a$,
@@ -569,8 +575,8 @@ To reason about the algorithm, we will use the following invariant:
             $\alpha = \lb W \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb$.
             According to \cref{prop:concat}, there exists $p$ such that
             \begin{itemize}
-                \item $\lb W \rc Y \rb \Rightarrow^* w_i ... w_p$
-                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_{p+1} ... w_j$
+                \item $\lb W \rc Y \rb \gsteps w_i ... w_p$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps w_{p+1} ... w_j$
             \end{itemize}
             However, according to the inductive hypothesis, this means that
             $(W \rc Y, i, p) \in P$ and
@@ -582,8 +588,8 @@ To reason about the algorithm, we will use the following invariant:
             (analogous to \ref{eq:right}).
             According to \cref{prop:concat}, there exists $p$ such that
             \begin{itemize}
-                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \Rightarrow^* w_i ... w_p$
-                \item $\lb W \lc Y \rb \Rightarrow^* w_{p + 1} ... w_j$
+                \item $\lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gsteps w_i ... w_p$
+                \item $\lb W \lc Y \rb \gsteps w_{p + 1} ... w_j$
             \end{itemize}
             However, according to the inductive hypothesis, this means that
             $(W \lc Y, p + 1, j) \in P$ and
@@ -651,13 +657,13 @@ flipped indices.
 The invariant here is composed of two parts:
 
 \begin{itemize}
-    \item $(X, i, j) \in P \iff |X| \leq c \land \lb X \rb \Rightarrow^* w_i ... w_j$
+    \item $(X, i, j) \in P \iff |X| \leq c \land \lb X \rb \gsteps w_i ... w_j$
     \item $(A, \xi, X, \mci{*} B, i, j, p, q) \in P$
         exactly when there exists $\nu \in \{ \lc, \rc \}, Y \in \cclos{N}$ such that
         \begin{itemize}
             \item $1 \leq |Y| \leq c'$
-            \item $\lb A \nu Y \xi X \rb \Rightarrow^* w_i ... w_{p - 1} \lb A \nu Y \mci{*} B \rb w_{q + 1} ... w_j$
-            \item $\lb A \nu Y \mci{*} B \rb \Rightarrow^* w_p ... w_q$
+            \item $\lb A \nu Y \xi X \rb \gsteps w_i ... w_{p - 1} \lb A \nu Y \mci{*} B \rb w_{q + 1} ... w_j$
+            \item $\lb A \nu Y \mci{*} B \rb \gsteps w_p ... w_q$
         \end{itemize}
 \end{itemize}
 

@@ -32,12 +32,12 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a countable set of symbols that 
 \end{convention}
 
 \begin{defn}
-    The function $\tss : \tclos{\tsymbs} \rightarrow 2^\tsymbs$, which
+    The function $\tss : \tclos{\tsymbs} \fun 2^\tsymbs$, which
     returns the set of type symbols used in a complex type, is defined inductively:
 
     \begin{itemize}
         \item $\sigma \in \tsymbs \implies \ts{\sigma} \defeq \sigma$
-        \item $\sigma = \sigma' \rightarrow \sigma'' \implies
+        \item $\sigma = \sigma' \tot \sigma'' \implies
             \ts{\sigma} \defeq \ts{\sigma'} \cup \ts{\sigma''}$
     \end{itemize}
 \end{defn}
@@ -46,27 +46,27 @@ We will now introduce a notation for easily obtaining the types of items ---
 $\typeof{x}$ shall mean "the type of $x$":
 
 \begin{defn}
-    We call a set $X$ \emph{typed in} $T$ when there is a function\marginpar{\scriptsize $\rightarrow$ се използва в един и същ контекст с две различни значения}
-    \[ \typeoff : X \rightarrow \tclos{T} \]
+    We call a set $X$ \emph{typed in} $T$ when there is a function\fixednote{\scriptsize $\tot$ се използва в един и същ контекст с две различни значения}
+    \[ \typeoff : X \fun \tclos{T} \]
     that we call a \emph{typing function}.
 \end{defn}
 
 \begin{defn}
-    If $X, Y$ are sets of type symbols and $\varphi: X \rightarrow \tclos{Y}$,
-    then $\hat{\varphi} : \tclos{X} \rightarrow \tclos{Y}$ is defined inductively:
+    If $X, Y$ are sets of type symbols and $\varphi: X \fun \tclos{Y}$,
+    then $\hat{\varphi} : \tclos{X} \fun \tclos{Y}$ is defined inductively:
     \begin{equation*}
         \hat{\varphi}(\sigma) =
         \begin{cases*}
             \varphi(\sigma) ,& $\sigma \in X$ \\
-            \hat{\varphi}(\sigma') \rightarrow \hat{\varphi}(\sigma'') ,&
-                $\sigma = \sigma' \rightarrow \sigma'' \in \tclos{X}$ \\
+            \hat{\varphi}(\sigma') \tot \hat{\varphi}(\sigma'') ,&
+                $\sigma = \sigma' \tot \sigma'' \in \tclos{X}$ \\
         \end{cases*}
     \end{equation*}
 \end{defn}
 
 \subsubsection{Terms}
 To define $\lambda$ terms with the types introduced above, a system similar
-to Church's $\lambda_\rightarrow$ \cite[chap.~2.4]{ttfp} shall be used. It
+to Church's $\lambda_\tot$ \cite[chap.~2.4]{ttfp} shall be used. It
 extends the original system with constants.
 
 Let $\lvars = \{ \alpha', \alpha'', \alpha''' ... \}$ be a countable set of symbols
@@ -103,7 +103,7 @@ free variables are not.
 We will now formally define the function $\fvv$ that gives us all free variables of a
 term.
 \begin{defn}
-    Let $\fvv : \plambda{T}{C} \rightarrow 2^{\lvars}$ be defined as:
+    Let $\fvv : \plambda{T}{C} \fun 2^{\lvars}$ be defined as:
     \[
         \fv{M} =
         \begin{cases*}
