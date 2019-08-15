@@ -490,7 +490,7 @@ If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely:
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
-if and only if\note{след като сменяш дефиницията на правилата за извод, може би трябва да смениш и дефиницията на $sem_\psi$, ако искаш свойство \cref{ccg:typeconsistent} да остане в сила?}
+if and only if\fixednote{след като сменяш дефиницията на правилата за извод, може би трябва да смениш и дефиницията на $sem_\psi$, ако искаш свойство ccg:typeconsistent да остане в сила?}
 \begin{equation}\label{eq:typeless}
     \typeof{Y_2} \less \typeof{Y_1}
 \end{equation}
@@ -517,6 +517,12 @@ $\overline{U}$ is equivalent
 to the condition in \cref{eq:typeless}
 (given that $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$).
 \fixednote{запетайка в началото на реда изглежда странно}
+
+The modification to the ``derivation tree'' construction and the semantic
+function is trivial. The proof for \cref{ccg:typeconsistent} also holds
+($\lambda$-terms with subtypes allow the argument to be a subtype of its
+required type).
+
 \begin{example}
     Imagine we want to be able to parse the following queries:
     \begin{itemize}
