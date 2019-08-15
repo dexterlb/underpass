@@ -298,7 +298,7 @@ So, for a of type lattice $T$, we will define the set of
                 \hypo{\sigma \less \tau}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
             }
-        \item Construction via downcast (dangerous, doesn't need to be included in most cases\discuss{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
+        \item Construction via downcast (dangerous, doesn't need to be included in most cases\fixednote{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma}
                 \hypo{\tau \less \sigma}
                 \infer2{\Gamma \vdash \tau[A] : \tau}

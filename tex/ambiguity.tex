@@ -112,24 +112,26 @@ compositions but in a different order.
             \Tree[
                 .\node(outtop){$GSet$};
                     [ .{$GSet \lc GSet$}
-                        [ .{$GSet \rc GSet$} [ .\node(inb){$small$}; ] ]
+                        [ .\node(lbound){$GSet \rc GSet$}; [ .\node(inb){$small$}; ] ]
                         [ .{$GSet \rc GSet$} [ .\node(inc){$capital$}; ] ]
                     ]
                     [ .{$GSet$} [ .\node(ina){$cities$}; ] ]
             ]
-            \node[boxcolb,fit=(outtop)(ina)(inb)(inc)](outbox){};
+            \node[boxcolb,fit=(outtop)(lbound)(ina)(inb)(inc)](outbox){};
             \node[right=of outbox,text=\boxtextb](outlabel){$T_1$};
         \end{tikzpicture}
+    \end{center}
+    \begin{center}
         \begin{tikzpicture}[node distance=1mm,sibling distance=1cm,scale=0.9,every node/.style={transform shape}]
             \Tree[
                 .\node(outtop){$GSet$};
-                    [ .{$GSet \rc GSet$} [ .\node(ina){$small$}; ] ]
+                    [ .\node(lbound){$GSet \rc GSet$}; [ .\node(ina){$small$}; ] ]
                     [ .{$GSet$}
                         [ .{$GSet \rc GSet$} [ .\node(inb){$capital$}; ] ]
                         [ .{$GSet$} [ .\node(inc){$cities$}; ] ]
                     ]
             ]
-            \node[boxcolb,fit=(outtop)(ina)(inb)(inc)](outbox){};
+            \node[boxcolb,fit=(outtop)(lbound)(ina)(inb)(inc)](outbox){};
             \node[right=of outbox,text=\boxtextb](outlabel){$T_2$};
         \end{tikzpicture}
     \end{center}

@@ -93,7 +93,7 @@
 \newcommand\suptyper[1]{\overline{#1}}
 
 \newcommand\catdefsep{\hspace{0.5em} {:} \hspace{0.5em}}
-\newcommand\cataddsep{\hspace{0.5em} , \hspace{0.5em}}
+\newcommand\cataddsep{\hspace{0.5em} \phantom{,} \hspace{0.5em}}
 \newcommand\termdefsep{\hspace{0.5em} @ \hspace{0.5em}}
 
 \newcommand\mname[1]{\mathrm{#1}}
@@ -108,7 +108,7 @@
 \newcommand\gramrow[3]{
     \ifstrempty{#2}{
         % category is empty, we'll leave just the term
-        & \phantom{\catdefsep} & \phantom{\termdefsep} & #3
+        & \phantom{\catdefsep} & \phantom{\termdefsep} & \quad #3
     }{
         % category is not empty
         \ifstrempty{#1}{
