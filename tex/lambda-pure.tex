@@ -46,7 +46,7 @@ We will now introduce a notation for easily obtaining the types of items ---
 $\typeof{x}$ shall mean ``the type of $x$'':
 
 \begin{defn}
-    We call a set $X$ \emph{typed in} $T$ when there is a function\fixednote{\scriptsize $\tot$ се използва в един и същ контекст с две различни значения}
+    We call a set $X$ \emph{typed in} $T$ when there is a function\fixednote{$\tot$ се използва в един и същ контекст с две различни значения}
     \[ \typeoff : X \fun \tclos{T} \]
     that we call a \emph{typing function}.
 \end{defn}
@@ -166,7 +166,7 @@ we will use derivation rules.
     \end{itemize}
 \end{defn}
 
-Now, we will prove that every well-typed term has a unique type:\discuss{\scriptsize формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
+Now, we will prove that every well-typed term has a unique type:\note{формално погледнато, преди това трябва да докажеш Лема за обръщането, иначе с индукция по $M$ не можеш да правиш заключения зи $\vdash$}
 \begin{prop}
     \label{prop:uniquetypespure}
     \[ \Gamma \vdash M : \sigma' \land \Gamma \vdash M : \sigma''

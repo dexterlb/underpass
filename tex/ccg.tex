@@ -92,14 +92,14 @@ We will now define the set of symbols that participate in the derivation process
 \end{defn}
 
 Let $\tau$ be a set of atomic categories.
-For iterative derivation, we will use strings in $S(\tau)$,\fixednote{\scriptsize Няма ли да е удобно да въведеш нотация за множеството $(\lb \cclos{\tau} \rb \cup \Sigma)^*$? Например $S(\tau)$ или нещо такова.}
+For iterative derivation, we will use strings in $S(\tau)$,\fixednote{Няма ли да е удобно да въведеш нотация за множеството $(\lb \cclos{\tau} \rb \cup \Sigma)^*$? Например $S(\tau)$ или нещо такова.}
 i.e., strings of terminals intermixed with categories. To make our derivations
 equivalent to context-free grammar derivations, we use the square
 brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 
 \begin{defn}
     For any string $\alpha \in S(\tau)$, where $\Sigma$ is a
-    finite alphabet of terminals, we define $\catsin{\alpha}$\fixednote{\scriptsize $\catsin{\cdot}$ е конфликт на нотации} to be the set of all
+    finite alphabet of terminals, we define $\catsin{\alpha}$\fixednote{$\catsin{\cdot}$ е конфликт на нотации} to be the set of all
     categories that
     can be found in $\alpha$, namely:
     \begin{itemize}
@@ -112,7 +112,7 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 \begin{defn}\label{def:ccg:rules}
     For a CCG $G$, we can construct a set $R \subset (\lb \cclos{N} \rb) \times (\Sigma \cup \lb \cclos{N} \rb)^*$
     of \emph{rule instances}. Instead of $(\alpha, \beta) \in R$ we will write
-    $\alpha \gderiv_G \beta$.\fixednote{\scriptsize трета семантика на $\gderiv$}
+    $\alpha \gderiv_G \beta$.\fixednote{трета семантика на $\gderiv$}
 
     \begin{itemize}
         \item If $ a \in \Sigma, X \in f(a) $, then \[ \lb X \rb \gderiv_G a \]
@@ -135,7 +135,7 @@ brackets ($\lb$, $\rb$) to delimit categories from the rest of the string.
 We will now define the notations $\gstep_G$ for a derivation step
 and $\gsteps_G$ for multiple derivation steps.
 \begin{defn}
-    Derivation process\fixednote{\scriptsize $\gstep_G$ вече се използва за абстракциите.}
+    Derivation process\fixednote{$\gstep_G$ вече се използва за абстракциите.}
     \begin{itemize}
         \item If $\beta \gderiv \beta'$, then $\alpha \beta \gamma \gstep_G \alpha \beta' \gamma$
         \item Let $\gsteps_G$ be the reflexive and transitive closure of $\gstep_G$.

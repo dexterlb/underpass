@@ -66,7 +66,7 @@ a type error is produced.
 
 Since this unifier can only change a subtype from \code{*} to something else,
 and there are a finite number of subtypes within a term, this algorithm
-always terminates.\marginpar{\scriptsize ако говориш за propagate, е хубаво да се докаже по-формално}
+always terminates.\note{ако говориш за propagate, е хубаво да се докаже по-формално}
 
 \subsubsection{Minipass query optimisation}
 \label{sec:optimisation}
@@ -209,7 +209,7 @@ After applying these rules, types are propagated through the term
 These two steps are then repeated until they no longer produce a new term\footnote{
     This terminates because all rules produce a "lesser term" by some criterion:
     be it less items in the type tag or ``everything'' instead of ``something'', etc.
-}\marginpar{\scriptsize това е второто такова разсъждение. Може би имаш нужда от някаква лема от вида: ако унификаторът е еди какъв си, то неподвижната точка на propagate изисква краен брой стъпки}, which is now ready for the translation phase.
+}\note{това е второто такова разсъждение. Може би имаш нужда от някаква лема от вида: ако унификаторът е еди какъв си, то неподвижната точка на propagate изисква краен брой стъпки}, which is now ready for the translation phase.
 
 \greenbox{
     While there are many other possible optimisations which can be done here,
@@ -252,7 +252,7 @@ Here is an outline of the basic translation process:
     \item Recursively evaluate (translate) all arguments
         (since there are no constants of higher-order
         type and the term has been fully $\beta$-reduced, the head
-        is always a constant and the arguments are of non-arrow types\marginpar{\scriptsize защо аргументите не може да са стрелки?})
+        is always a constant and the arguments are of non-arrow types\note{защо аргументите не може да са стрелки?})
     \item Perform pattern matching of the argument list against a set of
         translation rules. Modify state and return value according to matched
         rule (or throw translation error).

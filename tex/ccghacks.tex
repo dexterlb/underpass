@@ -254,7 +254,7 @@ CYK algorithm by replacing the rules (\cref{cyk:rules}) by the following:
         $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
         = {Y''}\underbrace{\subst{\subst{\subst{}{b_1}{{Y''}_1}}{b_2}{{Y''}_2}}{b_n}{{Y''}_n}}_{\xi''}$, \\
         then $(\xi'(X) \mci{1} \xi''(Z_1) \mci{2} \xi''(Z_2) ... \mci{m} \xi''(Z_m)), i, j) \in P$.
-        \fixednote{\scriptsize Тук не трябва ли да е $(\xi'(X) \mci{1} \xi''(Z_1) \mci{2} \xi''(Z_2) ... \mci{m} \xi''(Z_m), i, j)\in P$ заради лявата асоциативност?}
+        \fixednote{Тук не трябва ли да е $(\xi'(X) \mci{1} \xi''(Z_1) \mci{2} \xi''(Z_2) ... \mci{m} \xi''(Z_m), i, j)\in P$ заради лявата асоциативност?}
     \item If $(X \lc Y', p + 1, j) \in P, (Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$
         and $Y'$ and $Y''$ unify with substitutions
         $ {Y'} \underbrace{\subst{\subst{\subst{}{a_1}{{Y'}_1}}{a_2}{{Y'}_2}}{a_n}{{Y'}_n}}_{\xi'}
@@ -408,7 +408,7 @@ based on their structure, as will be done in the next two sections.
 \end{defn}
 
 To make use of this relation for parsing, we must extend it over complex categories.
-\fixednote{\scriptsize тук не се разбира какво имаш предвид}
+\fixednote{тук не се разбира какво имаш предвид}
 One way to define such an extension is by uniformly propagating membership
 into $U$ over complex categories:
 \begin{defn}\label{def:rel:uniform}
@@ -416,7 +416,7 @@ into $U$ over complex categories:
     for the set of
     atomic categories $N$, its extension over complex categories
     $\hat{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
-    inductively as follows:\fixednote{\scriptsize за индуктивни дефиниции досега си използвал стила със клаузи, защо не го ползваш и тук?}
+    inductively as follows:\fixednote{за индуктивни дефиниции досега си използвал стила със клаузи, защо не го ползваш и тук?}
     \begin{itemize}
         \item $X \in N \land Y \in N \land U(X, Y) \implies \hat{U}(X, Y)$
         \item $X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \hat{U}(W', W'')
@@ -490,7 +490,7 @@ If the desired semantics is to allow functions to only accept subtypes of
 their argument, some extra care needs to be taken, namely:
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rc Y_1 \rb \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
 \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y_2 \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y_1 \rb \]
-if and only if\marginpar{\scriptsize след като сменяш дефиницията на правилата за извод, може би трябва да смениш и дефиницията на $sem_\psi$, ако искаш свойство \cref{ccg:typeconsistent} да остане в сила?}
+if and only if\note{след като сменяш дефиницията на правилата за извод, може би трябва да смениш и дефиницията на $sem_\psi$, ако искаш свойство \cref{ccg:typeconsistent} да остане в сила?}
 \begin{equation}\label{eq:typeless}
     \typeof{Y_2} \less \typeof{Y_1}
 \end{equation}
@@ -504,7 +504,7 @@ we will use the following extension:
     for the set of
     atomic categories $N$, its contravariant extension over complex categories
     $\overline{U} \subseteq \cclos{N} \times \cclos{N}$ is defined
-    inductively as follows:\fixednote{\scriptsize също препоръчвам дефиниция с клаузи}
+    inductively as follows:\fixednote{също препоръчвам дефиниция с клаузи}
     \begin{itemize}
         \item $X \in N \land Y \in N \land U(X, Y) \implies \overline{U}(X, Y)$
         \item $X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \overline{U}(W'', W')
@@ -516,7 +516,7 @@ It can be easily seen that using
 $\overline{U}$ is equivalent
 to the condition in \cref{eq:typeless}
 (given that $U(X, Y) \defiff \typeof{Y} \less \typeof{X}$).
-\fixednote{\scriptsize запетайка в началото на реда изглежда странно}
+\fixednote{запетайка в началото на реда изглежда странно}
 \begin{example}
     Imagine we want to be able to parse the following queries:
     \begin{itemize}

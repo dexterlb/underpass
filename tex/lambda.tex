@@ -298,7 +298,7 @@ So, for a of type lattice $T$, we will define the set of
                 \hypo{\sigma \less \tau}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
             }
-        \item Construction via downcast (dangerous, doesn't need to be included in most cases\fixednote{\scriptsize не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
+        \item Construction via downcast (dangerous, doesn't need to be included in most cases\fixednote{не видях в текста никъде да използваш downcast, ако наистина е така, може би е по-добре да го махнеш}            \cenderiv{
                 \hypo{\Gamma \vdash A : \sigma}
                 \hypo{\tau \less \sigma}
                 \infer2{\Gamma \vdash \tau[A] : \tau}
@@ -703,7 +703,7 @@ existing manually-constructed types, and extend it with the new type.
     \begin{itemize}
         \item a type lattice $\langle T, \less \rangle$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
-        \item a mapping $\varphi : T \fun \tclos{T}$\fixednote{\scriptsize тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
+        \item a mapping $\varphi : T \fun \tclos{T}$\fixednote{тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
     \end{itemize}
     Let $\suptyper{\xi}$ and $\subtyper{\xi}$ be injections from
@@ -891,7 +891,7 @@ existing manually-constructed types, and extend it with the new type.
 
 \begin{lemma}
     \label{lemma:subadd:squash}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{\scriptsize има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
+    If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
     and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
     there is a squash function $\squash_{\theta} : T' \fun T$.
@@ -910,7 +910,7 @@ existing manually-constructed types, and extend it with the new type.
     \]
 
     This is a correctly defined function because $\subtyper{\xi}$ and
-    $\suptyper{\xi}$ are injections with non-overlapping ranges.\fixednote{\scriptsize и защото range-овете им не се пресичат}
+    $\suptyper{\xi}$ are injections with non-overlapping ranges.\fixednote{и защото range-овете им не се пресичат}
 
     Now let us check the conditions for $\squash_{\theta}$
     being a squash function for $T' \tless T$:
@@ -976,7 +976,7 @@ existing manually-constructed types, and extend it with the new type.
                     and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
 
                     Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ \fixednote{\scriptsize че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
+                    $\sigma \less' \sigma'$ \fixednote{че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
                     such that $\tau' \less' \tau$, we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
@@ -1009,7 +1009,7 @@ special possible basic type).
     \begin{itemize}
         \item for $T_0$, we trivially know that $T \tless T$ with an identity
             squash function $\squash_0(\sigma) = \sigma$.
-        \item for $T_{i + 1}$, inductively we have that $T_i \tless T$.\fixednote{\scriptsize тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
+        \item for $T_{i + 1}$, inductively we have that $T_i \tless T$.\fixednote{тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
 
             Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
             Now, by the transitivity\footnote{Which can be trivially
@@ -1053,7 +1053,7 @@ special possible basic type).
 The squash function we constructed here is unique by \cref{prop:squash:unique}.
 
 \subsubsection{Type-tagged terms and type propagation}
-\label{sec:propagation}\marginpar{\scriptsize струва ми се, че този раздел има нужда от мотивиращ пример}
+\label{sec:propagation}\note{струва ми се, че този раздел има нужда от мотивиращ пример}
 For the sake of performing optimisations, it is convenient to store extra
 information within types. For example, we can extend our $Num$ type to include
 a tag that says whether the value this type is attached to is a constant. This
@@ -1069,7 +1069,7 @@ versa, and the function $\mcf{propagate}$ that propagates type information
 throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
-process until\marginpar{\scriptsize възможно ли е този процес да зацикли?} it no longer produces a different term, and then $\mcf{untag}$ging
+process until\note{възможно ли е този процес да зацикли?} it no longer produces a different term, and then $\mcf{untag}$ging
 back into a regular $\lambda$-term. This process is illustrated in
 \cref{fig:propagation} and is utilised within \cref{sec:typeinf} and
 \cref{sec:optimisation}.
@@ -1080,12 +1080,12 @@ back into a regular $\lambda$-term. This process is illustrated in
         represent typed $\lambda$-terms, while green nodes represent
         type-tagged $\lambda$-terms.}
     \label{fig:propagation}
-}\fixednote{\scriptsize Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
+}\fixednote{Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
 We will informally assume that term manipulations don't alter semantics\footnote{
     by much} (in a very broad sense).
 
-This ``type-tagged term'' construction \fixednote{\scriptsize моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
+This ``type-tagged term'' construction \fixednote{моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
 a type for every subterm anyway, which can replace the use of casts for all
 practical\footnote{
     There is no way to preserve multiple consecutive casts.
@@ -1099,7 +1099,7 @@ they can be easily extracted from the types of the respective abstraction terms.
         to denote type tags in order not to confuse them with Church-style
         typing, which would imply that types are always correct (which we
         don't require here).
-    }\fixednote{\scriptsize стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
+    }\fixednote{стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
             \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
@@ -1188,13 +1188,13 @@ This means that it was given a term whose type cannot be cast to its type-tag.
 We will assume that manipulations done to the term will not produce such cases.
 
 Now that we have the construction for attaching types to subterms, we can
-describe a universal way to propagate information through those types.\fixednote{\scriptsize няма ли да покажеш, че термовете, които се връщат от $\mcf{untag}$ са коректно типизирани?}
+describe a universal way to propagate information through those types.\fixednote{няма ли да покажеш, че термовете, които се връщат от $\mcf{untag}$ са коректно типизирани?}
 
 We will use a basic operation $\unify$ that unifies two types.
 
 \begin{defn}
 An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
-called a \emph{unifier} for $T$ if:\marginpar{\scriptsize защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
+called a \emph{unifier} for $T$ if:\note{защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
 \begin{itemize}
     \item it is only defined for types with identical syntactic structure and
         preserves it
@@ -1277,5 +1277,5 @@ information down the term tree towards the leaves).
     \]
   \end{defn}
   \newpage
-  \marginpar{\scriptsize липсва стъпката за манипулиране на терм, може би е добре да дадеш поне един пример за такава функция? тук може би е редно да навържеш всички дефинирани функции в една обща функция, която работидиректно над $\lambda$-термове.}
+  \note{липсва стъпката за манипулиране на терм, може би е добре да дадеш поне един пример за такава функция? тук може би е редно да навържеш всички дефинирани функции в една обща функция, която работидиректно над $\lambda$-термове.}
 \end{document}
