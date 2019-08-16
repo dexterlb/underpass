@@ -252,7 +252,9 @@ Here is an outline of the basic translation process:
     \item Recursively evaluate (translate) all arguments
         (since there are no constants of higher-order
         type and the term has been fully $\beta$-reduced, the head
-        is always a constant and the arguments are of non-arrow types\note{защо аргументите не може да са стрелки?})
+        is always a constant and the arguments are of non-arrow types ---
+        see \cref{prop:simpleargs}
+        \fixednote{защо аргументите не може да са стрелки?})
     \item Perform pattern matching of the argument list against a set of
         translation rules. Modify state and return value according to matched
         rule (or throw translation error).

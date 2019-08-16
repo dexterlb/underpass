@@ -64,4 +64,29 @@ to a sequence of arguments:\note{съгласно тази дефиниция а
     The term $P (Q R) (\lambda x: \sigma \abstr S) T$ has head $P$ and
     arguments $(Q R)$, $(\lambda x: \sigma \abstr S)$ and $T$.
 \end{example}
+
+\begin{property}\label{prop:simpleargs}
+    If a term:
+    \begin{itemize}
+        \item is closed
+        \item contains no $\beta$-redex
+        \item contains no constants of higher-order-type
+        \item is of non-arrow type
+    \end{itemize}
+    then its arguments have non-arrow types.
+\end{property}
+\begin{proof}
+    Let $M \in \plambda{T}{C}$ be a term which satisfies the conditions above.
+
+    Since $M$ is of non-arrow type and contains no $\beta$-redex, it
+    contains no abstractions, therefore no bound variables. Since it is closed,
+    this means it also contains no free variables.
+
+    Thus, $M$ only contains constants and applications, and must have the
+    following form:
+    \[ ((...(c M_1) ... M_{k - 1} ) M_k ) \]
+    where the head $c$ is a constant and the arguments $M_1 ... M_k$.
+
+    Since $c$ is a constant of first-order type, its arguments have simple types.
+\end{proof}
 \end{document}
