@@ -1218,7 +1218,7 @@ back into a regular $\lambda$-term. This process is illustrated in
     \label{fig:propagation}
 }\fixednote{Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
-We will informally assume that term manipulations don't alter semantics\footnote{
+We will informally assume that term manipulations do not alter semantics\footnote{
     by much} (in a very broad sense).
 
 This ``type-tagged term'' construction \fixednote{моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
@@ -1234,7 +1234,7 @@ they can be easily extracted from the types of the respective abstraction terms.
         Here we use $\ttt{ M}{ \tau }$ instead of $M^\tau$
         to denote type tags in order not to confuse them with Church-style
         typing, which would imply that types are always correct (which we
-        don't require here).
+        do not require here).
     }\fixednote{стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
@@ -1322,7 +1322,7 @@ will take extra care and insert casts where needed:
 \end{defn}
 
 It can be easily seen that terms returned by $\mcf{untag}$ are well-typed,
-since we've inserted casts wherever the types don't match. Note that $\mcf{untag}$
+since we have inserted casts wherever the types do not match. Note that $\mcf{untag}$
 may be undefined in some cases (when its definition produces an invalid cast).
 This means that it was given a term whose type cannot be cast to its type-tag.
 We will assume that manipulations done to the term will not produce such cases.
