@@ -467,12 +467,12 @@ and contexts:
     \[
         \lsquash(A) =
         \begin{cases*}
-            c ,& $A = c \in C$ \\
-            v ,& $A = v \in \lvars$ \\
-            \lsquash(M) \lsquash(N) ,& $A = (MN)$ \\
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$, \\
             \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
- ,& $A = \lambda x : \sigma \abstr M$ \\
-                \tsquash(\sigma)[M] ,& $A = \sigma[M]$ \\
+ ,& $A = \lambda x : \sigma \abstr M$, \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$. \\
         \end{cases*}
     \]
 
@@ -553,7 +553,7 @@ type system used for CCG parsing into the Minipass type system
             $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
 
             Thus, \[
-                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
+                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma).
             \]
     \end{itemize}
 \end{proof}
@@ -922,7 +922,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It follows the subtyping relation:
             \[ \forall \tau \in T
-                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)) \]
+                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)). \]
 
             Let $\tau \in T'$. There are three possibilities for $\tau$:
             \begin{itemize}
@@ -941,7 +941,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It preserves the subtyping relation:
             \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
-                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
+                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)). \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
             There are 4 possibilities:
@@ -969,11 +969,11 @@ existing manually-constructed types, and extend it with the new type.
                     are in relation because of transitivity or reflexivity.
                     The reflexive case is trivial.
 
-                    For each of $\sigma$ and $\tau$, we've added a single edge
+                    For each of $\sigma$ and $\tau$, we have added a single edge
                     (plus transitive and reflective closure) in the relation.
-                    Therefore, having $\sigma \less \tau$, there is no
-                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
-                    and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
+                    Therefore, having $\sigma \less' \tau$, there is no
+                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less' \sigma$
+                    and no $\tau''$ such that $\tau \less' \tau'' \not\eq \tau$.
 
                     Since $\sigma'$ is the only element in $T$ such that
                     $\sigma \less' \sigma'$ \fixednote{че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
@@ -1013,11 +1013,11 @@ special possible basic type).
 
             Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
             Now, by the transitivity\footnote{Which can be trivially
-            proven} of $\tless$, we have that $T \tless T_{i + 1}$.
+            proven} of $\tless$, we have that $T_{i + 1} \tless T$.
 
             Moreover, since there is inductively a squash function
             $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
-            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
+            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$.
 
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
@@ -1026,8 +1026,8 @@ special possible basic type).
             properties of $\squash_{i + 1}$:
             \begin{enumerate}
                 \item For each special
-                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
-                    minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
+                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is the unique
+                    minimal element in $T$ for which $\tau \less \squash_{i + 1}(\tau)$.
 
                     Fix an arbitrary special $\tau$ and let
                     $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
@@ -1035,8 +1035,8 @@ special possible basic type).
 
                     This property is inductively true for elements within $T_i$.
                     Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
-                    $\tau'$ is a unique minimal element in
-                    $T_i$ such that $\tau \less \tau'$. Since there are no other
+                    $\tau'$ is the unique minimal element in
+                    $T_i$ for which $\tau \less \tau'$. Since there are no other
                     minimal elements in $T_i$ that satisfy this condition,
                     we have that $\tau''$ also satisfies this condition for
                     $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
