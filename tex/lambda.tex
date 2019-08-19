@@ -416,16 +416,16 @@ however, involves discarding information.
 \begin{property}
     If $\squash: T \fun S$ is a squash function for
     $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
-    then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
+    then $\squash(\tau) = \min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
     for special elements $\tau \in T \setminus S$, and dually
-    $\squash(\tau) = max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
+    $\squash(\tau) = \max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
     for general elements $\tau \in T \setminus S$.
 \end{property}
 \begin{proof}
-    WLOG\footnote{The argument for general elements is dual to the one for special
+    Without loss of generality\footnote{The argument for general elements is dual to the one for special
         elements.},
-    let $\tau$ be a special element in $T \setminus S$, e.g. for every
-    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.
+    let $\tau$ be a special element in $T \setminus S$, i.e., for every
+    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.\note{има разминаване с дефиницията на ``special'': $(\exists \sigma \in S)(\tau \less'\sigma)$. Не трябва ли да е ``for some''? Изглежда, че липсва една стъпка, която се позовава на $\xor$ в дефиницията на $\tless$, за да заключи, че от $\exists$ следва $\forall$.}
 
     Now, since $\squash(\tau)$ is comparable with $\tau$, we have
     $\tau \less' \squash(\tau)$.
@@ -434,10 +434,10 @@ however, involves discarding information.
     By the preservation property of $\squash$, we know that
     $\tau \less' \squash(\tau) \less \squash(\sigma) = \sigma$.
 
-    Thus, $\squash(\tau)$ is lower-than any element that is comparable
+    Thus, $\squash(\tau)$ is lower than any element that is comparable
     by $\less$ with any element that is comparable by $\less'$ with $\tau$.
     This gives that $\squash(\tau)$ is the minimal element in $S$ that is
-    greater-than $\tau$.
+    greater than $\tau$.
 \end{proof}
 \begin{corollary}\label{prop:squash:unique}
     If there is a squash function $\squash: T \fun S$ for
@@ -448,11 +448,11 @@ however, involves discarding information.
 \begin{proof}
     The value of $\squash(\tau)$ is unambiguous in all cases:
     \begin{itemize}
-        \item If $\tau \in S$, then $\squash(\tau) = \tau$
+        \item If $\tau \in S$, then $\squash(\tau) = \tau$.
         \item If $\tau \in T \setminus S$ and $\tau$ is special
-            then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
+            then $\squash(\tau) = \min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$.
         \item If $\tau \in T \setminus S$ and $\tau$ is general
-            then $\squash(\tau) = max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$
+            then $\squash(\tau) = \max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
     \end{itemize}
 \end{proof}
 
@@ -467,12 +467,12 @@ and contexts:
     \[
         \lsquash(A) =
         \begin{cases*}
-            c ,& $A = c \in C$ \\
-            v ,& $A = v \in \lvars$ \\
-            \lsquash(M) \lsquash(N) ,& $A = (MN)$ \\
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$, \\
             \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
- ,& $A = \lambda x : \sigma \abstr M$ \\
-                \tsquash(\sigma)[M] ,& $A = \sigma[M]$ \\
+ ,& $A = \lambda x : \sigma \abstr M$, \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$. \\
         \end{cases*}
     \]
 
@@ -553,7 +553,7 @@ type system used for CCG parsing into the Minipass type system
             $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
 
             Thus, \[
-                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
+                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma).
             \]
     \end{itemize}
 \end{proof}
@@ -922,7 +922,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It follows the subtyping relation:
             \[ \forall \tau \in T
-                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)) \]
+                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)). \]
 
             Let $\tau \in T'$. There are three possibilities for $\tau$:
             \begin{itemize}
@@ -941,7 +941,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It preserves the subtyping relation:
             \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
-                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
+                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)). \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
             There are 4 possibilities:
@@ -969,14 +969,14 @@ existing manually-constructed types, and extend it with the new type.
                     are in relation because of transitivity or reflexivity.
                     The reflexive case is trivial.
 
-                    For each of $\sigma$ and $\tau$, we've added a single edge
+                    For each of $\sigma$ and $\tau$, we have added a single edge
                     (plus transitive and reflective closure) in the relation.
-                    Therefore, having $\sigma \less \tau$, there is no
-                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
-                    and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
+                    Therefore, having $\sigma \less' \tau$, there is no
+                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less' \sigma$
+                    and no $\tau''$ such that $\tau \less' \tau'' \not\eq \tau$.
 
                     Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ \fixednote{че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
+                    $\sigma \less' \sigma'$ \note{only -> least} and $\tau'$ is the only element in $T$
                     such that $\tau' \less' \tau$, we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
@@ -996,7 +996,7 @@ special possible basic type).
     then $T' \tless T$. Moreover, there is a unique squash function
     $\squash_{\Theta} : T' \fun T$ that maps general elements in $T'$ into
     maximal elements in $T$ and maps special elements in $T'$ into minimal elements
-    in $T$.
+    in $T$.\note{уточнение за minimal и maximal}
 \end{prop}
 \begin{proof}
     Let \[
@@ -1013,11 +1013,11 @@ special possible basic type).
 
             Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
             Now, by the transitivity\footnote{Which can be trivially
-            proven} of $\tless$, we have that $T \tless T_{i + 1}$.
+            proven} of $\tless$, we have that $T_{i + 1} \tless T$.
 
             Moreover, since there is inductively a squash function
             $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
-            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
+            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$.
 
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
@@ -1026,8 +1026,8 @@ special possible basic type).
             properties of $\squash_{i + 1}$:
             \begin{enumerate}
                 \item For each special
-                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
-                    minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
+                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is the unique
+                    minimal element in $T$ for which $\tau \less \squash_{i + 1}(\tau)$.
 
                     Fix an arbitrary special $\tau$ and let
                     $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
@@ -1035,8 +1035,8 @@ special possible basic type).
 
                     This property is inductively true for elements within $T_i$.
                     Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
-                    $\tau'$ is a unique minimal element in
-                    $T_i$ such that $\tau \less \tau'$. Since there are no other
+                    $\tau'$ is the unique minimal element in
+                    $T_i$ for which $\tau \less \tau'$. Since there are no other
                     minimal elements in $T_i$ that satisfy this condition,
                     we have that $\tau''$ also satisfies this condition for
                     $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
@@ -1137,7 +1137,7 @@ back into a regular $\lambda$-term. This process is illustrated in
     \label{fig:propagation}
 }\fixednote{Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
-We will informally assume that term manipulations don't alter semantics\footnote{
+We will informally assume that term manipulations do not alter semantics\footnote{
     by much} (in a very broad sense).
 
 This ``type-tagged term'' construction \fixednote{моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
@@ -1153,7 +1153,7 @@ they can be easily extracted from the types of the respective abstraction terms.
         Here we use $\langle M, \tau \rangle$ instead of $M^\tau$
         to denote type tags in order not to confuse them with Church-style
         typing, which would imply that types are always correct (which we
-        don't require here).
+        do not require here).
     }\fixednote{стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
@@ -1241,7 +1241,7 @@ will take extra care and insert casts where needed:
 \end{defn}
 
 It can be easily seen that terms returned by $\mcf{untag}$ are well-typed,
-since we've inserted casts wherever the types don't match. Note that $\mcf{untag}$
+since we have inserted casts wherever the types do not match. Note that $\mcf{untag}$
 may be undefined in some cases (when its definition produces an invalid cast).
 This means that it was given a term whose type cannot be cast to its type-tag.
 We will assume that manipulations done to the term will not produce such cases.

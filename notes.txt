@@ -1,2 +1,3 @@
 replace commas by ands (when applicable)
 more commas in cases
+moreover -> furthermore
