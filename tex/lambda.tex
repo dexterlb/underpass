@@ -1066,7 +1066,62 @@ a type to every subterm.
 We will then define the functions $\mcf{tag}$ and $\mcf{untag}$ that allow us
 to convert typed $\lambda$-terms into type-tagged $\lambda$-terms and vice
 versa, and the function $\mcf{propagate}$ that propagates type information
-throughout the term. The main goal is to be able to $\mcf{tag}$ a term,
+throughout the term.
+
+\begin{example}
+    For simplicity, regard the world of arithmetic expressions with a single
+    type $Num$, numeric constants and the term $plus$ of type $Num \tot Num$.
+
+    We will implement a very simple optimisation: constant folding.
+
+    Take the following term:
+    \[ plus \app x \app (plus \app 3 \app 5) \]
+
+    If we decompose\footnote{
+        We can pretend the term has a non-binary syntax tree
+        by using the Uncurrying construction from \cref{sec:uncurry}
+    } it, we get this syntax tree:
+    \centree{.{$plus^{Num \tot Num}$}
+        [ .{$x^{Num}$} ]
+        [ .{$plus^{Num \tot Num}$}
+            [ .{$3^{Num}$} ]
+            [ .{$5^{Num}$} ]
+        ]
+    }
+
+    Now, we will extend the type system to the following lattice:
+    \centree{.{$Num$}
+        [ .{$C0$} ]
+        [ .{$C1$} ]
+        [ .{$C2$} ]
+        [ .{$...$} ]
+        [ .{$C69$} ]
+        [ .{$...$} ]
+    }
+
+    Since numeric constants like $5$ still bear the $Num$ type, we will
+    attach a \emph{type-tag} to each subterm in order to be able to give them
+    more concrete types:
+    \centree{.{$\langle plus, Num \tot Num \rangle$}
+        [ .{$\langle x, Num \rangle $} ]
+        [ .{$\langle plus, Num \tot Num \rangle $}
+            [ .{$\langle 3, Num \rangle $} ]
+            [ .{$\langle 5, Num \rangle $} ]
+        ]
+    }
+
+    We want to apply the following rewriter:
+    \[
+        \rho(M) \defeq
+        \begin{cases*}
+            \langle n, C_n \rangle,& M = \langle N, C_n \rangle \\
+            \langle n, C_n \rangle,& M = \langle N, C_n \rangle \\
+        \end{cases*}
+    \]
+    \fixme{finish this shit}
+\end{example}
+
+The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
 process until\note{възможно ли е този процес да зацикли?} it no longer produces a different term, and then $\mcf{untag}$ging
