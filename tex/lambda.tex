@@ -525,12 +525,12 @@ and contexts:
     \[
         \lsquash(A) =
         \begin{cases*}
-            c ,& $A = c \in C$ \\
-            v ,& $A = v \in \lvars$ \\
-            \lsquash(M) \lsquash(N) ,& $A = (MN)$ \\
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$, \\
             \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
- ,& $A = \lambda x : \sigma \abstr M$ \\
-                \tsquash(\sigma)[M] ,& $A = \sigma[M]$ \\
+ ,& $A = \lambda x : \sigma \abstr M$, \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$. \\
         \end{cases*}
     \]
 
@@ -611,7 +611,7 @@ type system used for CCG parsing into the Minipass type system
             $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
 
             Thus, \[
-                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
+                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma).
             \]
     \end{itemize}
 \end{proof}
@@ -980,7 +980,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It follows the subtyping relation:
             \[ \forall \tau \in T
-                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)) \]
+                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)). \]
 
             Let $\tau \in T'$. There are three possibilities for $\tau$:
             \begin{itemize}
@@ -999,7 +999,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It preserves the subtyping relation:
             \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
-                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
+                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)). \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
             There are 4 possibilities:
@@ -1027,11 +1027,11 @@ existing manually-constructed types, and extend it with the new type.
                     are in relation because of transitivity or reflexivity.
                     The reflexive case is trivial.
 
-                    For each of $\sigma$ and $\tau$, we've added a single edge
+                    For each of $\sigma$ and $\tau$, we have added a single edge
                     (plus transitive and reflective closure) in the relation.
-                    Therefore, having $\sigma \less \tau$, there is no
-                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
-                    and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
+                    Therefore, having $\sigma \less' \tau$, there is no
+                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less' \sigma$
+                    and no $\tau''$ such that $\tau \less' \tau'' \not\eq \tau$.
 
                     Since $\sigma'$ is the least element in $T$ such that
                     $\sigma \less' \sigma'$ \fixednote{only -> least} and $\tau'$
