@@ -413,7 +413,22 @@ however, involves discarding information.
     \end{itemize}
 \end{proof}
 
-\begin{property}
+\begin{property}\label{prop:squashcomp}
+    The composition of two squash functions is a squash function, i.e. if:
+    \begin{itemize}
+        \item $\squash' : T' \fun T$ is a squash function for
+            $\lattice{T'}{\less'} \tless \lattice{T}{\less}$
+        \item $\squash'' : T'' \fun T'$ is a squash function for
+            $\lattice{T''}{\less''} \tless \lattice{T'}{\less'}$
+    \end{itemize}
+    Then $\squash \defeq \squash' \circ \squash''$ is a squash function
+    for $\lattice{T''}{\less''} \tless \lattice{T}{\less}$.
+\end{property}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
+\begin{property}\label{prop:squashminmax}
     If $\squash: T \fun S$ is a squash function for
     $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$,
     then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
@@ -975,9 +990,11 @@ existing manually-constructed types, and extend it with the new type.
                     $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
                     and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
 
-                    Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ \fixednote{че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
-                    such that $\tau' \less' \tau$, we must have
+                    Since $\sigma'$ is the least element in $T$ such that
+                    $\sigma \less' \sigma'$ \fixednote{only -> least} and $\tau'$
+                    is the gratest element in $T$
+                    such that $\tau' \less' \tau$ (see \cref{prop:squashminmax}),
+                    we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
     \end{itemize}
@@ -993,10 +1010,8 @@ special possible basic type).
     If $\lattice{ T}{ \less }$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \lattice{ T'}{ \less' }, \varphi \rangle$,
-    then $T' \tless T$. Moreover, there is a unique squash function
-    $\squash_{\Theta} : T' \fun T$ that maps general elements in $T'$ into
-    maximal elements in $T$ and maps special elements in $T'$ into minimal elements
-    in $T$.
+    then $T' \tless T$. Moreover, there is a squash function
+    $\squash_{\Theta} : T' \fun T$.
 \end{prop}
 \begin{proof}
     Let \[
@@ -1022,31 +1037,8 @@ special possible basic type).
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
 
-            Now, we need to prove the squash-function and minimal/maximal element
-            properties of $\squash_{i + 1}$:
-            \begin{enumerate}
-                \item For each special
-                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
-                    minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
-
-                    Fix an arbitrary special $\tau$ and let
-                    $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
-                    $\tau'' = \squash_{i + 1}(\tau')$.
-
-                    This property is inductively true for elements within $T_i$.
-                    Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
-                    $\tau'$ is a unique minimal element in
-                    $T_i$ such that $\tau \less \tau'$. Since there are no other
-                    minimal elements in $T_i$ that satisfy this condition,
-                    we have that $\tau''$ also satisfies this condition for
-                    $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
-                    $T$ go through $\tau'$).
-
-                \item The argument for general elements is dual to the one
-                    for special elements.
-                \item It preserves $\less$ --- this is true because $\squash_{i + 1}$
-                    is a composition of two functions that preserve $\less$.
-            \end{enumerate}
+            By \cref{prop:squashcomp} we know that $\squash_{i + 1}$ is a
+            squash function for $T_{i + 1} \tless T$.
     \end{itemize}
 \end{proof}
 
