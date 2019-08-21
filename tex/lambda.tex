@@ -38,7 +38,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \end{defn}
 
 \begin{defn}
-    A \emph{partial lattice} is a pair $\langle X, \less \rangle$ where:
+    A \emph{partial lattice} is a pair $\lattice{ X}{ \less }$ where:
     \begin{itemize}
         \item $\less$ is a partial-order relation
         \item for any $x, y \in X$, there is at most one meet and at most one join.
@@ -48,12 +48,12 @@ One such ordering relation is the \emph{subtype} relation, as presented in
 \end{defn}
 
 \begin{defn}
-    A partial lattice $\langle T, \less \rangle$ where
+    A partial lattice $\lattice{ T}{ \less }$ where
     $T \subseteq \tsymbs$ is called a \emph{type lattice}.
 
-    Whenever the relation is unambiguous, $T$ and $\langle T, \less \rangle$
+    Whenever the relation is unambiguous, $T$ and $\lattice{ T}{ \less }$
     will be used interchangeably: we could say ``let $T$ be a
-    type lattice'', which would refer to $\langle T, \less \rangle$.
+    type lattice'', which would refer to $\lattice{ T}{ \less }$.
 \end{defn}
 
 \begin{defn}
@@ -328,8 +328,8 @@ We will now formalise the notion of a type lattice being more general
 or more concrete than another type lattice.
 
 \begin{defn}
-    If $\langle T, \less' \rangle$ and $\langle S, \less \rangle$
-    are type lattices, we say that $\langle T, \less' \rangle \tless \langle S, \less \rangle$ if:
+    If $\lattice{ T}{ \less' }$ and $\lattice{ S}{ \less }$
+    are type lattices, we say that $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$ if:
     \begin{itemize}
         \item $S \subseteq T$
         \item $\less \subseteq \less'$ and $\restr{\less'}{S \times S} = \less$
@@ -368,7 +368,7 @@ however, involves discarding information.
 
 \begin{defn}\label{def:squashfn}
     $\squash: T \fun S$ is a \emph{squash function} for
-    $\langle T, \less' \rangle \tless \langle S, \less \rangle$, if:
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$, if:
     \begin{itemize}
         \item for each $\tau \in S$, $\squash(\tau) = \tau$
         \item it follows the subtyping relation:
@@ -415,17 +415,17 @@ however, involves discarding information.
 
 \begin{property}
     If $\squash: T \fun S$ is a squash function for
-    $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
-    then $\squash(\tau) = \min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$,
+    then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
     for special elements $\tau \in T \setminus S$, and dually
-    $\squash(\tau) = \max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
+    $\squash(\tau) = max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
     for general elements $\tau \in T \setminus S$.
 \end{property}
 \begin{proof}
-    Without loss of generality\footnote{The argument for general elements is dual to the one for special
+    WLOG\footnote{The argument for general elements is dual to the one for special
         elements.},
-    let $\tau$ be a special element in $T \setminus S$, i.e., for every
-    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.\note{има разминаване с дефиницията на ``special'': $(\exists \sigma \in S)(\tau \less'\sigma)$. Не трябва ли да е ``for some''? Изглежда, че липсва една стъпка, която се позовава на $\xor$ в дефиницията на $\tless$, за да заключи, че от $\exists$ следва $\forall$.}
+    let $\tau$ be a special element in $T \setminus S$, e.g. for every
+    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.
 
     Now, since $\squash(\tau)$ is comparable with $\tau$, we have
     $\tau \less' \squash(\tau)$.
@@ -434,25 +434,25 @@ however, involves discarding information.
     By the preservation property of $\squash$, we know that
     $\tau \less' \squash(\tau) \less \squash(\sigma) = \sigma$.
 
-    Thus, $\squash(\tau)$ is lower than any element that is comparable
+    Thus, $\squash(\tau)$ is lower-than any element that is comparable
     by $\less$ with any element that is comparable by $\less'$ with $\tau$.
     This gives that $\squash(\tau)$ is the minimal element in $S$ that is
-    greater than $\tau$.
+    greater-than $\tau$.
 \end{proof}
 \begin{corollary}\label{prop:squash:unique}
     If there is a squash function $\squash: T \fun S$ for
-    $\langle T, \less' \rangle \tless \langle S, \less \rangle$,
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$,
     it is unique in the sense that there is no other squash function for
-    $\langle T, \less' \rangle \tless \langle S, \less \rangle$.
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$.
 \end{corollary}
 \begin{proof}
     The value of $\squash(\tau)$ is unambiguous in all cases:
     \begin{itemize}
-        \item If $\tau \in S$, then $\squash(\tau) = \tau$.
+        \item If $\tau \in S$, then $\squash(\tau) = \tau$
         \item If $\tau \in T \setminus S$ and $\tau$ is special
-            then $\squash(\tau) = \min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$.
+            then $\squash(\tau) = min_{\less} \{ \sigma \in S \mid \tau \less' \sigma \}$
         \item If $\tau \in T \setminus S$ and $\tau$ is general
-            then $\squash(\tau) = \max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$.
+            then $\squash(\tau) = max_{\less} \{ \sigma \in S \mid \sigma \less' \tau \}$
     \end{itemize}
 \end{proof}
 
@@ -467,12 +467,12 @@ and contexts:
     \[
         \lsquash(A) =
         \begin{cases*}
-            c ,& $A = c \in C$, \\
-            v ,& $A = v \in \lvars$, \\
-            \lsquash(M) \lsquash(N) ,& $A = (MN)$, \\
+            c ,& $A = c \in C$ \\
+            v ,& $A = v \in \lvars$ \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$ \\
             \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
- ,& $A = \lambda x : \sigma \abstr M$, \\
-                \tsquash(\sigma)[M] ,& $A = \sigma[M]$. \\
+ ,& $A = \lambda x : \sigma \abstr M$ \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$ \\
         \end{cases*}
     \]
 
@@ -553,7 +553,7 @@ type system used for CCG parsing into the Minipass type system
             $\tsquash(\sigma) \less \tsquash(\tau)$ or $\tsquash(\tau) \less \tsquash(\sigma)$.
 
             Thus, \[
-                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma).
+                \consquash(\Gamma) \vdash \tsquash(\sigma)[\lsquash(M)] : \tsquash(\sigma)
             \]
     \end{itemize}
 \end{proof}
@@ -612,7 +612,7 @@ with their respective clones. One way to deal with contravariance is the followi
 \newcommand\clonesup{\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
 
 \begin{defn}
-    Let $\langle T, \less \rangle$ be a type lattice, $\tau \in \tclos{T}$
+    Let $\lattice{ T}{ \less }$ be a type lattice, $\tau \in \tclos{T}$
     be a type and $\subtyper{\xi}, \suptyper{\xi}$ be mappings from a
     superset of
     $\ts{\tau}$ into $\tsymbs$ such that
@@ -701,7 +701,7 @@ existing manually-constructed types, and extend it with the new type.
     \label{def:subadd}
     Given
     \begin{itemize}
-        \item a type lattice $\langle T, \less \rangle$
+        \item a type lattice $\lattice{ T}{ \less }$
         \item a type symbol $\sigma \in \tsymbs \setminus T$
         \item a mapping $\varphi : T \fun \tclos{T}$\fixednote{тук означението $\pfun$ се появява за пръв път без да е обяснено, не мисля че може да се счита стандартно означение на частична функция.}
         \item a type $\tau$ such that $\hat{\varphi}(\tau)$ is defined\fixednote{ако започваш от $\varphi = \emptyset$ това условие няма как да е изпълнено}
@@ -717,10 +717,10 @@ existing manually-constructed types, and extend it with the new type.
     }.
 
     Now define the operation $\tadd$ as:
-        \[ \langle \langle T, \less \rangle, \varphi \rangle
+        \[ \langle \lattice{ T}{ \less }, \varphi \rangle
             \tadd (\sigma \lass \tau)
             \defeq
-            \langle \langle T', \less' \rangle, \varphi' \rangle
+            \langle \lattice{ T'}{ \less' }, \varphi' \rangle
         \] where:
     \begin{itemize}
         \item $\rho = \clonesub(\hat{\varphi}(\tau))$
@@ -733,10 +733,10 @@ existing manually-constructed types, and extend it with the new type.
 
     Note: in the cases where $\varphi$ is irrelevant, it will be omitted as
     so:
-    \[ \langle T, \less \rangle
+    \[ \lattice{ T}{ \less }
         \tadd (\sigma \lass \tau)
         \defeq
-        \langle T', \less' \rangle
+        \lattice{ T'}{ \less' }
     \]
 \end{defn}
 
@@ -752,9 +752,9 @@ existing manually-constructed types, and extend it with the new type.
 
 \begin{lemma}
     \label{lemma:subadd:rel}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
+    If $\lattice{ T}{ \less }$ is a type lattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
-    and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
+    and $\lattice{ T'}{ \less' } = \lattice{ T}{ \less } \tadd \theta$, then
     \[ T' \tless T \]
 \end{lemma}
 \begin{proof}
@@ -803,10 +803,10 @@ existing manually-constructed types, and extend it with the new type.
 
 \begin{lemma}
     \label{lemma:subadd:phi}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta = (\sigma \lass \tau)$
+    If $\lattice{ T}{ \less }$ is a type lattice, $\theta = (\sigma \lass \tau)$
     is a subtype assertion and $\varphi$ is a function, both of which satisfy the conditions from \cref{def:subadd}
-    and $\langle \langle T', \less' \rangle, \varphi' \rangle
-    = \langle \langle T, \less \rangle, \varphi \rangle \tadd \theta$, then
+    and $\langle \lattice{ T'}{ \less' }, \varphi' \rangle
+    = \langle \lattice{ T}{ \less }, \varphi \rangle \tadd \theta$, then
     \[ \varphi'(\sigma) \less' \hat{\varphi}(\tau). \]
 \end{lemma}
 \begin{proof}
@@ -826,7 +826,7 @@ existing manually-constructed types, and extend it with the new type.
 \begin{defn}
     A finite sequence of subtype assertions
     $\Theta_T = \theta_1 ... \theta_n$ is called a \emph{subtype library} over $T$
-    if the construction $\hat{\Theta}_T \defeq \langle \langle T, \less \rangle, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    if the construction $\hat{\Theta}_T \defeq \langle \lattice{ T}{ \less }, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
     is defined\fixednote{тук не става ясно, че освен понятието ``subtype library'' дефинираш също и $\hat{\Theta}_T$} \footnote{
         When trying to redefine a previously defined type, the sequence is not
         a subtype library because of the restriction for $\sigma$
@@ -841,7 +841,7 @@ existing manually-constructed types, and extend it with the new type.
 \begin{prop}
     If $T$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
-    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$
+    $\hat{\Theta}_T = \langle \lattice{ T'}{ \less' }, \varphi \rangle$
     the following properties hold:
     \begin{itemize}
         \item $dom(\varphi) = T \cup left(\Theta)$
@@ -869,13 +869,13 @@ existing manually-constructed types, and extend it with the new type.
             Let $\sigma \lass \tau = \theta_i$.
 
             We have that
-            $\langle \langle T', \less' \rangle, \varphi \rangle
-                = \langle \langle T, \less \rangle, \identity_T \rangle
+            $\langle \lattice{ T'}{ \less' }, \varphi \rangle
+                = \langle \lattice{ T}{ \less }, \identity_T \rangle
                 \tadd \theta_1 \tadd ... \tadd \theta_i \tadd ... \tadd \theta_n$
 
             Let
-            $\langle \langle T^{(i)}, \less^{(i)} \rangle, \varphi^{(i)} \rangle
-                = \langle \langle T, \less \rangle, \identity_T \rangle
+            $\langle \lattice{ T^{(i)}}{ \less^{(i)} }, \varphi^{(i)} \rangle
+                = \langle \lattice{ T}{ \less }, \identity_T \rangle
                 \tadd \theta_1 \tadd ... \tadd \theta_i$ \quad ($T' = T^{(n)},
                 \less' = \less^{(n)}$).
 
@@ -891,9 +891,9 @@ existing manually-constructed types, and extend it with the new type.
 
 \begin{lemma}
     \label{lemma:subadd:squash}
-    If $\langle T, \less \rangle$ is a type lattice, $\theta$\fixednote{има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
+    If $\lattice{ T}{ \less }$ is a type lattice, $\theta$\fixednote{има конфликт на символите $\sigma$ и $\tau$ в $\theta$ с тези по-надолу. Доколкото виждам, никъде не използваш конкретните $\sigma$ и $\tau$, така че може просто да не разписваш $\theta$}
     is a subtype assertion satisfying the conditions from \cref{def:subadd}
-    and $\langle T', \less' \rangle = \langle T, \less \rangle \tadd \theta$, then
+    and $\lattice{ T'}{ \less' } = \lattice{ T}{ \less } \tadd \theta$, then
     there is a squash function $\squash_{\theta} : T' \fun T$.
 \end{lemma}
 \begin{proof}
@@ -922,7 +922,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It follows the subtyping relation:
             \[ \forall \tau \in T
-                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)). \]
+                (\squash_{\theta}(\tau) \less' \tau \lor \tau \less' \squash_{\theta}(\tau)) \]
 
             Let $\tau \in T'$. There are three possibilities for $\tau$:
             \begin{itemize}
@@ -941,7 +941,7 @@ existing manually-constructed types, and extend it with the new type.
 
         \item It preserves the subtyping relation:
             \[ \forall \sigma, \tau \in T' (\sigma \less' \tau \implies
-                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)). \]
+                \squash_{\theta}(\sigma) \less \squash_{\theta}(\tau)) \]
 
             Let $\sigma \less' \tau$ for some $\sigma$ and $\tau$.
             There are 4 possibilities:
@@ -969,14 +969,14 @@ existing manually-constructed types, and extend it with the new type.
                     are in relation because of transitivity or reflexivity.
                     The reflexive case is trivial.
 
-                    For each of $\sigma$ and $\tau$, we have added a single edge
+                    For each of $\sigma$ and $\tau$, we've added a single edge
                     (plus transitive and reflective closure) in the relation.
-                    Therefore, having $\sigma \less' \tau$, there is no
-                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less' \sigma$
-                    and no $\tau''$ such that $\tau \less' \tau'' \not\eq \tau$.
+                    Therefore, having $\sigma \less \tau$, there is no
+                    $\sigma''$ such that $\sigma \not\eq \sigma'' \less \sigma$
+                    and no $\tau''$ such that $\tau \less \tau'' \not\eq \tau$.
 
                     Since $\sigma'$ is the only element in $T$ such that
-                    $\sigma \less' \sigma'$ \note{only -> least} and $\tau'$ is the only element in $T$
+                    $\sigma \less' \sigma'$ \fixednote{че $\sigma'$ е единствен е ясно, но откъде следва че релацията е $\sigma\less'\sigma'$, а не $\sigma'\less'\sigma$?} and $\tau'$ is the only element in $T$
                     such that $\tau' \less' \tau$, we must have
                     $\sigma \less' \sigma' \less \tau' \less \tau$.
             \end{itemize}
@@ -990,17 +990,17 @@ most general possible basic type, and for each special type we take the most
 special possible basic type).
 
 \begin{prop}\label{prop:makesquashfun}
-    If $\langle T, \less \rangle$ is a type lattice and
+    If $\lattice{ T}{ \less }$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
-    $\hat{\Theta}_T = \langle \langle T', \less' \rangle, \varphi \rangle$,
+    $\hat{\Theta}_T = \langle \lattice{ T'}{ \less' }, \varphi \rangle$,
     then $T' \tless T$. Moreover, there is a unique squash function
     $\squash_{\Theta} : T' \fun T$ that maps general elements in $T'$ into
     maximal elements in $T$ and maps special elements in $T'$ into minimal elements
-    in $T$.\note{уточнение за minimal и maximal}
+    in $T$.
 \end{prop}
 \begin{proof}
     Let \[
-        \langle T_i, \less_i \rangle = \langle T, \less \rangle
+        \lattice{ T_i}{ \less_i } = \lattice{ T}{ \less }
         \tadd \theta_1 \tadd \theta_2 \tadd ... \tadd \theta_i
     \]
     This property shall be proven by induction over the iterative process
@@ -1013,11 +1013,11 @@ special possible basic type).
 
             Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
             Now, by the transitivity\footnote{Which can be trivially
-            proven} of $\tless$, we have that $T_{i + 1} \tless T$.
+            proven} of $\tless$, we have that $T \tless T_{i + 1}$.
 
             Moreover, since there is inductively a squash function
             $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
-            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$.
+            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
 
             So, we define
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
@@ -1026,8 +1026,8 @@ special possible basic type).
             properties of $\squash_{i + 1}$:
             \begin{enumerate}
                 \item For each special
-                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is the unique
-                    minimal element in $T$ for which $\tau \less \squash_{i + 1}(\tau)$.
+                    $\tau \in T_{i + 1}$, $\squash_{i + 1}(\tau)$ is a unique
+                    minimal element in $T$ such that $\tau \less \squash_{i + 1}(\tau)$.
 
                     Fix an arbitrary special $\tau$ and let
                     $\tau' = \squash_{\theta_{i + 1}}(\tau)$ and
@@ -1035,8 +1035,8 @@ special possible basic type).
 
                     This property is inductively true for elements within $T_i$.
                     Otherwise, if $\tau \in T_{i + 1} \setminus T_i$, then
-                    $\tau'$ is the unique minimal element in
-                    $T_i$ for which $\tau \less \tau'$. Since there are no other
+                    $\tau'$ is a unique minimal element in
+                    $T_i$ such that $\tau \less \tau'$. Since there are no other
                     minimal elements in $T_i$ that satisfy this condition,
                     we have that $\tau''$ also satisfies this condition for
                     $T_{i + 1}$ (all non-transitive paths from $\tau''$ into
@@ -1053,7 +1053,7 @@ special possible basic type).
 The squash function we constructed here is unique by \cref{prop:squash:unique}.
 
 \subsubsection{Type-tagged terms and type propagation}
-\label{sec:propagation}\note{струва ми се, че този раздел има нужда от мотивиращ пример}
+\label{sec:propagation}\fixednote{струва ми се, че този раздел има нужда от мотивиращ пример}
 For the sake of performing optimisations, it is convenient to store extra
 information within types. For example, we can extend our $Num$ type to include
 a tag that says whether the value this type is attached to is a constant. This
@@ -1070,55 +1070,101 @@ throughout the term.
 
 \begin{example}
     For simplicity, regard the world of arithmetic expressions with a single
-    type $Num$, numeric constants and the term $plus$ of type $Num \tot Num$.
+    type $Num$, numeric constants and the term $plus$ of type $Num \tot Num \tot Num$.
 
     We will implement a very simple optimisation: constant folding.
 
     Take the following term:
     \[ plus \app x \app (plus \app 3 \app 5) \]
 
-    If we decompose\footnote{
-        We can pretend the term has a non-binary syntax tree
-        by using the Uncurrying construction from \cref{sec:uncurry}
-    } it, we get this syntax tree:
-    \centree{.{$plus^{Num \tot Num}$}
-        [ .{$x^{Num}$} ]
-        [ .{$plus^{Num \tot Num}$}
-            [ .{$3^{Num}$} ]
-            [ .{$5^{Num}$} ]
-        ]
-    }
+    We shall regard the type of every subterm:
+    \begin{align*}
+        ((&plus^{Num \tot Num \tot Num} \app
+                x^{Num})^{Num \tot Num} \app \\
+                &\quad ((plus^{Num \tot Num \tot Num} \app 3^{Num})^{Num \tot Num} \app
+                    5^{Num})^{Num})^{Num}
+    \end{align*}
 
     Now, we will extend the type system to the following lattice:
     \centree{.{$Num$}
         [ .{$C0$} ]
         [ .{$C1$} ]
         [ .{$C2$} ]
-        [ .{$...$} ]
+        \edge[opacity=0]; [ .{$...$} ]
         [ .{$C69$} ]
-        [ .{$...$} ]
+        \edge[opacity=0]; [ .{$...$} ]
     }
 
     Since numeric constants like $5$ still bear the $Num$ type, we will
     attach a \emph{type-tag} to each subterm in order to be able to give them
     more concrete types:
-    \centree{.{$\langle plus, Num \tot Num \rangle$}
-        [ .{$\langle x, Num \rangle $} ]
-        [ .{$\langle plus, Num \tot Num \rangle $}
-            [ .{$\langle 3, Num \rangle $} ]
-            [ .{$\langle 5, Num \rangle $} ]
-        ]
-    }
+    \begin{align*}
+        \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
+        \ttt{x}{Num}}{Num \tot Num} \app \\
+                &\quad \ttt{\ttt{\ttt{plus}{Num \tot Num \tot Num} \app \ttt{3}{Num}}{Num \tot Num} \app
+                \ttt{5}{Num}}{Num}}{Num}
+    \end{align*}
 
-    We want to apply the following rewriter:
+    We want to apply the following ``rewrite rules'' in the form of a mapping $\rho$:
     \[
         \rho(M) \defeq
         \begin{cases*}
-            \langle n, C_n \rangle,& M = \langle N, C_n \rangle \\
-            \langle n, C_n \rangle,& M = \langle N, C_n \rangle \\
+            \langle i, C_i \rangle,& $M = \langle i, Num \rangle, i \in \mathbb{N}
+            \footnote{mark literals as Constant}$ \\
+            \langle i, C_i \rangle,& $M = \langle N, C_i \rangle
+            \footnote{substitute terms marked as Constant with a literal}
+            $ \\
+            \langle M, C_{i + j} \rangle, & $M =
+                \langle plus \app \langle M', C_i \rangle \app
+                \langle M'', C_j \rangle \rangle
+                \footnote{sum with Constant type is of Constant type}
+            $ \\
         \end{cases*}
     \]
-    \fixme{finish this shit}
+
+    Intuitively, what we want to happen is:
+    \begin{enumerate}
+        \item Number literals are marked as constants (\emph{manipulate term}):
+            \begin{align*}
+                \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
+                \ttt{x}{Num}}{Num \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{Num \tot Num \tot Num} \app \ttt{3}{C_3}}{Num \tot Num} \app
+                        \ttt{5}{C_3}}{Num}}{Num}
+            \end{align*}
+        \item Propagate type information into arguments (\emph{propagate types}):
+            \begin{align*}
+                \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
+                \ttt{x}{Num}}{Num \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot Num} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
+                        \ttt{5}{C_5}}{Num}}{Num}
+            \end{align*}
+        \item Apply ``sum of constants'' rule (\emph{manipulate term}):
+            \begin{align*}
+                \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
+                \ttt{x}{Num}}{Num \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
+                        \ttt{5}{C_5}}{Num}}{Num}
+            \end{align*}
+        \item Propagate types again:
+            \begin{align*}
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
+                \ttt{x}{Num}}{C_7 \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot C_7} \app
+                        \ttt{5}{C_5}}{C_7}}{Num}
+            \end{align*}
+        \item Prune constant subterms:
+            \begin{align*}
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
+                \ttt{x}{Num}}{C_7 \tot Num} \app
+                        \ttt{7}{C_7}}{Num} \\
+            \end{align*}
+    \end{enumerate}
+
+    We can now strip the extra type information, and get the following
+    optimised term:
+    \[ plus \app x \app 7 \]
+
+    This section will formalise this process.
 \end{example}
 
 The main goal is to be able to $\mcf{tag}$ a term,
@@ -1137,7 +1183,7 @@ back into a regular $\lambda$-term. This process is illustrated in
     \label{fig:propagation}
 }\fixednote{Тази фигура няма ли да се опрости, ако махнеш $\varepsilon$-преходите?}
 
-We will informally assume that term manipulations do not alter semantics\footnote{
+We will informally assume that term manipulations don't alter semantics\footnote{
     by much} (in a very broad sense).
 
 This ``type-tagged term'' construction \fixednote{моля поясни: tagging? manipulation? propagation?} does not need to include casts, since we are storing
@@ -1150,10 +1196,10 @@ they can be easily extracted from the types of the respective abstraction terms.
     Let $C \subset \const$ be a set of constants, typed in $T$.
 
     The set of type-tagged $\lambda$-terms $\ttlambda{T}{C}$ is defined inductively\footnote{
-        Here we use $\langle M, \tau \rangle$ instead of $M^\tau$
+        Here we use $\ttt{ M}{ \tau }$ instead of $M^\tau$
         to denote type tags in order not to confuse them with Church-style
         typing, which would imply that types are always correct (which we
-        do not require here).
+        don't require here).
     }\fixednote{стандартната нотация за типове по термовете май е $M^\tau$. Ако нарочно въвеждаш различна нотация, за да разграничиш type-tagging от експлицитни системи стил Church, добре е да го кажеш явно.}:
     \begin{itemize}
         \item Constant:
@@ -1241,7 +1287,7 @@ will take extra care and insert casts where needed:
 \end{defn}
 
 It can be easily seen that terms returned by $\mcf{untag}$ are well-typed,
-since we have inserted casts wherever the types do not match. Note that $\mcf{untag}$
+since we've inserted casts wherever the types don't match. Note that $\mcf{untag}$
 may be undefined in some cases (when its definition produces an invalid cast).
 This means that it was given a term whose type cannot be cast to its type-tag.
 We will assume that manipulations done to the term will not produce such cases.
