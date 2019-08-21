@@ -1333,19 +1333,29 @@ describe a universal way to propagate information through those types.\fixednote
 We will use a basic operation $\unify$ that unifies two types.
 
 \begin{defn}
-An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
-called a \emph{unifier} for $T$ if:\note{защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
-\begin{itemize}
-    \item it is only defined for types with identical syntactic structure and
-        preserves it
-    \item it is symmetric\footnote{
-            Everything in this section may also be done for asymmetric unifiers.
-            Since the need for them has not yet arisen, symmetricity has been
-            assumed for simplicity.
-        }
-    \item it is idempotent
-\end{itemize}
+    An operation $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is
+    called a \emph{unifier} for $T$ if:\fixednote{защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
+    \begin{itemize}
+        \item it is only defined for types with identical syntactic structure and
+            preserves it, i.e. $\sigma \unify \tau = \nu$ implies that $\sigma$,
+            $\tau$ and $\nu$ have the same syntactic structure\footnote{
+                See \cref{def:typesynstruct}
+            }.
+
+        \item it is symmetric\footnote{
+                Everything in this section may also be done for asymmetric unifiers.
+                Since the need for them has not yet arisen, symmetricity has been
+                assumed for simplicity.
+            }:
+            \[ \sigma \unify \tau = \nu \implies \tau \unify \sigma = \nu \]
+
+        \item it is idempotent:
+            \[ \forall \sigma \in \tclos{T} (\sigma \unify \sigma = \sigma) \]
+    \end{itemize}
 \end{defn}
+
+A great example for a unifier is the type inference unifier defined in
+\cref{sec:typeinf}.
 
 
 It can also be extended for contexts in the following way:

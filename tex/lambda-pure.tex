@@ -42,6 +42,17 @@ Let $\tsymbs \defeq \{ t', t'', t''' ... \}$ be a countable set of symbols that 
     \end{itemize}
 \end{defn}
 
+\begin{defn}\label{def:typesynstruct}
+    The types $\tau, \sigma \in \tclos{T}$ have \emph{the same syntactic structure}
+    when either:
+    \begin{itemize}
+        \item $\tau \in T \land \sigma \in T$
+        \item $\tau = \tau' \tot \tau'' \land \sigma = \sigma' \tot \sigma''$
+            where $\tau'$ and $\sigma'$, and $\tau''$ and $\sigma''$ respectively
+            have the same syntactic structure.
+    \end{itemize}
+\end{defn}
+
 We will now introduce a notation for easily obtaining the types of items ---
 $\typeof{x}$ shall mean ``the type of $x$'':
 
