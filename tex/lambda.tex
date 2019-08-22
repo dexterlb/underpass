@@ -833,7 +833,7 @@ existing manually-constructed types, and extend it with the new type.
         \item $\restr{\less'}{S \times S} = \less$:
 
             we only add edges to $\less$ that point to symbols that are not
-            in $T$. Moreover, the transitive and reflexive closures do not
+            in $T$. Furthermore, the transitive and reflexive closures do not
             affect this condition because $\less$ is already transitive and
             reflexive.
 
@@ -872,7 +872,7 @@ existing manually-constructed types, and extend it with the new type.
 
     We know that $\varphi'(\sigma) = \clonesub(\hat{\varphi}(\tau))$.
 
-    Moreover,
+    Furthermore,
     $\forall \eta (\subtyper{\xi}(\eta) \less' \eta)$ and
     $\forall \eta (\eta \less' \suptyper{\xi}(\eta))$ by the construction of
     $\less'$.
@@ -1053,7 +1053,7 @@ special possible basic type).
     If $\lattice{ T}{ \less }$ is a type lattice and
     $\Theta_T = \theta_1 ... \theta_n$ is a subtype library over $T$, where
     $\hat{\Theta}_T = \langle \lattice{ T'}{ \less' }, \varphi \rangle$,
-    then $T' \tless T$. Moreover, there is a squash function
+    then $T' \tless T$. Furthermore, there is a squash function
     $\squash_{\Theta} : T' \fun T$.
 \end{prop}
 \begin{proof}
@@ -1073,7 +1073,7 @@ special possible basic type).
             Now, by the transitivity\footnote{Which can be trivially
             proven} of $\tless$, we have that $T \tless T_{i + 1}$.
 
-            Moreover, since there is inductively a squash function
+            Furthermore, since there is inductively a squash function
             $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
             a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
 
