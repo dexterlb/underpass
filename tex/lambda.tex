@@ -496,7 +496,7 @@ however, involves discarding information.
 
                     In this case, $\squash''(\tau)$ is both general for $T' \tless T$ 
                     (because it is greatest in $T'$ because of \cref{prop:squashminmax})
-                    and special for $T' \tless T$ (because it is lesser than
+                    and special for $T' \tless T$ (because it is less than
                     $\squash'(\squash''(\tau)) \in T$).
 
                     This means that $\tau \in T$, which makes the property trivial.
@@ -1035,10 +1035,10 @@ existing manually-constructed types, and extend it with the new type.
 
                     Since $\sigma'$ is the least element in $T$ such that
                     $\sigma \less' \sigma'$ \fixednote{only -> least} and $\tau'$
-                    is the gratest element in $T$
+                    is the greatest element in $T$
                     such that $\tau' \less' \tau$ (see \cref{prop:squashminmax}),
                     we must have
-                    $\sigma \less' \sigma' \less \tau' \less \tau$.
+                    $\sigma \less' \sigma' \less \tau' \less' \tau$.
             \end{itemize}
     \end{itemize}
 \end{proof}
@@ -1075,7 +1075,7 @@ special possible basic type).
                     $\squash_i : T_i \fun T$.
                 \item By \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
                 \item By the transitivity\footnote{Which can be trivially
-                    proven} of $\tless$, we have that $T \tless T_{i + 1}$.
+                    proven} of $\tless$, we have that $T_{i+1} \tless T$.
                 \item By \cref{lemma:subadd:squash},
                     $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$ is a
                     well-defined squash function.
@@ -1337,7 +1337,7 @@ We will use a basic operation $\unify$ that unifies two types.
     called a \emph{unifier} for $T$ if:\fixednote{защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
     \begin{itemize}
         \item it is only defined for types with identical syntactic structure and
-            preserves it, i.e. $\sigma \unify \tau = \nu$ implies that $\sigma$,
+            preserves it, i.e., $\sigma \unify \tau = \nu$ implies that $\sigma$,
             $\tau$ and $\nu$ have the same syntactic structure\footnote{
                 See \cref{def:typesynstruct}
             }.
