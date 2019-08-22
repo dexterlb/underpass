@@ -1145,15 +1145,15 @@ throughout the term.
         \rho(M) \defeq
         \begin{cases*}
             \langle i, C_i \rangle,& $M = \langle i, Num \rangle, i \in \mathbb{N}
-            \footnote{mark literals as Constant}$ \\
+            \footnote{mark literals as Constant}$, \\
             \langle i, C_i \rangle,& $M = \langle N, C_i \rangle
             \footnote{substitute terms marked as Constant with a literal}
-            $ \\
+            $, \\
             \langle M, C_{i + j} \rangle, & $M =
                 \langle plus \app \langle M', C_i \rangle \app
                 \langle M'', C_j \rangle \rangle
                 \footnote{sum with Constant type is of Constant type}
-            $ \\
+            $. \\
         \end{cases*}
     \]
 
@@ -1164,7 +1164,7 @@ throughout the term.
                 \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
                 \ttt{x}{Num}}{Num \tot Num} \app \\
                         &\quad \ttt{\ttt{\ttt{plus}{Num \tot Num \tot Num} \app \ttt{3}{C_3}}{Num \tot Num} \app
-                        \ttt{5}{C_3}}{Num}}{Num}
+                        \ttt{5}{C_5}}{Num}}{Num}
             \end{align*}
         \item Propagate type information into arguments (\emph{propagate types}):
             \begin{align*}
@@ -1177,27 +1177,27 @@ throughout the term.
             \begin{align*}
                 \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
                 \ttt{x}{Num}}{Num \tot Num} \app \\
-                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_8} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
                         \ttt{5}{C_5}}{Num}}{Num}
             \end{align*}
         \item Propagate types again:
             \begin{align*}
-                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
-                \ttt{x}{Num}}{C_7 \tot Num} \app \\
-                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot C_7} \app
-                        \ttt{5}{C_5}}{C_7}}{Num}
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_8 \tot Num} \app
+                \ttt{x}{Num}}{C_8 \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_8} \app \ttt{3}{C_3}}{C_5 \tot C_8} \app
+                        \ttt{5}{C_5}}{C_8}}{Num}
             \end{align*}
         \item Prune constant subterms:
             \begin{align*}
-                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
-                \ttt{x}{Num}}{C_7 \tot Num} \app
-                        \ttt{7}{C_7}}{Num} \\
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_8 \tot Num} \app
+                \ttt{x}{Num}}{C_8 \tot Num} \app
+                        \ttt{8}{C_8}}{Num} \\
             \end{align*}
     \end{enumerate}
 
     We can now strip the extra type information, and get the following
     optimised term:
-    \[ plus \app x \app 7 \]
+    \[ plus \app x \app 8 \]
 
     This section will formalise this process.
 \end{example}
