@@ -1067,21 +1067,21 @@ special possible basic type).
     \begin{itemize}
         \item for $T_0$, we trivially know that $T \tless T$ with an identity
             squash function $\squash_0(\sigma) = \sigma$.
-        \item for $T_{i + 1}$, inductively we have that $T_i \tless T$.\fixednote{тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
-
-            Also, by \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
-            Now, by the transitivity\footnote{Which can be trivially
-            proven} of $\tless$, we have that $T \tless T_{i + 1}$.
-
-            Furthermore, since there is inductively a squash function
-            $\squash_i : T_i \fun T$ and (from \cref{lemma:subadd:squash})
-            a squash function $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T$.
-
-            So, we define
+        \item for $T_{i + 1}$, we will define\fixednote{тук може би искаш да кажеш, че $T_i \tless T$? Нещо не разбирам означенията\ldots като ги обсъдим, ще прегледам пак.}
             $\squash_{i + 1}(\sigma) = \squash_i(\squash_{\theta_{i + 1}}(\sigma))$.
 
-            By \cref{prop:squashcomp} we know that $\squash_{i + 1}$ is a
-            squash function for $T_{i + 1} \tless T$.
+            \begin{itemize}
+                \item Inductively we have that $T_i \tless T$ and a squash function
+                    $\squash_i : T_i \fun T$.
+                \item By \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
+                \item By the transitivity\footnote{Which can be trivially
+                    proven} of $\tless$, we have that $T \tless T_{i + 1}$.
+                \item By \cref{lemma:subadd:squash},
+                    $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$ is a
+                    well-defined squash function.
+                \item By \cref{prop:squashcomp}, $\squash_{i + 1}$ is a
+                    squash function for $T_{i + 1} \tless T$.
+            \end{itemize}
     \end{itemize}
 \end{proof}
 
