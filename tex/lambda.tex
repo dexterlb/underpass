@@ -494,7 +494,7 @@ however, involves discarding information.
                     WLOG $\tau \less'' \squash''(\tau)$ and
                     $\squash'(\squash''(\tau)) \less' \squash''(\tau)$:
 
-                    In this case, $\squash''(\tau)$ is both general for $T' \tless T$ 
+                    In this case, $\squash''(\tau)$ is both general for $T' \tless T$
                     (because it is greatest in $T'$ because of \cref{prop:squashminmax})
                     and special for $T' \tless T$ (because it is lesser than
                     $\squash'(\squash''(\tau)) \in T$).
@@ -1354,6 +1354,13 @@ We will use a basic operation $\unify$ that unifies two types.
     \end{itemize}
 \end{defn}
 
+\begin{defn}
+    A unifier $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is called
+    \emph{monotonic} if there exists a partial-order relation $\less$ such that:
+    \[ \forall \sigma, \tau \in \tclos{T}
+        ((\sigma \unify \tau \less \sigma) \land (\sigma \unify \tau \less \tau)) \]
+\end{defn}
+
 A great example for a unifier is the type inference unifier defined in
 \cref{sec:typeinf}.
 
@@ -1425,7 +1432,19 @@ information down the term tree towards the leaves).
         \mcf{propagate}_{\unify}(P) = \mcf{down}_{\unify}(\ttt{M}{\tau}, \tau, \Gamma)
         \text{ , where } \mcf{up}_{\unify}(P) = (\ttt{M}{\tau}, \Gamma).
     \]
-  \end{defn}
+\end{defn}
+
+\begin{prop}
+    If $\unify$ is a monotonic unifier for $T$ with a partial order relation
+    $\less$ that has no infinite decreasing sequences, then
+    $\mcf{propagate}_{\unify}$ reaches a fixed point on every term, i.e.
+    \[ \forall P \in \fancylambda{T}{C} \exists n \in \mathbb{N}
+        (\mcf{propagate}_{\unify}^n(P) = \mcf{propagate}_{\unify}^{n + 1}(P)) \]
+\end{prop}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
   \newpage
   \note{липсва стъпката за манипулиране на терм, може би е добре да дадеш поне един пример за такава функция? тук може би е редно да навържеш всички дефинирани функции в една обща функция, която работидиректно над $\lambda$-термове.}
 \end{document}
