@@ -496,7 +496,7 @@ however, involves discarding information.
 
                     In this case, $\squash''(\tau)$ is both general for $T' \tless T$
                     (because it is greatest in $T'$ because of \cref{prop:squashminmax})
-                    and special for $T' \tless T$ (because it is lesser than
+                    and special for $T' \tless T$ (because it is less than
                     $\squash'(\squash''(\tau)) \in T$).
 
                     This means that $\tau \in T$, which makes the property trivial.
@@ -1035,10 +1035,10 @@ existing manually-constructed types, and extend it with the new type.
 
                     Since $\sigma'$ is the least element in $T$ such that
                     $\sigma \less' \sigma'$ \fixednote{only -> least} and $\tau'$
-                    is the gratest element in $T$
+                    is the greatest element in $T$
                     such that $\tau' \less' \tau$ (see \cref{prop:squashminmax}),
                     we must have
-                    $\sigma \less' \sigma' \less \tau' \less \tau$.
+                    $\sigma \less' \sigma' \less \tau' \less' \tau$.
             \end{itemize}
     \end{itemize}
 \end{proof}
@@ -1075,7 +1075,7 @@ special possible basic type).
                     $\squash_i : T_i \fun T$.
                 \item By \cref{lemma:subadd:rel} we know that $T_{i + 1} \tless T_{i}$.
                 \item By the transitivity\footnote{Which can be trivially
-                    proven} of $\tless$, we have that $T \tless T_{i + 1}$.
+                    proven} of $\tless$, we have that $T_{i+1} \tless T$.
                 \item By \cref{lemma:subadd:squash},
                     $\squash_{\theta_{i + 1}} : T_{i + 1} \fun T_i$ is a
                     well-defined squash function.
@@ -1145,15 +1145,15 @@ throughout the term.
         \rho(M) \defeq
         \begin{cases*}
             \langle i, C_i \rangle,& $M = \langle i, Num \rangle, i \in \mathbb{N}
-            \footnote{mark literals as Constant}$ \\
+            \footnote{mark literals as Constant}$, \\
             \langle i, C_i \rangle,& $M = \langle N, C_i \rangle
             \footnote{substitute terms marked as Constant with a literal}
-            $ \\
+            $, \\
             \langle M, C_{i + j} \rangle, & $M =
                 \langle plus \app \langle M', C_i \rangle \app
                 \langle M'', C_j \rangle \rangle
                 \footnote{sum with Constant type is of Constant type}
-            $ \\
+            $. \\
         \end{cases*}
     \]
 
@@ -1164,7 +1164,7 @@ throughout the term.
                 \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
                 \ttt{x}{Num}}{Num \tot Num} \app \\
                         &\quad \ttt{\ttt{\ttt{plus}{Num \tot Num \tot Num} \app \ttt{3}{C_3}}{Num \tot Num} \app
-                        \ttt{5}{C_3}}{Num}}{Num}
+                        \ttt{5}{C_5}}{Num}}{Num}
             \end{align*}
         \item Propagate type information into arguments (\emph{propagate types}):
             \begin{align*}
@@ -1177,27 +1177,27 @@ throughout the term.
             \begin{align*}
                 \ttt{\ttt{&\ttt{plus}{Num \tot Num \tot Num} \app
                 \ttt{x}{Num}}{Num \tot Num} \app \\
-                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_8} \app \ttt{3}{C_3}}{C_5 \tot Num} \app
                         \ttt{5}{C_5}}{Num}}{Num}
             \end{align*}
         \item Propagate types again:
             \begin{align*}
-                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
-                \ttt{x}{Num}}{C_7 \tot Num} \app \\
-                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_7} \app \ttt{3}{C_3}}{C_5 \tot C_7} \app
-                        \ttt{5}{C_5}}{C_7}}{Num}
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_8 \tot Num} \app
+                \ttt{x}{Num}}{C_8 \tot Num} \app \\
+                        &\quad \ttt{\ttt{\ttt{plus}{C_3 \tot C_5 \tot C_8} \app \ttt{3}{C_3}}{C_5 \tot C_8} \app
+                        \ttt{5}{C_5}}{C_8}}{Num}
             \end{align*}
         \item Prune constant subterms:
             \begin{align*}
-                \ttt{\ttt{&\ttt{plus}{Num \tot C_7 \tot Num} \app
-                \ttt{x}{Num}}{C_7 \tot Num} \app
-                        \ttt{7}{C_7}}{Num} \\
+                \ttt{\ttt{&\ttt{plus}{Num \tot C_8 \tot Num} \app
+                \ttt{x}{Num}}{C_8 \tot Num} \app
+                        \ttt{8}{C_8}}{Num} \\
             \end{align*}
     \end{enumerate}
 
     We can now strip the extra type information, and get the following
     optimised term:
-    \[ plus \app x \app 7 \]
+    \[ plus \app x \app 8 \]
 
     This section will formalise this process.
 \end{example}
@@ -1337,7 +1337,7 @@ We will use a basic operation $\unify$ that unifies two types.
     called a \emph{unifier} for $T$ if:\fixednote{защо не опишеш свойствата формално? мотивиращ пример за унификатор?}
     \begin{itemize}
         \item it is only defined for types with identical syntactic structure and
-            preserves it, i.e. $\sigma \unify \tau = \nu$ implies that $\sigma$,
+            preserves it, i.e., $\sigma \unify \tau = \nu$ implies that $\sigma$,
             $\tau$ and $\nu$ have the same syntactic structure\footnote{
                 See \cref{def:typesynstruct}
             }.
