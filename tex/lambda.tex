@@ -1465,7 +1465,7 @@ eventually terminates.
     \end{itemize}
 \end{defn}
 
-\begin{lemma}
+\begin{lemma}\label{lemma:termwellfounded}
     If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
     is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
     $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
@@ -1475,15 +1475,32 @@ eventually terminates.
     \fixme{need proof}
 \end{proof}
 
-\begin{prop}
-    If $\unify$ is a monotonic unifier for $T$ with a well-founded 
+\begin{lemma}\label{lemma:propagatemono}
+    If $\unify$ is a monotonic unifier for $T$ with a
+    partial order relation $\less$, then for any type-tagged term
+    $P \in \ttlambda{T}{C}$, \[ \mcf{propagate}_{\unify}(P) \termless{T}{C} P \]
+\end{lemma}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
+\begin{prop}\label{prop:propagateterminates}
+    If $\unify$ is a monotonic unifier for $T$ with a well-founded
     partial order relation $\less$, then
     $\mcf{propagate}_{\unify}$ reaches a fixed point on every term, i.e.
-    \[ \forall P \in \fancylambda{T}{C} \quad \exists n \in \mathbb{N} \quad
+    \[ \forall P \in \ttlambda{T}{C} \quad \exists n \in \mathbb{N} \quad
         (\mcf{propagate}_{\unify}^n(P) = \mcf{propagate}_{\unify}^{n + 1}(P)) \]
 \end{prop}
 \begin{proof}
-    \fixme{need proof}
+    By \cref{lemma:propagatemono} the sequence
+    $\{ A_i \} = \{ \mcf{propagate}_{\unify}^{n} \}_{n = 1}^{\infty}$
+    is a decreasing chain with respect to $\termless{T}{C}$.
+
+    By \cref{lemma:termwellfounded} the relation $\termless{T}{C}$ is well-founded.
+
+    Then, $\{ A_i \}$ has a minimal element $A_n$ for a fixed $n$. Since
+    $A_{n + 1} \termless{T}{C} A_n$ and $A_n$ is minimal, it follows that
+    $A_{n + 1} = A_n$.
 \end{proof}
 
   \newpage
