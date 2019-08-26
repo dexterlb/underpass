@@ -327,7 +327,7 @@ Now we will show that every well-typed term has a unique type under a fixed cont
 We will now formalise the notion of a type lattice being more general
 or more concrete than another type lattice.
 
-\begin{defn}
+\begin{defn}\label{def:tless}
     If $\lattice{ T}{ \less' }$ and $\lattice{ S}{ \less }$
     are type lattices, we say that $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$ if:
     \begin{itemize}
@@ -424,8 +424,12 @@ however, involves discarding information.
 \begin{proof}
     Without loss of generality\footnote{The argument for general elements is dual to the one for special
         elements.},
-    let $\tau$ be a special element in $T \setminus S$, i.e., for every
-    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.\note{има разминаване с дефиницията на ``special'': $(\exists \sigma \in S)(\tau \less'\sigma)$. Не трябва ли да е ``for some''? Изглежда, че липсва една стъпка, която се позовава на $\xor$ в дефиницията на $\tless$, за да заключи, че от $\exists$ следва $\forall$.}
+    let $\tau$ be a special element in $T \setminus S$.
+    Because of the ``exclusive or'' in \cref{def:tless}, this means that
+    $\exists \sigma \in S (\tau \less' \sigma)$ and
+    $\neg \exists \sigma \in S (\sigma \less' \tau)$. Thus, for every
+    $\sigma \in S$ that $\tau$ is comparable with, $\tau \less' \sigma$.
+    \fixednote{има разминаване с дефиницията на ``special'': $(\exists \sigma \in S)(\tau \less'\sigma)$. Не трябва ли да е ``for some''? Изглежда, че липсва една стъпка, която се позовава на $\xor$ в дефиницията на $\tless$, за да заключи, че от $\exists$ следва $\forall$.}
 
     Now, since $\squash(\tau)$ is comparable with $\tau$, we have
     $\tau \less' \squash(\tau)$.
