@@ -202,6 +202,8 @@ After applying these rules, types are propagated through the term
         Num ,& $\sigma = Num, \tau = Num$, \\
         String ,& $\sigma = String, \tau = String$, \\
         List ,& $\sigma = List, \tau = List$, \\
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau''), &
+        $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$, \\
         \text{type error} ,& otherwise. \\
     \end{cases*}
 \]
