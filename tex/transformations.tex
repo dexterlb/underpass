@@ -64,9 +64,10 @@ with the following unifier:
 Whenever the algorithm encounters a case where the unifier is not defined,
 a type error is produced.
 
-Since this unifier can only change a subtype from \code{*} to something else,
-and there are a finite number of subtypes within a term, this algorithm
-always terminates.\note{ако говориш за propagate, е хубаво да се докаже по-формално}
+This unifier is monotonic (\cref{def:mono}) for the partial order ``\code{*} is
+above every other type, and there are no other edges''. By \cref{prop:propagateterminates},
+the process of iteratively applying $\mcf{propagate}$ always terminates.
+\fixednote{ако говориш за propagate, е хубаво да се докаже по-формално}
 
 \subsubsection{Minipass query optimisation}
 \label{sec:optimisation}
@@ -207,6 +208,10 @@ After applying these rules, types are propagated through the term
         \lnot ! ,& $\mathsf{otherwise}$. \\
     \end{cases*}
 \]
+
+We can induce a natural ordering on the finite set of $GSet$ subtypes,
+so the iterative application of $\mcf{propagate}$ terminates by
+\cref{prop:propagateterminates}.
 
 These two steps are then repeated until they no longer produce a new term\footnote{
     This terminates because all rules produce a "lesser term" by some criterion:

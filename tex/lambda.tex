@@ -1354,7 +1354,7 @@ We will use a basic operation $\unify$ that unifies two types.
     \end{itemize}
 \end{defn}
 
-\begin{defn}
+\begin{defn}\label{def:mono}
     A unifier $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is called
     \emph{monotonic} if there exists a partial-order relation $\less$ such that:
     \[ \forall \sigma, \tau \in \tclos{T}
@@ -1465,11 +1465,21 @@ eventually terminates.
     \end{itemize}
 \end{defn}
 
-\begin{lemma}\label{lemma:termwellfounded}
-    If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
-    is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
-    $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
-    is also a well-founded partial order.
+\begin{lemma}\label{lemma:upmono}
+    If $\unify$ is a monotonic unifier for $T$ with a
+    partial order relation $\less$, then for any type-tagged term
+    $P \in \ttlambda{T}{C}$, 
+    \[ \ttt{P', \Gamma} = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P \]
+\end{lemma}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
+\begin{lemma}\label{lemma:downmono}
+    If $\unify$ is a monotonic unifier for $T$ with a
+    partial order relation $\less$, then for any type-tagged term
+    $P \in \ttlambda{T}{C}$, any type $\tau$ and context $\Gamma$,
+    \[ \mcf{down}_{\unify}(P, \tau, \Gamma) \termless{T}{C} P \]
 \end{lemma}
 \begin{proof}
     \fixme{need proof}
@@ -1479,6 +1489,17 @@ eventually terminates.
     If $\unify$ is a monotonic unifier for $T$ with a
     partial order relation $\less$, then for any type-tagged term
     $P \in \ttlambda{T}{C}$, \[ \mcf{propagate}_{\unify}(P) \termless{T}{C} P \]
+\end{lemma}
+\begin{proof}
+    This follows directly from the definition of $\mcf{propagate}$,
+    \cref{lemma:upmono} and \cref{lemma:downmono}.
+\end{proof}
+
+\begin{lemma}\label{lemma:termwellfounded}
+    If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
+    $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
+    is also a well-founded partial order.
 \end{lemma}
 \begin{proof}
     \fixme{need proof}
