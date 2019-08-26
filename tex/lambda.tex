@@ -1434,11 +1434,42 @@ information down the term tree towards the leaves).
     \]
 \end{defn}
 
+We will now prove that the iterative application of $\mcf{propagate}$
+eventually terminates.
+
+\begin{defn}
+    If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a partial order relation on $\tclos{T}$, the relation
+    $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
+    which works on terms is defined inductively as follows:
+
+    \begin{itemize}
+        \item Constant:
+            \[ a \in C, b \in C, \tau \less \sigma
+                \implies \ttt{a}{\tau} \termless{T}{C} \ttt{b}{\sigma} \]
+        \item Variable:
+            \[ v \in \lvars, w \in \lvars, \sigma \in \tclos{T}, \tau \in \tclos{T},
+                \tau \less \sigma,
+                \implies \ttt{v}{\tau} \termless{T}{C} \ttt{w}{\sigma} \]
+        \item Application:
+            \[
+                A_1 \in \ttlambda{T}{C}, A_2 \in \ttlambda{T}{C},
+                B_1 \in \ttlambda{T}{C}, B_2 \in \ttlambda{T}{C},
+                A_1 \termless{T}{C} A_2, B_1 \termless{T}{C} B_2,
+                \implies \ttt{(A_1 B_1)}{\tau} \termless{T}{C} \ttt{(A_2 B_2)}{\sigma}
+            \]
+        \item Abstraction:
+            \[ v \in \lvars, w \in \lvars, A \in \ttlambda{T}{C}, B \in \ttlambda{T}{C},
+                A \termless{T}{C} B, \tau \less \sigma,
+                \implies \ttt{(\lambda v \abstr A)}{\tau} \less \ttt{(\lambda w \abstr b)}{\sigma}\]
+    \end{itemize}
+\end{defn}
+
 \begin{prop}
     If $\unify$ is a monotonic unifier for $T$ with a partial order relation
     $\less$ that has no infinite decreasing sequences, then
     $\mcf{propagate}_{\unify}$ reaches a fixed point on every term, i.e.
-    \[ \forall P \in \fancylambda{T}{C} \exists n \in \mathbb{N}
+    \[ \forall P \in \fancylambda{T}{C} \quad \exists n \in \mathbb{N} \quad
         (\mcf{propagate}_{\unify}^n(P) = \mcf{propagate}_{\unify}^{n + 1}(P)) \]
 \end{prop}
 \begin{proof}
