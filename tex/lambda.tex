@@ -1465,9 +1465,19 @@ eventually terminates.
     \end{itemize}
 \end{defn}
 
+\begin{lemma}
+    If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
+    $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
+    is also a well-founded partial order.
+\end{lemma}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
 \begin{prop}
-    If $\unify$ is a monotonic unifier for $T$ with a partial order relation
-    $\less$ that has no infinite decreasing sequences, then
+    If $\unify$ is a monotonic unifier for $T$ with a well-founded 
+    partial order relation $\less$, then
     $\mcf{propagate}_{\unify}$ reaches a fixed point on every term, i.e.
     \[ \forall P \in \fancylambda{T}{C} \quad \exists n \in \mathbb{N} \quad
         (\mcf{propagate}_{\unify}^n(P) = \mcf{propagate}_{\unify}^{n + 1}(P)) \]
