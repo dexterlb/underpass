@@ -213,10 +213,13 @@ We can induce a natural ordering on the finite set of $GSet$ subtypes,
 so the iterative application of $\mcf{propagate}$ terminates by
 \cref{prop:propagateterminates}.
 
-These two steps are then repeated until they no longer produce a new term\footnote{
-    This terminates because all rules produce a "lesser term" by some criterion:
-    be it less items in the type tag or ``everything'' instead of ``something'', etc.
-}\note{това е второто такова разсъждение. Може би имаш нужда от някаква лема от вида: ако унификаторът е еди какъв си, то неподвижната точка на propagate изисква краен брой стъпки}, which is now ready for the translation phase.
+It can also be seen that the optimisation rules shown above converge after
+a finite number of steps. A rigorous proof will be omitted\footnote{
+    As with the optimisation steps of most compilers, any bugs in the optimiser
+    are left to the user to discover.
+}
+
+\fixednote{това е второто такова разсъждение. Може би имаш нужда от някаква лема от вида: ако унификаторът е еди какъв си, то неподвижната точка на propagate изисква краен брой стъпки}, which is now ready for the translation phase.
 
 \greenbox{
     While there are many other possible optimisations which can be done here,

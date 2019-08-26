@@ -1205,7 +1205,12 @@ throughout the term.
 The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$
 any new type information that has arisen after rewriting, repeating the
-process until\note{възможно ли е този процес да зацикли?} it no longer produces a different term, and then $\mcf{untag}$ging
+process until\footnote{
+    We will prove that type propagation always terminates. The termination of
+    rewriting, however, depends on the nature of the rewriter itself,
+    and will just be discussed briefly.
+} \fixednote{възможно ли е този процес да зацикли?}
+it no longer produces a different term, and then $\mcf{untag}$ging
 back into a regular $\lambda$-term. This process is illustrated in
 \cref{fig:propagation} and is utilised within \cref{sec:typeinf} and
 \cref{sec:optimisation}.
@@ -1468,7 +1473,7 @@ eventually terminates.
 \begin{lemma}\label{lemma:upmono}
     If $\unify$ is a monotonic unifier for $T$ with a
     partial order relation $\less$, then for any type-tagged term
-    $P \in \ttlambda{T}{C}$, 
+    $P \in \ttlambda{T}{C}$,
     \[ \ttt{P', \Gamma} = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P \]
 \end{lemma}
 \begin{proof}
