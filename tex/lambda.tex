@@ -1402,13 +1402,13 @@ information down the term tree towards the leaves).
         \begin{cases*}
             (\ttt{c}{\tau}, \{ \}) ,& $A = c \in C$ \\
             (\ttt{v}{\tau}, \{ v : \tau \}) ,& $A = v \in \lvars$ \\
-            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \unify \eta) \tot (\sigma' \unify \sigma)}, \Gamma')
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \tot \sigma') \unify \tau}, \Gamma')
  ,& $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
                 \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)
                 , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
                 \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
-            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\eta \tot (\sigma' \unify \sigma)}, \Gamma')
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta \tot \sigma') \unify \tau}, \Gamma')
  ,& $A = (\lambda x \abstr P)
                 , \tau = (\eta \tot \sigma),$ \\
                 \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)$ \\
@@ -1478,10 +1478,48 @@ eventually terminates.
     If $\unify$ is a monotonic unifier for $T$ with a
     partial order relation $\less$, then for any type-tagged term
     $P \in \ttlambda{T}{C}$,
-    \[ \ttt{P', \Gamma} = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P \]
+    \[ (P', \Gamma) = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P \]
 \end{lemma}
 \begin{proof}
-    \fixme{need proof}
+    Let $(\ttt{A'}{\tau'}, \Gamma) = \mcf{up}_{\unify}(\ttt{A}{\tau})$.
+
+    We will prove the lemma inductively.
+
+    \begin{itemize}
+        \item $A = c \in C$:
+            \[ \ttt{A'}{\tau'} =
+                \underbrace{\ttt{c}{\tau} \termless{T}{C} \ttt{c}{\tau}}_{\text{since } \tau \less \tau}
+                = \ttt{A}{\tau} \]
+        \item $A = v \in \lvars$:
+            \[ \ttt{A'}{\tau'} =
+                \underbrace{\ttt{v}{\tau} \termless{T}{C} \ttt{v}{\tau}}_{\text{since } \tau \less \tau}
+                = \ttt{A}{\tau} \]
+        \item $A = (\lambda x \abstr P), \tau = (\eta \tot \sigma),
+                (\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P),
+                \Gamma' = \Gamma \setminus (x : \eta'), (x : \eta') \in \Gamma$:
+            Inductively, we have that $\ttt{M}{\sigma'} \termless{T}{C} P$.
+            We also know that $\tau' = (\eta \tot \sigma') \unify \tau \less \tau$.
+            Thus,
+            \[ \ttt{A'}{\tau'} =
+                \ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\tau'}
+                \termless{T}{C}
+                \ttt{(\lambda x \abstr P)}{\tau} =
+                \ttt{A}{\tau}
+            \]
+        \item $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),
+            (Q', \Gamma_Q) = \mcf{up}_{\unify}(Q),
+            P' = \ttt{M}{\sigma' \tot \sigma''}$
+
+            Inductively, $P' \termless{T}{C} P$ and $Q' \termless{T}{C} Q$.
+            Since also $\sigma'' \unify \tau \less \tau$, we have:
+
+            \[ \ttt{A'}{\tau'} =
+                \ttt{P' Q'}{\sigma'' \unify \tau}
+                \termless{T}{C}
+                \ttt{P Q}{\tau} =
+                \ttt{A}{\tau}
+            \]
+    \end{itemize}
 \end{proof}
 
 \begin{lemma}\label{lemma:downmono}
@@ -1491,7 +1529,44 @@ eventually terminates.
     \[ \mcf{down}_{\unify}(P, \tau, \Gamma) \termless{T}{C} P \]
 \end{lemma}
 \begin{proof}
-    \fixme{need proof}
+    Let $\ttt{A'}{\tau} = \mcf{down}_{\unify}(\ttt{A}{\tau}, \sigma, \Gamma)$.
+    We will prove the lemma inductively:
+
+    \begin{itemize}
+        \item $A = c \in C$:
+            \[ \ttt{A'}{\tau'} =
+                \underbrace{\ttt{c}{\tau \unify \sigma}
+                \termless{T}{C} \ttt{c}{\tau}}_{\text{since } (\tau \unify \sigma) \less \tau}
+                = \ttt{A}{\tau} \]
+        \item $A = v \in \lvars, (v : \tau') \in \Gamma$:
+            \[ \ttt{A'}{\tau'} =
+                \underbrace{\ttt{v}{\tau \unify \sigma \unify \tau'}
+                \termless{T}{C} \ttt{v}{\tau}}_{\text{since } (\tau \unify \tau' \unify \sigma) \less \tau}
+                = \ttt{A}{\tau} \]
+        \item $A = (\lambda x \abstr P), \tau'' = \tau \unify \sigma,
+            \tau'' = (\sigma \tot \eta), P' = \mcf{down}_{\unify}(P, \eta, \Gamma \circ (x : \sigma))$:
+            Inductively, $P' \termless{T}{C} P$. Furthermore,
+            $(\tau \unify \sigma) \less \tau$. Thus,
+            \[ \ttt{A'}{\tau'} =
+                \ttt{(\lambda x \abstr P')}{\tau \unify \sigma}
+                \termless{T}{C}
+                \ttt{(\lambda x \abstr P)}{\tau}
+                = \ttt{A}{\tau}
+            \]
+        \item $A = (PQ), P = \ttt{M}{\nu \tot \eta}, Q = \ttt{N}{\nu'},
+                \tau' = (\sigma \unify \tau), \nu'' = (\nu' \unify \nu),
+                P' = \mcf{down}_{\unify}(P, (\nu' \tot \sigma'), \Gamma),
+                Q' = \mcf{down}_{\unify}(Q, \nu'', \Gamma)$:
+
+            Inductively, $P' \termless{T}{C} P$ and $Q' \termless{T}{C} Q$.
+            Since also $\tau' = \tau \unify \sigma \less \tau$, we have:
+
+            \[ \ttt{A'}{\tau'} =
+                \ttt{P' Q'}{\tau'} \termless{T}{C}
+                \ttt{P Q}{\tau} =
+                \ttt{A}{\tau}
+            \]
+    \end{itemize}
 \end{proof}
 
 \begin{lemma}\label{lemma:propagatemono}
@@ -1507,7 +1582,7 @@ eventually terminates.
 \begin{lemma}\label{lemma:termwellfounded}
     If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
     is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
-    $\termless{T}{C} \subseteq \ttlambda{T}{C} \times \ttlambda{T}{C}$
+    $\termless{T}{C}$
     is also a well-founded partial order.
 \end{lemma}
 \begin{proof}
@@ -1533,6 +1608,8 @@ eventually terminates.
     $A_{n + 1} = A_n$.
 \end{proof}
 
-  \newpage
-  \note{липсва стъпката за манипулиране на терм, може би е добре да дадеш поне един пример за такава функция? тук може би е редно да навържеш всички дефинирани функции в една обща функция, която работидиректно над $\lambda$-термове.}
+In practice, the $\mcf{propagate}$ step shall be combined with a step which manipulates
+the term for optimisation purposes. This is illustrated in \cref{sec:optimisation}.
+
+\fixednote{липсва стъпката за манипулиране на терм}
 \end{document}
