@@ -1454,23 +1454,34 @@ eventually terminates.
 
     \begin{itemize}
         \item Constant:
-            \[ a \in C, b \in C, \tau \less \sigma
-                \implies \ttt{a}{\tau} \termless{T}{C} \ttt{b}{\sigma} \]
+            \cenderiv{
+                \hypo{a, b \in C}
+                \hypo{\tau \less \sigma}
+                \infer2{\ttt{a}{\tau} \termless{T}{C} \ttt{b}{\sigma}}
+            }
         \item Variable:
-            \[ v \in \lvars, w \in \lvars, \sigma \in \tclos{T}, \tau \in \tclos{T},
-                \tau \less \sigma,
-                \implies \ttt{v}{\tau} \termless{T}{C} \ttt{w}{\sigma} \]
+            \cenderiv{
+                \hypo{v, w \in \lvars}
+                \hypo{\sigma, \tau \in \tclos{T}}
+                \hypo{\tau \less \sigma}
+                \infer3{\ttt{v}{\tau} \termless{T}{C} \ttt{w}{\sigma}}
+            }
         \item Application:
-            \[
-                A_1 \in \ttlambda{T}{C}, A_2 \in \ttlambda{T}{C},
-                B_1 \in \ttlambda{T}{C}, B_2 \in \ttlambda{T}{C},
-                A_1 \termless{T}{C} A_2, B_1 \termless{T}{C} B_2,
-                \implies \ttt{(A_1 B_1)}{\tau} \termless{T}{C} \ttt{(A_2 B_2)}{\sigma}
-            \]
+            \cenderiv{
+                \hypo{A_1, A_2, B_1, B_2 \in \ttlambda{T}{C}}
+                \hypo{A_1 \termless{T}{C} A_2}
+                \hypo{B_1 \termless{T}{C} B_2}
+                \hypo{\tau \less \sigma}
+                \infer4{\ttt{(A_1 B_1)}{\tau} \termless{T}{C} \ttt{(A_2 B_2)}{\sigma}}
+            }
         \item Abstraction:
-            \[ v \in \lvars, w \in \lvars, A \in \ttlambda{T}{C}, B \in \ttlambda{T}{C},
-                A \termless{T}{C} B, \tau \less \sigma,
-                \implies \ttt{(\lambda v \abstr A)}{\tau} \less \ttt{(\lambda w \abstr b)}{\sigma}\]
+            \cenderiv{
+                \hypo{v, w \in \lvars}
+                \hypo{A, B \in \ttlambda{T}{C}}
+                \hypo{A \termless{T}{C} B}
+                \hypo{\tau \less \sigma}
+                \infer4{\ttt{(\lambda v \abstr A)}{\tau} \less \ttt{(\lambda w \abstr B)}{\sigma}}
+            }
     \end{itemize}
 \end{defn}
 
