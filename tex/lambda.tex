@@ -1590,6 +1590,93 @@ eventually terminates.
     \cref{lemma:upmono} and \cref{lemma:downmono}.
 \end{proof}
 
+\fixme{define term length}
+
+\begin{lemma}\label{lemma:termpartial}
+    If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a partial order relation on $\tclos{T}$, the relation
+    $\termless{T}{C}$
+    is also a partial order relation.
+\end{lemma}
+\begin{proof}
+    This lemma can be proven by a simple inductive argument.
+\end{proof}
+
+\begin{lemma}\label{lemma:rellen}
+    If $T$ is a set of type symbols, $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a partial order relation on $\tclos{T}$ and
+    $\ttt{M}{\sigma} \termless{T}{C} \ttt{N}{\tau}$, then:
+    \begin{equation}\label{cond:rellen}
+        \termlen{M} = \termlen{N}
+    \end{equation}
+    \begin{equation}\label{cond:reldir}
+        \sigma \less \tau
+    \end{equation}
+\end{lemma}
+\begin{proof}
+    \fixme{need proof}
+\end{proof}
+
+
+\begin{lemma}\label{lemma:lenwellfounded}
+    If $T$ is a set of type symbols, $\less \subseteq \tclos{T} \times \tclos{T}$
+    is a \emph{well-founded} partial order relation on $\tclos{T}$ and
+    $n \in \mathbb{N}$, then every nonempty subset of $\ttlambda{T}{C}$ of
+    type-tagged terms of length $n$ has a minimal element with respect to
+    $\termless{T}{C}$.
+\end{lemma}
+\begin{proof}
+    Let $S \subseteq \ttlambda{T}{C}$ be a nonempty set of terms of length $n$.
+    Furthermore, let
+    $\tau_0 = \min\limits_{\less} \{ \tau \mid \ttt{M}{\tau} \in S \}$.
+
+    We know that if the set $S' = \{ \ttt{M}{\tau} \mid \tau = \tau_0 \}$
+    has a minimum, it is also the
+    minimum of $S$, since the contrary would contradict the choice of
+    $\tau_0$ due to \cref{cond:reldir}.
+
+    Suppose that $S'$ has no minimum, i.e. there exists an infinite descending
+    chain of nonequal elements
+    \[ ... \termless{T}{C}
+       \ttt{M_3}{\tau_0} \termless{T}{C} \ttt{M_2}{\tau_0} \termless{T}{C}
+       \ttt{M_1}{\tau_0} \termless{T}{C} \ttt{M_0}{\tau_0} \]
+    such that for every $i \in \mathbb{N}, \termlen{\ttt{M_i}{\tau_0}} = n$.
+
+    Furthermore, the definition of $\termless{T}{C}$ implies that all terms
+    in the chain have the same syntactic structure:
+    \begin{itemize}
+        \item For every $i \in \mathbb{N}$, $M_i$ is a Constant or Variable:
+
+            In this case, an infinite chain is trivially impossible since
+            constants and variables are only in relation with themselves.
+
+        \item For every $i \in \mathbb{N}$, $M_i = P_i Q_i$:
+
+            We know that $\termlen{P_i} \le \termlen{M_i}$ and
+            $\termlen{Q_i} \le \termlen{M_i}$.
+
+            Inductively, the sets $\{ P_i \mid i \in \mathbb{N} \}$ and
+            $\{ Q_j \mid j \in \mathbb{N} \}$ have minimal elements
+            $P_i$ and $Q_j$ for some fixed $i$ and $j$. Without loss of
+            generality, let $i \ge j$.
+
+            We have $\ttt{M_{i + 1}}{\tau_0} \termless{T}{C} \ttt{M_i}{\tau_0}$,
+            i.e. $\ttt{P_{i + 1} Q_{i + 1}}{\tau_0} \termless{T}{C}
+            \ttt{P_i Q_i}{\tau_0}$. The definition of $\termless{T}{C}$
+            implies that $\ttt{P_{i + 1}}{\tau_0} \termless{T}{C} \ttt{P_i}{\tau_0}$:
+            thus, since $P_i$ is minimal,
+            $P_{i + 1} = P_i$. Similarly, $Q_{j + 1} = Q_j = Q_{i} = Q_{i + 1}$.
+
+            Therefore, the elements $\ttt{P_{i + 1} Q_{i + 1}}{\tau_0}$ and
+            $\ttt{P_i Q_i}{\tau_0}$ are equal, which contradicts our supposition.
+
+        \item For every $i \in \mathbb{N}$, $M_i$ is an Abstraction:
+
+            This case can be proven analogously to the case with Application.
+    \end{itemize}
+\end{proof}
+
+
 \begin{lemma}\label{lemma:termwellfounded}
     If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
     is a \emph{well-founded} partial order relation on $\tclos{T}$, the relation
@@ -1597,7 +1684,14 @@ eventually terminates.
     is also a well-founded partial order.
 \end{lemma}
 \begin{proof}
-    \fixme{need proof}
+    The fact that $\termless{T}{C}$ is a partial order is given by \cref{lemma:termpartial}.
+
+    To prove well-foundedness, take a set $S \subseteq \ttlambda{T}{C}$ and fix
+    $M \in S$. Let $n = \termlen{M}$. We can isolate
+    $S_n = \{ N \mid \termlen{N} = n \}$. By \cref{lemma:lenwellfounded},
+    $S_n$ has a minimal element. By \cref{cond:rellen} we know that this
+    minimal element is not related to any element in $S \setminus S_n$,
+    therefore it is also minimal in $S$.
 \end{proof}
 
 \begin{prop}\label{prop:propagateterminates}
