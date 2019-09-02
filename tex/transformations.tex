@@ -65,7 +65,7 @@ Whenever the algorithm encounters a case where the unifier is not defined,
 a type error is produced.
 
 This unifier is monotonic (\cref{def:mono}) for the partial order ``\code{*} is
-above every other type, and there are no other edges''. By \cref{prop:propagateterminates},
+above every other type, and there are no other edges''\note{Бих го написал $x \geq y \iff x = \code{*} \vee x = y$.} By \cref{prop:propagateterminates},
 the process of iteratively applying $\mcf{propagate}$ always terminates.
 \fixednote{ако говориш за propagate, е хубаво да се докаже по-формално}
 
