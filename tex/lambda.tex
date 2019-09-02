@@ -1264,6 +1264,20 @@ construction (type-tags may be emulated by inserting casts at all subterms),
 and is used only for convenience: this way we can manipulate types directly
 instead of having to deal with casts and bound variable types.
 
+For convenience, we
+will also define the notion of \emph{length} on type-tagged terms:
+\begin{defn}
+    \[
+        \termlen{\ttt{A}{\tau}} \defeq
+        \begin{cases*}
+            1 , & $A = c \in C$, \\
+            1 , & $A = v \in \lvars$, \\
+            \termlen{P} + \termlen{Q} + 1, & $A = (PQ)$, \\
+            \termlen{P} + 1 , & $A = (\lambda v \abstr P)$. \\
+        \end{cases*}
+    \]
+\end{defn}
+
 Converting regular $\lambda$-terms into type-tagged $\lambda$-terms is
 relatively straightforward: simply examine the type of every subterm according
 to its local context and then store it into the tag.
@@ -1590,8 +1604,6 @@ eventually terminates.
     \cref{lemma:upmono} and \cref{lemma:downmono}.
 \end{proof}
 
-\fixme{define term length}
-
 \begin{lemma}\label{lemma:termpartial}
     If $T$ is a set of type symbols and $\less \subseteq \tclos{T} \times \tclos{T}$
     is a partial order relation on $\tclos{T}$, the relation
@@ -1614,9 +1626,12 @@ eventually terminates.
     \end{equation}
 \end{lemma}
 \begin{proof}
-    \fixme{need proof}
-\end{proof}
+    \cref{cond:reldir} stems trivially from the definition of $\termless{T}{C}$.
 
+    \cref{cond:rellen} can be proven by induction over the same definition,
+    since the terms on the left and right of $\termless{T}{C}$ always
+    have the same syntactic structure.
+\end{proof}
 
 \begin{lemma}\label{lemma:lenwellfounded}
     If $T$ is a set of type symbols, $\less \subseteq \tclos{T} \times \tclos{T}$
@@ -1626,7 +1641,16 @@ eventually terminates.
     $\termless{T}{C}$.
 \end{lemma}
 \begin{proof}
+    We will prove this lemma inductively over the term length $n$.
+
+    First, for $n = 1$, we have that any nonempty subset of $\ttlambda{T}{C}$
+    contains only Constants or Variables. Each constant or variable is only
+    related to itself, so the proof is trivial.
+
+    Now, we will prove the lemma for $n > 1$:
+
     Let $S \subseteq \ttlambda{T}{C}$ be a nonempty set of terms of length $n$.
+
     Furthermore, let
     $\tau_0 = \min\limits_{\less} \{ \tau \mid \ttt{M}{\tau} \in S \}$.
 
@@ -1645,11 +1669,6 @@ eventually terminates.
     Furthermore, the definition of $\termless{T}{C}$ implies that all terms
     in the chain have the same syntactic structure:
     \begin{itemize}
-        \item For every $i \in \mathbb{N}$, $M_i$ is a Constant or Variable:
-
-            In this case, an infinite chain is trivially impossible since
-            constants and variables are only in relation with themselves.
-
         \item For every $i \in \mathbb{N}$, $M_i = P_i Q_i$:
 
             We know that $\termlen{P_i} \le \termlen{M_i}$ and
