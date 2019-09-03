@@ -1339,7 +1339,10 @@ will take extra care and insert casts where needed:
         \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
         \begin{cases*}
             M ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$, \\
-            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau$. \\
+            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau
+            \text{ and } \tau[M] \text { is a valid cast}
+            $, \\
+            \neg ! ,& \text{otherwise}.
         \end{cases*}
     \]
 \end{defn}
