@@ -1,7 +1,0 @@
-replace commas by ands (when applicable)
-more commas in cases
-fix less than equal
-monotonic + with respect to a partial order relation
-that minimum
-full induction
-fix the note for partial untag
