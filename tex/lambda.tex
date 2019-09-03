@@ -1379,7 +1379,8 @@ We will use a basic operation $\unify$ that unifies two types.
 
 \begin{defn}\label{def:mono}
     A unifier $ \unify : \tclos{T} \times \tclos{T} \pfun \tclos{T}$ is called
-    \emph{monotonic} if there exists a partial-order relation $\less$ such that:
+    \emph{monotonic} with respect to the partial order
+    $\less \subseteq \tclos{T} \times \tclos{T}$ when:
     \[ \forall \sigma, \tau \in \tclos{T}
         ((\sigma \unify \tau \less \sigma) \land (\sigma \unify \tau \less \tau)) \]
 \end{defn}
@@ -1641,7 +1642,7 @@ eventually terminates.
     $\termless{T}{C}$.
 \end{lemma}
 \begin{proof}
-    We will prove this lemma inductively over the term length $n$.
+    We will prove this lemma by strong induction over the term length $n$.
 
     First, for $n = 1$, we have that any nonempty subset of $\ttlambda{T}{C}$
     contains only Constants or Variables. Each constant or variable is only
@@ -1652,7 +1653,9 @@ eventually terminates.
     Let $S \subseteq \ttlambda{T}{C}$ be a nonempty set of terms of length $n$.
 
     Furthermore, let
-    $\tau_0 = \min\limits_{\less} \{ \tau \mid \ttt{M}{\tau} \in S \}$.
+    $\tau_0$ be a minimal element
+    of the set $\{ \tau \mid \ttt{M}{\tau} \in S \}$
+    with respect to $\less$.
 
     We know that if the set $S' = \{ \ttt{M}{\tau} \mid \tau = \tau_0 \}$
     has a minimum, it is also the
