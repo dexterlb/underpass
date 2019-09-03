@@ -1659,20 +1659,22 @@ eventually terminates.
     minimum of $S$, since the contrary would contradict the choice of
     $\tau_0$ due to \cref{cond:reldir}.
 
-    Suppose that $S'$ has no minimum, i.e. there exists an infinite descending
-    chain of nonequal elements
-    \[ ... \termless{T}{C}
-       \ttt{M_3}{\tau_0} \termless{T}{C} \ttt{M_2}{\tau_0} \termless{T}{C}
-       \ttt{M_1}{\tau_0} \termless{T}{C} \ttt{M_0}{\tau_0} \]
+    Suppose that $S'$ has no minimum, i.e. there exists an infinite
+    strictly-decreasing chain:
+    \[ ... \termlessne{T}{C}
+       \ttt{M_3}{\tau_0} \termlessne{T}{C} \ttt{M_2}{\tau_0} \termlessne{T}{C}
+       \ttt{M_1}{\tau_0} \termlessne{T}{C} \ttt{M_0}{\tau_0} \]
     such that for every $i \in \mathbb{N}, \termlen{\ttt{M_i}{\tau_0}} = n$.
 
     Furthermore, the definition of $\termless{T}{C}$ implies that all terms
     in the chain have the same syntactic structure:
     \begin{itemize}
-        \item For every $i \in \mathbb{N}$, $M_i = P_i Q_i$:
+        \item For every $i \in \mathbb{N}$, $M_i$ is an Application, i.e.
+            $M_i = P_i Q_i$:
 
             We know that $\termlen{P_i} \le \termlen{M_i}$ and
-            $\termlen{Q_i} \le \termlen{M_i}$.
+            $\termlen{Q_i} \le \termlen{M_i}$ since
+            $\termlen{M_i} = \termlen{P_i} + \termlen{Q_i} + 1$.
 
             Inductively, the sets $\{ P_i \mid i \in \mathbb{N} \}$ and
             $\{ Q_j \mid j \in \mathbb{N} \}$ have minimal elements
@@ -1705,7 +1707,8 @@ eventually terminates.
 \begin{proof}
     The fact that $\termless{T}{C}$ is a partial order is given by \cref{lemma:termpartial}.
 
-    To prove well-foundedness, take a set $S \subseteq \ttlambda{T}{C}$ and fix
+    To prove well-foundedness, take a nonempty set
+    $S \subseteq \ttlambda{T}{C}$ and fix
     $M \in S$. Let $n = \termlen{M}$. We can isolate
     $S_n = \{ N \mid \termlen{N} = n \}$. By \cref{lemma:lenwellfounded},
     $S_n$ has a minimal element. By \cref{cond:rellen} we know that this
