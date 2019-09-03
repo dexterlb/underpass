@@ -43,7 +43,7 @@ The CLI can run in 3 modes:
     within the web interface, \code{xelatex} and \code{latexmk} must be installed.
 }
 
-For a build system, Haskell's \code{stack} package manager has been used. The
+For a build system, Haskell's \code{Stack} has been used. The
 CLI can be run by issuing:
 \begin{lstwrap}\begin{lstlisting}[language=bash]
     $ stack run underpass-exe <arguments>
@@ -56,10 +56,10 @@ Other modes can be used as follows:
 \begin{lstwrap}\begin{lstlisting}[language=bash]
     # Start in web-interface mode and load my_grammar.ccg:
     $ stack run underpass-exe serve my_grammar.ccg
-    
+
     # Display summary for a given query:
     $ stack run underpass-exe summary my_grammar.ccg 'hospitals in China'
-    
+
     # Generate a PDF breakdown for a given query:
     $ stack run underpass-exe latex my_grammar.ccg 'hospitals in China'
 \end{lstlisting}\end{lstwrap}
@@ -91,16 +91,16 @@ mark="end"    : SE \ GSet     @ \x: GSet   => SE[x] .
 
 pos="comma"   : $X \ $X       @ id.
 
-raw="in"      
-    : GSet / GSet \ GSet 
+raw="in"
+    : GSet / GSet \ GSet
     @ \things, where => and things (in where).
 
 pos="nnp" `'$raw'` : String
-    : Entity          
+    : Entity
     @ name.
 
 pos="nnp" `'$raw'` : String
-    : NamedEntity       
+    : NamedEntity
     @ \x => NamedEntity[x].
 
 raw="like"    : GSet \ NamedEntity @ nameLike.
