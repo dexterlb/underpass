@@ -121,7 +121,7 @@ round brackets.
     This meta-example shows a couple of rules to illustrate the syntax:
     \gramshort{
         \gramrow{near}{ GSet \lc GSet \rc GSet }{ \lambda from: GSet, things: GSet \abstr }
-            \gramrow{}{}{ and \app things \app (within \app nearDistance \app from) }
+        \gramrow{}{}{ and \app things \app (within \app nearDistance \app from) }
         \gramrow{german \sq city}{ GSet }{ and \app inGermany \app city }
         \gramrow{}{ GSet \rc Name }{ \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) }
     }
@@ -134,13 +134,18 @@ round brackets.
         & \phantom{=} \qquad and \app things \app (within \app nearDistance \app from) \\
         \psi[german \sq city, GSet] &= and \app inGermany \app city \\
         \psi[german \sq city, GSet \rc GSet] &= \lambda n{:} Name \abstr and \app (named \app n) \app (and \app inGermany \app city) \\
-     \end{align*}
+    \end{align*}
 
-     Here we assign two different categories with their respective semantics
-     to the phrase \code{german city} --- one that can be seen in the query
-     \code{"fountains in a german city"}, and another in the query
-     \code{"the german city Frankfurt"}.
- \end{example}
+    Here we assign two different categories with their respective semantics
+    to the phrase \code{german city} --- one that can be seen in the query
+    \begin{center}
+        \code{"fountains in a german city"}
+    \end{center}
+    and another in the query
+    \begin{center}
+        \code{"the german city Frankfurt"}
+    \end{center}
+\end{example}
 
 Also, most examples from here on will assume that grammars have a starting
 category $GSet$, to conform as close as possible to the implementation in
