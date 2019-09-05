@@ -37,7 +37,7 @@
 \usepackage{lstautogobble}
 \usepackage{listings}
 \usepackage{syntax}
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage{subfiles}
 \usepackage{csquotes}
 \usepackage[style=alphabetic]{biblatex}
@@ -145,6 +145,7 @@
 \setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
 
+\appto{\bibsetup}{\sloppy}
 \addbibresource{references.bib}
 
 \graphicspath{ {./images/} }
