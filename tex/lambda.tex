@@ -1507,7 +1507,7 @@ eventually terminates.
     If $\unify$ is a monotonic unifier for $T$ with a
     partial order relation $\less$, then for any type-tagged term
     $P \in \ttlambda{T}{C}$,
-    \[ (P', \Gamma) = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P \]
+    \[ (P', \Gamma) = \mcf{up}_{\unify}(P) \implies P' \termless{T}{C} P. \]
 \end{lemma}
 \begin{proof}
     Let $(\ttt{A'}{\tau'}, \Gamma) = \mcf{up}_{\unify}(\ttt{A}{\tau})$.
@@ -1533,7 +1533,7 @@ eventually terminates.
                 \ttt{\lambda x \abstr \ttt{M}{\sigma'}}{\tau'}
                 \termless{T}{C}
                 \ttt{(\lambda x \abstr P)}{\tau} =
-                \ttt{A}{\tau}
+                \ttt{A}{\tau}.
             \]
         \item $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),
             (Q', \Gamma_Q) = \mcf{up}_{\unify}(Q),
@@ -1546,7 +1546,7 @@ eventually terminates.
                 \ttt{P' Q'}{\sigma'' \unify \tau}
                 \termless{T}{C}
                 \ttt{P Q}{\tau} =
-                \ttt{A}{\tau}
+                \ttt{A}{\tau}.
             \]
     \end{itemize}
 \end{proof}
