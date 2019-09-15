@@ -2,25 +2,33 @@
 \begin{document}
 
 \subsection{Summary}
-The following steps have been completed as part of this thesis:
-\begin{itemize}
-    \item Design of a functional intermediate language that can be
-        easily generated and translated into Overpass
-    \item Design of a language for defining CCGs on top of aforementioned
-        intermediate language
-    \item Implementation of parsers and internal representations for said
-        languages
-    \item Design, implementation and prooves of correctness for
-        a subtyping system and a type variable system for providing
-        polymorphism
-    \item Implementation and proof of correctness of a Categorial CYK-based
-        CCG parser
-    \item Implementation of an intermediate language term generator from
-        CCG derivation trees
-    \item Implementation and proof of termination of a translator from
-        intermediate language terms into Overpass programs
-    \item Implementation of user interfaces (console and web-based)
-\end{itemize}
+
+The original purpose of this thesis was to create an end-to-end
+solution for translating some subset of English into Overpass.
+In the process it became clear that defining the exact subset of English
+was not as interesting as expected, so the project grew to allow
+definition of frontends for any natural language subsets. This shifted the
+focus into the design of a rule definition language, which felt more
+fulfilling.
+
+It seems clear that this CCG-based approach can't model the input natural
+language as well as some methods based on statistics would have
+(the language subset modelled by CCG feels more formal than actual
+natural language sentences), but it
+may prove useful for many scenarios: this ``formalness'' ensures predictability
+of the system and still models enough of the natural language for queries
+to be semantically-recognisable to non-experts. Interfacing such a system
+may be much easier to learn than working directly with a formal language
+such as Overpass.
+
+In retrospect, the subjectively most interesting part of this thesis was probably
+incorporating the concept of subtyping into CCGs and using it to model
+real-world semantics, and also the most tedious, since the details arising
+from contravariance had to be considered in most prooves.
+
+Even without using Overpass as a target formal language, this project might be
+useful for generating queries into other formal languages by simply
+substituting the backend.
 
 \subsection{Future work}
 The current implementation is fairly basic and may be extended along multiple
