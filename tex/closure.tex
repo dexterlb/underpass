@@ -1,8 +1,31 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-The original purpose of this thesis was to create an end-to-end
-solution for translating some subset of English into Overpass.
+The primary objective of this thesis was to explore the suitability CCGs
+for formulating geospatial queries in a formal language based on a
+natural language phrase. English was chosen as a concrete natural language
+while Overpass was chosen as a target formal language.
+To achieve this goal, the following tasks were accomplished:
+
+\begin{itemize}
+    \item Design of a functional intermediate language that can be
+        easily generated and translated into Overpass
+    \item Design of a language for defining CCGs on top of aforementioned
+        intermediate language
+    \item Implementation of parsers and internal representations for said
+        languages
+    \item Design, implementation and prooves of correctness for
+        a subtyping system and a type variable system for providing
+        polymorphism
+    \item Implementation and proof of correctness of a Categorial CYK-based
+        CCG parser
+    \item Implementation of an intermediate language term generator from
+        CCG derivation trees
+    \item Implementation and proof of termination of a translator from
+        intermediate language terms into Overpass programs
+    \item Implementation of user interfaces (console and web-based)
+\end{itemize}
+
 In the process it became clear that defining the exact subset of English
 was not as interesting as expected, so the project grew to allow
 definition of frontends for any natural language subsets. This shifted the
@@ -28,6 +51,7 @@ Even without using Overpass as a target formal language, this project might be
 useful for generating queries into other formal languages by simply
 substituting the backend.
 
+\pagebreak
 \subsection{Future work}
 The current implementation is fairly basic and may be extended along multiple
 axes:
@@ -47,7 +71,6 @@ axes:
     \item ...
 \end{itemize}
 
-\pagebreak
 \subsection{Conclusion}
 Mostly harmless.
 \end{document}
