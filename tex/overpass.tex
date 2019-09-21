@@ -153,15 +153,15 @@ These are the possible tag filters\footnote{All double quotes within filters
         out;
     \end{lstlisting}\end{lstwrap}
 
-    Get nodes with amenity ``cafe'' and name ``Stardeers'':
+    Get nodes with amenity ``cafe'' and name ``Moondeers'':
     \begin{lstwrap}\begin{lstlisting}
-        node[amenity="cafe"][name="Stardeers"];
+        node[amenity="cafe"][name="Moondeers"];
         out;
     \end{lstlisting}\end{lstwrap}
 
-    Get nodes with amenity ``cafe'' and name ``Stardeers'', case insensitive:
+    Get nodes with amenity ``cafe'' and name ``moondeers'', case insensitive:
     \begin{lstwrap}\begin{lstlisting}
-        node[amenity="cafe"][name~"^Stardeers$",i];
+        node[amenity="cafe"][name~"^moondeers$",i];
         out;
     \end{lstlisting}\end{lstwrap}
 
@@ -184,10 +184,10 @@ Some filters can use an input set to influence the retrieval query.
                 node.cafes;
             \end{lstlisting}\end{lstwrap}
 
-            Get nodes with amenity ``cafe'' and name ``Stardeers'':
+            Get nodes with amenity ``cafe'' and name ``Moondeers'':
             \begin{lstwrap}\begin{lstlisting}
                 node[amenity="cafe"] -> .cafes;
-                node.cafes[name="Stardeers"];
+                node.cafes[name="Moondeers"];
             \end{lstlisting}\end{lstwrap}
         \end{example}
     \item Objects within an area: get objects that are physically inside
