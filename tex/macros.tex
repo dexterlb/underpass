@@ -1,0 +1,393 @@
+\usepackage{fontenc}
+\usepackage{fontspec}
+\usepackage{libertine}
+
+\newfontfamily\fontcomic[NFSSFamily=comic]{Comic Sans MS}
+
+\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage[bulgarian,english]{babel}
+\usepackage{indentfirst}
+\usepackage{titling}
+\usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
+\usepackage{url}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hhline}
+\usepackage{xspace}
+\usepackage{minibox}
+\usepackage{pbox}
+\usepackage{mathtools}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[pdfusetitle]{hyperref}
+\usepackage[nameinlink]{cleveref}
+\usepackage{mathabx}
+\usepackage{graphicx}
+\usepackage{ebproof}
+\usepackage[toc,page]{appendix}
+\usepackage{adjustbox}
+\usepackage{lstautogobble}
+\usepackage{listings}
+\usepackage{syntax}
+\usepackage[normalem]{ulem}
+\usepackage{subfiles}
+\usepackage{csquotes}
+\usepackage[style=alphabetic]{biblatex}
+\usepackage{tikz-qtree}
+\usepackage{tikz}
+\usetikzlibrary{fit}
+\usetikzlibrary{external}
+\usetikzlibrary{positioning}
+\tikzset{main node/.style={circle,fill=blue!5,draw,minimum size=1cm,inner sep=0pt},
+            }
+\tikzset{
+    external/system call={%
+    xelatex \tikzexternalcheckshellescape
+    -halt-on-error -interaction=batchmode -shell-escape
+    -jobname "\image" "\texsource"}}
+% \tikzexternalize
+
+\newcommand\gderiv{\rightarrow}
+\newcommand\gstep{\Rightarrow}
+\newcommand\gsteps{\gstep^*}
+\newcommand\tderiv{\Rrightarrow}
+
+\newcommand\fun{\rightarrow}
+\newcommand\pfun{\mathrel{\ooalign{\hfil$\mapstochar$\hfil\cr$\to$\cr}}}
+
+\renewcommand\descriptionlabel[1]{\qquad $\bullet$ \textbf{#1}}
+\newcommand\code[1]{\mbox{\texttt{#1}}}
+\newcommand\cendrow{\vspace{0.4em} \\}
+
+\newcommand\note[1]{\marginpar{\scriptsize{ #1 }}}
+\newcommand\fixednote[1]{}
+\newcommand\discuss[1]{\note{ #1 \textcolor{red}{discuss}}}
+
+\usepackage{color}
+\definecolor{Bluish}{rgb}{0.39,0.55,0.78}
+\definecolor{exampleness}{HTML}{ebf9d6}
+\definecolor{codeness}{HTML}{fbf1c7}
+\definecolor{commentness}{HTML}{b57614}
+\definecolor{light-gray}{gray}{0.9}
+\definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
+\definecolor{asparagus}{rgb}{0.53, 0.66, 0.42}
+\definecolor{linkness}{rgb}{0.12, 0.43, 0.41}
+
+\newcommand\fixme[1]{
+    \greenbox{
+        \vspace{1em}
+        \textbf{\textcolor{red}{FIXME:} } #1
+        \vspace{1em}
+    }
+}
+
+\newcommand\subtyper[1]{\underline{#1}}
+\newcommand\suptyper[1]{\overline{#1}}
+
+\newcommand\catdefsep{\hspace{0.5em} {:} \hspace{0.5em}}
+\newcommand\cataddsep{\hspace{0.5em} \phantom{,} \hspace{0.5em}}
+\newcommand\termdefsep{\hspace{0.5em} @ \hspace{0.5em}}
+
+\newcommand\mname[1]{\mathrm{#1}}
+\newcommand\identity{\mname{id}}
+
+\newcommand\gramshort[1]{
+    \begin{alignat*}{2}
+        #1
+    \end{alignat*}
+}
+
+\newcommand\gramrow[3]{
+    \ifstrempty{#2}{
+        % category is empty, we'll leave just the term
+        & \phantom{\catdefsep} & \phantom{\termdefsep} & \quad #3
+    }{
+        % category is not empty
+        \ifstrempty{#1}{
+            % token is empty, this is an additional category to the previous token
+            \phantom{ } & \cataddsep #2
+        }{
+            % token is not empty
+            #1 &\catdefsep #2
+        }
+        \ifstrempty{#3}{
+            % term is empty
+            & \phantom{} & \phantom{}
+        }{
+            % term is not empty
+            & \termdefsep & #3
+        }
+    } \\
+}
+
+\newcommand\plambda[2]{\Lambda^{#2}_{#1}}
+\newcommand\fancylambda[2]{\Lambda^{#2}_{\le #1}}
+\newcommand\ttlambda[2]{\Lambda^{#2}_{t #1}}
+\newcommand\tvlambda[2]{\Lambda^{#2}_{a #1}}
+\newcommand\ttt[2]{\langle #1, #2 \rangle}
+\newcommand\lattice[2]{\langle #1, #2 \rangle}
+
+\newcommand\betared{\xrightarrow{\beta}}
+\newcommand\bbetared{\xRightarrow{\beta}}
+
+\DeclareRobustCommand{\hsout}[1]{\texorpdfstring{\sout{#1}}{#1}}
+
+\renewcommand{\baselinestretch}{1.1}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+
+\appto{\bibsetup}{\sloppy}
+\addbibresource{references.bib}
+
+\graphicspath{ {./images/} }
+
+\tikzset{%
+  boxcola/.style={rectangle,rounded corners,fill=asparagus,draw=asparagus,fill opacity=0.02,thick,inner sep=5pt}
+}
+\newcommand\boxtexta{asparagus}
+
+\tikzset{%
+  boxcolb/.style={rectangle,rounded corners,fill=blue,draw=blue,fill opacity=0.02,thick,inner sep=5pt}
+}
+\newcommand\boxtextb{blue}
+
+\newcommand\greenbox[1]{
+    \tikzexternaldisable
+    \begin{samepage}
+        \begin{mdframed}[%
+            backgroundcolor=green!8,
+            linecolor=gray!50!green!60,
+            outerlinewidth=0.5pt,
+            roundcorner=5mm,
+            skipabove=\baselineskip,
+            skipbelow=\baselineskip,
+            leftmargin=1cm,
+            rightmargin=1cm,
+        ]
+            #1
+        \end{mdframed}
+    \end{samepage}
+    \tikzexternalenable
+}
+
+\newenvironment{example}
+    {
+        \tikzexternaldisable
+        \begin{mdframed}[%
+            backgroundcolor=exampleness,
+            rightline=false,
+            topline=false,
+            bottomline=false,
+            leftline=false,
+        ]
+            \begin{examplethm}
+    }
+    {
+            \end{examplethm}
+        \end{mdframed}
+        \tikzexternalenable
+    }
+
+\newcommand{\cfigure}[1]{
+    \begin{figure}[htbp!]
+        \centering
+        #1
+    \end{figure}
+}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+
+\newenvironment{lstwrap}
+    {
+    }
+    { 
+    }
+
+\lstset{
+	backgroundcolor = \color{codeness},
+    autogobble,
+    columns=fixed,
+    showspaces=false,
+    showtabs=false,
+    breaklines=true,
+    showstringspaces=false,
+    breakatwhitespace=true,
+    escapeinside={(*@}{@*)},
+    language=Haskell,
+    commentstyle=\color{commentness},
+    keywordstyle=\color{black},
+    stringstyle=\color{black},
+    numberstyle=\color{black},
+    basicstyle=\ttfamily\footnotesize,
+    frame=lrtb,
+    framesep=12pt,
+    xleftmargin=12pt,
+    xrightmargin=12pt,
+    tabsize=4,
+    captionpos=b,
+    literate={symlambda}{{$\lambda$}}1 {symabstr}{{$\abstr$}}1 {symtot}{{$\tot$}}1
+}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+\newcommand\tree[1]{
+    \begin{tikzpicture}
+    \Tree[ #1 ]
+    \end{tikzpicture}
+}
+
+\newcommand\centree[1]{
+    \begin{center}
+    \tree{ #1 }
+    \end{center}
+}
+
+\newcommand\scaledtree[2]{
+    \begin{center}
+    \begin{tikzpicture}[thick,scale=#1, every node/.style={transform shape}]
+    \Tree[ #2 ]
+    \end{tikzpicture}
+    \end{center}
+}
+
+\newcommand\autoscaledtree[1]{
+    \begin{center}
+    \resizebox{\textwidth}{!}{
+        \begin{tikzpicture}
+        \Tree[ #1 ]
+        \end{tikzpicture}
+    }
+    \end{center}
+}
+
+\newcommand\deriv[1]{
+    \begin{prooftree}
+        #1
+    \end{prooftree}
+}
+
+\newcommand\cenderiv[1]{
+    \begin{center}
+        \deriv{ #1 }
+    \end{center}
+}
+
+\newcommand\subst[3]{
+    #1 [ #2 := #3 ]
+}
+
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    citecolor=linkness,
+    filecolor=linkness,
+    linkcolor=linkness,
+    urlcolor=linkness
+}
+
+\newcommand\printtoc{
+    {
+        \hypersetup{linkcolor=black}
+        \tableofcontents
+    }
+}
+
+\usepackage{tabularx}
+
+
+\setlength{\grammarparsep}{0.2em}
+\setlength{\grammarindent}{12em}
+
+\theoremstyle{definition} \newtheorem{convention}{Convention}
+                          \numberwithin{convention}{section}
+\theoremstyle{definition} \newtheorem{defn}{Definition}
+                          \numberwithin{defn}{section}
+\theoremstyle{definition} \newtheorem{lemma}{Lemma}
+                          \numberwithin{lemma}{section}
+\theoremstyle{definition} \newtheorem{prop}{Proposition}
+                          \numberwithin{prop}{section}
+\theoremstyle{definition} \newtheorem{property}{Property}
+                          \numberwithin{property}{section}
+\theoremstyle{definition} \newtheorem{examplethm}{Example}
+                          \numberwithin{examplethm}{section}
+\theoremstyle{definition} \newtheorem{corollary}{Corollary}
+                          \numberwithin{corollary}{section}
+
+\newcommand{\lc}{\textcolor{red}{\backslash}}
+\newcommand{\rc}{\textcolor{red}{/}}
+\newcommand{\mc}{\textcolor{red}{|}}
+\newcommand{\lci}[1]{\textcolor{red}{\backslash_{#1}}}
+\newcommand{\rci}[1]{\textcolor{red}{/_{#1}}}
+\newcommand{\mci}[1]{\textcolor{red}{|_{#1}}}
+\newcommand{\lb}{\textcolor{red}{[}}
+\newcommand{\rb}{\textcolor{red}{]}}
+\newcommand{\lp}{\textcolor{red}{(}}
+\newcommand{\rp}{\textcolor{red}{)}}
+\newcommand{\modstar}{\star}
+\newcommand{\moddot}{.}
+\newcommand{\modr}{\lozenge}
+\newcommand{\modx}{\times}
+
+\newcommand{\meet}{\wedge}
+\newcommand{\join}{\vee}
+\newcommand{\unify}{\hat{\wedge}}
+\newcommand{\less}{\leq}
+\newcommand{\termless}[2]{\less_{ #1 }^{ #2 }}
+\newcommand{\termlessne}[2]{<_{ #1 }^{ #2 }}
+\newcommand{\termlen}[1]{| #1 |}
+\newcommand{\lesss}{\ll}
+\newcommand{\lass}{<:}
+\newcommand{\tless}{\sqsupseteq}
+
+\renewcommand{\land}{\mathbin{\&}}
+\newcommand{\xor}{\veebar}
+\newcommand{\boolset}{\mathbb{B}}
+
+\newcommand{\mcf}[1]{\mathsf{#1}}
+
+\newcommand{\tclos}[1]{\mathcal{T}( #1 )}
+\newcommand{\tvclos}[1]{\mathcal{T}_v( #1 )}
+\newcommand{\cclos}[1]{\mathcal{C}( #1 )}
+\newcommand{\catsin}[1]{\mathsf{Cats}( #1 )}
+\newcommand{\tsymbs}{\mathbb{T}}
+\newcommand{\csymbs}{\mcf{Cat}}
+\newcommand{\lvars}{\mathbb{V}^{\lambda}}
+\newcommand{\cvars}{\mathbb{V}^{C}}
+\newcommand{\tvars}{\mathbb{V}^{T}}
+\newcommand{\trees}[1]{\mathbb{T}_{ #1 }}
+\newcommand{\const}{\mcf{Const}}
+\newcommand{\fvv}{\mcf{fv}}
+\newcommand{\fv}[1]{\fvv(#1)}
+\newcommand{\tss}{\mcf{ts}}
+\newcommand{\ts}[1]{\tss(#1)}
+
+\newcommand{\squash}{\omega}
+\newcommand{\consquash}{\squash^{\gamma}}
+\newcommand{\lsquash}{\squash^{\lambda}}
+\newcommand{\tsquash}{\hat{\squash}}
+
+\newcommand{\tadd}{\oplus}
+\newcommand{\tot}{\rightarrow}
+\newcommand{\abstr}{\Rightarrow}
+\newcommand{\app}{\text{ }}
+\newcommand{\sq}{\text{ }}
+\newcommand{\wildcard}{\Asterisk}
+\newcommand{\typeof}[1]{\|#1\|}
+\newcommand{\typeoff}{\typeof{\cdot}}
+\newcommand{\typeofv}[1]{\typeof{#1}_v}
+\newcommand{\typeofvv}{\typeofv{\cdot}}
+\newcommand{\defeq}{\overset{\text{\scriptsize def}}{=}}
+\newcommand{\defiff}{\overset{\text{\scriptsize def}}{\iff}}
+\newcommand{\condeq}{\simeq}
+
+\newcommand{\latex}{\LaTeX\xspace}

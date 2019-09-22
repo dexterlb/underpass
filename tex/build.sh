@@ -8,7 +8,10 @@ OPTS=(-latexoption="-shell-escape" -halt-on-error -xelatex)
 
 case "${1}" in
     "")
-        latexmk ${OPTS[@]} main.tex
+        "${0}" build main.tex
+        ;;
+    build)
+        latexmk ${OPTS[@]} "${2}"
         ;;
     clean)
         latexmk -C
@@ -17,7 +20,12 @@ case "${1}" in
         done
         ;;
     watch)
-        latexmk ${OPTS[@]} -pvc main.tex
+        if [[ -z "${2}" ]]; then
+            f=main.tex
+        else
+            f="${2}"
+        fi
+        latexmk ${OPTS[@]} -pvc "${f}"
         ;;
     *)
         echo "say whaaa?"
