@@ -69,7 +69,7 @@ dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
     out <input set>;
 \end{lstlisting}\end{lstwrap}
 
-\begin{example}
+\begin{mexample}
     The following statement saves all nodes with name Foo within the set variable
     \code{.\_}:
     \begin{lstwrap}\begin{lstlisting}
@@ -88,7 +88,7 @@ dots and polygons on a map. The syntax of the ``\code{out}'' statement is:
         node[name="Foo"] -> .foo;
         out .foo;
     \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 The most basic group of statements are \emph{retrieval statements}.
 They may retrieve specific type of objects depending on what
@@ -146,7 +146,7 @@ These are the possible tag filters\footnote{All double quotes within filters
 \end{center}
 
 \pagebreak % some bug makes the text in this example white if it spans a page break??
-\begin{example}
+\begin{mexample}
     Get nodes with amenity ``cafe'':
     \begin{lstwrap}\begin{lstlisting}
         node[amenity="cafe"];
@@ -170,14 +170,14 @@ These are the possible tag filters\footnote{All double quotes within filters
         area["administrative"];
         out;
     \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 \subsubsection{Relative filters}
 Some filters can use an input set to influence the retrieval query.
 \begin{itemize}
     \item Set intersection: this filter only matches objects that are within
         the input set. The syntax is a dot followed by the input set's name.
-        \begin{example}
+        \begin{mexample}
             Get nodes with amenity ``cafe'':
             \begin{lstwrap}\begin{lstlisting}
                 node[amenity="cafe"] -> .cafes;
@@ -189,28 +189,28 @@ Some filters can use an input set to influence the retrieval query.
                 node[amenity="cafe"] -> .cafes;
                 node.cafes[name="Moondeers"];
             \end{lstlisting}\end{lstwrap}
-        \end{example}
+        \end{mexample}
     \item Objects within an area: get objects that are physically inside
         of areas in the input set. The syntax uses the \code{area} keyword
         within round braces:
         \begin{lstwrap}\begin{lstlisting}
             (area.<input set>)
         \end{lstlisting}\end{lstwrap}
-        \begin{example}
+        \begin{mexample}
             Nodes in Frankfurt:
             \begin{lstwrap}\begin{lstlisting}
                 area[name="Frankfurt"] -> fr;
                 node(area.fr);
                 out;
             \end{lstlisting}\end{lstwrap}
-        \end{example}
+        \end{mexample}
     \item Physical distance: get objects within said distance from objects in
         the input set. The syntax involves using the \code{around} keyword
         within round braces:
         \begin{lstwrap}\begin{lstlisting}
             (around.<input set>:<radius in metres>)
         \end{lstlisting}\end{lstwrap}
-        \begin{example}
+        \begin{mexample}
             Cafes within 120m of a parking space:
             \begin{lstwrap}\begin{lstlisting}
                 node[amenity="parking_space"] -> pspaces;
@@ -225,7 +225,7 @@ Some filters can use an input set to influence the retrieval query.
                 node(around:100)[amenity=cinema];
                 out;
             \end{lstlisting}\end{lstwrap}
-        \end{example}
+        \end{mexample}
 \end{itemize}
 
 \pagebreak
@@ -234,7 +234,7 @@ Several statements that produce an output set may be chained within round
 brackets. This is a \emph{union} statement and produces the union of all
 output sets. Bare input sets (preceded by a dot) may also take part in a union.
 
-\begin{example}
+\begin{mexample}
     Nodes and areas with an ``administrative'' tag:
     \begin{lstwrap}\begin{lstlisting}
         (node["administrative"]; area["administrative"];);
@@ -259,7 +259,7 @@ output sets. Bare input sets (preceded by a dot) may also take part in a union.
         ( node[amenity="cafe"](area.bonn); node[amenity="cafe"](area.frankfurt); );
         out;
     \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 \subsubsection{And everything else}
 There are more available statements within Overpass QL, including:

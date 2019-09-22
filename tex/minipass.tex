@@ -24,7 +24,7 @@ The graph abstraction works as follows:
         transport route''
 \end{itemize}
 
-\begin{example}
+\begin{mexample}
     To model a query like \code{"bus stops near schools in Russia"}
     using the graph abstraction, we could think like this:
     \begin{itemize}
@@ -40,7 +40,7 @@ The graph abstraction works as follows:
             by traversing an edge whose label unifies with \code{"is inside of"}.
         \item Our result is $B \cap N \cap P$.
     \end{itemize}
-\end{example}
+\end{mexample}
 
 \subsubsection{Language grammar}
 \label{minipass:grammar}
@@ -231,7 +231,7 @@ And the three vertex label templates:
     \end{tabular}
 \end{center}
 
-\begin{example}
+\begin{mexample}
 \label{example:schools}
     Here is a query that retrieves all schools in Bristol:
     \begin{lstwrap}\begin{lstlisting}
@@ -248,7 +248,7 @@ and
                     (consString 'Bristol' empty)))
         empty))))
     \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 Since Minipass queries can get too long and cumbersome for humans,
 a mechanism for modularisation has been implemented. Similarly to most
@@ -361,14 +361,14 @@ areas     :=  get (consString 'all'
 everything := get (consString 'all' empty).
 \end{lstlisting}\end{lstwrap}
 
-\begin{example}
+\begin{mexample}
     With the aid of this term library, the query in \cref{example:schools}
     becomes more concise:
 
     \begin{lstwrap}\begin{lstlisting}
 and (amenity 'school') (in (name 'Bristol'))
     \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 When regarding a standalone Minipass program, the term \code{main} is used
 as the query.

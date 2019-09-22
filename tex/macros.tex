@@ -8,8 +8,6 @@
 
 \usepackage[bulgarian,english]{babel}
 \usepackage{indentfirst}
-\usepackage{titling}
-\usepackage[a4paper, portrait, margin = 2.5 cm]{geometry}
 \usepackage{url}
 \usepackage{color}
 \usepackage{xcolor}
@@ -22,7 +20,6 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage[pdfusetitle]{hyperref}
 \usepackage[nameinlink]{cleveref}
 \usepackage{mathabx}
 \usepackage{graphicx}
@@ -58,11 +55,10 @@
 \newcommand\fun{\rightarrow}
 \newcommand\pfun{\mathrel{\ooalign{\hfil$\mapstochar$\hfil\cr$\to$\cr}}}
 
-\renewcommand\descriptionlabel[1]{\qquad $\bullet$ \textbf{#1}}
 \newcommand\code[1]{\mbox{\texttt{#1}}}
 \newcommand\cendrow{\vspace{0.4em} \\}
 
-\newcommand\note[1]{\marginpar{\scriptsize{ #1 }}}
+\newcommand\mnote[1]{\marginpar{\scriptsize{ #1 }}}
 \newcommand\fixednote[1]{}
 \newcommand\discuss[1]{\note{ #1 \textcolor{red}{discuss}}}
 
@@ -174,7 +170,7 @@
     \tikzexternalenable
 }
 
-\newenvironment{example}
+\newenvironment{mexample}
     {
         \tikzexternaldisable
         \begin{mdframed}[%
@@ -307,21 +303,6 @@
 
 \setlength{\grammarparsep}{0.2em}
 \setlength{\grammarindent}{12em}
-
-\theoremstyle{definition} \newtheorem{convention}{Convention}
-                          \numberwithin{convention}{section}
-\theoremstyle{definition} \newtheorem{defn}{Definition}
-                          \numberwithin{defn}{section}
-\theoremstyle{definition} \newtheorem{lemma}{Lemma}
-                          \numberwithin{lemma}{section}
-\theoremstyle{definition} \newtheorem{prop}{Proposition}
-                          \numberwithin{prop}{section}
-\theoremstyle{definition} \newtheorem{property}{Property}
-                          \numberwithin{property}{section}
-\theoremstyle{definition} \newtheorem{examplethm}{Example}
-                          \numberwithin{examplethm}{section}
-\theoremstyle{definition} \newtheorem{corollary}{Corollary}
-                          \numberwithin{corollary}{section}
 
 \newcommand{\lc}{\textcolor{red}{\backslash}}
 \newcommand{\rc}{\textcolor{red}{/}}

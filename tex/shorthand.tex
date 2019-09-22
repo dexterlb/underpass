@@ -16,7 +16,7 @@ adjacent terminals but we want to regard as a single terminal.
     of this construction, so it may be regarded as a regular slash ($\rc$).
 }
 
-\begin{example}
+\begin{mexample}
     Suppose we have a $\lambda$-term $parkinglot$ with type $Amenity$.
 
     For example, we might want to assign the category $Amenity$ with term
@@ -44,7 +44,7 @@ adjacent terminals but we want to regard as a single terminal.
         [ .{$Amenity \rci{\modstar} Dummy$} [ .{$parking$} ] ]
         [ .{$Dummy$} [ .{$lot$} ] ]
     }
-\end{example}
+\end{mexample}
 
 \begin{convention}
     \label{hack:phrases}
@@ -117,7 +117,7 @@ Here, the square brackets denote possible phrase matching (\cref{hack:phrases}).
 be ignored or swept under the rug, which makes square brackets behave like
 round brackets.
 
-\begin{example}
+\begin{mexample}
     This meta-example shows a couple of rules to illustrate the syntax:
     \gramshort{
         \gramrow{near}{ GSet \lc GSet \rc GSet }{ \lambda from: GSet, things: GSet \abstr }
@@ -145,7 +145,7 @@ round brackets.
     \begin{center}
         \code{"the german city Frankfurt"}
     \end{center}
-\end{example}
+\end{mexample}
 
 Also, most examples from here on will assume that grammars have a starting
 category $GSet$, to conform as close as possible to the implementation in

@@ -79,14 +79,14 @@ modality that is less-than or equal (according to the modality lattice)
 to the one specified. The modalities on the left-hand side are produced by
 unifying (lowest common ancestor) the modalities on the right.
 
-\begin{example}
+\begin{mexample}
     For example, here are a few valid derivations:
     \[ \lb X \rb \gderiv \lb X \rci{\modr} Y \rb \lb Y \rb \]
     \[ \lb X \rb \gderiv \lb X \rci{\modx} Y \rb \lb Y \rb \]
     \[ \lb X \rb \gderiv \lb X \rci{\moddot} Y \rb \lb Y \rb \]
     \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rci{\modr} Y \rb \lb Y \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
     \[ \lb X \rci{\moddot} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y \rci{\modx} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\moddot} Y \rb \]
-\end{example}
+\end{mexample}
 
 This way, one can restrict the ways in which a category would
 combine by choosing appropriate slash modalities.
@@ -95,7 +95,7 @@ When using slash modalities, the bare slashes ($\lc$ and $\rc$) will actually
 mean $\lci{\moddot}$ and $\rci{\moddot}$, being the most generic (they
 can combine with any other type of slash).
 
-\begin{example}
+\begin{mexample}
     Consider the following simple grammar:
     \gramshort{
         \gramrow{small}{ GSet \rc GSet }{}
@@ -131,7 +131,7 @@ can combine with any other type of slash).
     It appears that adjectives such as $small$ should not be allowed to combine
     in this way. This can be remedied by setting $small \catdefsep GSet \rci{\modr} GSet$
     in order to disallow crossing composition.
-\end{example}
+\end{mexample}
 
 \subsubsection{Categorial variables}
 \label{hack:catvars}
@@ -323,7 +323,7 @@ The semantics are defined as follows:
 Since considering type-raising at any level would make parsing much slower,
 it is usually only considered on categories that appear in leaves.
 
-\begin{example}
+\begin{mexample}
     Consider the following simple grammar:
     \gramshort{
         \gramrow{cities}{ GSet }{}
@@ -388,7 +388,7 @@ it is usually only considered on categories that appear in leaves.
         ]
         [ .{$ GSet$} [ .{$Finland$} ] ]
     }
-\end{example}
+\end{mexample}
 
 \subsubsection{Equification of categories}
 \label{hack:equification}
@@ -523,7 +523,7 @@ function is trivial. The proof for \cref{ccg:typeconsistent} also holds
 ($\lambda$-terms with subtypes allow the argument to be a subtype of its
 required type).
 
-\begin{example}
+\begin{mexample}
     Imagine we want to be able to parse the following queries:
     \begin{itemize}
         \item \code{German \sq cities \sq less \sq than \sq 20km \sq from \sq Cologne}
@@ -608,6 +608,6 @@ required type).
     deal with it: we tag our type with additional information to denote that
     we are looking for something specific, and when we find it we can unwrap the
     type.
-  \end{example}
+  \end{mexample}
   \fixednote{не става ясно: кои са they и кои са различните $\lambda$-термове?}
 \end{document}

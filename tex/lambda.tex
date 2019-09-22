@@ -10,7 +10,7 @@ it is well-suited to use some sort of ordering relation over our types.
 One such ordering relation is the \emph{subtype} relation, as presented in
 \cite[chap.~15]{pierce}, and will be used here.
 
-\begin{example}
+\begin{mexample}
     The subtyping construction is particularly useful for domains like
     geographical queries --- it lets us express relations such as the following:
     \begin{align*}
@@ -18,7 +18,7 @@ One such ordering relation is the \emph{subtype} relation, as presented in
         Name & \less String \\
         Distance & \less Number \\
     \end{align*}
-\end{example}
+\end{mexample}
 
 \subsubsection{Type lattices}
 \begin{defn}
@@ -351,7 +351,7 @@ If we have $T \tless S$, it would be convenient to be able to convert between th
 The conversion from $S$ to $T$ is trivial. The conversion from $T$ to $S$,
 however, involves discarding information.
 
-\begin{example}
+\begin{mexample}
     For example, let $S = \{ Int, String \}$, supposing the obvious semantics
     behind those names. This is a nice type system --- however, one might want to
     be able to encode extra information within types: this comes especially
@@ -364,7 +364,7 @@ however, involves discarding information.
     Now while doing natural language parsing, we can use $T$. Afterwards
     we no longer need the extra information, so we could discard the extra
     types and return to $S$. To do this, we define a \emph{squash function}.
-\end{example}
+\end{mexample}
 
 \begin{defn}\label{def:squashfn}
     $\squash: T \fun S$ is a \emph{squash function} for
@@ -632,7 +632,7 @@ syntactic structure as $\tau$ and then subtyping on the level of individual
 basic types it is made of. To do this, we need to be able to create a new term
 with the same syntactic structure of another term.
 
-\begin{example}
+\begin{mexample}
     Suppose we have the basic types $Int$ and $String$, and we want to extend
     them.
 
@@ -649,7 +649,7 @@ with the same syntactic structure of another term.
 
     To remember that $F$ stands for $\sigma$, we will iteratively build a
     function $\varphi$ such that $\varphi(F) = \sigma$.
-\end{example}
+\end{mexample}
 
 The following few definitions will formalise this process.
 
@@ -1107,7 +1107,7 @@ to convert typed $\lambda$-terms into type-tagged $\lambda$-terms and vice
 versa, and the function $\mcf{propagate}$ that propagates type information
 throughout the term.
 
-\begin{example}
+\begin{mexample}
     For simplicity, regard the world of arithmetic expressions with a single
     type $Num$, numeric constants and the term $plus$ of type $Num \tot Num \tot Num$.
 
@@ -1204,7 +1204,7 @@ throughout the term.
     \[ plus \app x \app 8 \]
 
     This section will formalise this process.
-\end{example}
+\end{mexample}
 
 The main goal is to be able to $\mcf{tag}$ a term,
 perform rewriting passes that depend on type information, then $\mcf{propagate}$

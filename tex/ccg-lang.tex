@@ -140,7 +140,7 @@ Categories are constructed as follows:
         dollar sign followed by \code{[a-zA-Z][a-zA-Z0-9\_]*}
 \end{itemize}
 
-\begin{example}
+\begin{mexample}
 Below is a sample grammar defined using the CCG definition language\footnote{
     Here \code{"library.ccg"} is assumed to contain the code from \cref{stdlib}
 }:
@@ -169,7 +169,7 @@ raw="in"
 
 lemma="school",pos="nnp" : GSet @ amenity 'school'.
 \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 \subsubsection{Composing phrases}
 In most cases we would would want our rule to match single tokens. Sometimes,
@@ -194,7 +194,7 @@ in the resulting derivation trees).
 
 For more details about this construction, see \cref{hack:phrases}.
 
-\begin{example}
+\begin{mexample}
 The following statement:
 \begin{lstwrap}\begin{lstlisting}
 lemma="place" <> raw="of" <> lemma="worship"
@@ -220,7 +220,7 @@ lemma="worship"
     : Dummy2
     @ Dummy2[\x => x].
 \end{lstlisting}\end{lstwrap}
-\end{example}
+\end{mexample}
 
 \subsubsection{Term templates}
 Sometimes it is required to insert arbitrary information from tokens into
@@ -247,7 +247,7 @@ or having a term with a wrong type produced by the template will cause the
 CCG parsing process to fail. It is the expert's responsibility to ensure that
 templates are correct.
 
-\begin{example}
+\begin{mexample}
 Consider the following rule that contains a template:
 \begin{lstwrap}\begin{lstlisting}
 pos="nnp" `'$raw'` : String
@@ -262,7 +262,7 @@ When matching the token data "\code{pos="nnp",raw="Belgium"}", the template
 \code{ \textasciigrave'Belgium'\textasciigrave } after substitution. Its type
 (\code{String}) will be verified, and the resulting term
 (\code{name 'Belgium'}) will be constructed.
-\end{example}
+\end{mexample}
 
 In the case of multiple concatenated matchers with templates, all templates
 are fed to the term from left to right. This is achieved by making the
