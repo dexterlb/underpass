@@ -1,7 +1,7 @@
 \documentclass[10pt]{beamer}
 \usepackage[english,bulgarian]{babel}
 \input{./macros.tex}
-\usetheme{Copenhagen}
+% \usetheme{Copenhagen}
 \usecolortheme{dove}
 \title{Катег\'орийни граматики за геопространствени заявки}
 \date{\today}
@@ -266,18 +266,50 @@
     \begin{itemize}
       \item Прилагане на термове (ляво-асоциативно)
         \begin{center}
-          \code{<терм1> <терм2>}
+          \code{<term1> <term2>}
         \end{center}
       \item Абстракция
         \begin{center}
-          \code{lambda <име на променлива> : <тип> => <терм>}
+          \code{lambda <varname> : <type> => <term>}
         \end{center}
       \item Променливи и константи
       \item Сложни типове
         \begin{center}
-          \code{<тип1> -> <тип2>}
+          \code{<type1> -> <type2>}
         \end{center}
     \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Синтаксис: ключови думи}
+    \begin{center}
+      \begin{tabular}{r l p{0.35\textwidth}}
+        Идентификатор  & Тип & \\
+        \hline
+        \code{and}  & $GSet \tot GSet \tot GSet$ & сечение \cendrow
+        \code{or}   & $GSet \tot GSet \tot GSet$ & обединение \cendrow
+        \code{not}  & $GSet \tot GSet$ & допълнение \cendrow
+        \hline
+        \code{get}  & $List \tot GSet$ & извличане на географски обекти по
+        етикет на връх \cendrow
+        \code{next} & $List \tot GSet \tot GSet$ & извличане на географски обекти
+        траверсирайки ребро \cendrow
+      \end{tabular}
+    \end{center}
+  \end{frame}
+  \begin{frame}{Синтаксис: ключови думи за списъци}
+    \begin{center}
+      \begin{tabular}{r l p{0.35\textwidth}}
+        Идентификатор  & Тип & \\
+        \hline
+        \code{empty} & $List$ & празен списък \cendrow
+        \code{consNum} & $Num \tot List \tot List$ & залепяне на число
+        в началото на списък \cendrow
+        \code{consString} & $String \tot List \tot List$ & залепяне на низ
+        в началото на списък \cendrow
+        \code{consList} & $List \tot List \tot List$ & залепяне на списък
+        в началото на списък \cendrow
+      \end{tabular}
+    \end{center}
   \end{frame}
 
   \section{Подтипове}
