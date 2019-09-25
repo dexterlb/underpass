@@ -311,9 +311,142 @@
       \end{tabular}
     \end{center}
   \end{frame}
+  
+  \begin{frame}[fragile]{Пример}
+    Искаме да извадим всички училища, физически намиращи се в обекти,
+    които се казват Sofia:
+    \begin{lstwrap}\begin{lstlisting}
+and
+    (get (consString 'tagFilter'
+            (consList (consString '='
+                (consString 'amenity'
+                    (consString 'school' empty)))
+        empty)))
+    (next (consString 'in' empty)
+        (get (consString 'tagFilter' (consList
+            (consString '='
+                (consString 'name'
+                    (consString 'Sofia' empty)))
+        empty))))
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
+
+  \begin{frame}[fragile]{``Стандартна'' библиотека}
+    \begin{lstwrap}\begin{lstlisting}
+      -- get all items of given type
+      nodes     :=  get (consString 'all'
+      (consString 'nodes' empty)).
+      ways      :=  get (consString 'all'
+      (consString 'ways' empty)).
+      relations :=  get (consString 'all'
+      (consString 'relations' empty)).
+      areas     :=  get (consString 'all'
+      (consString 'areas' empty)).
+
+      -- get all items in the universe
+      everything := get (consString 'all' empty).
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
+
+  \begin{frame}[fragile]{``Стандартна'' библиотека}
+    \begin{lstwrap}\begin{lstlisting}
+-- find items by tag key and value infix
+contains  :=  \k: String, n: String => get
+    (consString 'tagFilter'
+        (consList (consString '~'
+            (consString k (consString n empty)))
+        empty)).
+
+-- find items within distance of given items
+within    :=  \dist : Num => next
+    (consString 'around' (consNum dist empty)) .
+
+-- find items inside of given items
+in        :=  next (consString 'in' empty).
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
+  \begin{frame}[fragile]{``Стандартна'' библиотека}
+    \begin{lstwrap}\begin{lstlisting}
+-- find items by name
+name      :=  \x => or (or
+        (kv 'name' x)
+        (kv 'int_name' x))
+    (kv 'name:en' x).
+
+-- find items by name infix
+nameLike  :=  \x => or (or
+        (contains 'name' x)
+        (contains 'int_name' x))
+    (contains 'name:en' x).
+
+-- find items by amenity key (fountain, school...)
+amenity   :=  kv 'amenity'.
+
+-- find items by tag key and value
+kv        :=  \k: String, n: String => get
+    (consString 'tagFilter'
+        (consList (consString '='
+            (consString k (consString n empty)))
+    empty)).
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
+  \begin{frame}[fragile]{``Стандартна'' библиотека}
+    \begin{lstwrap}\begin{lstlisting}
+-- identity
+id        := \y => y.
+
+-- the set of all cities
+city      := or (or
+        (kv 'admin_level' '8')
+        (kv 'admin_level' '6'))
+    (kv 'capital' '4').
+
+-- within 100 metres
+near      :=  within 100.
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
+
+  \begin{frame}[fragile]{Пример (отново)}
+    Искаме да извадим всички училища, физически намиращи се в обекти,
+    които се казват Sofia:
+    \begin{lstwrap}\begin{lstlisting}
+and (amenity 'school') (in (name 'Sofia'))
+    \end{lstlisting}\end{lstwrap}
+  \end{frame}
 
   \section{Подтипове}
   \begin{frame}{Подтипове}няколко слайда тук\end{frame}
+
+  \section{Категорийни граматики (формално)}
+  \begin{frame}{Категорийно затваряне}
+    \begin{enumerate}
+        \item \label{itm:atomic} $A \in \tau \implies A \in \cclos{\tau}$
+        \item \label{itm:right}  $X, Y \in \cclos{\tau} \implies \lp X \rc Y \rp \in \cclos{\tau}$
+        \item \label{itm:left}   $X, Y \in \cclos{\tau} \implies \lp X \lc Y \rp \in \cclos{\tau}$
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}{(Чиста) категорийна граматика}
+    $ G = \langle \Sigma, N, S, f, n \rangle $ е \emph{категорийна граматика}, ако
+    \begin{itemize}
+        \item $ \Sigma $ е крайно множество от \emph{терминали}
+        \item $ N $ е крайно множество от \emph{нетерминали} (атомарни категории)
+        \item $ S \in N $
+        \item $ f : \Sigma \fun \hat{N} $, където $\hat{N}$ е множеството от
+            \textbf{крайни} подмножества на $\cclos{N}$
+        \item $ n \in \mathbb{N} $
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Правила за извод}
+    \begin{itemize}
+        \item Ако $ a \in \Sigma, X \in f(a) $, то \[ \lb X \rb \gderiv_G a \]
+        \item Ако $ X \rc Y \in \cclos{N}, Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
+            то \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv_G \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \item Ако $ X \lc Y \in \cclos{N}, Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
+            то \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv_G \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+    \end{itemize}
+  \end{frame}
 
   \section{Категорийни граматики върху Minipass}
   \begin{frame}{Категорийни граматики върху Minipass}няколко слайда тук\end{frame}
