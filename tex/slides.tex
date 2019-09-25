@@ -311,7 +311,7 @@
       \end{tabular}
     \end{center}
   \end{frame}
-  
+
   \begin{frame}[fragile]{Пример}
     Искаме да извадим всички училища, физически намиращи се в обекти,
     които се казват Sofia:
@@ -446,6 +446,96 @@ and (amenity 'school') (in (name 'Sofia'))
         \item Ако $ X \lc Y \in \cclos{N}, Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
             то \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv_G \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
     \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Пример}
+    Ще построим проста граматика $G = \langle \Sigma, N, S, f, n \rangle$
+    която генерира \code{cities in Germany}:
+
+    \begin{align*}
+        \Sigma \defeq& \{ cities, in, Germany \} \\
+        N \defeq& \{ GSet \} \\
+        S \defeq& GSet \\
+        f(x) \defeq&
+            \begin{cases*}
+                \{ GSet \},& x = cities \\
+                \{ GSet \},& x = Germany \\
+                \{ GSet \lc GSet \rc GSet \},& x = in \\
+            \end{cases*} \\
+        n \defeq& 1 \\
+    \end{align*}
+  \end{frame}
+
+  \begin{frame}{Примерен извод}
+    \begin{center}
+        \begin{tabular}{c}
+            $\underline{\lb GSet \rb}$ \\ $\gstep$ \\
+            $\lb GSet \rb \underline{\lb GSet \lc GSet \rb}$ \\ $\gstep$ \\
+            $\underline{\lb GSet \rb} \lb GSet \lc GSet \rc GSet \rb \lb GSet \rb$ \\ $\gstep$ \\
+            $cities \sq \underline{\lb GSet \lc GSet \rc GSet \rb} \lb GSet \rb$ \\ $\gstep$ \\
+            $cities \sq in \sq \underline{\lb GSet \rb}$ \\ $\gstep$ \\
+            $cities \sq in \sq Germany$ \\
+        \end{tabular}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}{Свойство}
+    Всяка КГ $G = \langle \Sigma, N, S, f, n \rangle$ е еквивалентна на
+    (безкрайна) контекстно свободна граматика
+    $G^C = \langle \Sigma, \lb \cclos{N} \rb, R, \lb S \rb \rangle$.
+
+    Освен това, имайки извод $\mu: \alpha_1 \gstep ... \gstep \alpha_r$.
+    Можем да построим специална \textbf{крайна} контекстно-свободна граматика
+    $G_\mu^C = \langle \Sigma, \lb \catsin{\mu} \rb, \restr{R}{\lb \catsin{\mu} \rb}, \lb S \rb \rangle$,
+    в която $\mu$ е валиден извод и всички нейни изводи са изводи и в $G$.
+
+    \begin{proof}
+        Дефинициите на $\gstep$ за $G$ и за $G^C$ съвпадат.
+    \end{proof}
+  \end{frame}
+
+  \begin{frame}{CYK за КГ}
+    По даден вход (дума) строим строим множество $P$ от тройки
+    $(X, i, j)$, $X \in \cclos{N}, 1 \leq i \leq j \leq k$ индуктивно,
+    опитвайки се да получим
+    $(S, 1, k)$.
+
+    \begin{enumerate}
+    \label{cyk:rules}
+        \item Ако $X \in f(w_i)$, то $(X, i, i) \in P$.
+        \item Ако $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+        \item Ако $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}{Коректност}
+    \begin{enumerate}
+    \label{cyk:rules}
+        \item Ако $X \in f(w_i)$, то $(X, i, i) \in P$.
+        \item Ако $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+        \item Ако $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+    \end{enumerate}
+
+    \begin{equation}\label{eq:left}
+        (X, i, j) \in P \implies \lb X \rb \gsteps w_i ... w_j
+    \end{equation}
+  \end{frame}
+  \begin{frame}{Пълнота}
+    \begin{enumerate}
+    \label{cyk:rules}
+        \item Ако $X \in f(w_i)$, то $(X, i, i) \in P$.
+        \item Ако $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+        \item Ако $(X \lc Y, p + 1, j) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, p) \in P$,
+            то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
+    \end{enumerate}
+    \begin{equation}\label{eq:right}
+        \lb X \rb \gsteps w_i ... w_j \implies (X, i, j) \in P
+    \end{equation}
   \end{frame}
 
   \section{Категорийни граматики върху Minipass}
