@@ -162,7 +162,79 @@
   \end{frame}
 
   \section{Типово $\lambda$-смятане}
-  \begin{frame}{$\lambda$}няколко слайда тук\end{frame}
+  \begin{frame}{Типове}
+    \begin{itemize}
+      \item $\tsymbs \defeq \{ t', t'', t''' ... \}$ за $T \subseteq \tsymbs$ - изброимо множество от \emph{типови символи}
+      \item $\tclos{T} \subseteq (T \, \cup \,\{\, \tot, ), ( \,\})^*$ - \emph{типово затваряне},
+        дефинирано индуктивно:
+          \begin{itemize}
+              \item $\sigma \in T \implies \sigma \in \tclos{T}$
+              \item $\sigma, \tau \in \tclos{T} \implies (\sigma \tot \tau) \in \tclos{T}$
+          \end{itemize}
+      \item Конвенция: дясна асоциативност на $\tot$
+      \item Типизираща функция:
+        \[ \typeoff : X \fun \tclos{T} \]
+      \item Прилагане на изображение върху сложен тип:
+        \begin{equation*}
+            \hat{\varphi}(\sigma) =
+            \begin{cases*}
+                \varphi(\sigma) ,& $\sigma \in X$ \\
+                \hat{\varphi}(\sigma') \tot \hat{\varphi}(\sigma'') ,&
+                    $\sigma = \sigma' \tot \sigma'' \in \tclos{X}$ \\
+            \end{cases*}
+        \end{equation*}
+    \end{itemize}
+  \end{frame}
+  \begin{frame}{Термове}
+    Нека $C \subset \const$ са константи с типове от $T$.
+
+    $\plambda{T}{C}$ се дефинира индуктивно:
+    \begin{itemize}
+        \item Константа:  \[ c \in C \implies c \in \plambda{T}{C} \]
+        \item Променлива: \[ v \in \lvars \implies v \in \plambda{T}{C} \]
+        \item Прилагане:  \[ A, B \in \plambda{T}{C} \implies (AB) \in \plambda{T}{C} \]
+        \item Абстракция: \[ v \in \lvars, A \in \plambda{T}{C}, \sigma \in \tclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \plambda{T}{C} \]
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Контекст}
+    \begin{itemize}
+      \item Ако $M \in \plambda{T}{C}, \sigma \in \tclos{T}$, то $M : \sigma$ се нарича
+          \emph{statement}. $M$ се нарича \emph{субект} and $\sigma$
+          се нарича \emph{тип}.
+      \item Statement с променлива за субект се нарича \emph{декларация}.
+      \item Множество декларации с различни субекти се нарича \emph{контекст}.
+      \item \emph{Извод} от контекст има вида $\Gamma \vdash M: \sigma$, където
+          $\Gamma$ е контекст, а $M: \sigma$ е statement.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Типизиране на термове}
+    \begin{itemize}
+        \item Константи
+            \cenderiv{
+                \hypo{c \in C}
+                \infer1{\Gamma \vdash c : \typeof{c}}
+            }
+        \item Променливи
+            \cenderiv{
+                \hypo{x : \sigma \in \Gamma}
+                \infer1{\Gamma \vdash x : \sigma}
+            }
+        \item Прилагания
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma' \tot \sigma''}
+                \hypo{\Gamma \vdash B : \sigma'}
+                \infer2{\Gamma \vdash (AB) : \sigma''}
+            }
+        \item Абстракции
+            \cenderiv{
+                \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
+                \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
+            }
+    \end{itemize}
+  \end{frame}
 
   \section{Minipass: междинен език}
   \begin{frame}{Графова абстракция}
