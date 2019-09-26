@@ -1,8 +1,8 @@
-\documentclass[10pt]{beamer}
+\documentclass[9pt]{beamer}
 \usepackage[english,bulgarian]{babel}
 \input{./macros.tex}
-% \usetheme{Copenhagen}
-\usecolortheme{dove}
+\usetheme{metropolis}
+% \usecolortheme{dove}
 \title{Катег\'орийни граматики за геопространствени заявки}
 \date{\today}
 \author{Бла Бла}
@@ -208,6 +208,34 @@
             [ .{$GSet$} [ .{$Berlin$} ] ]
         ]
     }
+  \end{frame}
+
+  \begin{frame}{Разширения на КГ}
+    \begin{itemize}
+      \item Ограничение на правилата
+      \item Модалности
+      \item Повдигане на типове
+      \item Типови променливи
+      \item Equification на категории
+      \item Семантика на подтипове
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Модалности}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[main node] (1) {$\modstar$};
+            \node[main node] (2) [below left = 1cm and 1.5cm of 1]  {$\modr$};
+            \node[main node] (3) [below right = 1cm and 1.5cm of 1] {$\modx$};
+            \node[main node] (4) [below = 2cm of 1] {$\moddot$};
+
+            \path[draw,thick]
+            (1) edge node {} (2)
+            (1) edge node {} (3)
+            (2) edge node {} (4)
+            (3) edge node {} (4);
+        \end{tikzpicture}
+    \end{center}
   \end{frame}
 
   \section{Minipass: междинен език}
