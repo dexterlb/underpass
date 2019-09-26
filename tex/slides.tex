@@ -679,6 +679,192 @@ and (amenity 'school') (in (name 'Sofia'))
         \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
     \end{itemize}
   \end{frame}
+
+  \section{Превод от Minipass към Overpass}
+  \begin{frame}{Трансформации}
+    \includegraphics[width=\textwidth]{optimisation.eps}
+  \end{frame}
+
+  \begin{frame}{Тагнати термове}
+    \begin{itemize}
+        \item Константа:
+            \[ c \in C, \tau \in \tclos{T} \implies \ttt{c}{\tau} \in \ttlambda{T}{C} \]
+        \item Променлива:
+            \[ v \in \lvars, \tau \in \tclos{T} \implies \ttt{v}{\tau} \in \ttlambda{T}{C} \]
+        \item Приложение:
+            \[ A, B \in \ttlambda{T}{C}, \tau \in \tclos{T} \implies \ttt{(AB)}{\tau} \in \ttlambda{T}{C} \]
+        \item Абстракция:
+            \[ v \in \lvars, A \in \ttlambda{T}{C},
+                \tau = (\tau' \tot \tau'') \in \tclos{T},
+                \implies \ttt{(\lambda v \abstr A)}{\tau} \in \ttlambda{T}{C} \]
+    \end{itemize}
+  \end{frame}
+  \begin{frame}{Тагнати термове}
+      \[
+      \mcf{tag}_{\Gamma}(A) =
+      \begin{cases*}
+          \ttt{c}{\typeof{C}} ,& $A = c \in C$, \\
+          \ttt{v}{\tau} ,& $A = v \in \lvars, \Gamma \vdash v : \tau$, \\
+          \ttt{(\mcf{tag}_{\Gamma}(M) \app \mcf{tag}_{\Gamma}(N))}{\tau}
+,& $A = (MN), \Gamma \vdash A : \tau$, \\
+          \ttt{\lambda v \abstr \mcf{tag}_{\Gamma'}(M)}{\sigma \tot \tau}
+,& $A = (\lambda v: \sigma \abstr M)
+                , \Gamma' \vdash M : \tau
+                , \Gamma' = \Gamma \circ v : \sigma$,\\
+          \ttt{M}{\tau} ,& $A = \tau[M]$. \\
+      \end{cases*}
+    \]
+  \end{frame}
+  \begin{frame}{Тагнати термове}
+    \[
+        \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
+            \mcf{untag}_{\Gamma}(P) \app \mcf{untag}_{\Gamma}(Q)
+ ,& $A = (PQ)$, \\
+            \lambda v : \tau' \abstr \mcf{untag}_{\Gamma'}(P)
+ ,& $A = (\lambda v \abstr P), \tau = (\tau' \tot \tau'')
+                 , \Gamma' = \Gamma \circ v : \tau'$. \\
+        \end{cases*}
+    \]
+
+    \[
+        \mcf{untag}_{\Gamma}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            M ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \vdash M : \tau$, \\
+            \tau[M] ,& $M = \mcf{untag'}_{\Gamma}(\ttt{A}{\tau}), \Gamma \not\vdash M : \tau
+            \text{ and } \tau[M] \text { is a valid cast}
+            $, \\
+            \neg ! ,& \text{otherwise}.
+        \end{cases*}
+    \]
+  \end{frame}
+
+  \begin{frame}{Пропагиране на типове}
+    \[
+        \mcf{up}_{\unify}(\ttt{A}{\tau}) =
+        \begin{cases*}
+            (\ttt{c}{\tau}, \{ \}) ,& $A = c \in C$ \\
+            (\ttt{v}{\tau}, \{ v : \tau \}) ,& $A = v \in \lvars$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta' \tot \sigma') \unify \tau}, \Gamma')
+ ,& $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)
+                , \Gamma' = \Gamma \setminus (x : \eta'),$ \\
+                \phantom{} &\phantom{, }$(x : \eta') \in \Gamma$ \\
+            (\ttt{\lambda x \abstr \ttt{M}{\sigma'}}{(\eta \tot \sigma') \unify \tau}, \Gamma')
+ ,& $A = (\lambda x \abstr P)
+                , \tau = (\eta \tot \sigma),$ \\
+                \phantom{} &\phantom{, }$(\ttt{M}{\sigma'}, \Gamma) = \mcf{up}_{\unify}(P)$ \\
+                \phantom{} &\phantom{, }$(x : \cdot) \not\in \Gamma$ \\
+            (\ttt{P' Q'}{\sigma'' \unify \tau}, \Gamma_P \unify \Gamma_Q)
+ ,& $A = (PQ), (P', \Gamma_P) = \mcf{up}_{\unify}(P),$ \\
+                \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}_{\unify}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
+        \end{cases*}
+    \]
+  \end{frame}
+  \begin{frame}{Пропагиране на типове}
+    \[
+        \mcf{down}_{\unify}(\ttt{A}{\tau}, \tau', \Gamma) =
+        \begin{cases*}
+            \ttt{c}{\tau \unify \tau'} ,& $A = c \in C$ \\
+            \ttt{v}{\tau \unify \tau' \unify \tau''}
+ ,& $A = v \in \lvars, (v : \tau'') \in \Gamma$ \\
+            \ttt{\lambda x \abstr P'}{\tau''}
+ ,& $A = (\lambda x \abstr P), \tau'' = \tau \unify \tau'$ \\
+                \phantom{} &\phantom{, } $\tau'' = (\sigma \tot \eta), P' = \mcf{down}_{\unify}(P, \eta, \Gamma \circ (x : \sigma)),$ \\
+            \ttt{P' Q'}{\tau''}
+ ,& $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
+                \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
+                \phantom{} &\phantom{, }$P' = \mcf{down}_{\unify}(P, (\sigma' \tot \tau''), \Gamma),
+                Q' = \mcf{down}_{\unify}(Q, \sigma'', \Gamma)$ \\
+        \end{cases*}
+    \]
+  \end{frame}
+
+  \begin{frame}{Пропагиране на типове}
+    \[
+        \mcf{propagate}_{\unify}(P) = \mcf{down}_{\unify}(\ttt{M}{\tau}, \tau, \Gamma)
+        \text{ , where } \mcf{up}_{\unify}(P) = (\ttt{M}{\tau}, \Gamma).
+    \]
+  \end{frame}
+
+  \begin{frame}{Извод на типове}
+    \[
+        \sigma \unify \tau =
+        \begin{cases*}
+            \tau ,& $\sigma = \text{\code{*}}$, \\
+            \sigma ,& $\tau = \text{\code{*}}$, \\
+            \sigma ,& $\sigma = \tau$, \\
+            (\sigma' \unify \tau') \tot (\sigma'' \unify \tau''), &
+                $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$, \\
+            \lnot ! ,& $\mathsf{otherwise}$. \\
+        \end{cases*}
+    \]
+  \end{frame}
+
+  \begin{frame}{Оптимизация на заявки}
+    \includegraphics[width=\textwidth]{lattice.eps}
+  \end{frame}
+
+  \begin{frame}{Оптимизация на заявки}
+\begin{center}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \hline
+    Subterm & Action \\
+    \hline
+    ``and'' of type $GSet[X] \tot GSet[Y] \tot GSet[Z]$
+        & set its type to $GSet[X \cap Y \cap Z] \tot GSet[X \cap Y \cap Z] \tot GSet[X \cap Y \cap Z]$ \\
+    \hline
+    ``or'' of type $GSet[X] \tot GSet[Y] \tot GSet[Z]$
+        & set its type to $GSet[X \cap Z] \tot GSet[Y \cap Z] \tot GSet[(X \cup Y) \cap Z]$ \\
+    \hline
+    $\beta$-redex & reduce it \\
+    \hline
+    ``get all nodes'' & change it to ``get everything'' of type $GSet[n]$ \\
+    ``get all ways'' & change it to ``get everything'' of type $GSet[w]$ \\
+    ``get all relations'' & change it to ``get everything'' of type $GSet[r]$ \\
+    ``get all areas'' & change it to ``get everything'' of type $GSet[a]$ \\
+    \hline
+    ``next'' of type $GSet[X] \tot GSet[Y]$ applied to an ``in'' label
+        & set its type to $GSet[X \cap \{ a \}] \tot GSet[Y \cap \{ n, w, r \}]$ \\
+    \hline
+    ``or'' with one of the arguments being of type $GSet[]$
+        & rewrite the term to only the other argument \\
+    \hline
+    ... & ... \\
+    \hline
+\end{tabular}
+\end{center}
+  \end{frame}
+
+  \begin{frame}{Оптимизация на заявки}
+\[
+    \sigma \unify \tau \defeq
+    \begin{cases*}
+        GSet[X \cap Y] ,& $\sigma = GSet[X], \tau = GSet[Y]$, \\
+        Num ,& $\sigma = Num, \tau = Num$, \\
+        String ,& $\sigma = String, \tau = String$, \\
+        List ,& $\sigma = List, \tau = List$, \\
+        (\sigma' \unify \tau') \tot (\sigma'' \unify \tau''), &
+        $\sigma = (\sigma' \tot \sigma''), \tau = (\tau' \tot \tau'')$, \\
+        \lnot ! ,& $\mathsf{otherwise}$. \\
+    \end{cases*}
+\]
+  \end{frame}
+
+  \begin{frame}{Превод}
+    Резултатът от превеждане на Minipass терм до Overpass е \emph{стойност}
+    и евентуално страничен ефект, който се изразява в извеждане на Overpass
+    statement.
+
+    \begin{itemize}
+      \item Представяне на терма като функция, приложена върху аргументи
+      \item Рекурсивно превеждане на всички аргументи
+      \item Прилагане на правила за превод върху получената форма
+    \end{itemize}
+  \end{frame}
   \section{Категорийни граматики}
   \begin{frame}{Категорийни граматики: пример}
     \code{pharmacies near parking spaces in Berlin}
@@ -1265,12 +1451,6 @@ and (amenity 'school') (in (name 'Sofia'))
       \item Категорийни правила
     \end{itemize}
   \end{frame}
-
-  \section{Превод от Minipass към Overpass}
-  \begin{frame}{Трансформации}
-    \includegraphics[width=\textwidth]{optimisation.eps}
-  \end{frame}
-
   \section{Резултат}
   \begin{frame}{Резултат}няколко слайда тук\end{frame}
 
