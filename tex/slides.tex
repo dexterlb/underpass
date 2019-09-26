@@ -370,8 +370,243 @@ and (amenity 'school') (in (name 'Sofia'))
 
 
   \section{Подтипове}
-  \begin{frame}{Подтипове}няколко слайда тук\end{frame}
+  \begin{frame}{Подтипове}
+    \begin{align*}
+        Capital & \less City \less GSet \\
+        Name & \less String \\
+        Distance & \less Number \\
+    \end{align*}
+  \end{frame}
 
+  \begin{frame}{Meet and Join}
+    \begin{itemize}
+      \item Meet:
+      \begin{equation}
+          z \less x, z \less y,
+              \forall t \in X (t \less x, t \less y \implies t \less z)
+      \end{equation}
+
+      \item Join:
+      \begin{equation}
+          x \less z, y \less z,
+              \forall t \in X (x \less t, y \less t \implies z \less t)
+      \end{equation}
+
+    \item Частична решетка: за всеки два елемента има по не повече от един
+      meet и join. Отбелязваме ги с частичните оператори $x \meet y$
+      и $x \join y$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    $\tsymbs$ - изброимо множество от типови символи
+
+    Типова решетка: частична решетка с носител, който е подмножество на $\tsymbs$.
+  \end{frame}
+
+  \begin{frame}{Подтипова релация върху сложни типове}
+    \begin{itemize}
+        \item $(\sigma \tot \sigma') \less (\tau \tot \tau') \iff (\sigma' \less \sigma)
+            \& (\tau \less \tau')$
+        \item Контравариантност!
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{$\lambda$-термове с подтипове}
+    Нека $C \subset \const$ е множество от константи, имащи типове от $T$.
+
+    Дефинираме $\fancylambda{T}{C}$ индуктивно:
+    \begin{itemize}
+        \item Константа:   \[ c \in C \implies c \in \fancylambda{T}{C} \]
+        \item Променлива:  \[ v \in \lvars \implies v \in \fancylambda{T}{C} \]
+        \item Прилагане:   \[ A, B \in \fancylambda{T}{C} \implies (AB) \in \fancylambda{T}{C} \]
+        \item Абстракция:  \[ v \in \lvars, A \in \fancylambda{T}{C}, \sigma \in \tclos{T}
+                \implies (\lambda v : \sigma \abstr A) \in \fancylambda{T}{C} \]
+        \item Конструиране: \[ \sigma \in T, A \in \fancylambda{T}{C}
+                \implies \sigma[A] \in \fancylambda{T}{C} \]
+    \end{itemize}
+  \end{frame}
+  \begin{frame}{Типизиране на $\lambda$-смятане с подтипове}
+    \begin{itemize}
+        \item Константи
+            \cenderiv{
+                \hypo{c \in C}
+                \infer1{\Gamma \vdash c : \typeof{c}}
+            }
+        \item Променливи
+            \cenderiv{
+                \hypo{x : \sigma \in \Gamma}
+                \infer1{\Gamma \vdash x : \sigma}
+            }
+        \item Приложения
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma' \tot \sigma''}
+                \hypo{\Gamma \vdash B : \tau}
+                \hypo{\tau \less \sigma'}
+                \infer3{\Gamma \vdash (AB) : \sigma''}
+            }
+        \item Абстракции
+            \cenderiv{
+                \hypo{\Gamma \circ x : \tau \vdash A : \sigma}
+                \infer1{\Gamma \vdash (\lambda x : \tau \abstr A) : \tau \tot \sigma}
+            }
+        \item Upcast
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\sigma \less \tau}
+                \infer2{\Gamma \vdash \tau[A] : \tau}
+            }
+        \item Downcast
+            \cenderiv{
+                \hypo{\Gamma \vdash A : \sigma}
+                \hypo{\tau \less \sigma}
+                \infer2{\Gamma \vdash \tau[A] : \tau}
+            }
+    \end{itemize}
+  \end{frame}
+
+  \section{Включване на типови решетки}
+
+  \begin{frame}{Включване на типови решетки}
+    Ако $\lattice{ T}{ \less' }$ и $\lattice{ S}{ \less }$
+    са типови решетки, казваме, че
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$ ако:
+    \begin{itemize}
+        \item $S \subseteq T$
+        \item $\less \subseteq \less'$ и $\restr{\less'}{S \times S} = \less$
+        \item $\forall \tau \in (T \setminus S) ((\exists \sigma \in S : \tau \less \sigma )
+            \xor (\exists \sigma \in S : \sigma \less \tau)$
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Смачкваща функция}
+    $\squash: T \fun S$ е смачкваща функция за
+    $\lattice{ T}{ \less' } \tless \lattice{ S}{ \less }$, ако:
+    \begin{itemize}
+        \item за всяко $\tau \in S$, $\squash(\tau) = \tau$
+        \item следва дадената релация:
+            \[ \forall \sigma \in T
+                (\squash(\sigma) \less' \sigma \lor \sigma \less' \squash(\sigma)) \]
+        \item запазва дадената релация:
+            \[ \forall \sigma, \tau \in T (\sigma \less' \tau \implies
+                \squash(\sigma) \less \squash(\tau)) \]
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Свойства на смачкващата функция}
+    \begin{itemize}
+      \item Ако $\sigma$ е над малката релация, то $\squash(\sigma)$ е максимален
+        елемент в нея, такъв че $\squash(\sigma) \less \sigma$
+      \item Ако $\sigma$ е под малката релация, то $\squash(\sigma)$ е минимален
+        елемент в нея, такъв че $\sigma \less \squash(\sigma)$
+      \item Уникална е
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Смачкваща функция върху $\lambda$-термове}
+    Ако $\squash: T \fun S$ е смачкваща функция за $T \tless S$ и
+    константите $C$ имат типове от $S$,
+    $\lsquash: \fancylambda{T}{C} \fun \fancylambda{S}{C}$
+    се дефинира индуктивно:
+
+    \[
+        \lsquash(A) =
+        \begin{cases*}
+            c ,& $A = c \in C$, \\
+            v ,& $A = v \in \lvars$, \\
+            \lsquash(M) \lsquash(N) ,& $A = (MN)$, \\
+            \lambda x : \tsquash(\sigma) \abstr \lsquash(M)
+ ,& $A = \lambda x : \sigma \abstr M$, \\
+                \tsquash(\sigma)[M] ,& $A = \sigma[M]$. \\
+        \end{cases*}
+    \]
+
+    Тривиално можем да смачкваме и контексти:
+    \[
+        \consquash(\Gamma)
+            = \{ x : \tsquash(\sigma) \mid (x : \sigma) \in \Gamma \}
+    \]
+
+    \textbf{Свойство}:
+    \[ \Gamma \vdash A : \sigma \implies
+        \consquash(\Gamma) \vdash \lsquash(A) : \tsquash(\sigma) \]
+  \end{frame}
+
+  \section{Библиотеки от подтипове}
+  \newcommand\clonesub{\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
+  \newcommand\clonesup{\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}}
+
+  \begin{frame}{Клониране на тип}
+    Искаме да клонираме тип $\tau$.
+
+    Нека $\subtyper{\xi}, \suptyper{\xi}$ са изображения от надмножество на
+    $\ts{\tau}$ в непресичащи се подмножества на $\tsymbs$.
+
+    Дефинираме
+    $\suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ и
+    $\subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}$ с взаимна индукция:
+    \[
+        \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
+        \begin{cases*}
+            \subtyper{\xi}(\tau) ,&
+                $\tau \in T$ \\
+            \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
+                \tot \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,&
+                $\tau = \tau_1 \tot \tau_2$ \\
+        \end{cases*}
+    \]
+
+    \[
+        \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau) =
+        \begin{cases*}
+            \suptyper{\xi}(\tau) ,&
+                $\tau \in T$ \\
+            \subtyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_1)
+                \tot \suptyper{clone}_{\subtyper{\xi} \suptyper{\xi}}(\tau_2) ,&
+                $\tau = \tau_1 \tot \tau_2$ \\
+        \end{cases*}
+    \]
+  \end{frame}
+
+  \begin{frame}{Добавяне на подтип към решетка}
+    Нека имаме:
+    \begin{itemize}
+        \item типова решетка $\lattice{ T}{ \less }$
+        \item типов символ $\sigma \in \tsymbs \setminus T$
+        \item изображение $\varphi : T \fun \tclos{T}$
+        \item тип $\tau$ такъв че $\hat{\varphi}(\tau)$ е дефинирано
+    \end{itemize}
+    Взимаме $\suptyper{\xi}$ и $\subtyper{\xi}$ - инекции от
+    $\ts{\hat{\varphi}(\tau)}$ в $\tsymbs \setminus (T \cup \{ \sigma \})$ такива че
+    $range(\suptyper{\xi}) \cap range(\subtyper{\xi}) = \emptyset$
+
+    Сега дефинираме $\tadd$:
+        \[ \langle \lattice{ T}{ \less }, \varphi \rangle
+            \tadd (\sigma \lass \tau)
+            \defeq
+            \langle \lattice{ T'}{ \less' }, \varphi' \rangle
+        \] където:
+    \begin{itemize}
+        \item $\rho = \clonesub(\hat{\varphi}(\tau))$
+        \item $T' = T \cup ((range(\subtyper{\xi}) \cup range(\suptyper{\xi})) \cap \ts{\rho})$
+        \item $\less'$ е транзитивното и рефлексивно затваряне на
+            $\less \cup \{ (\sigma', \tau') \in T' \times T \mid \subtyper{\xi}(\tau') = \sigma' \}
+                   \cup \{ (\sigma', \tau') \in T \times T' \mid \suptyper{\xi}(\sigma') = \tau' \}$
+        \item $\varphi' = \varphi \cup \{ (\sigma, \rho) \}$
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Библиотека от подтипове}
+    $\Theta_T = \theta_1 ... \theta_n$ се нарича \emph{библиотека от подтипове} над $T$
+    ако конструкцията $\hat{\Theta}_T \defeq \langle \lattice{ T}{ \less }, \identity_T \rangle \oplus \theta_1 \oplus \theta_2 ... \oplus \theta_n$
+    е дефинирана.
+
+    \textbf{Свойства:}
+    \begin{itemize}
+        \item $\sigma \less \tau \implies \sigma \less' \tau$
+        \item $\sigma \lass \tau \in \Theta \implies \varphi(\sigma) \less' \hat{\varphi}(\tau)$
+    \end{itemize}
+  \end{frame}
   \section{Категорийни граматики}
   \begin{frame}{Категорийни граматики: пример}
     \code{pharmacies near parking spaces in Berlin}
@@ -925,11 +1160,44 @@ and (amenity 'school') (in (name 'Sofia'))
       }
   \end{frame}
 
+  \begin{frame}{Подтипове в КГ}
+    Релация за подтипове върху атомарни категории:
+    \[ U(X, Y) \defiff \typeof{Y} \less \typeof{X} \]
+
+    Контравариантно затваряне на $U$:
+    \begin{itemize}
+        \item $X \in N \land Y \in N \land U(X, Y) \implies \overline{U}(X, Y)$
+        \item $X = (W' \mc Z') \land Y = (W'' \mc Z'') \land \overline{U}(W'', W')
+        \land \overline{U}(Z', Z'')\implies \overline{U}(X, Y)$
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Подтипове в КГ: изводи}
+    \begin{itemize}
+        \item Ако $ a \in \Sigma, X \in f(a) $, то \[ \lb X \rb \gderiv a \]
+        \item Ако $ X \rc Y' \in \cclos{N}, Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
+            и $\overline{U}(Y', Y'')$, \\
+            то \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rc Y \rb \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \item Ако $ X \lc Y' \in \cclos{N}, Y'' \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \in \cclos{N}, 0 \leq m \leq n $
+            и $\overline{U}(Y', Y'')$, \\
+            то \[ \lb X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lc Y \rb \]
+    \end{itemize}
+  \end{frame}
+
   \section{Категорийни граматики върху Minipass}
-  \begin{frame}{Категорийни граматики върху Minipass}няколко слайда тук\end{frame}
+  \begin{frame}{Език за дефиниране на КГ}
+    \begin{itemize}
+      \item Дефиниране на подтипове
+      \item Дефиниране на термове
+      \item Специфициране на начална категория
+      \item Категорийни правила
+    \end{itemize}
+  \end{frame}
 
   \section{Превод от Minipass към Overpass}
-  \begin{frame}{Превод}няколко слайда тук\end{frame}
+  \begin{frame}{Трансформации}
+    \includegraphics[width=\textwidth]{optimisation.eps}
+  \end{frame}
 
   \section{Резултат}
   \begin{frame}{Резултат}няколко слайда тук\end{frame}

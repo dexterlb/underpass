@@ -15,16 +15,16 @@ mark="end"    : SE \ GSet     @ \x: GSet   => SE[x] .
 
 pos="comma"   : $X \ $X       @ id.
 
-raw="in"      
-    : GSet / GSet \ GSet 
+raw="in"
+    : GSet / GSet \ GSet
     @ \things, where => and things (in where).
 
 pos="nnp" `'$raw'` : String
-    : Entity          
+    : Entity
     @ name.
 
 pos="nnp" `'$raw'` : String
-    : NamedEntity       
+    : NamedEntity
     @ \x => NamedEntity[x].
 
 raw="like"    : GSet \ NamedEntity @ nameLike.
