@@ -742,6 +742,7 @@ and (amenity 'school') (in (name 'Sofia'))
   \end{frame}
 
   \begin{frame}{Пропагиране на типове}
+    \begin{small}
     \[
         \mcf{up}_{\unify}(\ttt{A}{\tau}) =
         \begin{cases*}
@@ -763,8 +764,10 @@ and (amenity 'school') (in (name 'Sofia'))
                 \phantom{} &\phantom{, }$(Q', \Gamma_Q) = \mcf{up}_{\unify}(Q), P' = \ttt{M}{\sigma' \tot \sigma''}$ \\
         \end{cases*}
     \]
+  \end{small}
   \end{frame}
   \begin{frame}{Пропагиране на типове}
+    \begin{small}
     \[
         \mcf{down}_{\unify}(\ttt{A}{\tau}, \tau', \Gamma) =
         \begin{cases*}
@@ -777,10 +780,11 @@ and (amenity 'school') (in (name 'Sofia'))
             \ttt{P' Q'}{\tau''}
  ,& $A = (PQ), P = \ttt{M}{\sigma \tot \eta}, Q = \ttt{N}{\sigma'},$ \\
                 \phantom{} &\phantom{, }$\tau'' = (\tau' \unify \tau), \sigma'' = (\sigma' \unify \sigma)$ \\
-                \phantom{} &\phantom{, }$P' = \mcf{down}_{\unify}(P, (\sigma' \tot \tau''), \Gamma),
-                Q' = \mcf{down}_{\unify}(Q, \sigma'', \Gamma)$ \\
+                \phantom{} &\phantom{, }$P' = \mcf{down}_{\unify}(P, (\sigma' \tot \tau''), \Gamma),$\\
+                \phantom{} &\phantom{, }$Q' = \mcf{down}_{\unify}(Q, \sigma'', \Gamma)$ \\
         \end{cases*}
     \]
+    \end{small}
   \end{frame}
 
   \begin{frame}{Пропагиране на типове}
