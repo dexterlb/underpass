@@ -730,6 +730,201 @@ and (amenity 'school') (in (name 'Sofia'))
     \end{center}
   \end{frame}
 
+  \begin{frame}{Категорийни променливи}
+    Категорийно затваряне с променливи:
+    \begin{enumerate}
+        \item \label{cvar:atomic} $A \in \tau \implies A \in \cclos{\tau}$
+        \item \label{cvar:right}  $X, Y \in \cclos{\tau} \implies \lp X \rc Y \rp \in \cclos{\tau}$
+        \item \label{cvar:left}   $X, Y \in \cclos{\tau} \implies \lp X \lc Y \rp \in \cclos{\tau}$
+        \item \label{cvar:var}    $\alpha \in \cvars \implies \alpha \in \cclos{\tau}$
+    \end{enumerate}
+    Субституция:
+    \[
+        \subst{Z}{\alpha}{W} =
+        \begin{cases*}
+            Z ,& $Z \in \tau$ \\
+            \lp \subst{X}{\alpha}{W} \mc \subst{Y}{\alpha}{W} \rp ,& $Z = \lp X \mc Y \rp$ \\
+            \beta ,& $Z = \beta \in \cvars, \beta \neq \alpha$ \\
+            W ,& $Z = \alpha$ \\
+        \end{cases*}
+    \]
+    за $Z \in \cclos{\tau}, W \in \cclos{\tau}, \alpha \in \cvars$
+  \end{frame}
+
+  \begin{frame}{Категорийни променливи: извод}
+    \begin{center}
+        \begin{tikzpicture}[node distance=1mm]
+            \Tree[
+                .\node(outtop){$\subst{X}{a}{Y}$};
+                    \edge[very thick];
+                    [ .\node(intop){$X$};
+                        \edge[roof];
+                        [ .\node(inbot){$\alpha$}; ]
+                    ]
+            ]
+            \node[boxcola,fit=(intop)(inbot)](inbox){};
+            \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+            \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+            \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+        \end{tikzpicture}
+    \end{center}
+
+    \hrule
+    \begin{align*}
+        sem_{\psi}(T) &= \{ \subst{M}{\typeof{a}}{Y} \mid M \in sem_{\psi}(T') \} \\
+    \end{align*}
+  \end{frame}
+
+  \begin{frame}{Повдигане на типове}
+    \begin{center}
+        \tree{.{$\alpha \rci{i} \lp \alpha \lci{i} X \rp$} \edge[very thick]; {$X$} }
+            ( Forward type-raising )
+        \tree{.{$\alpha \lci{i} \lp \alpha \rci{i} X \rp$} \edge[very thick]; {$X$} }
+            ( Backward type-raising )
+    \end{center}
+  \end{frame}
+
+  \begin{frame}{Повдигане на типове: семантика}
+    \begin{center}
+        \begin{tikzpicture}[node distance=1mm]
+            \Tree[
+                .\node(outtop){$\alpha \rci{i} \lp \alpha \lci{i} X \rp$};
+                    \edge[very thick];
+                    [ .\node(intop){$X$};
+                        \edge[roof];
+                        [ .\node(inbot){$\alpha$}; ]
+                    ]
+            ]
+            \node[boxcola,fit=(intop)(inbot)](inbox){};
+            \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+            \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+            \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+        \end{tikzpicture}
+        \hspace{2cm}
+        \begin{tikzpicture}[node distance=1mm]
+            \Tree[
+                .\node(outtop){$\alpha \lci{i} \lp \alpha \rci{i} X \rp$};
+                    \edge[very thick];
+                    [ .\node(intop){$X$};
+                        \edge[roof];
+                        [ .\node(inbot){$\alpha$}; ]
+                    ]
+            ]
+            \node[boxcola,fit=(intop)(inbot)](inbox){};
+            \node[right=of inbox,text=\boxtexta](inlabel){$T'$};
+
+            \node[boxcolb,fit=(outtop)(inbot)(inbox)(inlabel)](outbox){};
+            \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+        \end{tikzpicture}
+    \end{center}
+
+    \[ sem_{\psi}(T) = \{ \lambda f {:} ( X \tot \alpha ) \abstr f M \mid M \in sem_{\psi}(T') \} \]
+  \end{frame}
+
+  \begin{frame}{Повдигане на типове: пример}
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{cities}{ GSet }{}
+        \gramrow{villages}{ GSet }{}
+        \gramrow{Finland}{ GSet }{}
+    }
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
+      }
+    \end{minipage}
+
+    \scaledtree{0.9}{
+        .{$GSet$}
+            \edge[very thick];
+            [ .{$GSet$}
+                [ .{$GSet$}
+                    [ .{$cities$} ]
+                ]
+                [ .{$GSet \lc GSet$}
+                    [ .{$GSet \lc GSet \rc GSet$}
+                        [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
+                    ]
+                    [ .{$GSet$}
+                        [ .{$villages$} ]
+                    ]
+                ]
+            ]
+            [ .{$GSet \lc GSet$}
+                [ .{$GSet \lc GSet \rc GSet$}
+                    [ .{$in$} ]
+                ]
+                [ .{$GSet$}
+                    [ .{$Finland$} ]
+                ]
+            ]
+    }
+  \end{frame}
+
+  \begin{frame}{Повдигане на типове: пример}
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{cities}{ GSet }{}
+        \gramrow{villages}{ GSet }{}
+        \gramrow{Finland}{ GSet }{}
+    }
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
+      }
+    \end{minipage}
+    \code{cities in and villages near Finland}?
+  \end{frame}
+  \begin{frame}{Повдигане на типове: пример}
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{cities}{ GSet }{}
+        \gramrow{villages}{ GSet }{}
+        \gramrow{Finland}{ GSet }{}
+    }
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+    \gramshort{
+        \gramrow{and}{ \alpha \lc \alpha \rc \alpha }{}
+        \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+        \gramrow{near}{ GSet \lc GSet \rc GSet }{}
+      }
+    \end{minipage}
+    \scaledtree{0.6}{
+        .{$GSet$}
+        [ .{$GSet \rc GSet$}
+            [ .{$ GSet \rc GSet$}
+                [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                    [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$cities$} ] ] ]
+                ]
+                [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ]
+                ]
+            ]
+            [ .{$ \lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp$}
+                [ .{$\lp GSet \rc GSet \rp \lc \lp GSet \rc GSet \rp \rc \lp GSet \rc GSet \rp$}
+                    [ .{$\alpha \lc \alpha \rc \alpha$} [ .{$and$} ] ]
+                ]
+                    [ .{$GSet \rc GSet$}
+                    [ .{$GSet \rc \lp GSet \lc GSet \rp$}
+                        [ .{$\alpha \rc \lp \alpha \lc GSet \rp$} [ .{$GSet$} [ .{$villages$} ] ] ]
+                    ]
+                    [ .{$GSet \lc GSet \rc GSet$} [ .{$near$} ]
+                    ]
+                ]
+            ]
+        ]
+        [ .{$ GSet$} [ .{$Finland$} ] ]
+      }
+  \end{frame}
+
   \section{Категорийни граматики върху Minipass}
   \begin{frame}{Категорийни граматики върху Minipass}няколко слайда тук\end{frame}
 
