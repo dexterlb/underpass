@@ -161,82 +161,8 @@
     \end{lstlisting}\end{lstwrap}
   \end{frame}
 
-  \section{Категорийни граматики}
-  \begin{frame}{Категорийни граматики: пример}
-    \gramshort{
-        \gramrow{pharmacies}{ GSet }{}
-        \gramrow{Berlin}{ GSet }{}
-    }
-  \end{frame}
-  \begin{frame}{Категорийни граматики: пример}
-    \gramshort{
-        \gramrow{pharmacies}{ GSet }{}
-        \gramrow{Berlin}{ GSet }{}
-        \gramrow{parking}{ GSet \rc Spaces }{}
-        \gramrow{spaces}{Spaces}{}
-    }
-  \end{frame}
-  \begin{frame}{Категорийни граматики: пример}
-    \gramshort{
-        \gramrow{pharmacies}{ GSet }{}
-        \gramrow{Berlin}{ GSet }{}
-        \gramrow{parking}{ GSet \rc Spaces }{}
-        \gramrow{spaces}{Spaces}{}
-        \gramrow{in}{ (GSet \lc GSet) \rc GSet }{}
-        \gramrow{near}{ (GSet \lc GSet) \rc GSet }{}
-    }
-  \end{frame}
-  \begin{frame}{Категорийни граматики: пример}
-    \autoscaledtree{.{$GSet$}
-        [ .{$GSet$}
-            [ .{$GSet$} [ .{$pharmacies$} ] ]
-            \edge[very thick];
-            [ .{$GSet \lc GSet$}
-                \edge[very thick];
-                [ .{$(GSet \lc GSet) \rc GSet$} [ .{$near$} ] ]
-                [ .{$GSet$}
-                    \edge[very thick];
-                    [ .{$GSet \rc Spaces$} [ .{$parking$} ] ]
-                    [ .{$Spaces$} [ .{$spaces$} ] ]
-                ]
-            ]
-        ]
-        \edge[very thick];
-        [ .{$GSet \lc GSet$}
-            \edge[very thick];
-            [ .{$(GSet \lc GSet) \rc GSet$} [ .{$in$} ] ]
-            [ .{$GSet$} [ .{$Berlin$} ] ]
-        ]
-    }
-  \end{frame}
-
-  \begin{frame}{Разширения на КГ}
-    \begin{itemize}
-      \item Ограничение на правилата
-      \item Модалности
-      \item Повдигане на типове
-      \item Типови променливи
-      \item Equification на категории
-      \item Семантика на подтипове
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Модалности}
-    \begin{center}
-        \begin{tikzpicture}
-            \node[main node] (1) {$\modstar$};
-            \node[main node] (2) [below left = 1cm and 1.5cm of 1]  {$\modr$};
-            \node[main node] (3) [below right = 1cm and 1.5cm of 1] {$\modx$};
-            \node[main node] (4) [below = 2cm of 1] {$\moddot$};
-
-            \path[draw,thick]
-            (1) edge node {} (2)
-            (1) edge node {} (3)
-            (2) edge node {} (4)
-            (3) edge node {} (4);
-        \end{tikzpicture}
-    \end{center}
-  \end{frame}
+  \section{Типово $\lambda$-смятане}
+  \begin{frame}{$\lambda$}няколко слайда тук\end{frame}
 
   \section{Minipass: междинен език}
   \begin{frame}{Графова абстракция}
@@ -442,8 +368,62 @@ and (amenity 'school') (in (name 'Sofia'))
     \end{lstlisting}\end{lstwrap}
   \end{frame}
 
+
   \section{Подтипове}
   \begin{frame}{Подтипове}няколко слайда тук\end{frame}
+
+  \section{Категорийни граматики}
+  \begin{frame}{Категорийни граматики: пример}
+    \code{pharmacies near parking spaces in Berlin}
+  \end{frame}
+
+  \begin{frame}{Категорийни граматики: пример}
+    \gramshort{
+        \gramrow{pharmacies}{ GSet }{}
+        \gramrow{Berlin}{ GSet }{}
+    }
+  \end{frame}
+  \begin{frame}{Категорийни граматики: пример}
+    \gramshort{
+        \gramrow{pharmacies}{ GSet }{}
+        \gramrow{Berlin}{ GSet }{}
+        \gramrow{parking}{ GSet \rc Spaces }{}
+        \gramrow{spaces}{Spaces}{}
+    }
+  \end{frame}
+  \begin{frame}{Категорийни граматики: пример}
+    \gramshort{
+        \gramrow{pharmacies}{ GSet }{}
+        \gramrow{Berlin}{ GSet }{}
+        \gramrow{parking}{ GSet \rc Spaces }{}
+        \gramrow{spaces}{Spaces}{}
+        \gramrow{in}{ (GSet \lc GSet) \rc GSet }{}
+        \gramrow{near}{ (GSet \lc GSet) \rc GSet }{}
+    }
+  \end{frame}
+  \begin{frame}{Категорийни граматики: пример}
+    \autoscaledtree{.{$GSet$}
+        [ .{$GSet$}
+            [ .{$GSet$} [ .{$pharmacies$} ] ]
+            \edge[very thick];
+            [ .{$GSet \lc GSet$}
+                \edge[very thick];
+                [ .{$(GSet \lc GSet) \rc GSet$} [ .{$near$} ] ]
+                [ .{$GSet$}
+                    \edge[very thick];
+                    [ .{$GSet \rc Spaces$} [ .{$parking$} ] ]
+                    [ .{$Spaces$} [ .{$spaces$} ] ]
+                ]
+            ]
+        ]
+        \edge[very thick];
+        [ .{$GSet \lc GSet$}
+            \edge[very thick];
+            [ .{$(GSet \lc GSet) \rc GSet$} [ .{$in$} ] ]
+            [ .{$GSet$} [ .{$Berlin$} ] ]
+        ]
+    }
+  \end{frame}
 
   \section{Категорийни граматики (формално)}
   \begin{frame}{Категорийно затваряне}
@@ -540,7 +520,6 @@ and (amenity 'school') (in (name 'Sofia'))
 
   \begin{frame}{Коректност}
     \begin{enumerate}
-    \label{cyk:rules}
         \item Ако $X \in f(w_i)$, то $(X, i, i) \in P$.
         \item Ако $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
             то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
@@ -554,7 +533,6 @@ and (amenity 'school') (in (name 'Sofia'))
   \end{frame}
   \begin{frame}{Пълнота}
     \begin{enumerate}
-    \label{cyk:rules}
         \item Ако $X \in f(w_i)$, то $(X, i, i) \in P$.
         \item Ако $(X \rc Y, i, p) \in P, (Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, p + 1, j) \in P$,
             то $(X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m, i, j) \in P$.
@@ -564,6 +542,192 @@ and (amenity 'school') (in (name 'Sofia'))
     \begin{equation}\label{eq:right}
         \lb X \rb \gsteps w_i ... w_j \implies (X, i, j) \in P
     \end{equation}
+  \end{frame}
+
+  \begin{frame}{Семантика в КГ}
+    Дефинираме $\typeoff : \cclos{N} \fun \tclos{\Theta}$ като:
+    \[\typeof{\lp X \mc Y \rp} \defeq  \typeof{Y} \tot \typeof{X}\].
+
+    По дадена КГ $ G = \langle \Sigma, N, S, f, n \rangle $, функцията
+    \[ \psi : \{ (a, X) \mid a \in \Sigma, X \in f(a) \} \fun 2^{\plambda{\Theta}{C}} \]
+    ще наричаме \emph{семантична функция} за $G$.
+  \end{frame}
+
+  \begin{frame}{Семантика в КГ: базов случай}
+    \begin{center}
+        \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
+            \Tree[
+                .\node(outtop){$X$};
+                    \edge[very thick];
+                    [ .\node(in){$a$};
+                    ]
+            ]
+            \node[boxcolb,fit=(outtop)(in)](outbox){};
+            \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+        \end{tikzpicture}
+    \end{center}
+    \[ X \in f(a) \]
+    \hrule
+    \[ sem_{\psi}(T) = \psi(a, X). \]
+  \end{frame}
+
+  \begin{frame}{Семантика в КГ: десен случай}
+    \begin{center}
+      \begin{tikzpicture}[node distance=1mm,sibling distance=1cm]
+        \Tree[
+        .\node(outtop){$X \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
+        \edge[very thick];
+        [ .\node(intopl){$X \rc Y$};
+        \edge[roof];
+        [ .\node(inbotl){$\alpha$}; ]
+        ]
+        [ .\node(intopr){$Y \mci{1} Z_1 \mci{2} Z_2 ... \mci{m} Z_m$};
+        \edge[roof];
+        [ .\node(inbotr){$\beta$}; ]
+        ]
+        ]
+        \node[boxcola,fit=(intopl)(inbotl)](inboxl){};
+        \node[left=of inboxl,text=\boxtexta](inlabell){$T_1$};
+
+        \node[boxcola,fit=(intopr)(inbotr)](inboxr){};
+        \node[right=of inboxr,text=\boxtexta](inlabelr){$T_2$};
+
+        \node[boxcolb,fit=(outtop)(inbotl)(inboxl)(inboxr)(inlabell)(inlabelr)](outbox){};
+        \node[right=of outbox,text=\boxtextb](outlabel){$T$};
+      \end{tikzpicture}
+    \end{center}
+
+    \hrule
+
+    \[
+      \begin{split}
+        sem_{\psi}(T) =& \{
+        \lambda z_m {:} \typeof{Z_m}, z_{m - 1} {:} \typeof{Z_{m - 1}}, ..., z_1 {:} \typeof{Z_1} \abstr
+        M ( N z_m z_{m - 1} ... z_1 ) \\
+        & \quad \mid M \in sem_{\psi}(T_1), N \in sem_{\psi}(T_2) \} \\
+      \end{split}
+    \]
+
+    за свежи
+    $z_1 ... z_m \in \lvars \setminus \big(\fv{sem_{\psi}(T_1)} \cup \fv{sem_{\psi}(T_2)}\big)$.
+  \end{frame}
+
+  \begin{frame}{Консистентност на семантична функция с контекст}
+    Семантична функция $\psi$ е консистентна с контекст $\Gamma$, когато
+    \[
+        \forall a, X: M \in \psi(a, X) \implies \Gamma \vdash M : \typeof{X}.
+    \]
+
+    Ако $\psi$ е консистентна с $\Gamma$, то за всяко валидно дърво на извод
+    $T$:
+    \[
+        M \in sem_{\psi}(T) \implies \Gamma \vdash M : \typeof{root(T)}
+    \]
+  \end{frame}
+
+  \begin{frame}{Разширения на КГ}
+    \begin{itemize}
+      \item Ограничение на правилата
+      \item Модалности
+      \item Повдигане на типове
+      \item Типови променливи
+      \item Equification на категории
+      \item Семантика на подтипове
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Модалности}
+    \begin{center}
+      \begin{tikzpicture}
+        \node[main node] (1) {$\modstar$};
+        \node[main node] (2) [below left = 1cm and 1.5cm of 1]  {$\modr$};
+        \node[main node] (3) [below right = 1cm and 1.5cm of 1] {$\modx$};
+        \node[main node] (4) [below = 2cm of 1] {$\moddot$};
+
+        \path[draw,thick]
+        (1) edge node {} (2)
+        (1) edge node {} (3)
+        (2) edge node {} (4)
+        (3) edge node {} (4);
+      \end{tikzpicture}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}{Модалности}
+    \begin{itemize}
+      \item ``Application''
+        \[ \lb X \rb \gderiv \lb X \rci{\mu} Y \rb \lb Y \rb \]
+        \[ \lb X \rb \gderiv \lb Y \rb \lb X \lci{\mu} Y \rb \]
+        където $\mu \less \modstar$ (т.е. за всяко $\mu$).
+      \item ``Harmonic composition''
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rci{\mu} Y \rb \lb Y \rci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y \lci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
+        където $\mu \less \modr, \nu \less \modr, \eta = \mu \meet \nu$.
+      \item ``Crossing composition''
+        \[ \lb X \lci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb X \rci{\mu} Y \rb \lb Y \lci{\nu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \]
+        \[ \lb X \rci{\eta} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \gderiv \lb Y \rci{\mu} Z_1 \mci{2} Z_2 ... \mci{m} Z_m \rb \lb X \lci{\nu} Y \rb \]
+        където $\mu \less \modx, \nu \less \modx, \eta = \mu \meet \nu$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Модалности: пример}
+    \gramshort{
+      \gramrow{small}{ GSet \rc GSet }{}
+      \gramrow{cities}{ GSet }{}
+      \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+      \gramrow{Russia}{ GSet }{}
+    }
+
+    \begin{center}
+      \begin{minipage}{0.5\textwidth}
+        \autoscaledtree{.{$GSet$}
+          [ .{$GSet$}
+          [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+          [ .{$GSet$} [ .{$cities$} ] ]
+          ]
+          [ .{$GSet \lc GSet$}
+          [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+          [ .{$GSet$} [ .{$Russia$} ] ]
+          ]
+        }
+      \end{minipage}%
+      \begin{minipage}{0.5\textwidth}
+        \autoscaledtree{.{$GSet$}
+          [ .{$GSet$} [ .{$cities$} ] ]
+          [ .{$GSet \lc GSet$}
+          [ .{$GSet \rc GSet$} [ .{$small$} ] ]
+          [ .{$GSet \lc GSet$}
+          [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+          [ .{$GSet$} [ .{$Russia$} ] ]
+          ]
+          ]
+        }
+      \end{minipage}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}{Модалности: пример}
+    \gramshort{
+      \gramrow{small}{ GSet \rci{\modr} GSet }{}
+      \gramrow{cities}{ GSet }{}
+      \gramrow{in}{ GSet \lc GSet \rc GSet }{}
+      \gramrow{Russia}{ GSet }{}
+    }
+
+    \begin{center}
+      \begin{minipage}{0.5\textwidth}
+        \autoscaledtree{.{$GSet$}
+          [ .{$GSet$}
+          [ .{$GSet \rci{\modr} GSet$} [ .{$small$} ] ]
+          [ .{$GSet$} [ .{$cities$} ] ]
+          ]
+          [ .{$GSet \lc GSet$}
+          [ .{$GSet \lc GSet \rc GSet$} [ .{$in$} ] ]
+          [ .{$GSet$} [ .{$Russia$} ] ]
+          ]
+        }
+      \end{minipage}%
+    \end{center}
   \end{frame}
 
   \section{Категорийни граматики върху Minipass}
